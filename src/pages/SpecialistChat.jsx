@@ -20,7 +20,7 @@ export default function SpecialistChat() {
   const [messages, setMessages] = useState([
     {
       role: "assistant",
-      content: `Olá! Sou ${specialist?.name}, ${specialist?.description}. Como posso ajudar você hoje?`
+      content: `Olá! Sou o KIZI 2.5 Pro operando como ${specialist?.name}. ${specialist?.description}. Como posso ajudar você hoje?`
     }
   ]);
   const [input, setInput] = useState("");
@@ -119,7 +119,11 @@ export default function SpecialistChat() {
           <div>
             <h1>{specialist.name}</h1>
             <p>{specialist.description}</p>
-            <p style={{fontSize: '0.75rem', color: '#888', marginTop: '4px'}}>🤖 Gemini 2.5 Pro</p>
+            <div style={{display: 'flex', gap: '8px', marginTop: '4px', flexWrap: 'wrap'}}>
+              <span style={{fontSize: '0.65rem', background: 'linear-gradient(135deg, #6366f1, #8b5cf6)', color: 'white', padding: '2px 6px', borderRadius: '10px'}}>🧠 KIZI 2.5 Pro</span>
+              <span style={{fontSize: '0.65rem', background: 'linear-gradient(135deg, #f59e0b, #ef4444)', color: 'white', padding: '2px 6px', borderRadius: '10px'}}>🚀 KIZI Speed</span>
+              <span style={{fontSize: '0.65rem', background: 'linear-gradient(135deg, #10b981, #06b6d4)', color: 'white', padding: '2px 6px', borderRadius: '10px'}}>⚡ KIZI Flash</span>
+            </div>
           </div>
         </div>
       </div>

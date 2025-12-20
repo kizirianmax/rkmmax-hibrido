@@ -2,31 +2,32 @@ import { useState, useRef, useEffect } from 'react';
 import '../styles/HybridAgent.css';
 
 /**
- * RKMMAX HYBRID - VERSÃO MANUS SIMPLIFICADA
- * Um único agente (Serginho) que faz TUDO
- * Metodologia: Execução real com fallback automático
- * Gemini 1.5 Pro → GROQ (fallback)
+ * RKMMAX HYBRID - VERSÃO KIZI INTELIGENTE
+ * Sistema com 3 motores de IA:
+ * - KIZI 2.5 Pro (Gemini 2.5 Pro) - Raciocínio complexo
+ * - KIZI Speed (Groq Llama 70B) - Velocidade máxima
+ * - KIZI Flash (Gemini Flash) - Respostas rápidas
  * Modos: Manual (1 crédito) | Otimizado (0.5 crédito)
  */
 export default function HybridAgentSimple() {
   const [mode, setMode] = useState('manual');
   const [input, setInput] = useState('');
   // Versão do app para cache busting
-  const APP_VERSION = 'v3.0.2-gemini2thinking';
+  const APP_VERSION = 'v3.1.0-kizi';
   
   const [messages, setMessages] = useState([
     {
       id: 1,
       type: 'system',
-      content: `🤖 Bem-vindo ao RKMMAX Híbrido - Sistema Inteligente (${APP_VERSION})`,
+      content: `🤖 Bem-vindo ao KIZI 2.5 Pro - Sistema Inteligente (${APP_VERSION})`,
       timestamp: new Date(),
     },
     {
       id: 2,
       type: 'agent',
       agent: 'Serginho',
-      content: 'Olá! Sou Serginho, seu orquestrador de IA. Posso orquestrar 54 especialistas ou executar tarefas complexas diretamente. Descreva o que precisa!',
-        provider: 'gemini-2.0-flash-thinking',
+      content: 'Olá! Sou o KIZI 2.5 Pro operando como Serginho. Posso ajudar com qualquer tarefa - desde programação até pesquisas complexas. Descreva o que precisa!',
+        provider: 'kizi-2.5-pro',
       timestamp: new Date(),
     },
   ]);
@@ -317,7 +318,7 @@ export default function HybridAgentSimple() {
               <h3>SISTEMA</h3>
               <p>🚀 <strong>Versão 3.0.2</strong></p>
               <p>Serginho - Orquestrador de IA</p>
-              <p>🤖 <strong>Gemini 2.0 Flash (Thinking)</strong></p>
+              <p>🧠 <strong>KIZI 2.5 Pro</strong> | 🚀 <strong>Speed</strong> | ⚡ <strong>Flash</strong></p>
               <p>💰 Otimização de Custo Ativa</p>
             </div>
           </div>

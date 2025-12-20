@@ -6,7 +6,7 @@ export default function Serginho() {
   const [messages, setMessages] = useState([
     {
       role: "assistant",
-      content: "Olá! Sou o Serginho, seu orquestrador de IA. Posso orquestrar 54 especialistas ou responder diretamente. Como posso ajudar?"
+      content: "Olá! Sou o KIZI 2.5 Pro operando como Serginho. Posso ajudar com qualquer tarefa - desde programação até pesquisas complexas. Como posso ajudar?"
     }
   ]);
   const [input, setInput] = useState("");
@@ -284,7 +284,11 @@ export default function Serginho() {
           <div className="header-info">
             <h1>Serginho</h1>
             <p>Orquestrador de IA • Online</p>
-            <p style={{fontSize: '0.75rem', color: '#888', marginTop: '2px'}}>🤖 Gemini 2.0 Flash (Thinking)</p>
+            <div style={{display: 'flex', gap: '8px', marginTop: '4px', flexWrap: 'wrap'}}>
+              <span style={{fontSize: '0.65rem', background: 'linear-gradient(135deg, #6366f1, #8b5cf6)', color: 'white', padding: '2px 6px', borderRadius: '10px'}}>🧠 KIZI 2.5 Pro</span>
+              <span style={{fontSize: '0.65rem', background: 'linear-gradient(135deg, #f59e0b, #ef4444)', color: 'white', padding: '2px 6px', borderRadius: '10px'}}>🚀 KIZI Speed</span>
+              <span style={{fontSize: '0.65rem', background: 'linear-gradient(135deg, #10b981, #06b6d4)', color: 'white', padding: '2px 6px', borderRadius: '10px'}}>⚡ KIZI Flash</span>
+            </div>
           </div>
         </div>
       </div>
