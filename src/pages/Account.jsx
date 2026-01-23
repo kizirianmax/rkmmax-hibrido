@@ -113,9 +113,7 @@ export default function Account() {
         <h1 className="text-2xl font-bold mb-4">Minha Conta</h1>
 
         <div className="mb-6">
-          <label className="block text-sm font-medium text-gray-700 mb-1">
-            E-mail
-          </label>
+          <label className="block text-sm font-medium text-gray-700 mb-1">E-mail</label>
           <input
             value={user?.email || ""}
             readOnly
@@ -156,9 +154,7 @@ export default function Account() {
               className="w-full border rounded p-2 font-mono"
               placeholder='Ex.: { "tema": "escuro" }'
             />
-            <p className="text-xs text-gray-500 mt-1">
-              Dica: precisa ser um JSON válido.
-            </p>
+            <p className="text-xs text-gray-500 mt-1">Dica: precisa ser um JSON válido.</p>
           </div>
 
           <div className="flex gap-3">

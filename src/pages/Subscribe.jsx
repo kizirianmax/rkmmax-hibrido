@@ -4,25 +4,25 @@ import React, { useMemo, useState } from "react";
 // Links de pagamento (Payment Links) por região e plano via variáveis de ambiente
 const LINKS = {
   BR: {
-    basic:  process.env.REACT_APP_STRIPE_PAYMENT_LINK_BASIC_BR || "",
-    pro:    process.env.REACT_APP_STRIPE_PAYMENT_LINK_INTERMEDIATE_BR || "",
+    basic: process.env.REACT_APP_STRIPE_PAYMENT_LINK_BASIC_BR || "",
+    pro: process.env.REACT_APP_STRIPE_PAYMENT_LINK_INTERMEDIATE_BR || "",
     premium: process.env.REACT_APP_STRIPE_PAYMENT_LINK_PREMIUM_BR || "",
     labels: {
-      basic:   "Básico — R$ 25,00/mês",
-      pro:     "Intermediário — R$ 50,00/mês",
-      premium: "Premium — R$ 90,00/mês"
-    }
+      basic: "Básico — R$ 25,00/mês",
+      pro: "Intermediário — R$ 50,00/mês",
+      premium: "Premium — R$ 90,00/mês",
+    },
   },
   US: {
-    basic:  process.env.REACT_APP_STRIPE_PAYMENT_LINK_BASIC_US || "",
-    pro:    process.env.REACT_APP_STRIPE_PAYMENT_LINK_INTERMEDIATE_US || "",
+    basic: process.env.REACT_APP_STRIPE_PAYMENT_LINK_BASIC_US || "",
+    pro: process.env.REACT_APP_STRIPE_PAYMENT_LINK_INTERMEDIATE_US || "",
     premium: process.env.REACT_APP_STRIPE_PAYMENT_LINK_PREMIUM_US || "",
     labels: {
-      basic:   "Basic — $10/month",
-      pro:     "Intermediate — $20/month",
-      premium: "Premium — $30/month"
-    }
-  }
+      basic: "Basic — $10/month",
+      pro: "Intermediate — $20/month",
+      premium: "Premium — $30/month",
+    },
+  },
 };
 
 // Detecção simples de região pelo idioma do navegador
@@ -67,10 +67,8 @@ export default function Subscribe() {
       </div>
 
       <p style={{ marginTop: 16, fontSize: 12, opacity: 0.8 }}>
-        * O valor exibido é apenas rótulo de UI; a cobrança é definida pelo
-        Payment Link da Stripe.
+        * O valor exibido é apenas rótulo de UI; a cobrança é definida pelo Payment Link da Stripe.
       </p>
     </div>
   );
 }
-

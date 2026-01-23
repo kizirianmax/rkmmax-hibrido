@@ -4,13 +4,14 @@ import { useParams, Link } from "react-router-dom";
 import AGENTS from "../data/agents.js";
 
 // ===== Configurações =====
-const SHOW_HUMAN_SUPPORT = true;                 // torne false para ocultar
-const WHATSAPP_NUMBER = "55SEUNUMEROAQUI";       // DDI+DDD+número
+const SHOW_HUMAN_SUPPORT = true; // torne false para ocultar
+const WHATSAPP_NUMBER = "55SEUNUMEROAQUI"; // DDI+DDD+número
 
 function openWhatsAppEmergency(agent) {
-  const text = agent?.id === "serginho"
-    ? "Suporte crítico: preciso de ajuda com meu projeto (Serginho)."
-    : `Suporte crítico sobre o especialista ${agent?.name} (orquestrado pelo Serginho).`;
+  const text =
+    agent?.id === "serginho"
+      ? "Suporte crítico: preciso de ajuda com meu projeto (Serginho)."
+      : `Suporte crítico sobre o especialista ${agent?.name} (orquestrado pelo Serginho).`;
 
   const appDeepLink = `whatsapp://send?phone=${WHATSAPP_NUMBER}&text=${encodeURIComponent(text)}`;
   const webFallback = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(text)}`;
@@ -29,14 +30,18 @@ export default function AgentDetail() {
     return (
       <div style={{ padding: "1.5rem", color: "#e6eef5" }}>
         <h1>Agente não encontrado</h1>
-        <Link to="/agents" style={{ color: "#15d0d4" }}>← Voltar</Link>
+        <Link to="/agents" style={{ color: "#15d0d4" }}>
+          ← Voltar
+        </Link>
       </div>
     );
   }
 
   return (
     <div style={{ padding: "1.5rem", color: "#e6eef5" }}>
-      <Link to="/agents" style={{ color: "#15d0d4" }}>← Voltar</Link>
+      <Link to="/agents" style={{ color: "#15d0d4" }}>
+        ← Voltar
+      </Link>
 
       <div style={{ display: "flex", alignItems: "center", gap: 12, marginTop: 16 }}>
         <img

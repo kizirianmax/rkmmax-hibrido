@@ -6,8 +6,9 @@ export default function Serginho() {
   const [messages, setMessages] = useState([
     {
       role: "assistant",
-      content: "Olá! Sou o KIZI 2.5 Pro operando como Serginho. Posso ajudar com qualquer tarefa - desde programação até pesquisas complexas. Como posso ajudar?"
-    }
+      content:
+        "Olá! Sou o KIZI 2.5 Pro operando como Serginho. Posso ajudar com qualquer tarefa - desde programação até pesquisas complexas. Como posso ajudar?",
+    },
   ]);
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -32,7 +33,7 @@ export default function Serginho() {
 
     const userMessage = input.trim();
     setInput("");
-    
+
     // Adicionar mensagem do usuário
     const newMessages = [...messages, { role: "user", content: userMessage }];
     setMessages(newMessages);
@@ -40,13 +41,14 @@ export default function Serginho() {
 
     try {
       // Chamar API com Gemini Pro 2.5 (nível ChatGPT-5)
-      const response = await fetch('/api/ai', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },        body: JSON.stringify({
-          type: 'genius',         // Endpoint unificado
+      const response = await fetch("/api/ai", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          type: "genius", // Endpoint unificado
           messages: newMessages,
-          agentType: 'serginho',  // Prompts de gênio do Serginho
-          mode: 'OTIMIZADO'       // Otimização de custo ativada
+          agentType: "serginho", // Prompts de gênio do Serginho
+          mode: "OTIMIZADO", // Otimização de custo ativada
         }),
       });
 
@@ -56,23 +58,29 @@ export default function Serginho() {
 
       const data = await response.json();
       const aiResponse = data.response;
-      
+
       if (!aiResponse || aiResponse.trim() === "") {
         throw new Error("Resposta vazia da IA");
       }
-      
+
       // Adicionar resposta da IA
-      setMessages(prev => [...prev, {
-        role: "assistant",
-        content: aiResponse
-      }]);
+      setMessages((prev) => [
+        ...prev,
+        {
+          role: "assistant",
+          content: aiResponse,
+        },
+      ]);
     } catch (error) {
       console.error("Erro ao enviar mensagem:", error);
       const errorMsg = error?.message || "erro desconhecido";
-      setMessages(prev => [...prev, {
-        role: "assistant",
-        content: `❌ Erro ao processar: ${errorMsg}. Tente novamente.`
-      }]);
+      setMessages((prev) => [
+        ...prev,
+        {
+          role: "assistant",
+          content: `❌ Erro ao processar: ${errorMsg}. Tente novamente.`,
+        },
+      ]);
     } finally {
       setIsLoading(false);
     }
@@ -97,58 +105,63 @@ export default function Serginho() {
 
       // Solicitar permissão de microfone
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-      
+
       const mediaRecorder = new MediaRecorder(stream);
       mediaRecorderRef.current = mediaRecorder;
-      
+
       const audioChunks = [];
-      
+
       mediaRecorder.ondataavailable = (event) => {
         audioChunks.push(event.data);
       };
-      
+
       mediaRecorder.onstop = async () => {
-        const audioBlob = new Blob(audioChunks, { type: 'audio/wav' });
-        
+        const audioBlob = new Blob(audioChunks, { type: "audio/wav" });
+
         // Parar todas as tracks do stream
-        stream.getTracks().forEach(track => track.stop());
-        
+        stream.getTracks().forEach((track) => track.stop());
+
         // Enviar áudio para API Whisper
         try {
           const formData = new FormData();
-          formData.append('audio', audioBlob, 'recording.wav');
-          
-          const response = await fetch('/api/transcribe', {
-            method: 'POST',
-            body: formData
+          formData.append("audio", audioBlob, "recording.wav");
+
+          const response = await fetch("/api/transcribe", {
+            method: "POST",
+            body: formData,
           });
-          
+
           if (!response.ok) {
-            throw new Error('Erro na transcrição');
+            throw new Error("Erro na transcrição");
           }
-          
+
           const { text } = await response.json();
-          
+
           // Colocar texto transcrito no input
           setInput(text);
-          
+
           // Mostrar mensagem de sucesso
-          setMessages(prev => [...prev, {
-            role: "assistant",
-            content: `🎤 Áudio transcrito: "${text}"`
-          }]);
+          setMessages((prev) => [
+            ...prev,
+            {
+              role: "assistant",
+              content: `🎤 Áudio transcrito: "${text}"`,
+            },
+          ]);
         } catch (error) {
-          console.error('Erro na transcrição:', error);
-          setMessages(prev => [...prev, {
-            role: "assistant",
-            content: "❌ Erro ao transcrever áudio. Verifique se a API Whisper está configurada."
-          }]);
+          console.error("Erro na transcrição:", error);
+          setMessages((prev) => [
+            ...prev,
+            {
+              role: "assistant",
+              content: "❌ Erro ao transcrever áudio. Verifique se a API Whisper está configurada.",
+            },
+          ]);
         }
       };
-      
+
       mediaRecorder.start();
       setIsRecording(true);
-      
     } catch (error) {
       console.error("Erro ao acessar microfone:", error);
       alert("Não foi possível acessar o microfone. Verifique as permissões do navegador.");
@@ -170,10 +183,13 @@ export default function Serginho() {
   const handleFileSelect = (event) => {
     const file = event.target.files?.[0];
     if (file) {
-      setMessages(prev => [...prev, {
-        role: "assistant",
-        content: `📎 Arquivo "${file.name}" recebido! O upload de arquivos ainda não está implementado, mas a interface está pronta. Em breve você poderá enviar documentos! 😊`
-      }]);
+      setMessages((prev) => [
+        ...prev,
+        {
+          role: "assistant",
+          content: `📎 Arquivo "${file.name}" recebido! O upload de arquivos ainda não está implementado, mas a interface está pronta. Em breve você poderá enviar documentos! 😊`,
+        },
+      ]);
     }
   };
 
@@ -183,41 +199,51 @@ export default function Serginho() {
       const reader = new FileReader();
       reader.onload = async (e) => {
         const imageBase64 = e.target.result;
-        
+
         // Mostrar imagem enviada
-        setMessages(prev => [...prev, {
-          role: "user",
-          content: `🖼️ Imagem: ${file.name}`,
-          image: imageBase64
-        }]);
-        
+        setMessages((prev) => [
+          ...prev,
+          {
+            role: "user",
+            content: `🖼️ Imagem: ${file.name}`,
+            image: imageBase64,
+          },
+        ]);
+
         // Analisar imagem com GPT-4 Vision
         setIsLoading(true);
         try {
-          const response = await fetch('/api/vision', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ imageBase64 })
+          const response = await fetch("/api/vision", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ imageBase64 }),
           });
-          
+
           if (!response.ok) {
-            throw new Error('Erro na análise de imagem');
+            throw new Error("Erro na análise de imagem");
           }
-          
+
           const { description } = await response.json();
-          
+
           // Formatar resposta com padrão
           const formatted = `👀 **Análise da imagem:**\n\n${description}`;
-          setMessages(prev => [...prev, {
-            role: "assistant",
-            content: formatted
-          }]);
+          setMessages((prev) => [
+            ...prev,
+            {
+              role: "assistant",
+              content: formatted,
+            },
+          ]);
         } catch (error) {
-          console.error('Erro na análise de imagem:', error);
-          setMessages(prev => [...prev, {
-            role: "assistant",
-            content: "❌ Erro ao analisar imagem. Verifique se a API GPT-4 Vision está configurada."
-          }]);
+          console.error("Erro na análise de imagem:", error);
+          setMessages((prev) => [
+            ...prev,
+            {
+              role: "assistant",
+              content:
+                "❌ Erro ao analisar imagem. Verifique se a API GPT-4 Vision está configurada.",
+            },
+          ]);
         } finally {
           setIsLoading(false);
         }
@@ -232,41 +258,51 @@ export default function Serginho() {
       const reader = new FileReader();
       reader.onload = async (e) => {
         const imageBase64 = e.target.result;
-        
+
         // Mostrar foto capturada
-        setMessages(prev => [...prev, {
-          role: "user",
-          content: `📸 Foto capturada`,
-          image: imageBase64
-        }]);
-        
+        setMessages((prev) => [
+          ...prev,
+          {
+            role: "user",
+            content: `📸 Foto capturada`,
+            image: imageBase64,
+          },
+        ]);
+
         // Analisar foto com GPT-4 Vision
         setIsLoading(true);
         try {
-          const response = await fetch('/api/vision', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ imageBase64 })
+          const response = await fetch("/api/vision", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ imageBase64 }),
           });
-          
+
           if (!response.ok) {
-            throw new Error('Erro na análise de foto');
+            throw new Error("Erro na análise de foto");
           }
-          
+
           const { description } = await response.json();
-          
+
           // Formatar resposta com padrão
           const formatted = `👀 **Análise da foto:**\n\n${description}`;
-          setMessages(prev => [...prev, {
-            role: "assistant",
-            content: formatted
-          }]);
+          setMessages((prev) => [
+            ...prev,
+            {
+              role: "assistant",
+              content: formatted,
+            },
+          ]);
         } catch (error) {
-          console.error('Erro na análise de foto:', error);
-          setMessages(prev => [...prev, {
-            role: "assistant",
-            content: "❌ Erro ao analisar foto. Verifique se a API GPT-4 Vision está configurada."
-          }]);
+          console.error("Erro na análise de foto:", error);
+          setMessages((prev) => [
+            ...prev,
+            {
+              role: "assistant",
+              content:
+                "❌ Erro ao analisar foto. Verifique se a API GPT-4 Vision está configurada.",
+            },
+          ]);
         } finally {
           setIsLoading(false);
         }
@@ -280,14 +316,49 @@ export default function Serginho() {
       {/* Header fixo */}
       <div className="serginho-header">
         <div className="header-content">
-          <img src="/avatars/serginho.png" alt="Serginho" className="avatar-large" style={{borderRadius: '50%', objectFit: 'cover'}} />
+          <img
+            src="/avatars/serginho.png"
+            alt="Serginho"
+            className="avatar-large"
+            style={{ borderRadius: "50%", objectFit: "cover" }}
+          />
           <div className="header-info">
             <h1>Serginho</h1>
             <p>Orquestrador de IA • Online</p>
-            <div style={{display: 'flex', gap: '8px', marginTop: '4px', flexWrap: 'wrap'}}>
-              <span style={{fontSize: '0.65rem', background: 'linear-gradient(135deg, #6366f1, #8b5cf6)', color: 'white', padding: '2px 6px', borderRadius: '10px'}}>🧠 KIZI 2.5 Pro</span>
-              <span style={{fontSize: '0.65rem', background: 'linear-gradient(135deg, #f59e0b, #ef4444)', color: 'white', padding: '2px 6px', borderRadius: '10px'}}>🚀 KIZI Speed</span>
-              <span style={{fontSize: '0.65rem', background: 'linear-gradient(135deg, #10b981, #06b6d4)', color: 'white', padding: '2px 6px', borderRadius: '10px'}}>⚡ KIZI Flash</span>
+            <div style={{ display: "flex", gap: "8px", marginTop: "4px", flexWrap: "wrap" }}>
+              <span
+                style={{
+                  fontSize: "0.65rem",
+                  background: "linear-gradient(135deg, #6366f1, #8b5cf6)",
+                  color: "white",
+                  padding: "2px 6px",
+                  borderRadius: "10px",
+                }}
+              >
+                🧠 KIZI 2.5 Pro
+              </span>
+              <span
+                style={{
+                  fontSize: "0.65rem",
+                  background: "linear-gradient(135deg, #f59e0b, #ef4444)",
+                  color: "white",
+                  padding: "2px 6px",
+                  borderRadius: "10px",
+                }}
+              >
+                🚀 KIZI Speed
+              </span>
+              <span
+                style={{
+                  fontSize: "0.65rem",
+                  background: "linear-gradient(135deg, #10b981, #06b6d4)",
+                  color: "white",
+                  padding: "2px 6px",
+                  borderRadius: "10px",
+                }}
+              >
+                ⚡ KIZI Flash
+              </span>
             </div>
           </div>
         </div>
@@ -312,18 +383,23 @@ export default function Serginho() {
             className={`message ${msg.role === "user" ? "message-user" : "message-assistant"}`}
           >
             {msg.role === "assistant" && (
-              <img src="/avatars/serginho.png" alt="Serginho" className="message-avatar" style={{borderRadius: '50%', objectFit: 'cover'}} />
+              <img
+                src="/avatars/serginho.png"
+                alt="Serginho"
+                className="message-avatar"
+                style={{ borderRadius: "50%", objectFit: "cover" }}
+              />
             )}
             <div className="message-bubble">
               {msg.image && (
-                <img 
-                  src={msg.image} 
-                  alt="Imagem enviada" 
+                <img
+                  src={msg.image}
+                  alt="Imagem enviada"
                   className="message-image"
                   style={{
-                    maxWidth: '100%',
-                    borderRadius: '12px',
-                    marginBottom: msg.content ? '8px' : '0'
+                    maxWidth: "100%",
+                    borderRadius: "12px",
+                    marginBottom: msg.content ? "8px" : "0",
                   }}
                 />
               )}
@@ -333,7 +409,12 @@ export default function Serginho() {
         ))}
         {isLoading && (
           <div className="message message-assistant">
-            <img src="/avatars/serginho.png" alt="Serginho" className="message-avatar" style={{borderRadius: '50%', objectFit: 'cover'}} />
+            <img
+              src="/avatars/serginho.png"
+              alt="Serginho"
+              className="message-avatar"
+              style={{ borderRadius: "50%", objectFit: "cover" }}
+            />
             <div className="message-bubble message-loading">
               <div className="typing-indicator">
                 <span></span>
@@ -367,11 +448,7 @@ export default function Serginho() {
             >
               🗸️
             </button>
-            <button
-              className="action-btn"
-              onClick={handleFileAttach}
-              title="Anexar arquivo"
-            >
+            <button className="action-btn" onClick={handleFileAttach} title="Anexar arquivo">
               📎
             </button>
           </div>
@@ -389,7 +466,7 @@ export default function Serginho() {
 
           {/* Botão de voz - DESATIVADO */}
           <button
-            className={`voice-btn ${isRecording ? 'recording' : ''}`}
+            className={`voice-btn ${isRecording ? "recording" : ""}`}
             onClick={handleVoiceInput}
             disabled={true}
             title="Recurso em desenvolvimento"
@@ -398,11 +475,7 @@ export default function Serginho() {
           </button>
 
           {/* Botão de enviar */}
-          <button
-            onClick={handleSend}
-            disabled={!input.trim() || isLoading}
-            className="send-btn"
-          >
+          <button onClick={handleSend} disabled={!input.trim() || isLoading} className="send-btn">
             ↑
           </button>
         </div>
@@ -412,21 +485,21 @@ export default function Serginho() {
       <input
         ref={fileInputRef}
         type="file"
-        style={{ display: 'none' }}
+        style={{ display: "none" }}
         onChange={handleFileSelect}
         accept=".pdf,.doc,.docx,.txt,.xlsx,.csv"
       />
       <input
         ref={imageInputRef}
         type="file"
-        style={{ display: 'none' }}
+        style={{ display: "none" }}
         onChange={handleImageSelect}
         accept="image/*"
       />
       <input
         ref={cameraInputRef}
         type="file"
-        style={{ display: 'none' }}
+        style={{ display: "none" }}
         onChange={handleCameraSelect}
         accept="image/*"
         capture="environment"
@@ -434,4 +507,3 @@ export default function Serginho() {
     </div>
   );
 }
-

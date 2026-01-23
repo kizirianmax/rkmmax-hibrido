@@ -7,15 +7,15 @@
 class GitHubAutomation {
   constructor(token) {
     this.token = token || process.env.GITHUB_TOKEN;
-    this.baseUrl = 'https://api.github.com';
+    this.baseUrl = "https://api.github.com";
     this.headers = {
-      'Accept': 'application/vnd.github.v3+json',
-      'Authorization': `token ${this.token}`,
-      'User-Agent': 'RKMMAX-Automation',
+      Accept: "application/vnd.github.v3+json",
+      Authorization: `token ${this.token}`,
+      "User-Agent": "RKMMAX-Automation",
     };
 
     if (!this.token) {
-      throw new Error('GITHUB_TOKEN não configurado');
+      throw new Error("GITHUB_TOKEN não configurado");
     }
   }
 
@@ -24,10 +24,9 @@ class GitHubAutomation {
    */
   async getRepositoryInfo(owner, repo) {
     try {
-      const response = await fetch(
-        `${this.baseUrl}/repos/${owner}/${repo}`,
-        { headers: this.headers }
-      );
+      const response = await fetch(`${this.baseUrl}/repos/${owner}/${repo}`, {
+        headers: this.headers,
+      });
 
       if (!response.ok) {
         throw new Error(`GitHub API error: ${response.status}`);
@@ -51,7 +50,7 @@ class GitHubAutomation {
   /**
    * Obter referência de branch (SHA)
    */
-  async getBranchRef(owner, repo, branch = 'main') {
+  async getBranchRef(owner, repo, branch = "main") {
     try {
       const response = await fetch(
         `${this.baseUrl}/repos/${owner}/${repo}/git/refs/heads/${branch}`,
@@ -79,10 +78,9 @@ class GitHubAutomation {
    */
   async getCommitTree(owner, repo, sha) {
     try {
-      const response = await fetch(
-        `${this.baseUrl}/repos/${owner}/${repo}/git/commits/${sha}`,
-        { headers: this.headers }
-      );
+      const response = await fetch(`${this.baseUrl}/repos/${owner}/${repo}/git/commits/${sha}`, {
+        headers: this.headers,
+      });
 
       if (!response.ok) {
         throw new Error(`Commit não encontrado: ${sha}`);
@@ -104,19 +102,16 @@ class GitHubAutomation {
   /**
    * Criar blob (arquivo)
    */
-  async createBlob(owner, repo, content, encoding = 'utf-8') {
+  async createBlob(owner, repo, content, encoding = "utf-8") {
     try {
-      const response = await fetch(
-        `${this.baseUrl}/repos/${owner}/${repo}/git/blobs`,
-        {
-          method: 'POST',
-          headers: this.headers,
-          body: JSON.stringify({
-            content,
-            encoding,
-          }),
-        }
-      );
+      const response = await fetch(`${this.baseUrl}/repos/${owner}/${repo}/git/blobs`, {
+        method: "POST",
+        headers: this.headers,
+        body: JSON.stringify({
+          content,
+          encoding,
+        }),
+      });
 
       if (!response.ok) {
         throw new Error(`Erro ao criar blob: ${response.status}`);
@@ -146,8 +141,8 @@ class GitHubAutomation {
           const blob = await this.createBlob(owner, repo, file.content);
           tree.push({
             path: file.path,
-            mode: '100644', // arquivo regular
-            type: 'blob',
+            mode: "100644", // arquivo regular
+            type: "blob",
             sha: blob.sha,
           });
         }
@@ -155,24 +150,21 @@ class GitHubAutomation {
         else if (file.delete) {
           tree.push({
             path: file.path,
-            mode: '100644',
-            type: 'blob',
+            mode: "100644",
+            type: "blob",
             sha: null,
           });
         }
       }
 
-      const response = await fetch(
-        `${this.baseUrl}/repos/${owner}/${repo}/git/trees`,
-        {
-          method: 'POST',
-          headers: this.headers,
-          body: JSON.stringify({
-            tree,
-            base_tree: baseTreeSha,
-          }),
-        }
-      );
+      const response = await fetch(`${this.baseUrl}/repos/${owner}/${repo}/git/trees`, {
+        method: "POST",
+        headers: this.headers,
+        body: JSON.stringify({
+          tree,
+          base_tree: baseTreeSha,
+        }),
+      });
 
       if (!response.ok) {
         throw new Error(`Erro ao criar árvore: ${response.status}`);
@@ -194,23 +186,20 @@ class GitHubAutomation {
    */
   async createCommit(owner, repo, message, treeSha, parentSha, author) {
     try {
-      const response = await fetch(
-        `${this.baseUrl}/repos/${owner}/${repo}/git/commits`,
-        {
-          method: 'POST',
-          headers: this.headers,
-          body: JSON.stringify({
-            message,
-            tree: treeSha,
-            parents: [parentSha],
-            author: {
-              name: author?.name || 'RKMMAX Bot',
-              email: author?.email || 'bot@rkmmax.com',
-              date: new Date().toISOString(),
-            },
-          }),
-        }
-      );
+      const response = await fetch(`${this.baseUrl}/repos/${owner}/${repo}/git/commits`, {
+        method: "POST",
+        headers: this.headers,
+        body: JSON.stringify({
+          message,
+          tree: treeSha,
+          parents: [parentSha],
+          author: {
+            name: author?.name || "RKMMAX Bot",
+            email: author?.email || "bot@rkmmax.com",
+            date: new Date().toISOString(),
+          },
+        }),
+      });
 
       if (!response.ok) {
         throw new Error(`Erro ao criar commit: ${response.status}`);
@@ -237,7 +226,7 @@ class GitHubAutomation {
       const response = await fetch(
         `${this.baseUrl}/repos/${owner}/${repo}/git/refs/heads/${branch}`,
         {
-          method: 'PATCH',
+          method: "PATCH",
           headers: this.headers,
           body: JSON.stringify({
             sha: newSha,
@@ -265,7 +254,7 @@ class GitHubAutomation {
   /**
    * Fluxo completo: Commit + Push
    */
-  async commitAndPush(owner, repo, files, message, branch = 'main', author = null) {
+  async commitAndPush(owner, repo, files, message, branch = "main", author = null) {
     try {
       console.log(`📝 Iniciando commit em ${owner}/${repo}/${branch}`);
 
@@ -311,21 +300,18 @@ class GitHubAutomation {
   /**
    * Criar Pull Request
    */
-  async createPullRequest(owner, repo, title, body, head, base = 'main') {
+  async createPullRequest(owner, repo, title, body, head, base = "main") {
     try {
-      const response = await fetch(
-        `${this.baseUrl}/repos/${owner}/${repo}/pulls`,
-        {
-          method: 'POST',
-          headers: this.headers,
-          body: JSON.stringify({
-            title,
-            body,
-            head,
-            base,
-          }),
-        }
-      );
+      const response = await fetch(`${this.baseUrl}/repos/${owner}/${repo}/pulls`, {
+        method: "POST",
+        headers: this.headers,
+        body: JSON.stringify({
+          title,
+          body,
+          head,
+          base,
+        }),
+      });
 
       if (!response.ok) {
         const error = await response.json();
@@ -350,10 +336,9 @@ class GitHubAutomation {
    */
   async getCommitFiles(owner, repo, commitSha) {
     try {
-      const response = await fetch(
-        `${this.baseUrl}/repos/${owner}/${repo}/commits/${commitSha}`,
-        { headers: this.headers }
-      );
+      const response = await fetch(`${this.baseUrl}/repos/${owner}/${repo}/commits/${commitSha}`, {
+        headers: this.headers,
+      });
 
       if (!response.ok) {
         throw new Error(`Commit não encontrado: ${commitSha}`);
@@ -365,7 +350,7 @@ class GitHubAutomation {
         commit: commitSha,
         author: data.commit.author,
         message: data.commit.message,
-        files: data.files.map(f => ({
+        files: data.files.map((f) => ({
           path: f.filename,
           status: f.status,
           additions: f.additions,
@@ -386,7 +371,7 @@ class GitHubAutomation {
   /**
    * Obter conteúdo de arquivo
    */
-  async getFileContent(owner, repo, path, branch = 'main') {
+  async getFileContent(owner, repo, path, branch = "main") {
     try {
       const response = await fetch(
         `${this.baseUrl}/repos/${owner}/${repo}/contents/${path}?ref=${branch}`,
@@ -400,7 +385,7 @@ class GitHubAutomation {
       const data = await response.json();
 
       // Decodificar base64
-      const content = Buffer.from(data.content, 'base64').toString('utf-8');
+      const content = Buffer.from(data.content, "base64").toString("utf-8");
 
       return {
         path: data.path,
@@ -416,23 +401,20 @@ class GitHubAutomation {
   /**
    * Criar branch
    */
-  async createBranch(owner, repo, branchName, fromBranch = 'main') {
+  async createBranch(owner, repo, branchName, fromBranch = "main") {
     try {
       // Obter SHA do branch origem
       const originBranch = await this.getBranchRef(owner, repo, fromBranch);
 
       // Criar novo branch
-      const response = await fetch(
-        `${this.baseUrl}/repos/${owner}/${repo}/git/refs`,
-        {
-          method: 'POST',
-          headers: this.headers,
-          body: JSON.stringify({
-            ref: `refs/heads/${branchName}`,
-            sha: originBranch.sha,
-          }),
-        }
-      );
+      const response = await fetch(`${this.baseUrl}/repos/${owner}/${repo}/git/refs`, {
+        method: "POST",
+        headers: this.headers,
+        body: JSON.stringify({
+          ref: `refs/heads/${branchName}`,
+          sha: originBranch.sha,
+        }),
+      });
 
       if (!response.ok) {
         throw new Error(`Erro ao criar branch: ${response.status}`);
@@ -458,7 +440,7 @@ class GitHubAutomation {
       const response = await fetch(
         `${this.baseUrl}/repos/${owner}/${repo}/git/refs/heads/${branchName}`,
         {
-          method: 'DELETE',
+          method: "DELETE",
           headers: this.headers,
         }
       );
@@ -479,7 +461,7 @@ class GitHubAutomation {
   /**
    * Obter histórico de commits
    */
-  async getCommitHistory(owner, repo, branch = 'main', limit = 10) {
+  async getCommitHistory(owner, repo, branch = "main", limit = 10) {
     try {
       const response = await fetch(
         `${this.baseUrl}/repos/${owner}/${repo}/commits?sha=${branch}&per_page=${limit}`,
@@ -492,7 +474,7 @@ class GitHubAutomation {
 
       const data = await response.json();
 
-      return data.map(commit => ({
+      return data.map((commit) => ({
         sha: commit.sha,
         message: commit.commit.message,
         author: commit.commit.author.name,
@@ -506,7 +488,7 @@ class GitHubAutomation {
 }
 
 // Exportar
-if (typeof module !== 'undefined' && module.exports) {
+if (typeof module !== "undefined" && module.exports) {
   module.exports = GitHubAutomation;
 }
 

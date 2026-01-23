@@ -6,8 +6,8 @@
 class StateManager {
   constructor(githubClient) {
     this.github = githubClient;
-    this.repo = 'kizirianmax/Rkmmax-app';
-    this.configPath = '.github/agent-config';
+    this.repo = "kizirianmax/Rkmmax-app";
+    this.configPath = ".github/agent-config";
 
     // Cache local de configurações
     this.configCache = new Map();
@@ -29,7 +29,7 @@ class StateManager {
 
       return parsed;
     } catch (error) {
-      console.error('Error loading global state:', error);
+      console.error("Error loading global state:", error);
       return null;
     }
   }
@@ -44,10 +44,7 @@ class StateManager {
     }
 
     try {
-      const config = await this.github.getFile(
-        this.repo,
-        `${this.configPath}/${agentId}.json`
-      );
+      const config = await this.github.getFile(this.repo, `${this.configPath}/${agentId}.json`);
 
       const parsed = JSON.parse(config);
       this.configCache.set(agentId, parsed);
@@ -70,7 +67,7 @@ class StateManager {
       // Por enquanto, retornamos array vazio
       return specialists;
     } catch (error) {
-      console.error('Error loading specialists:', error);
+      console.error("Error loading specialists:", error);
       return [];
     }
   }
@@ -121,13 +118,13 @@ class StateManager {
         this.repo,
         `${this.configPath}/cache-manifest.json`,
         JSON.stringify(manifest, null, 2),
-        'Sync cache manifest with latest statistics'
+        "Sync cache manifest with latest statistics"
       );
 
       this.lastSync = Date.now();
       return manifest;
     } catch (error) {
-      console.error('Error syncing cache manifest:', error);
+      console.error("Error syncing cache manifest:", error);
       return null;
     }
   }
@@ -140,15 +137,15 @@ class StateManager {
       const newConfig = {
         id: agentId,
         name: config.name || agentId,
-        role: config.role || 'Specialist',
-        mode: config.mode || 'MANUAL',
-        version: '1.0.0',
+        role: config.role || "Specialist",
+        mode: config.mode || "MANUAL",
+        version: "1.0.0",
         createdAt: Date.now(),
         lastUpdated: Date.now(),
         cacheStats: {
           hits: 0,
           misses: 0,
-          hitRate: '0%',
+          hitRate: "0%",
           apiCallsSaved: 0,
         },
         capabilities: config.capabilities || [],
@@ -181,9 +178,9 @@ class StateManager {
         cacheStats: {
           hits: stats.hits || 0,
           misses: stats.misses || 0,
-          hitRate: stats.hitRate || '0%',
+          hitRate: stats.hitRate || "0%",
           apiCallsSaved: stats.apiCallsSaved || 0,
-          memoryUsage: stats.memoryUsage || '0%',
+          memoryUsage: stats.memoryUsage || "0%",
         },
         lastUpdated: Date.now(),
       };
@@ -207,8 +204,8 @@ class StateManager {
    * Mudar Modo de um Agente (MANUAL ↔ AUTONOMOUS)
    */
   async setAgentMode(agentId, mode) {
-    if (!['MANUAL', 'AUTONOMOUS'].includes(mode)) {
-      throw new Error('Invalid mode. Must be MANUAL or AUTONOMOUS');
+    if (!["MANUAL", "AUTONOMOUS"].includes(mode)) {
+      throw new Error("Invalid mode. Must be MANUAL or AUTONOMOUS");
     }
 
     try {
@@ -254,8 +251,8 @@ class StateManager {
       totalRequests += (stats.hits || 0) + (stats.misses || 0);
     }
 
-    if (totalRequests === 0) return '0%';
-    return ((totalHits / totalRequests) * 100).toFixed(2) + '%';
+    if (totalRequests === 0) return "0%";
+    return ((totalHits / totalRequests) * 100).toFixed(2) + "%";
   }
 
   /**
@@ -275,7 +272,7 @@ class StateManager {
       const globalState = await this.loadGlobalState();
 
       if (!globalState) {
-        return 'Unable to generate report: Global state not available';
+        return "Unable to generate report: Global state not available";
       }
 
       const report = `
@@ -295,8 +292,8 @@ Top Agents by Hit Rate:
       // Ordenar agentes por hit rate
       const sorted = Object.entries(globalState.agents)
         .sort(([, a], [, b]) => {
-          const aRate = parseFloat(a.hitRate || '0');
-          const bRate = parseFloat(b.hitRate || '0');
+          const aRate = parseFloat(a.hitRate || "0");
+          const bRate = parseFloat(b.hitRate || "0");
           return bRate - aRate;
         })
         .slice(0, 10);
@@ -309,7 +306,7 @@ Top Agents by Hit Rate:
 
       return report;
     } catch (error) {
-      console.error('Error generating global report:', error);
+      console.error("Error generating global report:", error);
       return null;
     }
   }
@@ -334,4 +331,3 @@ Top Agents by Hit Rate:
 }
 
 module.exports = StateManager;
-

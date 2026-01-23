@@ -1,23 +1,23 @@
-import React, { useState, useEffect } from 'react';
-import './ConsentBanner.css';
+import React, { useState, useEffect } from "react";
+import "./ConsentBanner.css";
 
 export default function ConsentBanner() {
   const [showBanner, setShowBanner] = useState(false);
 
   useEffect(() => {
-    const hasConsent = localStorage.getItem('gdpr_consent');
+    const hasConsent = localStorage.getItem("gdpr_consent");
     if (!hasConsent) {
       setShowBanner(true);
     }
   }, []);
 
   const handleAccept = () => {
-    localStorage.setItem('gdpr_consent', 'accepted');
+    localStorage.setItem("gdpr_consent", "accepted");
     setShowBanner(false);
   };
 
   const handleReject = () => {
-    localStorage.setItem('gdpr_consent', 'rejected');
+    localStorage.setItem("gdpr_consent", "rejected");
     setShowBanner(false);
   };
 
@@ -28,10 +28,13 @@ export default function ConsentBanner() {
       <div className="consent-content">
         <h2>🛡️ Blindagem de Conformidade Global</h2>
         <p>
-          Nós respeitamos sua privacidade. Este site está em conformidade com <strong>GDPR (UE)</strong>, <strong>LGPD (Brasil)</strong> e <strong>Google Play Store</strong>.
+          Nós respeitamos sua privacidade. Este site está em conformidade com{" "}
+          <strong>GDPR (UE)</strong>, <strong>LGPD (Brasil)</strong> e{" "}
+          <strong>Google Play Store</strong>.
         </p>
         <p>
-          Para continuar usando RKMMAX, você precisa aceitar nossa <a href="/privacy">Política de Privacidade</a> e <a href="/terms">Termos de Uso</a>.
+          Para continuar usando RKMMAX, você precisa aceitar nossa{" "}
+          <a href="/privacy">Política de Privacidade</a> e <a href="/terms">Termos de Uso</a>.
         </p>
         <div className="consent-buttons">
           <button className="consent-btn accept" onClick={handleAccept}>

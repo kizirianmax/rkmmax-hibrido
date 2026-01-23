@@ -33,11 +33,11 @@ class SpecialistRegistry {
     this.specialistIndex.set(specialistId, {
       id: specialistId,
       name: metadata.name || specialistId,
-      role: metadata.role || 'Specialist',
-      description: metadata.description || '',
+      role: metadata.role || "Specialist",
+      description: metadata.description || "",
       capabilities: metadata.capabilities || [],
-      category: metadata.category || 'general',
-      mode: metadata.mode || 'MANUAL',
+      category: metadata.category || "general",
+      mode: metadata.mode || "MANUAL",
       createdAt: Date.now(),
       loaded: false,
     });
@@ -235,11 +235,8 @@ class SpecialistRegistry {
       cacheMisses: this.stats.cacheMisses,
       hitRate:
         this.stats.totalRequests > 0
-          ? (
-              (this.stats.cacheHits / this.stats.totalRequests) *
-              100
-            ).toFixed(2) + '%'
-          : '0%',
+          ? ((this.stats.cacheHits / this.stats.totalRequests) * 100).toFixed(2) + "%"
+          : "0%",
       memoryUsage: this._estimateMemoryUsage(),
     };
   }
@@ -252,7 +249,7 @@ class SpecialistRegistry {
     for (const specialist of this.loadedSpecialists.values()) {
       totalSize += JSON.stringify(specialist).length / 1024; // KB
     }
-    return (totalSize / 1024).toFixed(2) + ' MB'; // MB
+    return (totalSize / 1024).toFixed(2) + " MB"; // MB
   }
 
   /**
@@ -286,7 +283,7 @@ Timestamp: ${new Date().toISOString()}
    */
   exportIndex() {
     return {
-      version: '1.0.0',
+      version: "1.0.0",
       timestamp: Date.now(),
       totalSpecialists: this.specialistIndex.size,
       specialists: Array.from(this.specialistIndex.values()),
@@ -298,7 +295,7 @@ Timestamp: ${new Date().toISOString()}
    */
   importIndex(indexData) {
     if (!indexData.specialists || !Array.isArray(indexData.specialists)) {
-      throw new Error('Invalid index data');
+      throw new Error("Invalid index data");
     }
 
     for (const specialist of indexData.specialists) {
@@ -308,4 +305,3 @@ Timestamp: ${new Date().toISOString()}
 }
 
 module.exports = SpecialistRegistry;
-

@@ -3,15 +3,15 @@
  * Implementa modo híbrido (Manual/Autônomo) com segurança e cache
  */
 
-const ModelArmor = require('../../security/ModelArmor');
-const IntelligentCache = require('../../cache/IntelligentCache');
+const ModelArmor = require("../../security/ModelArmor");
+const IntelligentCache = require("../../cache/IntelligentCache");
 
 class AgentBase {
   constructor(config) {
-    this.id = config.id || 'unknown-agent';
-    this.name = config.name || 'Unknown Agent';
-    this.role = config.role || 'General Purpose';
-    this.mode = config.mode || 'MANUAL'; // MANUAL | AUTONOMOUS
+    this.id = config.id || "unknown-agent";
+    this.name = config.name || "Unknown Agent";
+    this.role = config.role || "General Purpose";
+    this.mode = config.mode || "MANUAL"; // MANUAL | AUTONOMOUS
 
     // Componentes de segurança e cache
     this.modelArmor = new ModelArmor();
@@ -35,10 +35,10 @@ class AgentBase {
       // 1. VALIDAÇÃO DE SEGURANÇA
       const securityAnalysis = this.modelArmor.analyzePrompt(prompt);
 
-      if (securityAnalysis.recommendation === 'BLOCK') {
+      if (securityAnalysis.recommendation === "BLOCK") {
         return {
-          status: 'BLOCKED',
-          reason: 'Prompt violates security policies',
+          status: "BLOCKED",
+          reason: "Prompt violates security policies",
           violations: securityAnalysis.violations,
           timestamp: Date.now(),
         };
@@ -49,32 +49,27 @@ class AgentBase {
       const cachedResponse = this.cache.get(cacheKey);
 
       if (cachedResponse) {
-        this._addToHistory(prompt, cachedResponse, 'CACHE', null);
+        this._addToHistory(prompt, cachedResponse, "CACHE", null);
         return {
-          status: 'SUCCESS',
-          source: 'CACHE',
+          status: "SUCCESS",
+          source: "CACHE",
           response: cachedResponse,
           timestamp: Date.now(),
         };
       }
 
       // 3. MODO MANUAL: Requer consentimento do usuário
-      if (this.mode === 'MANUAL') {
+      if (this.mode === "MANUAL") {
         return await this._manualMode(prompt, context, securityAnalysis, cacheKey);
       }
 
       // 4. MODO AUTÔNOMO: Executa automaticamente
-      if (this.mode === 'AUTONOMOUS') {
-        return await this._autonomousMode(
-          prompt,
-          context,
-          securityAnalysis,
-          cacheKey
-        );
+      if (this.mode === "AUTONOMOUS") {
+        return await this._autonomousMode(prompt, context, securityAnalysis, cacheKey);
       }
     } catch (error) {
       return {
-        status: 'ERROR',
+        status: "ERROR",
         error: error.message,
         timestamp: Date.now(),
       };
@@ -85,15 +80,14 @@ class AgentBase {
    * Modo Manual: Requer Consentimento do Usuário
    */
   async _manualMode(prompt, context, securityAnalysis, cacheKey) {
-    const consentRequired =
-      securityAnalysis.recommendation === 'REQUIRE_CONSENT';
+    const consentRequired = securityAnalysis.recommendation === "REQUIRE_CONSENT";
 
     if (consentRequired) {
       // Em produção, isso seria uma solicitação real ao usuário
       // Por enquanto, retornamos que consentimento é necessário
       return {
-        status: 'CONSENT_REQUIRED',
-        reason: 'User consent required for this operation',
+        status: "CONSENT_REQUIRED",
+        reason: "User consent required for this operation",
         riskScore: securityAnalysis.riskScore,
         violations: securityAnalysis.violations,
         timestamp: Date.now(),
@@ -104,14 +98,14 @@ class AgentBase {
     const response = await this._callAPI(prompt, context);
 
     // Armazenar em cache
-    this.cache.set(cacheKey, response, 'specialist-response');
+    this.cache.set(cacheKey, response, "specialist-response");
 
     // Adicionar ao histórico
-    this._addToHistory(prompt, response, 'MANUAL', null);
+    this._addToHistory(prompt, response, "MANUAL", null);
 
     return {
-      status: 'SUCCESS',
-      source: 'API',
+      status: "SUCCESS",
+      source: "API",
       response,
       timestamp: Date.now(),
     };
@@ -137,14 +131,14 @@ class AgentBase {
     });
 
     // Armazenar em cache
-    this.cache.set(cacheKey, response, 'specialist-response');
+    this.cache.set(cacheKey, response, "specialist-response");
 
     // Adicionar ao histórico
-    this._addToHistory(prompt, response, 'AUTONOMOUS', pr.id);
+    this._addToHistory(prompt, response, "AUTONOMOUS", pr.id);
 
     return {
-      status: 'SUCCESS',
-      source: 'API',
+      status: "SUCCESS",
+      source: "API",
       response,
       prId: pr.id,
       requiresApproval: filtered.isModified,
@@ -160,9 +154,7 @@ class AgentBase {
    */
   async _callAPI(prompt, context) {
     // Implementação específica de cada agente
-    throw new Error(
-      '_callAPI must be implemented by subclass. Agent: ' + this.id
-    );
+    throw new Error("_callAPI must be implemented by subclass. Agent: " + this.id);
   }
 
   /**
@@ -175,7 +167,7 @@ class AgentBase {
     return {
       id: `PR-${Date.now()}`,
       agentId: data.agentId,
-      status: 'pending_approval',
+      status: "pending_approval",
       createdAt: Date.now(),
     };
   }
@@ -239,7 +231,7 @@ class AgentBase {
       isClean: true,
       violations: [],
       riskScore: 0,
-      recommendation: 'ALLOW',
+      recommendation: "ALLOW",
       timestamp: Date.now(),
     });
     const cacheReport = this.cache.generateReport();
@@ -268,8 +260,8 @@ Timestamp: ${new Date().toISOString()}
    * Mudar Modo (MANUAL ↔ AUTONOMOUS)
    */
   setMode(mode) {
-    if (!['MANUAL', 'AUTONOMOUS'].includes(mode)) {
-      throw new Error('Invalid mode. Must be MANUAL or AUTONOMOUS');
+    if (!["MANUAL", "AUTONOMOUS"].includes(mode)) {
+      throw new Error("Invalid mode. Must be MANUAL or AUTONOMOUS");
     }
     this.mode = mode;
   }
@@ -283,4 +275,3 @@ Timestamp: ${new Date().toISOString()}
 }
 
 module.exports = AgentBase;
-

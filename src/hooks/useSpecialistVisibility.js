@@ -1,8 +1,8 @@
 // src/hooks/useSpecialistVisibility.js
-import { useState, useEffect } from 'react';
-import { specialists } from '../config/specialists.js';
+import { useState, useEffect } from "react";
+import { specialists } from "../config/specialists.js";
 
-const STORAGE_KEY = 'rkmmax_specialist_visibility';
+const STORAGE_KEY = "rkmmax_specialist_visibility";
 
 export function useSpecialistVisibility() {
   const [visibility, setVisibility] = useState(() => {
@@ -15,9 +15,9 @@ export function useSpecialistVisibility() {
   }, [visibility]);
 
   const toggleVisibility = (specialistId) => {
-    setVisibility(prev => ({
+    setVisibility((prev) => ({
       ...prev,
-      [specialistId]: !prev[specialistId]
+      [specialistId]: !prev[specialistId],
     }));
   };
 
@@ -28,7 +28,7 @@ export function useSpecialistVisibility() {
 
   const setAllVisible = (visible) => {
     const newVisibility = {};
-    Object.keys(specialists).forEach(id => {
+    Object.keys(specialists).forEach((id) => {
       newVisibility[id] = visible;
     });
     setVisibility(newVisibility);
@@ -36,7 +36,7 @@ export function useSpecialistVisibility() {
 
   const setCategoryVisible = (category, visible) => {
     const newVisibility = { ...visibility };
-    Object.values(specialists).forEach(specialist => {
+    Object.values(specialists).forEach((specialist) => {
       if (specialist.category === category) {
         newVisibility[specialist.id] = visible;
       }
@@ -45,7 +45,7 @@ export function useSpecialistVisibility() {
   };
 
   const getVisibleCount = () => {
-    return Object.keys(specialists).filter(id => isVisible(id)).length;
+    return Object.keys(specialists).filter((id) => isVisible(id)).length;
   };
 
   const getHiddenCount = () => {
@@ -62,4 +62,3 @@ export function useSpecialistVisibility() {
     getHiddenCount,
   };
 }
-

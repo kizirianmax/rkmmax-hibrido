@@ -21,7 +21,7 @@ export default function Onboarding({ onComplete }) {
       description: "Sua plataforma completa de IA com 54 especialistas e assistente pessoal.",
       icon: "🚀",
       image: null,
-      action: "Começar Tour"
+      action: "Começar Tour",
     },
     {
       title: "Conheça o Serginho 💬",
@@ -31,9 +31,9 @@ export default function Onboarding({ onComplete }) {
         "Responde perguntas instantaneamente",
         "Cria conteúdo e textos",
         "Resolve problemas complexos",
-        "Conversa naturalmente em português"
+        "Conversa naturalmente em português",
       ],
-      action: "Próximo"
+      action: "Próximo",
     },
     {
       title: "54 Especialistas em IA 🎯",
@@ -43,9 +43,9 @@ export default function Onboarding({ onComplete }) {
         "Especialistas em programação",
         "Criadores de conteúdo",
         "Analistas de dados",
-        "E muito mais!"
+        "E muito mais!",
       ],
-      action: "Próximo"
+      action: "Próximo",
     },
     {
       title: "Study Lab Premium 📚",
@@ -55,22 +55,22 @@ export default function Onboarding({ onComplete }) {
         "Formatação ABNT/APA automática",
         "Cronogramas de estudo",
         "Fontes verificadas",
-        "Suporte acadêmico completo"
+        "Suporte acadêmico completo",
       ],
-      action: "Próximo"
+      action: "Próximo",
     },
     {
       title: "Pronto para Começar! ✨",
       description: "Você está pronto para explorar tudo que o RKMMAX tem a oferecer.",
       icon: "🎊",
       features: [
-          "Chat com Serginho",
+        "Chat com Serginho",
         "Explorar Especialistas",
         "Acessar Study Lab",
-        "Configurar Preferências"
+        "Configurar Preferências",
       ],
-      action: "Começar Agora"
-    }
+      action: "Começar Agora",
+    },
   ];
 
   const handleNext = () => {
@@ -107,7 +107,7 @@ export default function Onboarding({ onComplete }) {
           {steps.map((_, index) => (
             <div
               key={index}
-              className={`progress-dot ${index === currentStep ? 'active' : ''} ${index < currentStep ? 'completed' : ''}`}
+              className={`progress-dot ${index === currentStep ? "active" : ""} ${index < currentStep ? "completed" : ""}`}
             />
           ))}
         </div>
@@ -115,9 +115,9 @@ export default function Onboarding({ onComplete }) {
         {/* Content */}
         <div className="onboarding-content">
           <div className="onboarding-icon">{step.icon}</div>
-          
+
           <h2 className="onboarding-title">{step.title}</h2>
-          
+
           <p className="onboarding-description">{step.description}</p>
 
           {step.features && (
@@ -139,7 +139,7 @@ export default function Onboarding({ onComplete }) {
               Pular Tour
             </button>
           )}
-          
+
           <button onClick={handleNext} className="btn-next">
             {step.action}
           </button>
@@ -153,4 +153,3 @@ export default function Onboarding({ onComplete }) {
     </div>
   );
 }
-

@@ -45,16 +45,10 @@ export default function PricingTable() {
       <h2 className="title">Planos RKMMAX</h2>
 
       <div style={{ display: "flex", gap: 8, marginBottom: 16 }}>
-        <button
-          className={tab === "BR" ? "tab tab--active" : "tab"}
-          onClick={() => setTab("BR")}
-        >
+        <button className={tab === "BR" ? "tab tab--active" : "tab"} onClick={() => setTab("BR")}>
           Brasil (BRL)
         </button>
-        <button
-          className={tab === "US" ? "tab tab--active" : "tab"}
-          onClick={() => setTab("US")}
-        >
+        <button className={tab === "US" ? "tab tab--active" : "tab"} onClick={() => setTab("US")}>
           International (USD)
         </button>
       </div>
@@ -66,11 +60,7 @@ export default function PricingTable() {
             {tab === "BR" ? "Brasil" : "US"}: {p.price}/
             {p.billing === "monthly" ? "mês" : p.billing}
           </p>
-          <ul>
-            {p.features && p.features.map((feature, idx) => (
-              <li key={idx}>{feature}</li>
-            ))}
-          </ul>
+          <ul>{p.features && p.features.map((feature, idx) => <li key={idx}>{feature}</li>)}</ul>
           <button
             className="btn"
             onClick={() => handleCheckout(p.lookup_key)}

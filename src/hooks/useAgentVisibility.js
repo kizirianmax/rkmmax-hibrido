@@ -1,7 +1,7 @@
 // src/hooks/useAgentVisibility.js
-import { useState, useEffect } from 'react';
+import { useState, useEffect } from "react";
 
-const STORAGE_KEY = 'rkmmax_agent_visibility';
+const STORAGE_KEY = "rkmmax_agent_visibility";
 
 export function useAgentVisibility() {
   const [visibility, setVisibility] = useState(() => {
@@ -14,9 +14,9 @@ export function useAgentVisibility() {
   }, [visibility]);
 
   const toggleVisibility = (agentId) => {
-    setVisibility(prev => ({
+    setVisibility((prev) => ({
       ...prev,
-      [agentId]: !prev[agentId]
+      [agentId]: !prev[agentId],
     }));
   };
 
@@ -27,8 +27,22 @@ export function useAgentVisibility() {
   const setAllVisible = (visible) => {
     const newVisibility = {};
     // Assumindo que temos uma lista de agentes
-    const agentIds = ['serginho', 'didak', 'code', 'focus', 'emo', 'bizu', 'orac', 'planx', 'criar', 'finna', 'legalis', 'care', 'talky'];
-    agentIds.forEach(id => {
+    const agentIds = [
+      "serginho",
+      "didak",
+      "code",
+      "focus",
+      "emo",
+      "bizu",
+      "orac",
+      "planx",
+      "criar",
+      "finna",
+      "legalis",
+      "care",
+      "talky",
+    ];
+    agentIds.forEach((id) => {
       newVisibility[id] = visible;
     });
     setVisibility(newVisibility);
@@ -41,4 +55,3 @@ export function useAgentVisibility() {
     setAllVisible,
   };
 }
-

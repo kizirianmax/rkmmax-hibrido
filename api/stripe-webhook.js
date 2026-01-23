@@ -8,7 +8,7 @@ function applyCORS(req, res) {
   res.setHeader("Access-Control-Allow-Methods", "POST,OPTIONS");
   res.setHeader("Access-Control-Allow-Headers", "Content-Type, Stripe-Signature");
   res.setHeader("Cache-Control", "no-store");
-  
+
   if (req.method === "OPTIONS") {
     res.status(204).end();
     return true;
@@ -143,13 +143,7 @@ export default async function handler(req, res) {
   }
 }
 
-async function upsertSubscription({
-  email,
-  priceId,
-  subscriptionId,
-  status,
-  currentPeriodEnd,
-}) {
+async function upsertSubscription({ email, priceId, subscriptionId, status, currentPeriodEnd }) {
   if (!email) {
     console.warn("Webhook without email — skipping upsert");
     return;
@@ -160,19 +154,14 @@ async function upsertSubscription({
     return;
   }
 
-  const supabase = createClient(
-    process.env.SUPABASE_URL,
-    process.env.SUPABASE_SERVICE_ROLE
-  );
+  const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_SERVICE_ROLE);
 
   const payload = {
     email,
     stripe_price_id: priceId,
     stripe_subscription_id: subscriptionId,
     status,
-    current_period_end: currentPeriodEnd
-      ? new Date(currentPeriodEnd * 1000).toISOString()
-      : null,
+    current_period_end: currentPeriodEnd ? new Date(currentPeriodEnd * 1000).toISOString() : null,
     updated_at: new Date().toISOString(),
   };
 
@@ -200,7 +189,7 @@ async function sendWelcomeEmail({ email, session }) {
 
   // Extrair nome do cliente se disponível
   const customerName = session?.customer_details?.name || null;
-  
+
   // Determinar plano baseado no priceId ou metadata
   let planName = "Premium";
   const priceId = session?.metadata?.priceId || null;
@@ -221,7 +210,7 @@ async function sendWelcomeEmail({ email, session }) {
       <div style="font-size: 32px; font-weight: 800; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 16px;">RKMMAX</div>
       <h1 style="font-size: 28px; font-weight: 800; color: #1e293b; margin-bottom: 16px;">Bem-vindo ao RKMMAX Premium! 🎉</h1>
       <p style="font-size: 16px; color: #64748b;">
-        ${customerName ? `Olá ${customerName}! ` : ''}Sua assinatura foi ativada com sucesso!
+        ${customerName ? `Olá ${customerName}! ` : ""}Sua assinatura foi ativada com sucesso!
       </p>
     </div>
 
@@ -255,23 +244,23 @@ async function sendWelcomeEmail({ email, session }) {
 
   // Enviar e-mail via API Resend
   try {
-    const apiUrl = process.env.VERCEL_URL 
+    const apiUrl = process.env.VERCEL_URL
       ? `https://${process.env.VERCEL_URL}/api/send-email`
-      : 'http://localhost:3000/api/send-email';
+      : "http://localhost:3000/api/send-email";
 
     const response = await fetch(apiUrl, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         to: email,
-        subject: 'Bem-vindo ao RKMMAX Premium! 🎉',
+        subject: "Bem-vindo ao RKMMAX Premium! 🎉",
         html: emailHTML,
-        type: 'welcome'
-      })
+        type: "welcome",
+      }),
     });
 
     const result = await response.json();
-    
+
     if (result.ok) {
       console.log("✅ E-mail de boas-vindas enviado com sucesso:", result.emailId);
     } else {
@@ -281,4 +270,3 @@ async function sendWelcomeEmail({ email, session }) {
     console.error("❌ Erro ao enviar e-mail de boas-vindas:", error);
   }
 }
-

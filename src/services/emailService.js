@@ -2,7 +2,7 @@
 
 /**
  * Serviço de envio de e-mails
- * 
+ *
  * Em produção, isso pode usar:
  * - SendGrid
  * - Mailgun
@@ -15,33 +15,33 @@ export async function sendWelcomeEmail({ to, name, plan }) {
   try {
     // Em produção, fazer chamada para API de e-mail
     // Por enquanto, apenas log
-    console.log('📧 Enviando e-mail de boas-vindas:', { to, name, plan });
+    console.log("📧 Enviando e-mail de boas-vindas:", { to, name, plan });
 
     const emailData = {
       to,
-      from: 'suporte@kizirianmax.site',
-      subject: 'Bem-vindo ao RKMMAX Premium! 🎉',
+      from: "suporte@kizirianmax.site",
+      subject: "Bem-vindo ao RKMMAX Premium! 🎉",
       html: generateWelcomeEmailHTML({ name, plan }),
-      text: generateWelcomeEmailText({ name, plan })
+      text: generateWelcomeEmailText({ name, plan }),
     };
 
     // Enviar e-mail via API
-    const response = await fetch('/api/send-email', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(emailData)
+    const response = await fetch("/api/send-email", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(emailData),
     });
 
     const result = await response.json();
 
     if (!result.ok) {
-      throw new Error(result.error || 'Erro ao enviar e-mail');
+      throw new Error(result.error || "Erro ao enviar e-mail");
     }
 
-    console.log('✅ E-mail de boas-vindas enviado com sucesso:', result.emailId);
+    console.log("✅ E-mail de boas-vindas enviado com sucesso:", result.emailId);
     return { success: true, emailId: result.emailId };
   } catch (error) {
-    console.error('❌ Erro ao enviar e-mail:', error);
+    console.error("❌ Erro ao enviar e-mail:", error);
     return { success: false, error };
   }
 }
@@ -155,7 +155,7 @@ function generateWelcomeEmailHTML({ name, plan }) {
       <div class="logo">RKMMAX</div>
       <h1>Bem-vindo ao RKMMAX Premium! 🎉</h1>
       <p class="subtitle">
-        ${name ? `Olá ${name}! ` : ''}Sua assinatura foi ativada com sucesso e você agora tem acesso completo a todos os recursos premium.
+        ${name ? `Olá ${name}! ` : ""}Sua assinatura foi ativada com sucesso e você agora tem acesso completo a todos os recursos premium.
       </p>
     </div>
 
@@ -255,7 +255,7 @@ function generateWelcomeEmailText({ name, plan }) {
   return `
 Bem-vindo ao RKMMAX Premium!
 
-${name ? `Olá ${name}! ` : ''}Sua assinatura foi ativada com sucesso e você agora tem acesso completo a todos os recursos premium.
+${name ? `Olá ${name}! ` : ""}Sua assinatura foi ativada com sucesso e você agora tem acesso completo a todos os recursos premium.
 
 O QUE VOCÊ GANHOU:
 
@@ -299,6 +299,5 @@ Você está recebendo este e-mail porque criou uma conta no RKMMAX.
 }
 
 export default {
-  sendWelcomeEmail
+  sendWelcomeEmail,
 };
-
