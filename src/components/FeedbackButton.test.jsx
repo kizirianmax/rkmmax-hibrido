@@ -38,7 +38,7 @@ describe("FeedbackButton Component", () => {
     render(<FeedbackButton />);
     const button = screen.getByRole("button", { name: /feedback/i });
     fireEvent.click(button);
-    
+
     expect(screen.getByText(/enviar feedback/i)).toBeInTheDocument();
   });
 
@@ -46,10 +46,10 @@ describe("FeedbackButton Component", () => {
     render(<FeedbackButton />);
     const openButton = screen.getByRole("button", { name: /feedback/i });
     fireEvent.click(openButton);
-    
+
     const closeButton = screen.getByRole("button", { name: /fechar/i });
     fireEvent.click(closeButton);
-    
+
     expect(screen.queryByText(/enviar feedback/i)).not.toBeInTheDocument();
   });
 
@@ -57,16 +57,15 @@ describe("FeedbackButton Component", () => {
     render(<FeedbackButton />);
     const openButton = screen.getByRole("button", { name: /feedback/i });
     fireEvent.click(openButton);
-    
+
     const textarea = screen.getByPlaceholderText(/descreva o problema/i);
     fireEvent.change(textarea, { target: { value: "Test feedback" } });
-    
+
     const submitButton = screen.getByRole("button", { name: /enviar feedback/i });
     fireEvent.click(submitButton);
-    
+
     await waitFor(() => {
       expect(screen.getByText(/feedback enviado/i)).toBeInTheDocument();
     });
   });
 });
-

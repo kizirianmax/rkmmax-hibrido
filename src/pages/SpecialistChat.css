@@ -86,8 +86,6 @@
   }
 }
 
-
-
 /* Botão Enviar - Estilo WhatsApp */
 .send-button {
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
@@ -133,7 +131,7 @@
   resize: none;
   min-height: 48px;
   max-height: 120px;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   line-height: 1.4;
 }
 
@@ -153,10 +151,9 @@
     height: 44px;
     font-size: 18px;
   }
-  
+
   .input-container textarea {
     font-size: 14px;
     padding: 10px 14px;
   }
 }
-

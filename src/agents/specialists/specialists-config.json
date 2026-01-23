@@ -103,12 +103,7 @@
       "tags": ["negócio", "estratégia", "análise", "planejamento"]
     }
   ],
-  "categories": [
-    "education",
-    "technical",
-    "creative",
-    "business"
-  ],
+  "categories": ["education", "technical", "creative", "business"],
   "capabilities": [
     "teaching",
     "code",
@@ -123,4 +118,3 @@
   ],
   "notes": "Este arquivo é escalável. Adicione novos especialistas aqui sem modificar código."
 }
-

@@ -46,11 +46,11 @@ class ModelArmor {
     };
 
     this.severityMap = {
-      promptInjection: 'CRITICAL',
-      sensitiveData: 'HIGH',
-      sqlInjection: 'CRITICAL',
-      codeExecution: 'CRITICAL',
-      jailbreak: 'HIGH',
+      promptInjection: "CRITICAL",
+      sensitiveData: "HIGH",
+      sqlInjection: "CRITICAL",
+      codeExecution: "CRITICAL",
+      jailbreak: "HIGH",
     };
 
     this.severityWeights = {
@@ -67,12 +67,12 @@ class ModelArmor {
    * @returns {Object} Resultado da análise
    */
   analyzePrompt(prompt) {
-    if (!prompt || typeof prompt !== 'string') {
+    if (!prompt || typeof prompt !== "string") {
       return {
         isClean: false,
-        violations: [{ category: 'invalid_input', severity: 'HIGH' }],
+        violations: [{ category: "invalid_input", severity: "HIGH" }],
         riskScore: 50,
-        recommendation: 'BLOCK',
+        recommendation: "BLOCK",
       };
     }
 
@@ -91,7 +91,7 @@ class ModelArmor {
             category,
             pattern: pattern.toString().substring(0, 50),
             matches,
-            severity: this.severityMap[category] || 'MEDIUM',
+            severity: this.severityMap[category] || "MEDIUM",
           });
         }
       }
@@ -116,7 +116,7 @@ class ModelArmor {
    * @returns {Object} Resposta filtrada
    */
   filterResponse(response) {
-    if (!response || typeof response !== 'string') {
+    if (!response || typeof response !== "string") {
       return {
         filtered: response,
         redactions: [],
@@ -132,15 +132,15 @@ class ModelArmor {
       const matches = response.matchAll(pattern);
       for (const match of matches) {
         const original = match[0];
-        const preview = original.substring(0, 10) + '...';
+        const preview = original.substring(0, 10) + "...";
 
         redactions.push({
           original: preview,
-          category: 'sensitive_data',
+          category: "sensitive_data",
           position: match.index,
         });
 
-        filtered = filtered.replace(original, '[REDACTED_SENSITIVE_DATA]');
+        filtered = filtered.replace(original, "[REDACTED_SENSITIVE_DATA]");
       }
     }
 
@@ -165,10 +165,9 @@ class ModelArmor {
     return {
       prompt: promptAnalysis,
       response: responseFiltered,
-      isValid: promptAnalysis.recommendation !== 'BLOCK',
+      isValid: promptAnalysis.recommendation !== "BLOCK",
       requiresApproval:
-        promptAnalysis.recommendation === 'REQUIRE_CONSENT' ||
-        responseFiltered.isModified,
+        promptAnalysis.recommendation === "REQUIRE_CONSENT" || responseFiltered.isModified,
       timestamp: Date.now(),
     };
   }
@@ -191,17 +190,17 @@ class ModelArmor {
    * @returns {string} Recomendação (ALLOW, WARN, REQUIRE_CONSENT, BLOCK)
    */
   _getRecommendation(violations, riskScore) {
-    if (violations.length === 0) return 'ALLOW';
+    if (violations.length === 0) return "ALLOW";
 
-    const critical = violations.filter((v) => v.severity === 'CRITICAL');
-    if (critical.length > 0) return 'BLOCK';
+    const critical = violations.filter((v) => v.severity === "CRITICAL");
+    if (critical.length > 0) return "BLOCK";
 
-    const high = violations.filter((v) => v.severity === 'HIGH');
-    if (high.length > 0) return 'REQUIRE_CONSENT';
+    const high = violations.filter((v) => v.severity === "HIGH");
+    if (high.length > 0) return "REQUIRE_CONSENT";
 
-    if (riskScore > 50) return 'WARN';
+    if (riskScore > 50) return "WARN";
 
-    return 'ALLOW';
+    return "ALLOW";
   }
 
   /**
@@ -217,7 +216,7 @@ class ModelArmor {
 ║     MODEL ARMOR - SECURITY REPORT      ║
 ╚════════════════════════════════════════╝
 
-Status: ${isClean ? '✅ CLEAN' : '⚠️  VIOLATIONS DETECTED'}
+Status: ${isClean ? "✅ CLEAN" : "⚠️  VIOLATIONS DETECTED"}
 Risk Score: ${riskScore}/1000
 Recommendation: ${recommendation}
 
@@ -225,9 +224,9 @@ Violations: ${violations.length}
 `;
 
     if (violations.length > 0) {
-      report += '\nDetailed Violations:\n';
+      report += "\nDetailed Violations:\n";
       violations.forEach((v, i) => {
-        report += `  ${i + 1}. [${v.severity}] ${v.category} (${v.matches} match${v.matches > 1 ? 'es' : ''})\n`;
+        report += `  ${i + 1}. [${v.severity}] ${v.category} (${v.matches} match${v.matches > 1 ? "es" : ""})\n`;
       });
     }
 
@@ -238,4 +237,3 @@ Violations: ${violations.length}
 }
 
 module.exports = ModelArmor;
-

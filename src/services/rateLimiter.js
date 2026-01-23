@@ -10,23 +10,23 @@ class RateLimiter {
   constructor() {
     // Armazenar em memória (em produção usar Redis)
     this.users = {};
-    
+
     // Configuração de planos
     this.plans = {
       basic: {
-        name: 'Básico',
+        name: "Básico",
         creditsPerMonth: 400,
-        description: 'Plano básico com 400 créditos/mês',
+        description: "Plano básico com 400 créditos/mês",
       },
       pro: {
-        name: 'Pro',
+        name: "Pro",
         creditsPerMonth: 2000,
-        description: 'Plano Pro com 2000 créditos/mês',
+        description: "Plano Pro com 2000 créditos/mês",
       },
       enterprise: {
-        name: 'Enterprise',
+        name: "Enterprise",
         creditsPerMonth: 10000,
-        description: 'Plano Enterprise com 10000 créditos/mês',
+        description: "Plano Enterprise com 10000 créditos/mês",
       },
     };
 
@@ -34,13 +34,13 @@ class RateLimiter {
     this.modeCosts = {
       manual: {
         creditCost: 1,
-        speed: 'slow',
-        description: 'Modo manual - mais lento, 1 crédito por requisição',
+        speed: "slow",
+        description: "Modo manual - mais lento, 1 crédito por requisição",
       },
       optimized: {
         creditCost: 0.5,
-        speed: 'fast',
-        description: 'Modo otimizado - MUITO econômico, 0.5 crédito por requisição',
+        speed: "fast",
+        description: "Modo otimizado - MUITO econômico, 0.5 crédito por requisição",
       },
     };
 
@@ -52,7 +52,7 @@ class RateLimiter {
    * Obter chave do usuário
    */
   getUserKey(userId) {
-    return userId || 'anonymous';
+    return userId || "anonymous";
   }
 
   /**
@@ -66,7 +66,7 @@ class RateLimiter {
   /**
    * Criar usuário com plano
    */
-  createUser(userId, plan = 'basic') {
+  createUser(userId, plan = "basic") {
     const userKey = this.getUserKey(userId);
     const monthKey = this.getMonthKey();
     const planConfig = this.plans[plan] || this.plans.basic;
@@ -90,9 +90,9 @@ class RateLimiter {
   /**
    * Obter ou criar usuário
    */
-  getOrCreateUser(userId, plan = 'basic') {
+  getOrCreateUser(userId, plan = "basic") {
     const userKey = this.getUserKey(userId);
-    
+
     if (!this.users[userKey]) {
       return this.createUser(userId, plan);
     }
@@ -115,7 +115,7 @@ class RateLimiter {
   /**
    * Verificar se pode fazer requisição
    */
-  canMakeRequest(userId, mode = 'manual', plan = 'basic') {
+  canMakeRequest(userId, mode = "manual", plan = "basic") {
     const userKey = this.getUserKey(userId);
     const monthKey = this.getMonthKey();
     const user = this.getOrCreateUser(userId, plan);
@@ -135,7 +135,7 @@ class RateLimiter {
 
     return {
       allowed: true,
-      reason: 'Requisição permitida',
+      reason: "Requisição permitida",
       creditsRemaining: monthData.creditsRemaining,
       creditCost: modeCost.creditCost,
       mode: mode.toLowerCase(),
@@ -145,7 +145,7 @@ class RateLimiter {
   /**
    * Registrar requisição e descontar créditos
    */
-  recordRequest(userId, mode = 'manual', plan = 'basic') {
+  recordRequest(userId, mode = "manual", plan = "basic") {
     const userKey = this.getUserKey(userId);
     const monthKey = this.getMonthKey();
     const user = this.getOrCreateUser(userId, plan);
@@ -176,7 +176,7 @@ class RateLimiter {
   /**
    * Obter uso atual
    */
-  getCurrentUsage(userId, plan = 'basic') {
+  getCurrentUsage(userId, plan = "basic") {
     const userKey = this.getUserKey(userId);
     const monthKey = this.getMonthKey();
     const user = this.getOrCreateUser(userId, plan);
@@ -198,7 +198,7 @@ class RateLimiter {
   /**
    * Obter informações do plano
    */
-  getPlanInfo(plan = 'basic') {
+  getPlanInfo(plan = "basic") {
     const planConfig = this.plans[plan] || this.plans.basic;
     const manualCost = this.modeCosts.manual.creditCost;
     const optimizedCost = this.modeCosts.optimized.creditCost;
@@ -211,13 +211,13 @@ class RateLimiter {
         manual: {
           creditCost: manualCost,
           requestsPerMonth: Math.floor(planConfig.creditsPerMonth / manualCost),
-          speed: 'lento',
+          speed: "lento",
           description: `${Math.floor(planConfig.creditsPerMonth / manualCost)} requisições/mês`,
         },
         optimized: {
           creditCost: optimizedCost,
           requestsPerMonth: Math.floor(planConfig.creditsPerMonth / optimizedCost),
-          speed: 'rápido',
+          speed: "rápido",
           description: `${Math.floor(planConfig.creditsPerMonth / optimizedCost)} requisições/mês`,
         },
       },
@@ -247,12 +247,12 @@ class RateLimiter {
 
     for (const userKey in this.users) {
       const user = this.users[userKey];
-      
+
       // Remover dados de meses antigos (manter últimos 3 meses)
       const months = Object.keys(user.monthly).sort().reverse();
       if (months.length > 3) {
         const toDelete = months.slice(3);
-        toDelete.forEach(month => delete user.monthly[month]);
+        toDelete.forEach((month) => delete user.monthly[month]);
       }
 
       // Remover usuário se vazio
@@ -270,14 +270,14 @@ class RateLimiter {
     if (this.users[userKey]) {
       const monthKey = this.getMonthKey();
       const planConfig = this.plans[this.users[userKey].plan] || this.plans.basic;
-      
+
       this.users[userKey].monthly[monthKey] = {
         creditsUsed: 0,
         creditsRemaining: planConfig.creditsPerMonth,
         requests: [],
         createdAt: new Date().toISOString(),
       };
-      
+
       return { reset: true };
     }
     return { reset: false };
@@ -302,4 +302,3 @@ function getLimiter() {
 }
 
 module.exports = { RateLimiter, getLimiter };
-

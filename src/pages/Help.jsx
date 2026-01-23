@@ -33,8 +33,8 @@ export default function Help() {
             {status.ok === null
               ? "Verificando status..."
               : status.ok
-              ? "Todos os sistemas operacionais"
-              : "Problemas detectados"}
+                ? "Todos os sistemas operacionais"
+                : "Problemas detectados"}
           </span>
         </div>
         {status.uptime !== null && (
@@ -47,7 +47,7 @@ export default function Help() {
       {/* FAQ */}
       <section style={{ marginBottom: 40 }}>
         <h2 style={{ fontSize: 22, marginBottom: 16 }}>Perguntas Frequentes</h2>
-        
+
         <details style={detailsStyle}>
           <summary style={summaryStyle}>Como funciona o plano Premium?</summary>
           <p style={answerStyle}>
@@ -68,26 +68,25 @@ export default function Help() {
         <details style={detailsStyle}>
           <summary style={summaryStyle}>Meus dados estão seguros?</summary>
           <p style={answerStyle}>
-            Sim! Utilizamos criptografia de ponta a ponta, autenticação via Supabase e
-            processamento de pagamentos seguro via Stripe. Seus dados nunca são compartilhados
-            com terceiros.
+            Sim! Utilizamos criptografia de ponta a ponta, autenticação via Supabase e processamento
+            de pagamentos seguro via Stripe. Seus dados nunca são compartilhados com terceiros.
           </p>
         </details>
 
         <details style={detailsStyle}>
           <summary style={summaryStyle}>Como reportar um bug?</summary>
           <p style={answerStyle}>
-            Use o botão "🐛 Feedback" no canto inferior direito da tela. Seu feedback será
-            enviado diretamente para nossa equipe e criará automaticamente um issue no GitHub.
+            Use o botão "🐛 Feedback" no canto inferior direito da tela. Seu feedback será enviado
+            diretamente para nossa equipe e criará automaticamente um issue no GitHub.
           </p>
         </details>
 
         <details style={detailsStyle}>
           <summary style={summaryStyle}>Qual a diferença entre os agentes?</summary>
           <p style={answerStyle}>
-            Cada agente é especializado em uma área específica (marketing, código, design, etc.).
-            O Serginho é o orquestrador principal que pode delegar tarefas aos especialistas
-            quando necessário.
+            Cada agente é especializado em uma área específica (marketing, código, design, etc.). O
+            Serginho é o orquestrador principal que pode delegar tarefas aos especialistas quando
+            necessário.
           </p>
         </details>
       </section>
@@ -95,9 +94,7 @@ export default function Help() {
       {/* Contact */}
       <section style={{ marginBottom: 40 }}>
         <h2 style={{ fontSize: 22, marginBottom: 16 }}>Contato</h2>
-        <p style={{ marginBottom: 12 }}>
-          Precisa de ajuda adicional? Entre em contato conosco:
-        </p>
+        <p style={{ marginBottom: 12 }}>Precisa de ajuda adicional? Entre em contato conosco:</p>
         <ul style={{ lineHeight: 1.8 }}>
           <li>
             📧 E-mail:{" "}
@@ -116,9 +113,7 @@ export default function Help() {
               Reportar problema
             </a>
           </li>
-          <li>
-            💬 Use o botão de feedback no canto da tela para reportar bugs ou dar sugestões
-          </li>
+          <li>💬 Use o botão de feedback no canto da tela para reportar bugs ou dar sugestões</li>
         </ul>
       </section>
 
@@ -179,4 +174,3 @@ const linkCardStyle = {
   fontWeight: 500,
   transition: "background 0.2s",
 };
-

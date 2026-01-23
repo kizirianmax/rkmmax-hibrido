@@ -1,61 +1,61 @@
 /* Navbar base */
-.navbar{
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  gap:24px;
+.navbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
   backdrop-filter: blur(8px);
-  background: linear-gradient(180deg, rgba(12,20,34,.8), rgba(12,20,34,.35));
-  border:1px solid rgba(93,122,171,.15);
-  border-radius:16px;
-  padding:12px 20px;
+  background: linear-gradient(180deg, rgba(12, 20, 34, 0.8), rgba(12, 20, 34, 0.35));
+  border: 1px solid rgba(93, 122, 171, 0.15);
+  border-radius: 16px;
+  padding: 12px 20px;
 }
 
 /* Links do meio */
-.nav-links{
-  display:flex;
-  align-items:center;
-  gap:22px; /* distância clara entre os links */
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: 22px; /* distância clara entre os links */
 }
-.nav-links a{
+.nav-links a {
   color: var(--text-200);
-  text-decoration:none;
-  font-weight:600;
-  padding:8px 12px;
-  border-radius:10px;
-  transition:.15s;
+  text-decoration: none;
+  font-weight: 600;
+  padding: 8px 12px;
+  border-radius: 10px;
+  transition: 0.15s;
 }
-.nav-links a:hover{
+.nav-links a:hover {
   color: var(--text-100);
-  background: rgba(255,255,255,.05);
+  background: rgba(255, 255, 255, 0.05);
 }
 
 /* Ações do lado direito */
-.nav-cta{
-  display:flex;
-  gap:14px;
+.nav-cta {
+  display: flex;
+  gap: 14px;
 }
-.navbar .btn{
-  font-weight:700;
-  padding:10px 16px;
-  border-radius:14px;
-  text-decoration:none;
-  transition:.15s;
+.navbar .btn {
+  font-weight: 700;
+  padding: 10px 16px;
+  border-radius: 14px;
+  text-decoration: none;
+  transition: 0.15s;
 }
-.navbar .btn.ghost{
+.navbar .btn.ghost {
   color: var(--text-200);
-  background: rgba(255,255,255,.06);
-  border:1px solid rgba(255,255,255,.12);
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.12);
 }
-.navbar .btn.ghost:hover{
-  background: rgba(255,255,255,.1);
+.navbar .btn.ghost:hover {
+  background: rgba(255, 255, 255, 0.1);
   color: var(--text-100);
 }
-.navbar .btn.primary{
+.navbar .btn.primary {
   background: var(--accent-400);
-  color:#001b17;
-  box-shadow:0 6px 20px rgba(0,208,184,.25);
+  color: #001b17;
+  box-shadow: 0 6px 20px rgba(0, 208, 184, 0.25);
 }
-.navbar .btn.primary:hover{
+.navbar .btn.primary:hover {
   background: var(--accent-500);
 }

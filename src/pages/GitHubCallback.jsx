@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState } from "react";
 
 /**
  * GITHUB OAUTH CALLBACK PAGE
@@ -6,8 +6,8 @@ import { useEffect, useState } from 'react';
  * Depois redireciona de volta para o chat com o token
  */
 export default function GitHubCallback() {
-  const [status, setStatus] = useState('loading');
-  const [message, setMessage] = useState('Processando autorização...');
+  const [status, setStatus] = useState("loading");
+  const [message, setMessage] = useState("Processando autorização...");
   const [error, setError] = useState(null);
 
   useEffect(() => {
@@ -15,32 +15,32 @@ export default function GitHubCallback() {
       try {
         // Obter parâmetros da URL
         const urlParams = new URLSearchParams(window.location.search);
-        const code = urlParams.get('code');
-        const state = urlParams.get('state');
-        const errorParam = urlParams.get('error');
+        const code = urlParams.get("code");
+        const state = urlParams.get("state");
+        const errorParam = urlParams.get("error");
 
         if (errorParam) {
-          setStatus('error');
+          setStatus("error");
           setError(errorParam);
           setMessage(`Autorização negada: ${errorParam}`);
           return;
         }
 
         if (!code) {
-          setStatus('error');
-          setError('Código não recebido');
-          setMessage('Erro: Código de autorização não foi recebido do GitHub');
+          setStatus("error");
+          setError("Código não recebido");
+          setMessage("Erro: Código de autorização não foi recebido do GitHub");
           return;
         }
 
-        console.log('📥 Código recebido:', code);
-        setMessage('Trocando código por token...');
+        console.log("📥 Código recebido:", code);
+        setMessage("Trocando código por token...");
 
         // Chamar endpoint de callback
-        const response = await fetch('/api/github-oauth/callback', {
-          method: 'GET',
+        const response = await fetch("/api/github-oauth/callback", {
+          method: "GET",
           headers: {
-            'Content-Type': 'application/json',
+            "Content-Type": "application/json",
           },
         });
 
@@ -51,19 +51,19 @@ export default function GitHubCallback() {
         const data = await response.json();
 
         if (!data.success) {
-          setStatus('error');
+          setStatus("error");
           setError(data.error);
-          setMessage(`Erro: ${data.message || 'Falha ao processar token'}`);
+          setMessage(`Erro: ${data.message || "Falha ao processar token"}`);
           return;
         }
 
-        console.log('✅ Token recebido:', data.token);
-        setStatus('success');
+        console.log("✅ Token recebido:", data.token);
+        setStatus("success");
         setMessage(`✅ ${data.message}`);
 
         // Armazenar token localmente
-        localStorage.setItem('github_token', data.token);
-        localStorage.setItem('github_user', JSON.stringify(data.user));
+        localStorage.setItem("github_token", data.token);
+        localStorage.setItem("github_user", JSON.stringify(data.user));
 
         // Redirecionar de volta para o chat com token nos parâmetros
         setTimeout(() => {
@@ -71,8 +71,8 @@ export default function GitHubCallback() {
           window.location.href = redirectUrl;
         }, 2000);
       } catch (error) {
-        console.error('❌ Erro no callback:', error);
-        setStatus('error');
+        console.error("❌ Erro no callback:", error);
+        setStatus("error");
         setError(error.message);
         setMessage(`Erro: ${error.message}`);
       }
@@ -82,82 +82,92 @@ export default function GitHubCallback() {
   }, []);
 
   return (
-    <div style={{
-      display: 'flex',
-      flexDirection: 'column',
-      alignItems: 'center',
-      justifyContent: 'center',
-      minHeight: '100vh',
-      backgroundColor: '#0d1117',
-      color: '#c9d1d9',
-      fontFamily: 'system-ui, -apple-system, sans-serif',
-      padding: '20px',
-    }}>
-      <div style={{
-        maxWidth: '500px',
-        padding: '40px',
-        borderRadius: '12px',
-        backgroundColor: '#161b22',
-        border: '1px solid #30363d',
-        textAlign: 'center',
-      }}>
-        {status === 'loading' && (
+    <div
+      style={{
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        justifyContent: "center",
+        minHeight: "100vh",
+        backgroundColor: "#0d1117",
+        color: "#c9d1d9",
+        fontFamily: "system-ui, -apple-system, sans-serif",
+        padding: "20px",
+      }}
+    >
+      <div
+        style={{
+          maxWidth: "500px",
+          padding: "40px",
+          borderRadius: "12px",
+          backgroundColor: "#161b22",
+          border: "1px solid #30363d",
+          textAlign: "center",
+        }}
+      >
+        {status === "loading" && (
           <>
-            <div style={{
-              fontSize: '48px',
-              marginBottom: '20px',
-              animation: 'spin 1s linear infinite',
-            }}>
+            <div
+              style={{
+                fontSize: "48px",
+                marginBottom: "20px",
+                animation: "spin 1s linear infinite",
+              }}
+            >
               🔄
             </div>
             <h1 style={{ marginTop: 0 }}>Processando Autorização</h1>
-            <p style={{ fontSize: '16px', color: '#8b949e' }}>{message}</p>
+            <p style={{ fontSize: "16px", color: "#8b949e" }}>{message}</p>
           </>
         )}
 
-        {status === 'success' && (
+        {status === "success" && (
           <>
-            <div style={{
-              fontSize: '48px',
-              marginBottom: '20px',
-            }}>
+            <div
+              style={{
+                fontSize: "48px",
+                marginBottom: "20px",
+              }}
+            >
               ✅
             </div>
-            <h1 style={{ marginTop: 0, color: '#3fb950' }}>Sucesso!</h1>
-            <p style={{ fontSize: '16px', color: '#8b949e' }}>{message}</p>
-            <p style={{ fontSize: '14px', color: '#6e7681', marginTop: '20px' }}>
+            <h1 style={{ marginTop: 0, color: "#3fb950" }}>Sucesso!</h1>
+            <p style={{ fontSize: "16px", color: "#8b949e" }}>{message}</p>
+            <p style={{ fontSize: "14px", color: "#6e7681", marginTop: "20px" }}>
               Redirecionando para o chat em 2 segundos...
             </p>
           </>
         )}
 
-        {status === 'error' && (
+        {status === "error" && (
           <>
-            <div style={{
-              fontSize: '48px',
-              marginBottom: '20px',
-            }}>
+            <div
+              style={{
+                fontSize: "48px",
+                marginBottom: "20px",
+              }}
+            >
               ❌
             </div>
-            <h1 style={{ marginTop: 0, color: '#f85149' }}>Erro na Autorização</h1>
-            <p style={{ fontSize: '16px', color: '#8b949e' }}>{message}</p>
+            <h1 style={{ marginTop: 0, color: "#f85149" }}>Erro na Autorização</h1>
+            <p style={{ fontSize: "16px", color: "#8b949e" }}>{message}</p>
             {error && (
-              <p style={{ fontSize: '14px', color: '#f85149', marginTop: '20px' }}>
+              <p style={{ fontSize: "14px", color: "#f85149", marginTop: "20px" }}>
                 Detalhes: {error}
               </p>
             )}
             <button
-              onClick={() => window.location.href = '/hybrid'}
+              onClick={() => (window.location.href = "/hybrid")}
               style={{
-                marginTop: '20px',
-                padding: '10px 20px',
-                backgroundColor: '#238636',
-                color: 'white',
-                border: 'none',
-                borderRadius: '6px',
-                cursor: 'pointer',
-                fontSize: '14px',
-                fontWeight: 'bold',
+                marginTop: "20px",
+                padding: "10px 20px",
+                backgroundColor: "#238636",
+                color: "white",
+                border: "none",
+                borderRadius: "6px",
+                cursor: "pointer",
+                fontSize: "14px",
+                fontWeight: "bold",
               }}
             >
               Voltar ao Chat

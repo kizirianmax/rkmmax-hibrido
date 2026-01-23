@@ -7,13 +7,22 @@ import { capsByPlan } from "../../src/lib/planCaps.js";
  * substituir readCounter/writeCounter pelo seu storage.
  */
 const mem = globalThis.__USAGE_MEM__ || (globalThis.__USAGE_MEM__ = new Map());
-async function readCounter(key)  { return Number(mem.get(key) || 0); }
-async function writeCounter(key, value) { mem.set(key, String(value)); return true; }
+async function readCounter(key) {
+  return Number(mem.get(key) || 0);
+}
+async function writeCounter(key, value) {
+  mem.set(key, String(value));
+  return true;
+}
 
 /** Helpers de chave por dia/mês (UTC) */
-function dayStampUTC()   { return new Date().toISOString().slice(0,10).replace(/-/g, ""); } // YYYYMMDD
-function monthStampUTC() { return new Date().toISOString().slice(0,7).replace(/-/g, ""); }   // YYYYMM
-const reqKey    = (uid) => `reqs:${uid}:${dayStampUTC()}`;
+function dayStampUTC() {
+  return new Date().toISOString().slice(0, 10).replace(/-/g, "");
+} // YYYYMMDD
+function monthStampUTC() {
+  return new Date().toISOString().slice(0, 7).replace(/-/g, "");
+} // YYYYMM
+const reqKey = (uid) => `reqs:${uid}:${dayStampUTC()}`;
 const dayTokKey = (uid) => `toks:day:${uid}:${dayStampUTC()}`;
 const monTokKey = (uid) => `toks:mon:${uid}:${monthStampUTC()}`;
 
@@ -22,7 +31,7 @@ function ensureCaps(planKey) {
   if (!caps) throw new Error(`Plano inválido: ${planKey}`);
   return {
     dayReqs: Number(caps.limit_requests_per_day || 0),
-    dayToks: Number(caps.limit_tokens_per_day   || 0),
+    dayToks: Number(caps.limit_tokens_per_day || 0),
     monToks: Number(caps.limit_tokens_per_month || 0),
   };
 }
@@ -41,7 +50,7 @@ function ensureCaps(planKey) {
 export default async function guardAndBill(p) {
   const { user, plan, model, promptSize, expectedOutputSize = 800 } = p || {};
   if (!user?.id) throw new Error("user.id obrigatório");
-  if (!plan)     throw new Error("plan obrigatório");
+  if (!plan) throw new Error("plan obrigatório");
   const caps = ensureCaps(plan);
 
   // ========== 1) Requisições por dia ==========
@@ -49,7 +58,9 @@ export default async function guardAndBill(p) {
   const reqsToday = await readCounter(rK);
   if (caps.dayReqs && reqsToday + 1 > caps.dayReqs) {
     const left = Math.max(0, caps.dayReqs - reqsToday);
-    throw new Error(`Limite de requisições/dia do plano ${plan} atingido. Restantes hoje: ${left}.`);
+    throw new Error(
+      `Limite de requisições/dia do plano ${plan} atingido. Restantes hoje: ${left}.`
+    );
   }
 
   // ========== 2) Tokens por dia (checagem preventiva) ==========
@@ -66,7 +77,9 @@ export default async function guardAndBill(p) {
   const monTokens = await readCounter(mK);
   if (caps.monToks && monTokens + willSpend > caps.monToks) {
     const left = Math.max(0, caps.monToks - monTokens);
-    throw new Error(`Limite mensal de tokens do plano ${plan} atingido. Restantes no mês: ${left}.`);
+    throw new Error(
+      `Limite mensal de tokens do plano ${plan} atingido. Restantes no mês: ${left}.`
+    );
   }
 
   // Aprovado: já contabiliza 1 requisição agora
@@ -92,10 +105,7 @@ export default async function guardAndBill(p) {
       );
       const spend = Number(promptSize || 0) + out;
       const [curDay, curMon] = await Promise.all([readCounter(dK), readCounter(mK)]);
-      await Promise.all([
-        writeCounter(dK, curDay + spend),
-        writeCounter(mK, curMon + spend),
-      ]);
+      await Promise.all([writeCounter(dK, curDay + spend), writeCounter(mK, curMon + spend)]);
       return { billed_tokens: spend };
     },
   };

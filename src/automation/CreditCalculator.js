@@ -9,152 +9,152 @@ class CreditCalculator {
   constructor() {
     // Custos de IA por operação (em centavos de real)
     this.aiCosts = {
-      'gemini-2.0-flash': {
-        input: 0.075,      // R$ 0,00075 por 1K tokens
-        output: 0.3,       // R$ 0,003 por 1K tokens
+      "gemini-2.0-flash": {
+        input: 0.075, // R$ 0,00075 por 1K tokens
+        output: 0.3, // R$ 0,003 por 1K tokens
       },
-      'gemini-2.5-pro': {
-        input: 1.5,        // R$ 0,015 por 1K tokens
-        output: 6.0,       // R$ 0,06 por 1K tokens
+      "gemini-2.5-pro": {
+        input: 1.5, // R$ 0,015 por 1K tokens
+        output: 6.0, // R$ 0,06 por 1K tokens
       },
-      'groq-llama': {
-        input: 0.05,       // R$ 0,0005 por 1K tokens
-        output: 0.1,       // R$ 0,001 por 1K tokens
+      "groq-llama": {
+        input: 0.05, // R$ 0,0005 por 1K tokens
+        output: 0.1, // R$ 0,001 por 1K tokens
       },
     };
 
     // Custos operacionais por operação (em centavos)
     this.operationalCosts = {
-      'analysis': 50,           // R$ 0,50
-      'code-generation': 100,   // R$ 1,00
-      'security-validation': 30, // R$ 0,30
-      'git-operations': 20,     // R$ 0,20
-      'storage': 10,            // R$ 0,10
+      analysis: 50, // R$ 0,50
+      "code-generation": 100, // R$ 1,00
+      "security-validation": 30, // R$ 0,30
+      "git-operations": 20, // R$ 0,20
+      storage: 10, // R$ 0,10
     };
 
     // Definição de planos com limites rígidos
     this.plans = {
-      'free': {
-        name: 'Plano Gratuito',
+      free: {
+        name: "Plano Gratuito",
         monthlyPrice: 0,
         dailyLimits: {
-          automations: -1,        // Sem limite
-          aiRequests: -1,         // Sem limite
-          totalCredits: -1,       // Sem limite
+          automations: -1, // Sem limite
+          aiRequests: -1, // Sem limite
+          totalCredits: -1, // Sem limite
         },
         features: {
-          specialists: 1,         // Apenas Serginho
-          modes: ['MANUAL'],
+          specialists: 1, // Apenas Serginho
+          modes: ["MANUAL"],
           maxFilesPerAutomation: 5,
           maxLinesOfCode: 1000,
           gitIntegration: false,
           prCreation: false,
         },
-        marginTarget: 0,          // Gratuito não tem margem
-        status: 'ACTIVE',
+        marginTarget: 0, // Gratuito não tem margem
+        status: "ACTIVE",
         deprecationWarning: true, // Aviso de descontinuação
       },
 
-      'basic': {
-        name: 'Plano Básico',
-        monthlyPrice: 4990,       // R$ 49,90
+      basic: {
+        name: "Plano Básico",
+        monthlyPrice: 4990, // R$ 49,90
         dailyLimits: {
-          automations: 5,         // 5 automações por dia
-          aiRequests: 20,         // 20 requisições de IA por dia
-          totalCredits: 50,       // 50 créditos por dia
+          automations: 5, // 5 automações por dia
+          aiRequests: 20, // 20 requisições de IA por dia
+          totalCredits: 50, // 50 créditos por dia
         },
         features: {
-          specialists: 10,        // 10 especialistas
-          modes: ['MANUAL', 'HYBRID'],
+          specialists: 10, // 10 especialistas
+          modes: ["MANUAL", "HYBRID"],
           maxFilesPerAutomation: 10,
           maxLinesOfCode: 5000,
           gitIntegration: true,
           prCreation: false,
         },
-        marginTarget: 60,         // 60% de margem
-        status: 'ACTIVE',
+        marginTarget: 60, // 60% de margem
+        status: "ACTIVE",
       },
 
-      'intermediate': {
-        name: 'Plano Intermediário',
-        monthlyPrice: 9990,       // R$ 99,90
+      intermediate: {
+        name: "Plano Intermediário",
+        monthlyPrice: 9990, // R$ 99,90
         dailyLimits: {
-          automations: 15,        // 15 automações por dia
-          aiRequests: 60,         // 60 requisições de IA por dia
-          totalCredits: 150,      // 150 créditos por dia
+          automations: 15, // 15 automações por dia
+          aiRequests: 60, // 60 requisições de IA por dia
+          totalCredits: 150, // 150 créditos por dia
         },
         features: {
-          specialists: 30,        // 30 especialistas
-          modes: ['MANUAL', 'HYBRID', 'OPTIMIZED'],
+          specialists: 30, // 30 especialistas
+          modes: ["MANUAL", "HYBRID", "OPTIMIZED"],
           maxFilesPerAutomation: 25,
           maxLinesOfCode: 15000,
           gitIntegration: true,
           prCreation: true,
         },
-        marginTarget: 40,         // 40% de margem
-        status: 'ACTIVE',
+        marginTarget: 40, // 40% de margem
+        status: "ACTIVE",
       },
 
-      'premium': {
-        name: 'Plano Premium',
-        monthlyPrice: 19990,      // R$ 199,90
+      premium: {
+        name: "Plano Premium",
+        monthlyPrice: 19990, // R$ 199,90
         dailyLimits: {
-          automations: 50,        // 50 automações por dia
-          aiRequests: 200,        // 200 requisições de IA por dia
-          totalCredits: 500,      // 500 créditos por dia
+          automations: 50, // 50 automações por dia
+          aiRequests: 200, // 200 requisições de IA por dia
+          totalCredits: 500, // 500 créditos por dia
         },
         features: {
-          specialists: 54,        // Todos os especialistas
-          modes: ['MANUAL', 'HYBRID', 'OPTIMIZED'],
+          specialists: 54, // Todos os especialistas
+          modes: ["MANUAL", "HYBRID", "OPTIMIZED"],
           maxFilesPerAutomation: 100,
           maxLinesOfCode: 50000,
           gitIntegration: true,
           prCreation: true,
         },
-        marginTarget: 40,         // 40% de margem
-        status: 'ACTIVE',
+        marginTarget: 40, // 40% de margem
+        status: "ACTIVE",
       },
 
-      'enterprise': {
-        name: 'Plano Enterprise',
-        monthlyPrice: 0,          // Customizado
+      enterprise: {
+        name: "Plano Enterprise",
+        monthlyPrice: 0, // Customizado
         dailyLimits: {
-          automations: -1,        // Sem limite
-          aiRequests: -1,         // Sem limite
-          totalCredits: -1,       // Sem limite
+          automations: -1, // Sem limite
+          aiRequests: -1, // Sem limite
+          totalCredits: -1, // Sem limite
         },
         features: {
-          specialists: 54,        // Todos os especialistas
-          modes: ['MANUAL', 'HYBRID', 'OPTIMIZED'],
+          specialists: 54, // Todos os especialistas
+          modes: ["MANUAL", "HYBRID", "OPTIMIZED"],
           maxFilesPerAutomation: -1,
           maxLinesOfCode: -1,
           gitIntegration: true,
           prCreation: true,
         },
         marginTarget: 40,
-        status: 'CUSTOM',
+        status: "CUSTOM",
       },
     };
 
     // Custos de IA por tipo de operação
     this.operationCosts = {
-      'MANUAL': {
-        analysis: 0.50,           // R$ 0,50
-        codeGeneration: 1.00,     // R$ 1,00
-        securityValidation: 0.30, // R$ 0,30
-        gitOperations: 0.20,      // R$ 0,20
+      MANUAL: {
+        analysis: 0.5, // R$ 0,50
+        codeGeneration: 1.0, // R$ 1,00
+        securityValidation: 0.3, // R$ 0,30
+        gitOperations: 0.2, // R$ 0,20
       },
-      'HYBRID': {
-        analysis: 0.75,           // R$ 0,75
-        codeGeneration: 1.50,     // R$ 1,50
-        securityValidation: 0.50, // R$ 0,50
-        gitOperations: 0.30,      // R$ 0,30
+      HYBRID: {
+        analysis: 0.75, // R$ 0,75
+        codeGeneration: 1.5, // R$ 1,50
+        securityValidation: 0.5, // R$ 0,50
+        gitOperations: 0.3, // R$ 0,30
       },
-      'OPTIMIZED': {
-        analysis: 1.00,           // R$ 1,00
-        codeGeneration: 2.00,     // R$ 2,00
+      OPTIMIZED: {
+        analysis: 1.0, // R$ 1,00
+        codeGeneration: 2.0, // R$ 2,00
         securityValidation: 0.75, // R$ 0,75
-        gitOperations: 0.50,      // R$ 0,50
+        gitOperations: 0.5, // R$ 0,50
       },
     };
   }
@@ -162,14 +162,14 @@ class CreditCalculator {
   /**
    * Calcular custo total de uma automação
    */
-  calculateAutomationCost(mode, tokensUsed = 1000, model = 'gemini-2.0-flash') {
-    const operationCost = this.operationCosts[mode] || this.operationCosts['MANUAL'];
-    
+  calculateAutomationCost(mode, tokensUsed = 1000, model = "gemini-2.0-flash") {
+    const operationCost = this.operationCosts[mode] || this.operationCosts["MANUAL"];
+
     // Custo de IA (estimado por tokens)
     const aiCost = this.estimateAICost(model, tokensUsed);
-    
+
     // Custo operacional
-    const totalOperational = 
+    const totalOperational =
       operationCost.analysis +
       operationCost.codeGeneration +
       operationCost.securityValidation +
@@ -198,8 +198,8 @@ class CreditCalculator {
    * Estimar custo de IA por tokens
    */
   estimateAICost(model, totalTokens) {
-    const modelCost = this.aiCosts[model] || this.aiCosts['gemini-2.0-flash'];
-    
+    const modelCost = this.aiCosts[model] || this.aiCosts["gemini-2.0-flash"];
+
     // Estimativa: 70% input, 30% output
     const inputTokens = totalTokens * 0.7;
     const outputTokens = totalTokens * 0.3;
@@ -213,9 +213,9 @@ class CreditCalculator {
   /**
    * Converter custo em créditos
    */
-  costToCredits(costInReais, plan = 'basic') {
+  costToCredits(costInReais, plan = "basic") {
     // 1 crédito = R$ 0,10 (base)
-    const creditValue = 0.10;
+    const creditValue = 0.1;
     return Math.ceil(costInReais / creditValue);
   }
 
@@ -226,7 +226,7 @@ class CreditCalculator {
     // Fórmula: Preço de Venda = Custo / (1 - Margem%)
     const margin = marginPercentage / 100;
     const sellingPrice = costInReais / (1 - margin);
-    
+
     return parseFloat(sellingPrice.toFixed(2));
   }
 
@@ -252,13 +252,13 @@ class CreditCalculator {
    */
   checkDailyLimit(planName, currentUsage) {
     const plan = this.plans[planName];
-    if (!plan) return { valid: false, message: 'Plano não encontrado' };
+    if (!plan) return { valid: false, message: "Plano não encontrado" };
 
     const limits = plan.dailyLimits;
 
     // Plano gratuito não tem limite
-    if (planName === 'free') {
-      return { valid: true, message: 'Sem limite' };
+    if (planName === "free") {
+      return { valid: true, message: "Sem limite" };
     }
 
     // Verificar cada limite
@@ -289,7 +289,7 @@ class CreditCalculator {
       };
     }
 
-    return { valid: true, message: 'Dentro dos limites' };
+    return { valid: true, message: "Dentro dos limites" };
   }
 
   /**
@@ -299,15 +299,15 @@ class CreditCalculator {
     const prices = {};
 
     for (const [planId, plan] of Object.entries(this.plans)) {
-      if (planId === 'free' || planId === 'enterprise') continue;
+      if (planId === "free" || planId === "enterprise") continue;
 
       // Estimar custo mensal (assumindo 20 automações por dia)
       const automationsPerMonth = 20 * 30; // 20 por dia, 30 dias
       const avgTokensPerAutomation = 2000;
-      const avgModel = 'gemini-2.0-flash';
+      const avgModel = "gemini-2.0-flash";
 
       const costPerAutomation = this.calculateAutomationCost(
-        'OPTIMIZED',
+        "OPTIMIZED",
         avgTokensPerAutomation,
         avgModel
       );
@@ -315,10 +315,7 @@ class CreditCalculator {
       const monthlyCost = costPerAutomation.totalCost * automationsPerMonth;
 
       // Calcular preço de venda com margem
-      const sellingPrice = this.calculateSellingPrice(
-        monthlyCost,
-        plan.marginTarget
-      );
+      const sellingPrice = this.calculateSellingPrice(monthlyCost, plan.marginTarget);
 
       // Arredondar para valor comercial
       const commercialPrice = Math.ceil(sellingPrice / 10) * 10; // Arredondar para múltiplo de 10
@@ -330,7 +327,7 @@ class CreditCalculator {
         calculatedPrice: parseFloat(sellingPrice.toFixed(2)),
         commercialPrice: commercialPrice,
         monthlyPrice: plan.monthlyPrice,
-        priceMatch: Math.abs(plan.monthlyPrice - (commercialPrice * 100)) < 100,
+        priceMatch: Math.abs(plan.monthlyPrice - commercialPrice * 100) < 100,
       };
     }
 
@@ -365,7 +362,7 @@ class CreditCalculator {
       report.plans.push(planReport);
       report.summary.totalPlans++;
 
-      if (plan.status === 'ACTIVE') {
+      if (plan.status === "ACTIVE") {
         report.summary.activeePlans++;
         report.summary.totalMonthlyRevenue += plan.monthlyPrice;
       }

@@ -1,23 +1,23 @@
 // src/components/SpecialistVisibilityManager.jsx
-import React, { useState } from 'react';
-import { useSpecialistVisibility } from '../hooks/useSpecialistVisibility.js';
-import { specialists, categories } from '../config/specialists.js';
+import React, { useState } from "react";
+import { useSpecialistVisibility } from "../hooks/useSpecialistVisibility.js";
+import { specialists, categories } from "../config/specialists.js";
 
 export default function SpecialistVisibilityManager() {
-  const { 
-    isVisible, 
-    toggleVisibility, 
-    setAllVisible, 
+  const {
+    isVisible,
+    toggleVisibility,
+    setAllVisible,
     setCategoryVisible,
     getVisibleCount,
-    getHiddenCount 
+    getHiddenCount,
   } = useSpecialistVisibility();
 
-  const [selectedCategory, setSelectedCategory] = useState('all');
+  const [selectedCategory, setSelectedCategory] = useState("all");
 
   // Filtrar especialistas por categoria
-  const filteredSpecialists = Object.values(specialists).filter(specialist => 
-    selectedCategory === 'all' || specialist.category === selectedCategory
+  const filteredSpecialists = Object.values(specialists).filter(
+    (specialist) => selectedCategory === "all" || specialist.category === selectedCategory
   );
 
   return (
@@ -43,15 +43,12 @@ export default function SpecialistVisibilityManager() {
 
       {/* Ações rápidas */}
       <div style={styles.quickActions}>
-        <button 
-          onClick={() => setAllVisible(true)}
-          style={styles.actionButton}
-        >
+        <button onClick={() => setAllVisible(true)} style={styles.actionButton}>
           ✓ Mostrar Todos
         </button>
-        <button 
+        <button
           onClick={() => setAllVisible(false)}
-          style={{...styles.actionButton, ...styles.actionButtonSecondary}}
+          style={{ ...styles.actionButton, ...styles.actionButtonSecondary }}
         >
           ✗ Ocultar Todos
         </button>
@@ -60,21 +57,21 @@ export default function SpecialistVisibilityManager() {
       {/* Filtro por categoria */}
       <div style={styles.categoryFilter}>
         <button
-          onClick={() => setSelectedCategory('all')}
+          onClick={() => setSelectedCategory("all")}
           style={{
             ...styles.categoryButton,
-            ...(selectedCategory === 'all' ? styles.categoryButtonActive : {})
+            ...(selectedCategory === "all" ? styles.categoryButtonActive : {}),
           }}
         >
           Todos
         </button>
-        {Object.values(categories).map(category => (
+        {Object.values(categories).map((category) => (
           <button
             key={category.id}
             onClick={() => setSelectedCategory(category.id)}
             style={{
               ...styles.categoryButton,
-              ...(selectedCategory === category.id ? styles.categoryButtonActive : {})
+              ...(selectedCategory === category.id ? styles.categoryButtonActive : {}),
             }}
           >
             {category.emoji} {category.name}
@@ -84,7 +81,7 @@ export default function SpecialistVisibilityManager() {
 
       {/* Lista de especialistas */}
       <div style={styles.specialistsList}>
-        {filteredSpecialists.map(specialist => (
+        {filteredSpecialists.map((specialist) => (
           <div key={specialist.id} style={styles.specialistItem}>
             <div style={styles.specialistInfo}>
               <span style={styles.specialistEmoji}>{specialist.emoji}</span>
@@ -97,17 +94,19 @@ export default function SpecialistVisibilityManager() {
               onClick={() => toggleVisibility(specialist.id)}
               style={{
                 ...styles.toggleButton,
-                ...(isVisible(specialist.id) ? styles.toggleButtonVisible : styles.toggleButtonHidden)
+                ...(isVisible(specialist.id)
+                  ? styles.toggleButtonVisible
+                  : styles.toggleButtonHidden),
               }}
             >
-              {isVisible(specialist.id) ? '👁️ Visível' : '🚫 Oculto'}
+              {isVisible(specialist.id) ? "👁️ Visível" : "🚫 Oculto"}
             </button>
           </div>
         ))}
       </div>
 
       {/* Ações por categoria */}
-      {selectedCategory !== 'all' && (
+      {selectedCategory !== "all" && (
         <div style={styles.categoryActions}>
           <button
             onClick={() => setCategoryVisible(selectedCategory, true)}
@@ -117,7 +116,7 @@ export default function SpecialistVisibilityManager() {
           </button>
           <button
             onClick={() => setCategoryVisible(selectedCategory, false)}
-            style={{...styles.categoryActionButton, ...styles.categoryActionButtonSecondary}}
+            style={{ ...styles.categoryActionButton, ...styles.categoryActionButtonSecondary }}
           >
             Ocultar todos de {categories[selectedCategory]?.name}
           </button>
@@ -130,8 +129,8 @@ export default function SpecialistVisibilityManager() {
 const styles = {
   container: {
     maxWidth: 800,
-    margin: '0 auto',
-    padding: '24px 16px',
+    margin: "0 auto",
+    padding: "24px 16px",
   },
   header: {
     marginBottom: 24,
@@ -139,26 +138,26 @@ const styles = {
   title: {
     fontSize: 24,
     fontWeight: 700,
-    margin: '0 0 8px',
-    color: '#1e293b',
+    margin: "0 0 8px",
+    color: "#1e293b",
   },
   subtitle: {
     fontSize: 14,
-    color: '#64748b',
+    color: "#64748b",
     margin: 0,
   },
   stats: {
-    display: 'grid',
-    gridTemplateColumns: '1fr 1fr',
+    display: "grid",
+    gridTemplateColumns: "1fr 1fr",
     gap: 12,
     marginBottom: 24,
   },
   statCard: {
-    background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+    background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
     borderRadius: 12,
     padding: 20,
-    textAlign: 'center',
-    color: 'white',
+    textAlign: "center",
+    color: "white",
   },
   statNumber: {
     fontSize: 32,
@@ -170,65 +169,65 @@ const styles = {
     opacity: 0.9,
   },
   quickActions: {
-    display: 'flex',
+    display: "flex",
     gap: 12,
     marginBottom: 24,
   },
   actionButton: {
     flex: 1,
-    padding: '12px 24px',
+    padding: "12px 24px",
     borderRadius: 10,
-    border: 'none',
-    background: '#10b981',
-    color: 'white',
+    border: "none",
+    background: "#10b981",
+    color: "white",
     fontWeight: 600,
     fontSize: 14,
-    cursor: 'pointer',
-    transition: 'all 0.2s',
+    cursor: "pointer",
+    transition: "all 0.2s",
   },
   actionButtonSecondary: {
-    background: '#ef4444',
+    background: "#ef4444",
   },
   categoryFilter: {
-    display: 'flex',
-    flexWrap: 'wrap',
+    display: "flex",
+    flexWrap: "wrap",
     gap: 8,
     marginBottom: 24,
   },
   categoryButton: {
-    padding: '8px 16px',
+    padding: "8px 16px",
     borderRadius: 8,
-    border: '1px solid #e2e8f0',
-    background: 'white',
-    color: '#64748b',
+    border: "1px solid #e2e8f0",
+    background: "white",
+    color: "#64748b",
     fontSize: 13,
     fontWeight: 500,
-    cursor: 'pointer',
-    transition: 'all 0.2s',
+    cursor: "pointer",
+    transition: "all 0.2s",
   },
   categoryButtonActive: {
-    background: '#667eea',
-    color: 'white',
-    borderColor: '#667eea',
+    background: "#667eea",
+    color: "white",
+    borderColor: "#667eea",
   },
   specialistsList: {
-    display: 'flex',
-    flexDirection: 'column',
+    display: "flex",
+    flexDirection: "column",
     gap: 12,
   },
   specialistItem: {
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    background: 'white',
-    border: '1px solid #e2e8f0',
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "space-between",
+    background: "white",
+    border: "1px solid #e2e8f0",
     borderRadius: 12,
     padding: 16,
-    transition: 'all 0.2s',
+    transition: "all 0.2s",
   },
   specialistInfo: {
-    display: 'flex',
-    alignItems: 'center',
+    display: "flex",
+    alignItems: "center",
     gap: 12,
     flex: 1,
   },
@@ -238,52 +237,51 @@ const styles = {
   specialistName: {
     fontSize: 16,
     fontWeight: 700,
-    color: '#1e293b',
+    color: "#1e293b",
     marginBottom: 2,
   },
   specialistDesc: {
     fontSize: 13,
-    color: '#64748b',
+    color: "#64748b",
   },
   toggleButton: {
-    padding: '8px 16px',
+    padding: "8px 16px",
     borderRadius: 8,
-    border: 'none',
+    border: "none",
     fontWeight: 600,
     fontSize: 13,
-    cursor: 'pointer',
-    transition: 'all 0.2s',
+    cursor: "pointer",
+    transition: "all 0.2s",
     minWidth: 100,
   },
   toggleButtonVisible: {
-    background: '#10b981',
-    color: 'white',
+    background: "#10b981",
+    color: "white",
   },
   toggleButtonHidden: {
-    background: '#f1f5f9',
-    color: '#64748b',
+    background: "#f1f5f9",
+    color: "#64748b",
   },
   categoryActions: {
-    display: 'flex',
+    display: "flex",
     gap: 12,
     marginTop: 24,
     paddingTop: 24,
-    borderTop: '1px solid #e2e8f0',
+    borderTop: "1px solid #e2e8f0",
   },
   categoryActionButton: {
     flex: 1,
-    padding: '10px 20px',
+    padding: "10px 20px",
     borderRadius: 8,
-    border: '1px solid #667eea',
-    background: '#667eea',
-    color: 'white',
+    border: "1px solid #667eea",
+    background: "#667eea",
+    color: "white",
     fontWeight: 600,
     fontSize: 13,
-    cursor: 'pointer',
+    cursor: "pointer",
   },
   categoryActionButtonSecondary: {
-    background: 'white',
-    color: '#667eea',
+    background: "white",
+    color: "#667eea",
   },
 };
-

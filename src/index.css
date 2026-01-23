@@ -1,78 +1,79 @@
 /* src/index.css */
 
 /* ========= Variáveis de cor (opcional) ========= */
-:root{
-  --brand: #06b6d4;     /* cor principal (ciano) */
+:root {
+  --brand: #06b6d4; /* cor principal (ciano) */
   --brand-dark: #0e7490;
   --text: #333;
   --bg: #f9f9f9;
-  
+
   /* Safe area para mobile (iOS/Android) */
   --safe-bottom: env(safe-area-inset-bottom, 0px);
 }
 
 /* Reset básico */
-*{
+* {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
   font-family: Arial, Helvetica, sans-serif;
 }
 
-body{
+body {
   background-color: var(--bg);
   color: var(--text);
   line-height: 1.6;
-  
+
   /* Safe area para mobile */
   padding-bottom: calc(24px + var(--safe-bottom));
   scroll-padding-bottom: calc(120px + var(--safe-bottom));
 }
 
 /* Barra superior (se usar) */
-.topbar{
+.topbar {
   background: var(--brand);
   padding: 1rem;
   text-align: center;
 }
 
 /* Links da barra/nav */
-.nav a{
+.nav a {
   margin: 0 15px;
   text-decoration: none;
   font-weight: bold;
-  color: #003366;            /* mantém seu tom de azul */
+  color: #003366; /* mantém seu tom de azul */
 }
-.nav a:hover{
+.nav a:hover {
   color: var(--brand-dark);
 }
 
 /* Link ativo (NavLink aplica aria-current="page") */
-.nav a[aria-current="page"]{
+.nav a[aria-current="page"] {
   color: var(--brand);
   border-bottom: 2px solid var(--brand);
 }
 
 /* Foco visível no teclado (acessibilidade) */
-.nav a:focus-visible{
+.nav a:focus-visible {
   outline: 2px dashed var(--brand);
   outline-offset: 2px;
 }
 
 /* Container principal */
-.container{
+.container {
   padding: 2rem;
   text-align: center;
 }
 
 /* Títulos */
-.page h1, .page h2{
+.page h1,
+.page h2 {
   margin-bottom: 1rem;
   color: #222;
 }
 
 /* Rodapé */
-.footer{
+.footer {
   margin-top: 3rem;
   text-align: center;
   padding: 1rem;
@@ -82,9 +83,17 @@ body{
 
 /* ========= Utilitários p/ brand (sem Tailwind) ========= */
 /* Mostra lockup longo no desktop e o curto no mobile */
-.brand-full{ display: inline; }
-.brand-short{ display: none; }
-@media (max-width: 640px){
-  .brand-full{ display: none; }
-  .brand-short{ display: inline; }
+.brand-full {
+  display: inline;
+}
+.brand-short {
+  display: none;
+}
+@media (max-width: 640px) {
+  .brand-full {
+    display: none;
+  }
+  .brand-short {
+    display: inline;
+  }
 }

@@ -16,7 +16,7 @@ class AuditLogger {
   logAutomationRequest(data) {
     const log = {
       id: this.generateLogId(),
-      type: 'AUTOMATION_REQUEST',
+      type: "AUTOMATION_REQUEST",
       timestamp: new Date().toISOString(),
       userId: data.userId,
       username: data.username,
@@ -25,7 +25,7 @@ class AuditLogger {
       selectedSpecialist: data.selectedSpecialist,
       suggestedSpecialist: data.suggestedSpecialist,
       description: data.description,
-      status: 'INITIATED',
+      status: "INITIATED",
       details: {
         ipAddress: data.ipAddress,
         userAgent: data.userAgent,
@@ -43,14 +43,14 @@ class AuditLogger {
   logCodeAnalysis(data) {
     const log = {
       id: this.generateLogId(),
-      type: 'CODE_ANALYSIS',
+      type: "CODE_ANALYSIS",
       timestamp: new Date().toISOString(),
       automationId: data.automationId,
       specialist: data.specialist,
       filesAnalyzed: data.filesAnalyzed,
       codeGenerated: data.codeGenerated,
       linesOfCode: data.linesOfCode,
-      status: 'COMPLETED',
+      status: "COMPLETED",
       details: {
         analysisTime: data.analysisTime,
         model: data.model,
@@ -68,11 +68,11 @@ class AuditLogger {
   logSecurityValidation(data) {
     const log = {
       id: this.generateLogId(),
-      type: 'SECURITY_VALIDATION',
+      type: "SECURITY_VALIDATION",
       timestamp: new Date().toISOString(),
       automationId: data.automationId,
       filesChecked: data.filesChecked,
-      status: data.isValid ? 'PASSED' : 'BLOCKED',
+      status: data.isValid ? "PASSED" : "BLOCKED",
       severity: data.severity,
       errors: data.errors || [],
       warnings: data.warnings || [],
@@ -93,7 +93,7 @@ class AuditLogger {
   logGitCommit(data) {
     const log = {
       id: this.generateLogId(),
-      type: 'GIT_COMMIT',
+      type: "GIT_COMMIT",
       timestamp: new Date().toISOString(),
       automationId: data.automationId,
       commitHash: data.commitHash,
@@ -102,7 +102,7 @@ class AuditLogger {
       filesChanged: data.filesChanged,
       insertions: data.insertions,
       deletions: data.deletions,
-      status: 'COMPLETED',
+      status: "COMPLETED",
       details: {
         author: data.author,
         pushedTo: data.pushedTo,
@@ -121,7 +121,7 @@ class AuditLogger {
   logCreditDebit(data) {
     const log = {
       id: this.generateLogId(),
-      type: 'CREDIT_DEBIT',
+      type: "CREDIT_DEBIT",
       timestamp: new Date().toISOString(),
       userId: data.userId,
       automationId: data.automationId,
@@ -134,7 +134,7 @@ class AuditLogger {
         securityValidation: data.breakdown?.securityValidation || 0,
         gitOperations: data.breakdown?.gitOperations || 0,
       },
-      status: 'COMPLETED',
+      status: "COMPLETED",
     };
 
     this.addLog(log);
@@ -147,7 +147,7 @@ class AuditLogger {
   logError(data) {
     const log = {
       id: this.generateLogId(),
-      type: 'ERROR',
+      type: "ERROR",
       timestamp: new Date().toISOString(),
       automationId: data.automationId,
       userId: data.userId,
@@ -155,7 +155,7 @@ class AuditLogger {
       errorMessage: data.errorMessage,
       errorStack: data.errorStack,
       phase: data.phase, // 'ANALYSIS', 'CODE_GENERATION', 'SECURITY', 'GIT', etc
-      status: 'FAILED',
+      status: "FAILED",
       details: {
         recoveryAttempted: data.recoveryAttempted || false,
         recoverySuccessful: data.recoverySuccessful || false,
@@ -172,7 +172,7 @@ class AuditLogger {
   logAutomationCompletion(data) {
     const log = {
       id: this.generateLogId(),
-      type: 'AUTOMATION_COMPLETION',
+      type: "AUTOMATION_COMPLETION",
       timestamp: new Date().toISOString(),
       automationId: data.automationId,
       userId: data.userId,
@@ -204,14 +204,14 @@ class AuditLogger {
   logManualAction(data) {
     const log = {
       id: this.generateLogId(),
-      type: 'MANUAL_ACTION',
+      type: "MANUAL_ACTION",
       timestamp: new Date().toISOString(),
       userId: data.userId,
       username: data.username,
       action: data.action, // 'EDIT', 'REVIEW', 'APPROVE', 'REJECT', etc
       targetFile: data.targetFile,
       description: data.description,
-      status: 'COMPLETED',
+      status: "COMPLETED",
       details: {
         ipAddress: data.ipAddress,
         sessionId: data.sessionId,
@@ -228,14 +228,14 @@ class AuditLogger {
   logRepositoryAccess(data) {
     const log = {
       id: this.generateLogId(),
-      type: 'REPOSITORY_ACCESS',
+      type: "REPOSITORY_ACCESS",
       timestamp: new Date().toISOString(),
       userId: data.userId,
       action: data.action, // 'READ', 'WRITE', 'DELETE', etc
       repository: data.repository,
       branch: data.branch,
       filesAccessed: data.filesAccessed,
-      status: 'COMPLETED',
+      status: "COMPLETED",
       details: {
         ipAddress: data.ipAddress,
         userAgent: data.userAgent,
@@ -258,9 +258,7 @@ class AuditLogger {
     }
 
     // Enviar para servidor (async)
-    this.persistLog(log).catch(err => 
-      console.error('Erro ao persistir log:', err)
-    );
+    this.persistLog(log).catch((err) => console.error("Erro ao persistir log:", err));
   }
 
   /**
@@ -268,17 +266,17 @@ class AuditLogger {
    */
   async persistLog(log) {
     try {
-      const response = await fetch('/api/audit-log', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+      const response = await fetch("/api/audit-log", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(log),
       });
 
       if (!response.ok) {
-        console.error('Erro ao persistir log:', response.status);
+        console.error("Erro ao persistir log:", response.status);
       }
     } catch (error) {
-      console.error('Erro ao enviar log:', error);
+      console.error("Erro ao enviar log:", error);
     }
   }
 
@@ -296,29 +294,29 @@ class AuditLogger {
     let results = this.logs;
 
     if (filters.type) {
-      results = results.filter(log => log.type === filters.type);
+      results = results.filter((log) => log.type === filters.type);
     }
 
     if (filters.userId) {
-      results = results.filter(log => log.userId === filters.userId);
+      results = results.filter((log) => log.userId === filters.userId);
     }
 
     if (filters.status) {
-      results = results.filter(log => log.status === filters.status);
+      results = results.filter((log) => log.status === filters.status);
     }
 
     if (filters.startDate) {
       const start = new Date(filters.startDate);
-      results = results.filter(log => new Date(log.timestamp) >= start);
+      results = results.filter((log) => new Date(log.timestamp) >= start);
     }
 
     if (filters.endDate) {
       const end = new Date(filters.endDate);
-      results = results.filter(log => new Date(log.timestamp) <= end);
+      results = results.filter((log) => new Date(log.timestamp) <= end);
     }
 
     if (filters.automationId) {
-      results = results.filter(log => log.automationId === filters.automationId);
+      results = results.filter((log) => log.automationId === filters.automationId);
     }
 
     return results;
@@ -343,7 +341,7 @@ class AuditLogger {
     };
 
     // Contar por tipo
-    logs.forEach(log => {
+    logs.forEach((log) => {
       report.summary.byType[log.type] = (report.summary.byType[log.type] || 0) + 1;
       report.summary.byStatus[log.status] = (report.summary.byStatus[log.status] || 0) + 1;
       report.summary.byUser[log.userId] = (report.summary.byUser[log.userId] || 0) + 1;
@@ -365,26 +363,26 @@ class AuditLogger {
    */
   exportLogsCSV(filters = {}) {
     const logs = this.searchLogs(filters);
-    
-    if (logs.length === 0) return '';
+
+    if (logs.length === 0) return "";
 
     // Headers
     const headers = Object.keys(logs[0]);
-    const csv = [headers.join(',')];
+    const csv = [headers.join(",")];
 
     // Rows
-    logs.forEach(log => {
-      const row = headers.map(header => {
+    logs.forEach((log) => {
+      const row = headers.map((header) => {
         const value = log[header];
-        if (typeof value === 'object') {
+        if (typeof value === "object") {
           return `"${JSON.stringify(value).replace(/"/g, '""')}"`;
         }
         return `"${String(value).replace(/"/g, '""')}"`;
       });
-      csv.push(row.join(','));
+      csv.push(row.join(","));
     });
 
-    return csv.join('\n');
+    return csv.join("\n");
   }
 
   /**
@@ -395,9 +393,7 @@ class AuditLogger {
     cutoffDate.setDate(cutoffDate.getDate() - daysToKeep);
 
     const beforeCount = this.logs.length;
-    this.logs = this.logs.filter(log => 
-      new Date(log.timestamp) > cutoffDate
-    );
+    this.logs = this.logs.filter((log) => new Date(log.timestamp) > cutoffDate);
 
     return {
       logsRemoved: beforeCount - this.logs.length,
@@ -420,10 +416,10 @@ class AuditLogger {
       },
     };
 
-    this.logs.forEach(log => {
+    this.logs.forEach((log) => {
       stats.logTypes[log.type] = (stats.logTypes[log.type] || 0) + 1;
       stats.statusCounts[log.status] = (stats.statusCounts[log.status] || 0) + 1;
-      
+
       if (log.userId) {
         stats.userActivity[log.userId] = (stats.userActivity[log.userId] || 0) + 1;
       }
@@ -434,7 +430,7 @@ class AuditLogger {
 }
 
 // Exportar
-if (typeof module !== 'undefined' && module.exports) {
+if (typeof module !== "undefined" && module.exports) {
   module.exports = AuditLogger;
 }
 

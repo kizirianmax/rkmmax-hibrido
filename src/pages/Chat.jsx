@@ -79,9 +79,13 @@ export default function Chat() {
     <div style={styles.page}>
       {/* Navbar mínima da página de chat */}
       <header style={styles.header}>
-        <Link to="/agents" style={styles.linkBack}>← Voltar</Link>
+        <Link to="/agents" style={styles.linkBack}>
+          ← Voltar
+        </Link>
         <div style={{ flex: 1 }} />
-        <Link to="/pricing" style={styles.linkTop}>Planos</Link>
+        <Link to="/pricing" style={styles.linkTop}>
+          Planos
+        </Link>
       </header>
 
       {/* Banner de plano/upgrade */}
@@ -89,7 +93,9 @@ export default function Chat() {
         <div style={{ fontWeight: 700 }}>Plano atual: {label}</div>
         <div style={{ opacity: 0.85 }}>
           Precisa de mais limite ou recursos?{" "}
-          <Link to="/pricing" style={styles.linkInline}>Ver planos</Link>
+          <Link to="/pricing" style={styles.linkInline}>
+            Ver planos
+          </Link>
         </div>
       </div>
 
@@ -122,7 +128,9 @@ export default function Chat() {
           placeholder="Escreva sua mensagem..."
           style={styles.input}
         />
-        <button type="submit" style={styles.sendBtn}>Enviar</button>
+        <button type="submit" style={styles.sendBtn}>
+          Enviar
+        </button>
       </form>
     </div>
   );

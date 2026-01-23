@@ -11,5 +11,5 @@ export function pickModel(plan, { advanced = false, gpt5QuotaLeft = 0 } = {}) {
   if (plan === PLAN.PREMIUM && advanced && gpt5QuotaLeft > 0) {
     return "gpt-5"; // Standard
   }
-  return (MODEL_BY_PLAN[plan]?.model) || MODEL_BY_PLAN[PLAN.BASIC].model;
+  return MODEL_BY_PLAN[plan]?.model || MODEL_BY_PLAN[PLAN.BASIC].model;
 }
