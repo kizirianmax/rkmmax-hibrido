@@ -4,7 +4,7 @@ import posthog from "posthog-js";
 export function initAnalytics() {
   const apiKey = process.env.REACT_APP_POSTHOG_KEY;
   const host = process.env.REACT_APP_POSTHOG_HOST || "https://app.posthog.com";
-  
+
   if (!apiKey) {
     console.warn("⚠️ PostHog API key not configured. Analytics disabled.");
     return;
@@ -12,16 +12,16 @@ export function initAnalytics() {
 
   posthog.init(apiKey, {
     api_host: host,
-    
+
     // Amostragem econômica: capturar apenas eventos essenciais
     autocapture: false, // Desabilitar autocapture para reduzir volume
     capture_pageview: true,
     capture_pageleave: false, // Desabilitar para economia
-    
+
     // Privacy settings - Mascarar PII
     mask_all_text: true,
     mask_all_element_attributes: true,
-    
+
     // Session Recording - Amostragem econômica
     session_recording: {
       maskAllInputs: true, // Mascarar todos os inputs
@@ -33,7 +33,7 @@ export function initAnalytics() {
       // Gravar apenas 5% das sessões
       sampleRate: process.env.NODE_ENV === "production" ? 0.05 : 1.0,
     },
-    
+
     // Disable in development
     loaded: (ph) => {
       if (process.env.NODE_ENV === "development") {
@@ -73,4 +73,3 @@ export const Events = {
   CHAT_SENT: "chat_sent",
   FEEDBACK_SUBMITTED: "feedback_submitted",
 };
-

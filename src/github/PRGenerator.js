@@ -6,7 +6,7 @@
 class PRGenerator {
   constructor(githubClient) {
     this.github = githubClient;
-    this.repo = 'kizirianmax/Rkmmax-app';
+    this.repo = "kizirianmax/Rkmmax-app";
   }
 
   /**
@@ -14,14 +14,7 @@ class PRGenerator {
    */
   async create(data) {
     try {
-      const {
-        agentId,
-        prompt,
-        response,
-        timestamp,
-        requiresApproval,
-        changes,
-      } = data;
+      const { agentId, prompt, response, timestamp, requiresApproval, changes } = data;
 
       // Gerar título e descrição do PR
       const title = this._generateTitle(agentId, prompt);
@@ -44,7 +37,7 @@ class PRGenerator {
         title,
         body,
         branchName,
-        status: requiresApproval ? 'pending_approval' : 'auto_merge_ready',
+        status: requiresApproval ? "pending_approval" : "auto_merge_ready",
         createdAt: timestamp,
         requiresApproval,
         changes: changes || [],
@@ -52,7 +45,7 @@ class PRGenerator {
 
       return pr;
     } catch (error) {
-      console.error('Error creating PR:', error);
+      console.error("Error creating PR:", error);
       return null;
     }
   }
@@ -62,7 +55,7 @@ class PRGenerator {
    */
   _generateTitle(agentId, prompt) {
     // Extrair primeiras palavras do prompt como título
-    const words = prompt.split(' ').slice(0, 5).join(' ');
+    const words = prompt.split(" ").slice(0, 5).join(" ");
     return `[${agentId.toUpperCase()}] ${words}`;
   }
 
@@ -76,7 +69,7 @@ class PRGenerator {
 ### Agent Information
 - **Agent ID**: ${agentId}
 - **Timestamp**: ${new Date(timestamp).toISOString()}
-- **Requires Approval**: ${requiresApproval ? 'Yes ⚠️' : 'No ✅'}
+- **Requires Approval**: ${requiresApproval ? "Yes ⚠️" : "No ✅"}
 
 ### Original Prompt
 \`\`\`
@@ -89,7 +82,7 @@ ${response}
 \`\`\`
 
 ### Changes Summary
-${changes && changes.length > 0 ? this._formatChanges(changes) : 'No file changes'}
+${changes && changes.length > 0 ? this._formatChanges(changes) : "No file changes"}
 
 ### Security Analysis
 - ✅ Model Armor validation passed
@@ -97,11 +90,11 @@ ${changes && changes.length > 0 ? this._formatChanges(changes) : 'No file change
 - ✅ Compliance check completed
 
 ### Approval Status
-${requiresApproval ? '🔴 **REQUIRES USER APPROVAL** - Please review and approve/reject' : '🟢 **AUTO-MERGE READY** - No approval required'}
+${requiresApproval ? "🔴 **REQUIRES USER APPROVAL** - Please review and approve/reject" : "🟢 **AUTO-MERGE READY** - No approval required"}
 
 ### Next Steps
 1. Review the changes above
-2. ${requiresApproval ? 'Approve or reject this PR' : 'PR will auto-merge after CI checks'}
+2. ${requiresApproval ? "Approve or reject this PR" : "PR will auto-merge after CI checks"}
 3. Monitor agent performance in dashboard
 
 ---
@@ -115,7 +108,7 @@ ${requiresApproval ? '🔴 **REQUIRES USER APPROVAL** - Please review and approv
    * Formatar Mudanças de Arquivo
    */
   _formatChanges(changes) {
-    let formatted = '#### Files Changed\n\n';
+    let formatted = "#### Files Changed\n\n";
 
     changes.forEach((change) => {
       formatted += `- **${change.file}** (${change.type})\n`;
@@ -135,8 +128,8 @@ ${requiresApproval ? '🔴 **REQUIRES USER APPROVAL** - Please review and approv
    */
   _generateBranchName(agentId, timestamp) {
     const date = new Date(timestamp);
-    const dateStr = date.toISOString().split('T')[0];
-    const timeStr = date.getHours().toString().padStart(2, '0');
+    const dateStr = date.toISOString().split("T")[0];
+    const timeStr = date.getHours().toString().padStart(2, "0");
 
     return `agent/${agentId}/${dateStr}-${timeStr}`;
   }
@@ -165,12 +158,12 @@ ${requiresApproval ? '🔴 **REQUIRES USER APPROVAL** - Please review and approv
   /**
    * Aprovar PR (Consentimento do Usuário)
    */
-  async approvePR(prId, approverComment = '') {
+  async approvePR(prId, approverComment = "") {
     try {
       // Simulação: em produção, isso chamaria GitHub API
       return {
         prId,
-        status: 'approved',
+        status: "approved",
         approvedAt: Date.now(),
         comment: approverComment,
       };
@@ -183,12 +176,12 @@ ${requiresApproval ? '🔴 **REQUIRES USER APPROVAL** - Please review and approv
   /**
    * Rejeitar PR
    */
-  async rejectPR(prId, rejectionReason = '') {
+  async rejectPR(prId, rejectionReason = "") {
     try {
       // Simulação: em produção, isso chamaria GitHub API
       return {
         prId,
-        status: 'rejected',
+        status: "rejected",
         rejectedAt: Date.now(),
         reason: rejectionReason,
       };
@@ -206,7 +199,7 @@ ${requiresApproval ? '🔴 **REQUIRES USER APPROVAL** - Please review and approv
       // Simulação: em produção, isso chamaria GitHub API
       return {
         prId,
-        status: 'merged',
+        status: "merged",
         mergedAt: Date.now(),
       };
     } catch (error) {
@@ -223,7 +216,7 @@ ${requiresApproval ? '🔴 **REQUIRES USER APPROVAL** - Please review and approv
       // Simulação: em produção, isso buscaria do GitHub API
       return {
         prId,
-        status: 'pending_approval',
+        status: "pending_approval",
         createdAt: Date.now(),
         updatedAt: Date.now(),
       };
@@ -241,7 +234,7 @@ ${requiresApproval ? '🔴 **REQUIRES USER APPROVAL** - Please review and approv
       // Simulação: em produção, isso buscaria do GitHub API
       return [];
     } catch (error) {
-      console.error('Error listing pending PRs:', error);
+      console.error("Error listing pending PRs:", error);
       return [];
     }
   }
@@ -271,8 +264,8 @@ ${
   - Created: ${new Date(pr.createdAt).toISOString()}
 `
         )
-        .join('\n')
-    : 'No pending PRs'
+        .join("\n")
+    : "No pending PRs"
 }
 
 Timestamp: ${new Date().toISOString()}
@@ -280,11 +273,10 @@ Timestamp: ${new Date().toISOString()}
 
       return report;
     } catch (error) {
-      console.error('Error generating PR report:', error);
+      console.error("Error generating PR report:", error);
       return null;
     }
   }
 }
 
 module.exports = PRGenerator;
-

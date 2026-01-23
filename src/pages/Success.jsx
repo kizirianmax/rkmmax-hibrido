@@ -16,32 +16,45 @@ export default function Success() {
 
   return (
     <div className="success-page">
-      {showConfetti && <div className="confetti-container">
-        {[...Array(50)].map((_, i) => (
-          <div key={i} className="confetti" style={{
-            left: `${Math.random() * 100}%`,
-            animationDelay: `${Math.random() * 3}s`,
-            backgroundColor: ['#22d3ee', '#6366f1', '#ec4899', '#f59e0b'][Math.floor(Math.random() * 4)]
-          }} />
-        ))}
-      </div>}
+      {showConfetti && (
+        <div className="confetti-container">
+          {[...Array(50)].map((_, i) => (
+            <div
+              key={i}
+              className="confetti"
+              style={{
+                left: `${Math.random() * 100}%`,
+                animationDelay: `${Math.random() * 3}s`,
+                backgroundColor: ["#22d3ee", "#6366f1", "#ec4899", "#f59e0b"][
+                  Math.floor(Math.random() * 4)
+                ],
+              }}
+            />
+          ))}
+        </div>
+      )}
 
       <div className="success-container">
         {/* Ícone de sucesso animado */}
         <div className="success-icon">
           <svg viewBox="0 0 100 100" className="checkmark">
             <circle cx="50" cy="50" r="45" fill="none" stroke="#22d3ee" strokeWidth="4" />
-            <path d="M25 50 L40 65 L75 35" fill="none" stroke="#22d3ee" strokeWidth="6" strokeLinecap="round" />
+            <path
+              d="M25 50 L40 65 L75 35"
+              fill="none"
+              stroke="#22d3ee"
+              strokeWidth="6"
+              strokeLinecap="round"
+            />
           </svg>
         </div>
 
         {/* Título principal */}
-        <h1 className="success-title">
-          Bem-vindo ao RKMMAX Premium! 🎉
-        </h1>
+        <h1 className="success-title">Bem-vindo ao RKMMAX Premium! 🎉</h1>
 
         <p className="success-subtitle">
-          Sua assinatura foi ativada com sucesso. Agora você tem acesso completo a todos os recursos premium da plataforma.
+          Sua assinatura foi ativada com sucesso. Agora você tem acesso completo a todos os recursos
+          premium da plataforma.
         </p>
 
         {/* Benefícios */}
@@ -86,7 +99,7 @@ export default function Success() {
         {/* Próximos passos */}
         <div className="next-steps">
           <h2>Comece agora mesmo:</h2>
-          
+
           <div className="cta-buttons">
             <Link to="/agents" className="cta-primary">
               <span className="cta-icon">🎯</span>
@@ -123,12 +136,18 @@ export default function Success() {
 
           <div className="info-card">
             <h4>💳 Gerenciar Assinatura</h4>
-            <p>Acesse <Link to="/subscription">Minha Assinatura</Link> para gerenciar sua assinatura, método de pagamento e faturas.</p>
+            <p>
+              Acesse <Link to="/subscription">Minha Assinatura</Link> para gerenciar sua assinatura,
+              método de pagamento e faturas.
+            </p>
           </div>
 
           <div className="info-card">
             <h4>❓ Precisa de Ajuda?</h4>
-            <p>Nossa equipe está disponível em <a href="mailto:suporte@kizirianmax.site">suporte@kizirianmax.site</a></p>
+            <p>
+              Nossa equipe está disponível em{" "}
+              <a href="mailto:suporte@kizirianmax.site">suporte@kizirianmax.site</a>
+            </p>
           </div>
         </div>
 
@@ -147,4 +166,3 @@ export default function Success() {
     </div>
   );
 }
-

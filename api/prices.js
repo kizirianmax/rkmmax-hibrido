@@ -19,23 +19,14 @@ function allowCORS(req, res) {
 // sinônimos/aliases que reconhecemos por lookup_key, metadata.tier ou nome do produto
 const TIER_ALIASES = {
   basic: ["basic", "básico"],
-  intermediate: [
-    "intermediate",
-    "intermediario",
-    "intermediário",
-    "medio",
-    "médio",
-  ],
+  intermediate: ["intermediate", "intermediario", "intermediário", "medio", "médio"],
   premium: ["premium"],
 };
 
 function matchesRegion(price, region) {
   const lk = (price.lookup_key || "").toLowerCase();
   const metaRegion = (price.metadata?.region || "").toLowerCase();
-  return (
-    lk.startsWith(`rkm_${region.toLowerCase()}_`) ||
-    metaRegion === region.toLowerCase()
-  );
+  return lk.startsWith(`rkm_${region.toLowerCase()}_`) || metaRegion === region.toLowerCase();
 }
 
 function matchesTier(price, tierKey) {
@@ -43,9 +34,7 @@ function matchesTier(price, tierKey) {
   const metaTier = (price.metadata?.tier || "").toLowerCase();
   const prodName = (price.product?.name || "").toLowerCase();
   const aliases = TIER_ALIASES[tierKey] || [tierKey];
-  return aliases.some(
-    (a) => lk.includes(a) || metaTier === a || prodName.includes(a)
-  );
+  return aliases.some((a) => lk.includes(a) || metaTier === a || prodName.includes(a));
 }
 
 function fmtMoney(amount, currency, locale = "pt-BR") {
@@ -69,9 +58,7 @@ export default async function handler(req, res) {
 
   // Fallback amigável se faltar ENV na Vercel
   if (!stripe) {
-    return res
-      .status(200)
-      .json({ region, planos: [], reason: "fallback_no_stripe_env" });
+    return res.status(200).json({ region, planos: [], reason: "fallback_no_stripe_env" });
   }
 
   try {
@@ -99,13 +86,11 @@ export default async function handler(req, res) {
 
         // escolhe o mais barato do tier
         const chosen = candidates.reduce(
-          (acc, p) =>
-            !acc || (p.unit_amount || 0) < (acc.unit_amount || 0) ? p : acc,
+          (acc, p) => (!acc || (p.unit_amount || 0) < (acc.unit_amount || 0) ? p : acc),
           null
         );
 
-        const currency =
-          (chosen.currency || (region === "US" ? "USD" : "BRL")).toUpperCase();
+        const currency = (chosen.currency || (region === "US" ? "USD" : "BRL")).toUpperCase();
         const locale = region === "US" ? "en-US" : "pt-BR";
 
         return {
@@ -128,9 +113,7 @@ export default async function handler(req, res) {
       .filter(Boolean);
 
     if (resultados.length === 0) {
-      return res
-        .status(404)
-        .json({ error: "Nenhum plano encontrado para a região.", region });
+      return res.status(404).json({ error: "Nenhum plano encontrado para a região.", region });
     }
 
     res.setHeader("Cache-Control", "no-store");

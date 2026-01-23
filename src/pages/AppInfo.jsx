@@ -8,8 +8,8 @@ const WHATSAPP_NUMBER = "55SEUNUMEROAQUI";
 function openWhatsAppEmergency() {
   const ok = window.confirm(
     "Canal de EMERGÊNCIA (humano).\n\n" +
-    "Use apenas se o chat inteligente (Serginho) falhar ou for um caso crítico.\n\n" +
-    "Deseja abrir o WhatsApp agora?"
+      "Use apenas se o chat inteligente (Serginho) falhar ou for um caso crítico.\n\n" +
+      "Deseja abrir o WhatsApp agora?"
   );
   if (!ok) return;
 
@@ -30,9 +30,9 @@ export default function AppInfo() {
     <div style={{ padding: "1.5rem", color: "#e6eef5" }}>
       <h1 style={{ marginBottom: 8 }}>Informações do aplicativo</h1>
       <p style={{ opacity: 0.9 }}>
-        Nosso suporte é <strong>100% inteligente</strong> com o <strong>Serginho</strong>,
-        que orquestra os 12 especialistas. Para quase todos os casos,
-        use o botão <em>“Chat no app”</em> na lista de agentes.
+        Nosso suporte é <strong>100% inteligente</strong> com o <strong>Serginho</strong>, que
+        orquestra os 12 especialistas. Para quase todos os casos, use o botão <em>“Chat no app”</em>{" "}
+        na lista de agentes.
       </p>
 
       <div
@@ -46,16 +46,29 @@ export default function AppInfo() {
       >
         <h3 style={{ marginTop: 0 }}>Como usar</h3>
         <ul style={{ lineHeight: 1.6 }}>
-          <li>Escolha o <strong>Serginho</strong> para ele orquestrar tudo para você.</li>
-          <li>Ou fale direto com um <strong>especialista</strong> se já souber o foco.</li>
-          <li>Envie sua mensagem no <strong>chat do app</strong> e acompanhe por aqui.</li>
+          <li>
+            Escolha o <strong>Serginho</strong> para ele orquestrar tudo para você.
+          </li>
+          <li>
+            Ou fale direto com um <strong>especialista</strong> se já souber o foco.
+          </li>
+          <li>
+            Envie sua mensagem no <strong>chat do app</strong> e acompanhe por aqui.
+          </li>
         </ul>
 
         <h3>FAQ rápido</h3>
         <ul style={{ lineHeight: 1.6 }}>
-          <li><strong>Preciso do WhatsApp?</strong> Não. O chat do app resolve 99% dos casos.</li>
-          <li><strong>Quando usar humano?</strong> Só em emergência (bug grave, acesso, cobrança, denúncia).</li>
-          <li><strong>Privacidade:</strong> conversas do app ficam no app; WhatsApp é opcional.</li>
+          <li>
+            <strong>Preciso do WhatsApp?</strong> Não. O chat do app resolve 99% dos casos.
+          </li>
+          <li>
+            <strong>Quando usar humano?</strong> Só em emergência (bug grave, acesso, cobrança,
+            denúncia).
+          </li>
+          <li>
+            <strong>Privacidade:</strong> conversas do app ficam no app; WhatsApp é opcional.
+          </li>
         </ul>
 
         <div
@@ -92,7 +105,9 @@ export default function AppInfo() {
       </div>
 
       <div style={{ marginTop: 16 }}>
-        <Link to="/agents" style={{ color: "#15d0d4" }}>← Voltar para os agentes</Link>
+        <Link to="/agents" style={{ color: "#15d0d4" }}>
+          ← Voltar para os agentes
+        </Link>
       </div>
     </div>
   );

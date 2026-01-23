@@ -3,7 +3,7 @@ import * as Sentry from "@sentry/react";
 
 export function initSentry() {
   const dsn = process.env.REACT_APP_SENTRY_DSN;
-  
+
   if (!dsn) {
     console.warn("⚠️ Sentry DSN not configured. Error tracking disabled.");
     return;
@@ -20,27 +20,27 @@ export function initSentry() {
         maskAllInputs: true,
         blockAllMedia: true,
         // Permitir apenas elementos específicos
-        unmask: ['.public-content'],
+        unmask: [".public-content"],
       }),
     ],
-    
+
     // Performance Monitoring - Amostragem econômica: 5% em produção
     tracesSampleRate: process.env.NODE_ENV === "production" ? 0.05 : 1.0,
-    
+
     // Session Replay - Amostragem econômica
     replaysSessionSampleRate: 0.05, // 5% das sessões normais
-    replaysOnErrorSampleRate: 1.0,  // 100% dos erros (crítico)
-    
+    replaysOnErrorSampleRate: 1.0, // 100% dos erros (crítico)
+
     // Release tracking
     release: process.env.REACT_APP_VERSION || "1.0.0",
-    
+
     // Ignore common errors
     ignoreErrors: [
       "ResizeObserver loop limit exceeded",
       "Non-Error promise rejection captured",
       "Network request failed",
     ],
-    
+
     beforeSend(event, _hint) {
       // Add user context if available
       const userEmail = localStorage.getItem("user_email");
@@ -49,7 +49,7 @@ export function initSentry() {
           email: userEmail,
         };
       }
-      
+
       // Add custom context
       event.contexts = {
         ...event.contexts,
@@ -58,7 +58,7 @@ export function initSentry() {
           userAgent: navigator.userAgent,
         },
       };
-      
+
       return event;
     },
   });
@@ -91,4 +91,3 @@ export function setUserContext(email, userId = null) {
 export function clearUserContext() {
   Sentry.setUser(null);
 }
-

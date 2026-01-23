@@ -3,9 +3,20 @@
  * Monitoramento em tempo real do sistema de agentes
  */
 
-import React, { useState, useEffect } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+import React, { useState, useEffect } from "react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  LineChart,
+  Line,
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  Legend,
+  ResponsiveContainer,
+} from "recharts";
 
 export default function HybridSystemDashboard() {
   const [stats, setStats] = useState(null);
@@ -21,44 +32,46 @@ export default function HybridSystemDashboard() {
         const mockStats = {
           serginho: {
             uptime: Math.floor(Math.random() * 86400000),
-            mode: 'AUTONOMOUS',
+            mode: "AUTONOMOUS",
             requestsProcessed: Math.floor(Math.random() * 1000),
           },
           registry: {
             totalSpecialists: 55,
             loadedSpecialists: Math.floor(Math.random() * 20) + 1,
-            memoryUsage: (Math.random() * 40).toFixed(2) + ' MB',
+            memoryUsage: (Math.random() * 40).toFixed(2) + " MB",
           },
           cache: {
             hits: Math.floor(Math.random() * 500),
             misses: Math.floor(Math.random() * 200),
-            hitRate: (Math.random() * 100).toFixed(2) + '%',
-            estimatedSavings: '$' + Math.floor(Math.random() * 5000),
+            hitRate: (Math.random() * 100).toFixed(2) + "%",
+            estimatedSavings: "$" + Math.floor(Math.random() * 5000),
           },
           security: {
             blockedPrompts: Math.floor(Math.random() * 50),
             redactedInstances: Math.floor(Math.random() * 100),
-            modelArmorStatus: 'ACTIVE',
+            modelArmorStatus: "ACTIVE",
           },
           performance: {
-            avgResponseTime: Math.floor(Math.random() * 100) + 'ms',
-            p95ResponseTime: Math.floor(Math.random() * 200) + 'ms',
-            p99ResponseTime: Math.floor(Math.random() * 300) + 'ms',
+            avgResponseTime: Math.floor(Math.random() * 100) + "ms",
+            p95ResponseTime: Math.floor(Math.random() * 200) + "ms",
+            p99ResponseTime: Math.floor(Math.random() * 300) + "ms",
           },
         };
 
         setStats(mockStats);
 
         // Adicionar ao histórico
-        setHistory((prev) => [
-          ...prev,
-          {
-            timestamp: new Date().toLocaleTimeString(),
-            hitRate: parseFloat(mockStats.cache.hitRate),
-            responseTime: parseInt(mockStats.performance.avgResponseTime),
-            loadedSpecialists: mockStats.registry.loadedSpecialists,
-          },
-        ].slice(-20)); // Manter últimos 20
+        setHistory((prev) =>
+          [
+            ...prev,
+            {
+              timestamp: new Date().toLocaleTimeString(),
+              hitRate: parseFloat(mockStats.cache.hitRate),
+              responseTime: parseInt(mockStats.performance.avgResponseTime),
+              loadedSpecialists: mockStats.registry.loadedSpecialists,
+            },
+          ].slice(-20)
+        ); // Manter últimos 20
 
         setLoading(false);
       } catch (err) {
@@ -106,7 +119,9 @@ export default function HybridSystemDashboard() {
         {/* Header */}
         <div className="mb-8">
           <h1 className="text-4xl font-bold text-white mb-2">🤖 Hybrid System Dashboard</h1>
-          <p className="text-gray-400">Monitoramento em tempo real do Sistema Híbrido Inteligente</p>
+          <p className="text-gray-400">
+            Monitoramento em tempo real do Sistema Híbrido Inteligente
+          </p>
         </div>
 
         {/* Status Principal */}
@@ -124,7 +139,9 @@ export default function HybridSystemDashboard() {
                 </div>
                 <div className="flex items-center justify-between">
                   <span className="text-gray-400">Uptime:</span>
-                  <span className="text-blue-400">{(stats?.serginho.uptime / 3600000).toFixed(2)}h</span>
+                  <span className="text-blue-400">
+                    {(stats?.serginho.uptime / 3600000).toFixed(2)}h
+                  </span>
                 </div>
                 <div className="flex items-center justify-between">
                   <span className="text-gray-400">Requisições:</span>
@@ -143,7 +160,9 @@ export default function HybridSystemDashboard() {
               <div className="space-y-2">
                 <div className="flex items-center justify-between">
                   <span className="text-gray-400">Total:</span>
-                  <span className="text-blue-400 font-bold">{stats?.registry.totalSpecialists}</span>
+                  <span className="text-blue-400 font-bold">
+                    {stats?.registry.totalSpecialists}
+                  </span>
                 </div>
                 <div className="flex items-center justify-between">
                   <span className="text-gray-400">Carregados:</span>
@@ -170,7 +189,9 @@ export default function HybridSystemDashboard() {
                 </div>
                 <div className="flex items-center justify-between">
                   <span className="text-gray-400">Hits/Misses:</span>
-                  <span className="text-blue-400">{stats?.cache.hits}/{stats?.cache.misses}</span>
+                  <span className="text-blue-400">
+                    {stats?.cache.hits}/{stats?.cache.misses}
+                  </span>
                 </div>
                 <div className="flex items-center justify-between">
                   <span className="text-gray-400">Economia:</span>
@@ -219,8 +240,8 @@ export default function HybridSystemDashboard() {
                     <XAxis dataKey="timestamp" stroke="#888" />
                     <YAxis stroke="#888" />
                     <Tooltip
-                      contentStyle={{ backgroundColor: '#1e293b', border: '1px solid #404040' }}
-                      labelStyle={{ color: '#fff' }}
+                      contentStyle={{ backgroundColor: "#1e293b", border: "1px solid #404040" }}
+                      labelStyle={{ color: "#fff" }}
                     />
                     <Legend />
                     <Line
@@ -251,8 +272,8 @@ export default function HybridSystemDashboard() {
                     <XAxis dataKey="timestamp" stroke="#888" />
                     <YAxis stroke="#888" />
                     <Tooltip
-                      contentStyle={{ backgroundColor: '#1e293b', border: '1px solid #404040' }}
-                      labelStyle={{ color: '#fff' }}
+                      contentStyle={{ backgroundColor: "#1e293b", border: "1px solid #404040" }}
+                      labelStyle={{ color: "#fff" }}
                     />
                     <Legend />
                     <Line
@@ -278,7 +299,9 @@ export default function HybridSystemDashboard() {
               <CardTitle className="text-sm text-gray-400">Avg Response Time</CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-3xl font-bold text-blue-400">{stats?.performance.avgResponseTime}</p>
+              <p className="text-3xl font-bold text-blue-400">
+                {stats?.performance.avgResponseTime}
+              </p>
             </CardContent>
           </Card>
 
@@ -287,7 +310,9 @@ export default function HybridSystemDashboard() {
               <CardTitle className="text-sm text-gray-400">P95 Response Time</CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-3xl font-bold text-yellow-400">{stats?.performance.p95ResponseTime}</p>
+              <p className="text-3xl font-bold text-yellow-400">
+                {stats?.performance.p95ResponseTime}
+              </p>
             </CardContent>
           </Card>
 
@@ -296,7 +321,9 @@ export default function HybridSystemDashboard() {
               <CardTitle className="text-sm text-gray-400">P99 Response Time</CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-3xl font-bold text-red-400">{stats?.performance.p99ResponseTime}</p>
+              <p className="text-3xl font-bold text-red-400">
+                {stats?.performance.p99ResponseTime}
+              </p>
             </CardContent>
           </Card>
         </div>
@@ -316,7 +343,7 @@ export default function HybridSystemDashboard() {
                     <span className="text-green-400">35%</span>
                   </div>
                   <div className="w-full bg-slate-700 rounded-full h-2">
-                    <div className="bg-green-400 h-2 rounded-full" style={{ width: '35%' }}></div>
+                    <div className="bg-green-400 h-2 rounded-full" style={{ width: "35%" }}></div>
                   </div>
                 </div>
 
@@ -326,7 +353,7 @@ export default function HybridSystemDashboard() {
                     <span className="text-yellow-400">70%</span>
                   </div>
                   <div className="w-full bg-slate-700 rounded-full h-2">
-                    <div className="bg-yellow-400 h-2 rounded-full" style={{ width: '70%' }}></div>
+                    <div className="bg-yellow-400 h-2 rounded-full" style={{ width: "70%" }}></div>
                   </div>
                 </div>
 
@@ -336,16 +363,22 @@ export default function HybridSystemDashboard() {
                     <span className="text-blue-400">45%</span>
                   </div>
                   <div className="w-full bg-slate-700 rounded-full h-2">
-                    <div className="bg-blue-400 h-2 rounded-full" style={{ width: '45%' }}></div>
+                    <div className="bg-blue-400 h-2 rounded-full" style={{ width: "45%" }}></div>
                   </div>
                 </div>
               </div>
 
               {/* Status Badges */}
               <div className="flex flex-wrap gap-2 mt-6">
-                <div className="px-3 py-1 bg-green-900 text-green-300 rounded-full text-sm">✅ All Systems Operational</div>
-                <div className="px-3 py-1 bg-blue-900 text-blue-300 rounded-full text-sm">🔒 Security: Active</div>
-                <div className="px-3 py-1 bg-purple-900 text-purple-300 rounded-full text-sm">⚡ Performance: Optimal</div>
+                <div className="px-3 py-1 bg-green-900 text-green-300 rounded-full text-sm">
+                  ✅ All Systems Operational
+                </div>
+                <div className="px-3 py-1 bg-blue-900 text-blue-300 rounded-full text-sm">
+                  🔒 Security: Active
+                </div>
+                <div className="px-3 py-1 bg-purple-900 text-purple-300 rounded-full text-sm">
+                  ⚡ Performance: Optimal
+                </div>
               </div>
             </div>
           </CardContent>
@@ -360,4 +393,3 @@ export default function HybridSystemDashboard() {
     </div>
   );
 }
-

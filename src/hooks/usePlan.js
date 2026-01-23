@@ -7,14 +7,20 @@ export default function usePlan() {
 
   useEffect(() => {
     if (typeof window === "undefined") {
-      setPlan("basic"); setLoading(false); return;
+      setPlan("basic");
+      setLoading(false);
+      return;
     }
 
     const ctrl = new AbortController();
 
     const load = async () => {
       const raw = window.localStorage.getItem("user_email");
-      if (!raw) { setPlan("basic"); setLoading(false); return; }
+      if (!raw) {
+        setPlan("basic");
+        setLoading(false);
+        return;
+      }
 
       const email = raw.trim().toLowerCase();
       try {
@@ -22,7 +28,10 @@ export default function usePlan() {
           headers: { "x-user-email": email },
           signal: ctrl.signal,
         });
-        if (!res.ok) { setPlan("basic"); return; }
+        if (!res.ok) {
+          setPlan("basic");
+          return;
+        }
 
         const j = await res.json().catch(() => ({}));
         setPlan(j.plan || "basic");

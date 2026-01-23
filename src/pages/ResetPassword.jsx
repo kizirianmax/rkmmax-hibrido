@@ -142,8 +142,8 @@ export default function ResetPassword() {
 
         {!isRecovery && (
           <p className="mt-6 text-center text-gray-400 text-sm">
-            Depois de clicar no link do e-mail, você será trazido de volta para esta página
-            para definir a nova senha.
+            Depois de clicar no link do e-mail, você será trazido de volta para esta página para
+            definir a nova senha.
           </p>
         )}
       </div>

@@ -13,7 +13,7 @@ export default function AgentCard({ agent, onClick }) {
         background: "white",
         width: "100%",
         textAlign: "left",
-        boxShadow: "0 1px 2px rgba(0,0,0,.04)"
+        boxShadow: "0 1px 2px rgba(0,0,0,.04)",
       }}
     >
       <img
@@ -22,7 +22,9 @@ export default function AgentCard({ agent, onClick }) {
         width={44}
         height={44}
         style={{ borderRadius: 12, background: "#0f172a10" }}
-        onError={(e) => { e.currentTarget.src = "/avatars/serginho.svg"; }}
+        onError={(e) => {
+          e.currentTarget.src = "/avatars/serginho.svg";
+        }}
       />
       <div style={{ display: "grid" }}>
         <strong style={{ lineHeight: 1.2 }}>{agent.name}</strong>

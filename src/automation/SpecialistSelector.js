@@ -9,114 +9,114 @@ class SpecialistSelector {
     // Mapeamento de especialistas por categoria
     this.specialists = {
       // Desenvolvimento
-      'Dev': {
-        name: 'Dev',
-        category: 'DEVELOPMENT',
-        skills: ['código', 'programação', 'função', 'refatorar', 'bug', 'feature'],
-        models: ['gemini-2.5-pro', 'gemini-2.0-flash'],
+      Dev: {
+        name: "Dev",
+        category: "DEVELOPMENT",
+        skills: ["código", "programação", "função", "refatorar", "bug", "feature"],
+        models: ["gemini-2.5-pro", "gemini-2.0-flash"],
       },
-      'Frontend': {
-        name: 'Frontend',
-        category: 'DEVELOPMENT',
-        skills: ['react', 'vue', 'angular', 'componente', 'ui', 'interface', 'estilo'],
-        models: ['gemini-2.0-flash'],
+      Frontend: {
+        name: "Frontend",
+        category: "DEVELOPMENT",
+        skills: ["react", "vue", "angular", "componente", "ui", "interface", "estilo"],
+        models: ["gemini-2.0-flash"],
       },
-      'Backend': {
-        name: 'Backend',
-        category: 'DEVELOPMENT',
-        skills: ['api', 'banco de dados', 'servidor', 'node', 'python', 'java'],
-        models: ['gemini-2.5-pro'],
+      Backend: {
+        name: "Backend",
+        category: "DEVELOPMENT",
+        skills: ["api", "banco de dados", "servidor", "node", "python", "java"],
+        models: ["gemini-2.5-pro"],
       },
-      'Mobile': {
-        name: 'Mobile',
-        category: 'DEVELOPMENT',
-        skills: ['react native', 'flutter', 'ios', 'android', 'app'],
-        models: ['gemini-2.0-flash'],
+      Mobile: {
+        name: "Mobile",
+        category: "DEVELOPMENT",
+        skills: ["react native", "flutter", "ios", "android", "app"],
+        models: ["gemini-2.0-flash"],
       },
-      'DevOps': {
-        name: 'DevOps',
-        category: 'INFRASTRUCTURE',
-        skills: ['deploy', 'ci/cd', 'docker', 'kubernetes', 'vercel', 'github'],
-        models: ['gemini-2.5-pro'],
+      DevOps: {
+        name: "DevOps",
+        category: "INFRASTRUCTURE",
+        skills: ["deploy", "ci/cd", "docker", "kubernetes", "vercel", "github"],
+        models: ["gemini-2.5-pro"],
       },
 
       // Design
-      'Designer': {
-        name: 'Designer',
-        category: 'DESIGN',
-        skills: ['design', 'ui', 'ux', 'visual', 'layout', 'cores', 'tipografia'],
-        models: ['gemini-2.0-flash'],
+      Designer: {
+        name: "Designer",
+        category: "DESIGN",
+        skills: ["design", "ui", "ux", "visual", "layout", "cores", "tipografia"],
+        models: ["gemini-2.0-flash"],
       },
-      'UX': {
-        name: 'UX',
-        category: 'DESIGN',
-        skills: ['experiência', 'usuário', 'usabilidade', 'acessibilidade', 'fluxo'],
-        models: ['gemini-2.0-flash'],
+      UX: {
+        name: "UX",
+        category: "DESIGN",
+        skills: ["experiência", "usuário", "usabilidade", "acessibilidade", "fluxo"],
+        models: ["gemini-2.0-flash"],
       },
 
       // Dados
-      'Pesquisador': {
-        name: 'Pesquisador',
-        category: 'RESEARCH',
-        skills: ['pesquisa', 'análise', 'dados', 'estatística', 'investigação'],
-        models: ['gemini-2.5-pro'],
+      Pesquisador: {
+        name: "Pesquisador",
+        category: "RESEARCH",
+        skills: ["pesquisa", "análise", "dados", "estatística", "investigação"],
+        models: ["gemini-2.5-pro"],
       },
-      'DataAnalyst': {
-        name: 'DataAnalyst',
-        category: 'DATA',
-        skills: ['dados', 'análise', 'gráfico', 'visualização', 'sql', 'python'],
-        models: ['gemini-2.5-pro'],
+      DataAnalyst: {
+        name: "DataAnalyst",
+        category: "DATA",
+        skills: ["dados", "análise", "gráfico", "visualização", "sql", "python"],
+        models: ["gemini-2.5-pro"],
       },
 
       // Conteúdo
-      'Escritor': {
-        name: 'Escritor',
-        category: 'CONTENT',
-        skills: ['conteúdo', 'documentação', 'escrita', 'artigo', 'blog', 'readme'],
-        models: ['gemini-2.0-flash'],
+      Escritor: {
+        name: "Escritor",
+        category: "CONTENT",
+        skills: ["conteúdo", "documentação", "escrita", "artigo", "blog", "readme"],
+        models: ["gemini-2.0-flash"],
       },
-      'Copywriter': {
-        name: 'Copywriter',
-        category: 'CONTENT',
-        skills: ['copy', 'marketing', 'venda', 'persuasão', 'anúncio'],
-        models: ['gemini-2.0-flash'],
+      Copywriter: {
+        name: "Copywriter",
+        category: "CONTENT",
+        skills: ["copy", "marketing", "venda", "persuasão", "anúncio"],
+        models: ["gemini-2.0-flash"],
       },
 
       // Qualidade
-      'QA': {
-        name: 'QA',
-        category: 'QUALITY',
-        skills: ['teste', 'qualidade', 'bug', 'validação', 'verificação'],
-        models: ['gemini-2.0-flash'],
+      QA: {
+        name: "QA",
+        category: "QUALITY",
+        skills: ["teste", "qualidade", "bug", "validação", "verificação"],
+        models: ["gemini-2.0-flash"],
       },
-      'SecurityExpert': {
-        name: 'SecurityExpert',
-        category: 'SECURITY',
-        skills: ['segurança', 'vulnerabilidade', 'criptografia', 'autenticação'],
-        models: ['gemini-2.5-pro'],
+      SecurityExpert: {
+        name: "SecurityExpert",
+        category: "SECURITY",
+        skills: ["segurança", "vulnerabilidade", "criptografia", "autenticação"],
+        models: ["gemini-2.5-pro"],
       },
 
       // Serginho (orquestrador)
-      'Serginho': {
-        name: 'Serginho',
-        category: 'ORCHESTRATION',
-        skills: ['orquestração', 'coordenação', 'delegação', 'geral'],
-        models: ['gemini-2.0-flash'],
+      Serginho: {
+        name: "Serginho",
+        category: "ORCHESTRATION",
+        skills: ["orquestração", "coordenação", "delegação", "geral"],
+        models: ["gemini-2.0-flash"],
       },
     };
 
     // Mapeamento de tipos de tarefa para especialistas
     this.taskTypeMapping = {
-      'COMPONENT': ['Frontend', 'Designer', 'UX'],
-      'FUNCTION': ['Dev', 'Backend'],
-      'TEST': ['QA', 'Dev'],
-      'STYLE': ['Designer', 'Frontend', 'UX'],
-      'DOCUMENTATION': ['Escritor', 'Dev'],
-      'REFACTOR': ['Dev', 'Backend', 'Frontend'],
-      'ANALYSIS': ['Pesquisador', 'DataAnalyst'],
-      'SECURITY': ['SecurityExpert', 'Backend', 'DevOps'],
-      'DEPLOYMENT': ['DevOps', 'Backend'],
-      'GENERAL': ['Serginho', 'Dev'],
+      COMPONENT: ["Frontend", "Designer", "UX"],
+      FUNCTION: ["Dev", "Backend"],
+      TEST: ["QA", "Dev"],
+      STYLE: ["Designer", "Frontend", "UX"],
+      DOCUMENTATION: ["Escritor", "Dev"],
+      REFACTOR: ["Dev", "Backend", "Frontend"],
+      ANALYSIS: ["Pesquisador", "DataAnalyst"],
+      SECURITY: ["SecurityExpert", "Backend", "DevOps"],
+      DEPLOYMENT: ["DevOps", "Backend"],
+      GENERAL: ["Serginho", "Dev"],
     };
   }
 
@@ -127,7 +127,7 @@ class SpecialistSelector {
     console.log(`🎯 Selecionando especialista para: ${taskType}`);
 
     // Obter especialistas recomendados para o tipo de tarefa
-    let candidates = this.taskTypeMapping[taskType] || this.taskTypeMapping['GENERAL'];
+    let candidates = this.taskTypeMapping[taskType] || this.taskTypeMapping["GENERAL"];
 
     // Se houver keywords, refinar a seleção
     if (keywords && keywords.length > 0) {
@@ -135,7 +135,7 @@ class SpecialistSelector {
     }
 
     // Selecionar o primeiro (mais recomendado)
-    const selected = candidates[0] || 'Serginho';
+    const selected = candidates[0] || "Serginho";
 
     console.log(`✅ Especialista selecionado: ${selected}`);
 
@@ -146,11 +146,11 @@ class SpecialistSelector {
    * Refinar candidatos por keywords
    */
   refineByKeywords(candidates, keywords) {
-    const scored = candidates.map(name => {
+    const scored = candidates.map((name) => {
       const specialist = this.specialists[name];
-      const matches = keywords.filter(kw => 
-        specialist.skills.some(skill => 
-          skill.includes(kw.toLowerCase()) || kw.toLowerCase().includes(skill)
+      const matches = keywords.filter((kw) =>
+        specialist.skills.some(
+          (skill) => skill.includes(kw.toLowerCase()) || kw.toLowerCase().includes(skill)
         )
       ).length;
 
@@ -160,7 +160,7 @@ class SpecialistSelector {
     // Ordenar por score (descendente)
     scored.sort((a, b) => b.score - a.score);
 
-    return scored.map(s => s.name);
+    return scored.map((s) => s.name);
   }
 
   /**
@@ -181,7 +181,7 @@ class SpecialistSelector {
    * Listar especialistas por categoria
    */
   listByCategory(category) {
-    return Object.values(this.specialists).filter(s => s.category === category);
+    return Object.values(this.specialists).filter((s) => s.category === category);
   }
 
   /**
@@ -189,10 +189,10 @@ class SpecialistSelector {
    */
   getRecommendedModel(specialistName) {
     const specialist = this.specialists[specialistName];
-    if (!specialist) return 'gemini-2.0-flash';
+    if (!specialist) return "gemini-2.0-flash";
 
     // Retornar o primeiro modelo recomendado
-    return specialist.models[0] || 'gemini-2.0-flash';
+    return specialist.models[0] || "gemini-2.0-flash";
   }
 
   /**
@@ -202,7 +202,7 @@ class SpecialistSelector {
     const results = [];
 
     for (const [name, specialist] of Object.entries(this.specialists)) {
-      if (specialist.skills.some(s => s.includes(skill.toLowerCase()))) {
+      if (specialist.skills.some((s) => s.includes(skill.toLowerCase()))) {
         results.push(name);
       }
     }
@@ -214,7 +214,7 @@ class SpecialistSelector {
    * Sugerir especialistas para uma tarefa complexa
    */
   suggestTeam(taskType, keywords = []) {
-    let candidates = this.taskTypeMapping[taskType] || this.taskTypeMapping['GENERAL'];
+    let candidates = this.taskTypeMapping[taskType] || this.taskTypeMapping["GENERAL"];
 
     if (keywords && keywords.length > 0) {
       candidates = this.refineByKeywords(candidates, keywords);
@@ -237,9 +237,9 @@ class SpecialistSelector {
   addSpecialist(name, config) {
     this.specialists[name] = {
       name,
-      category: config.category || 'CUSTOM',
+      category: config.category || "CUSTOM",
       skills: config.skills || [],
-      models: config.models || ['gemini-2.0-flash'],
+      models: config.models || ["gemini-2.0-flash"],
     };
 
     return true;
@@ -249,8 +249,8 @@ class SpecialistSelector {
    * Remover especialista
    */
   removeSpecialist(name) {
-    if (name === 'Serginho') {
-      throw new Error('Não é possível remover Serginho (orquestrador)');
+    if (name === "Serginho") {
+      throw new Error("Não é possível remover Serginho (orquestrador)");
     }
 
     delete this.specialists[name];
@@ -266,7 +266,7 @@ class SpecialistSelector {
 
     for (const specialist of Object.values(this.specialists)) {
       categories[specialist.category] = (categories[specialist.category] || 0) + 1;
-      specialist.skills.forEach(skill => totalSkills.add(skill));
+      specialist.skills.forEach((skill) => totalSkills.add(skill));
     }
 
     return {

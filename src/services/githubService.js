@@ -7,14 +7,14 @@
 class GitHubService {
   constructor(token = null) {
     this.token = token || process.env.GITHUB_TOKEN;
-    this.baseUrl = 'https://api.github.com';
+    this.baseUrl = "https://api.github.com";
     this.headers = {
-      'Accept': 'application/vnd.github.v3+json',
-      'User-Agent': 'RKMMAX-Hybrid-System',
+      Accept: "application/vnd.github.v3+json",
+      "User-Agent": "RKMMAX-Hybrid-System",
     };
 
     if (this.token) {
-      this.headers['Authorization'] = `token ${this.token}`;
+      this.headers["Authorization"] = `token ${this.token}`;
     }
   }
 
@@ -24,15 +24,15 @@ class GitHubService {
   parseGitHubUrl(url) {
     try {
       const urlObj = new URL(url);
-      const parts = urlObj.pathname.split('/').filter(Boolean);
-      
+      const parts = urlObj.pathname.split("/").filter(Boolean);
+
       if (parts.length < 2) {
-        throw new Error('URL inválida');
+        throw new Error("URL inválida");
       }
 
       return {
         owner: parts[0],
-        repo: parts[1].replace('.git', ''),
+        repo: parts[1].replace(".git", ""),
       };
     } catch (error) {
       throw new Error(`URL GitHub inválida: ${error.message}`);
@@ -44,10 +44,9 @@ class GitHubService {
    */
   async getRepositoryInfo(owner, repo) {
     try {
-      const response = await fetch(
-        `${this.baseUrl}/repos/${owner}/${repo}`,
-        { headers: this.headers }
-      );
+      const response = await fetch(`${this.baseUrl}/repos/${owner}/${repo}`, {
+        headers: this.headers,
+      });
 
       if (!response.ok) {
         throw new Error(`GitHub API error: ${response.status}`);
@@ -75,12 +74,11 @@ class GitHubService {
   /**
    * Obter estrutura do repositório
    */
-  async getRepositoryStructure(owner, repo, path = '') {
+  async getRepositoryStructure(owner, repo, path = "") {
     try {
-      const response = await fetch(
-        `${this.baseUrl}/repos/${owner}/${repo}/contents/${path}`,
-        { headers: this.headers }
-      );
+      const response = await fetch(`${this.baseUrl}/repos/${owner}/${repo}/contents/${path}`, {
+        headers: this.headers,
+      });
 
       if (!response.ok) {
         throw new Error(`GitHub API error: ${response.status}`);
@@ -92,7 +90,7 @@ class GitHubService {
         return [data];
       }
 
-      return data.map(item => ({
+      return data.map((item) => ({
         name: item.name,
         type: item.type,
         path: item.path,
@@ -109,10 +107,9 @@ class GitHubService {
    */
   async getFileContent(owner, repo, path) {
     try {
-      const response = await fetch(
-        `${this.baseUrl}/repos/${owner}/${repo}/contents/${path}`,
-        { headers: this.headers }
-      );
+      const response = await fetch(`${this.baseUrl}/repos/${owner}/${repo}/contents/${path}`, {
+        headers: this.headers,
+      });
 
       if (!response.ok) {
         throw new Error(`GitHub API error: ${response.status}`);
@@ -120,12 +117,12 @@ class GitHubService {
 
       const data = await response.json();
 
-      if (data.type !== 'file') {
-        throw new Error('Caminho não é um arquivo');
+      if (data.type !== "file") {
+        throw new Error("Caminho não é um arquivo");
       }
 
       // Decodificar conteúdo base64
-      const content = Buffer.from(data.content, 'base64').toString('utf-8');
+      const content = Buffer.from(data.content, "base64").toString("utf-8");
 
       return {
         name: data.name,
@@ -143,17 +140,16 @@ class GitHubService {
    */
   async getReadme(owner, repo) {
     try {
-      const response = await fetch(
-        `${this.baseUrl}/repos/${owner}/${repo}/readme`,
-        { headers: this.headers }
-      );
+      const response = await fetch(`${this.baseUrl}/repos/${owner}/${repo}/readme`, {
+        headers: this.headers,
+      });
 
       if (!response.ok) {
         return null;
       }
 
       const data = await response.json();
-      const content = Buffer.from(data.content, 'base64').toString('utf-8');
+      const content = Buffer.from(data.content, "base64").toString("utf-8");
 
       return {
         name: data.name,
@@ -170,7 +166,7 @@ class GitHubService {
    */
   async getPackageJson(owner, repo) {
     try {
-      const file = await this.getFileContent(owner, repo, 'package.json');
+      const file = await this.getFileContent(owner, repo, "package.json");
       return JSON.parse(file.content);
     } catch (error) {
       return null;
@@ -183,12 +179,13 @@ class GitHubService {
   async getMainFiles(owner, repo) {
     try {
       const structure = await this.getRepositoryStructure(owner, repo);
-      
-      const mainFiles = structure.filter(item => 
-        item.type === 'file' && 
-        ['.md', '.json', '.js', '.jsx', '.ts', '.tsx', '.py', '.go', '.java'].some(ext => 
-          item.name.toLowerCase().endsWith(ext)
-        )
+
+      const mainFiles = structure.filter(
+        (item) =>
+          item.type === "file" &&
+          [".md", ".json", ".js", ".jsx", ".ts", ".tsx", ".py", ".go", ".java"].some((ext) =>
+            item.name.toLowerCase().endsWith(ext)
+          )
       );
 
       return mainFiles.slice(0, 20); // Limitar a 20 arquivos
@@ -237,10 +234,9 @@ class GitHubService {
 }
 
 // Exportar para uso em servidor Node.js
-if (typeof module !== 'undefined' && module.exports) {
+if (typeof module !== "undefined" && module.exports) {
   module.exports = GitHubService;
 }
 
 // Exportar para uso em cliente React
 export default GitHubService;
-

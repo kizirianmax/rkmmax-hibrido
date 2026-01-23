@@ -1,6 +1,6 @@
 /**
  * ALERT SYSTEM - ALERTAS INTELIGENTES
- * 
+ *
  * Sistema de notificações para:
  * - Slack (webhooks)
  * - Email (SMTP)
@@ -19,7 +19,7 @@ class AlertSystem {
       enableEmail: config.enableEmail !== false,
       enableDashboard: config.enableDashboard !== false,
       enableLogs: config.enableLogs !== false,
-      logFile: config.logFile || './logs/alerts.log',
+      logFile: config.logFile || "./logs/alerts.log",
       ...config,
     };
 
@@ -41,10 +41,10 @@ class AlertSystem {
    */
   initializeLogFile() {
     if (this.config.enableLogs) {
-      const fs = require('fs');
-      const path = require('path');
+      const fs = require("fs");
+      const path = require("path");
       const dir = path.dirname(this.config.logFile);
-      
+
       if (!fs.existsSync(dir)) {
         fs.mkdirSync(dir, { recursive: true });
       }
@@ -87,7 +87,7 @@ class AlertSystem {
    */
   async sendToSlack(alert) {
     try {
-      const fetch = require('node-fetch');
+      const fetch = require("node-fetch");
       const color = this.getAlertColor(alert.severity);
       const emoji = this.getAlertEmoji(alert.severity);
 
@@ -99,35 +99,35 @@ class AlertSystem {
             text: alert.message,
             fields: [
               {
-                title: 'Severity',
+                title: "Severity",
                 value: alert.severity,
                 short: true,
               },
               {
-                title: 'Timestamp',
+                title: "Timestamp",
                 value: alert.timestamp,
                 short: true,
               },
               {
-                title: 'Component',
-                value: alert.component || 'Unknown',
+                title: "Component",
+                value: alert.component || "Unknown",
                 short: true,
               },
               {
-                title: 'Value',
-                value: alert.value ? `${alert.value}${alert.unit || ''}` : 'N/A',
+                title: "Value",
+                value: alert.value ? `${alert.value}${alert.unit || ""}` : "N/A",
                 short: true,
               },
             ],
-            footer: 'RKMMAX Hybrid System',
+            footer: "RKMMAX Hybrid System",
             ts: Math.floor(Date.now() / 1000),
           },
         ],
       };
 
       const response = await fetch(this.config.slackWebhook, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
       });
 
@@ -137,7 +137,7 @@ class AlertSystem {
 
       return true;
     } catch (error) {
-      console.error('Failed to send Slack alert:', error);
+      console.error("Failed to send Slack alert:", error);
       return false;
     }
   }
@@ -147,7 +147,7 @@ class AlertSystem {
    */
   async sendEmail(alert) {
     try {
-      const nodemailer = require('nodemailer');
+      const nodemailer = require("nodemailer");
 
       // Criar transporter
       const transporter = nodemailer.createTransport(this.config.emailSmtp);
@@ -157,8 +157,8 @@ class AlertSystem {
         <h2>${alert.title}</h2>
         <p><strong>Severity:</strong> ${alert.severity}</p>
         <p><strong>Message:</strong> ${alert.message}</p>
-        <p><strong>Component:</strong> ${alert.component || 'Unknown'}</p>
-        <p><strong>Value:</strong> ${alert.value}${alert.unit || ''}</p>
+        <p><strong>Component:</strong> ${alert.component || "Unknown"}</p>
+        <p><strong>Value:</strong> ${alert.value}${alert.unit || ""}</p>
         <p><strong>Timestamp:</strong> ${alert.timestamp}</p>
         <hr>
         <p><small>RKMMAX Hybrid System Monitoring</small></p>
@@ -174,7 +174,7 @@ class AlertSystem {
 
       return true;
     } catch (error) {
-      console.error('Failed to send email alert:', error);
+      console.error("Failed to send email alert:", error);
       return false;
     }
   }
@@ -184,11 +184,11 @@ class AlertSystem {
    */
   logToFile(alert) {
     try {
-      const fs = require('fs');
-      const line = JSON.stringify(alert) + '\n';
+      const fs = require("fs");
+      const line = JSON.stringify(alert) + "\n";
       fs.appendFileSync(this.config.logFile, line);
     } catch (error) {
-      console.error('Failed to log alert:', error);
+      console.error("Failed to log alert:", error);
     }
   }
 
@@ -201,72 +201,72 @@ class AlertSystem {
     // Memory Usage
     if (metrics.memoryUsage > this.thresholds.memoryUsage) {
       alerts.push({
-        title: '⚠️ High Memory Usage',
+        title: "⚠️ High Memory Usage",
         message: `Memory usage is ${metrics.memoryUsage.toFixed(2)}MB, exceeding threshold of ${this.thresholds.memoryUsage}MB`,
-        severity: metrics.memoryUsage > this.thresholds.memoryUsage * 1.5 ? 'CRITICAL' : 'WARNING',
-        component: 'System',
+        severity: metrics.memoryUsage > this.thresholds.memoryUsage * 1.5 ? "CRITICAL" : "WARNING",
+        component: "System",
         value: metrics.memoryUsage,
-        unit: 'MB',
+        unit: "MB",
       });
     }
 
     // Response Time
     if (metrics.responseTime > this.thresholds.responseTime) {
       alerts.push({
-        title: '⏱️ Slow Response Time',
+        title: "⏱️ Slow Response Time",
         message: `Average response time is ${metrics.responseTime}ms, exceeding threshold of ${this.thresholds.responseTime}ms`,
-        severity: metrics.responseTime > this.thresholds.responseTime * 2 ? 'CRITICAL' : 'WARNING',
-        component: 'Performance',
+        severity: metrics.responseTime > this.thresholds.responseTime * 2 ? "CRITICAL" : "WARNING",
+        component: "Performance",
         value: metrics.responseTime,
-        unit: 'ms',
+        unit: "ms",
       });
     }
 
     // Error Rate
     if (metrics.errorRate > this.thresholds.errorRate) {
       alerts.push({
-        title: '❌ High Error Rate',
+        title: "❌ High Error Rate",
         message: `Error rate is ${(metrics.errorRate * 100).toFixed(2)}%, exceeding threshold of ${(this.thresholds.errorRate * 100).toFixed(2)}%`,
-        severity: metrics.errorRate > this.thresholds.errorRate * 2 ? 'CRITICAL' : 'WARNING',
-        component: 'Reliability',
+        severity: metrics.errorRate > this.thresholds.errorRate * 2 ? "CRITICAL" : "WARNING",
+        component: "Reliability",
         value: (metrics.errorRate * 100).toFixed(2),
-        unit: '%',
+        unit: "%",
       });
     }
 
     // Cache Hit Rate
     if (metrics.cacheHitRate < this.thresholds.cacheHitRate) {
       alerts.push({
-        title: '📉 Low Cache Hit Rate',
+        title: "📉 Low Cache Hit Rate",
         message: `Cache hit rate is ${(metrics.cacheHitRate * 100).toFixed(2)}%, below threshold of ${(this.thresholds.cacheHitRate * 100).toFixed(2)}%`,
-        severity: 'INFO',
-        component: 'Cache',
+        severity: "INFO",
+        component: "Cache",
         value: (metrics.cacheHitRate * 100).toFixed(2),
-        unit: '%',
+        unit: "%",
       });
     }
 
     // Build Time
     if (metrics.buildTime > this.thresholds.buildTime) {
       alerts.push({
-        title: '🏗️ Slow Build Time',
+        title: "🏗️ Slow Build Time",
         message: `Build time is ${metrics.buildTime}s, exceeding threshold of ${this.thresholds.buildTime}s`,
-        severity: 'WARNING',
-        component: 'Build',
+        severity: "WARNING",
+        component: "Build",
         value: metrics.buildTime,
-        unit: 's',
+        unit: "s",
       });
     }
 
     // API Calls
     if (metrics.apiCalls > this.thresholds.apiCalls) {
       alerts.push({
-        title: '📡 High API Call Rate',
+        title: "📡 High API Call Rate",
         message: `API calls per hour: ${metrics.apiCalls}, exceeding threshold of ${this.thresholds.apiCalls}`,
-        severity: 'WARNING',
-        component: 'API',
+        severity: "WARNING",
+        component: "API",
         value: metrics.apiCalls,
-        unit: 'calls/hour',
+        unit: "calls/hour",
       });
     }
 
@@ -283,43 +283,43 @@ class AlertSystem {
    */
   async alertDeploymentSuccess(deployment) {
     return this.send({
-      title: '✅ Deployment Successful',
+      title: "✅ Deployment Successful",
       message: `Deployment to ${deployment.environment} completed successfully`,
-      severity: 'INFO',
-      component: 'Deployment',
+      severity: "INFO",
+      component: "Deployment",
       value: deployment.duration,
-      unit: 'ms',
+      unit: "ms",
     });
   }
 
   async alertDeploymentFailure(deployment, error) {
     return this.send({
-      title: '❌ Deployment Failed',
+      title: "❌ Deployment Failed",
       message: `Deployment to ${deployment.environment} failed: ${error.message}`,
-      severity: 'CRITICAL',
-      component: 'Deployment',
+      severity: "CRITICAL",
+      component: "Deployment",
       value: error.code,
     });
   }
 
   async alertSecurityThreat(threat) {
     return this.send({
-      title: '🚨 Security Threat Detected',
+      title: "🚨 Security Threat Detected",
       message: `${threat.type}: ${threat.description}`,
-      severity: 'CRITICAL',
-      component: 'Security',
+      severity: "CRITICAL",
+      component: "Security",
       value: threat.count,
     });
   }
 
   async alertCacheAnomaly(anomaly) {
     return this.send({
-      title: '⚠️ Cache Anomaly',
+      title: "⚠️ Cache Anomaly",
       message: `${anomaly.description}`,
-      severity: 'WARNING',
-      component: 'Cache',
+      severity: "WARNING",
+      component: "Cache",
       value: anomaly.hitRate,
-      unit: '%',
+      unit: "%",
     });
   }
 
@@ -334,14 +334,14 @@ class AlertSystem {
    * OBTER ALERTAS POR SEVERIDADE
    */
   getAlertsBySeverity(severity) {
-    return this.alerts.filter(a => a.severity === severity);
+    return this.alerts.filter((a) => a.severity === severity);
   }
 
   /**
    * OBTER ALERTAS POR COMPONENTE
    */
   getAlertsByComponent(component) {
-    return this.alerts.filter(a => a.component === component);
+    return this.alerts.filter((a) => a.component === component);
   }
 
   /**
@@ -349,7 +349,7 @@ class AlertSystem {
    */
   clearOldAlerts(hoursOld = 24) {
     const cutoffTime = new Date(Date.now() - hoursOld * 60 * 60 * 1000);
-    this.alerts = this.alerts.filter(a => new Date(a.timestamp) > cutoffTime);
+    this.alerts = this.alerts.filter((a) => new Date(a.timestamp) > cutoffTime);
   }
 
   /**
@@ -359,17 +359,17 @@ class AlertSystem {
     const stats = {
       totalAlerts: this.alerts.length,
       bySeverity: {
-        CRITICAL: this.getAlertsBySeverity('CRITICAL').length,
-        WARNING: this.getAlertsBySeverity('WARNING').length,
-        INFO: this.getAlertsBySeverity('INFO').length,
+        CRITICAL: this.getAlertsBySeverity("CRITICAL").length,
+        WARNING: this.getAlertsBySeverity("WARNING").length,
+        INFO: this.getAlertsBySeverity("INFO").length,
       },
       byComponent: {},
       lastAlert: this.alerts[this.alerts.length - 1] || null,
     };
 
     // Contar por componente
-    this.alerts.forEach(alert => {
-      const component = alert.component || 'Unknown';
+    this.alerts.forEach((alert) => {
+      const component = alert.component || "Unknown";
       stats.byComponent[component] = (stats.byComponent[component] || 0) + 1;
     });
 
@@ -381,11 +381,11 @@ class AlertSystem {
    */
   getAlertColor(severity) {
     const colors = {
-      CRITICAL: '#FF0000',
-      WARNING: '#FFA500',
-      INFO: '#0099FF',
+      CRITICAL: "#FF0000",
+      WARNING: "#FFA500",
+      INFO: "#0099FF",
     };
-    return colors[severity] || '#808080';
+    return colors[severity] || "#808080";
   }
 
   /**
@@ -393,11 +393,11 @@ class AlertSystem {
    */
   getAlertEmoji(severity) {
     const emojis = {
-      CRITICAL: '🚨',
-      WARNING: '⚠️',
-      INFO: 'ℹ️',
+      CRITICAL: "🚨",
+      WARNING: "⚠️",
+      INFO: "ℹ️",
     };
-    return emojis[severity] || '📢';
+    return emojis[severity] || "📢";
   }
 
   /**
@@ -420,4 +420,3 @@ class AlertSystem {
 }
 
 module.exports = AlertSystem;
-

@@ -80,7 +80,7 @@
   font-size: 12px;
   color: #000000;
   margin-top: 8px;
-  font-family: 'Courier New', monospace;
+  font-family: "Courier New", monospace;
 }
 
 @media (max-width: 768px) {
@@ -92,4 +92,3 @@
     gap: 20px;
   }
 }
-

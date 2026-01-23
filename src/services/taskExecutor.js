@@ -4,22 +4,22 @@
  * Suporta: criar arquivos, gerar código, documentação, etc
  */
 
-const GitHubService = require('./githubService');
+const GitHubService = require("./githubService");
 
 class TaskExecutor {
   constructor(githubToken = null) {
     this.githubService = new GitHubService(githubToken);
     this.supportedTasks = [
-      'create_readme',
-      'create_documentation',
-      'create_code',
-      'create_config',
-      'analyze_code',
-      'generate_tests',
-      'create_contributing',
-      'create_license',
-      'create_changelog',
-      'create_github_workflows',
+      "create_readme",
+      "create_documentation",
+      "create_code",
+      "create_config",
+      "analyze_code",
+      "generate_tests",
+      "create_contributing",
+      "create_license",
+      "create_changelog",
+      "create_github_workflows",
     ];
   }
 
@@ -29,37 +29,45 @@ class TaskExecutor {
   detectTaskType(taskDescription) {
     const desc = taskDescription.toLowerCase();
 
-    if (desc.includes('readme')) return 'create_readme';
-    if (desc.includes('documentação') || desc.includes('documentation')) return 'create_documentation';
-    if (desc.includes('código') || desc.includes('code') || desc.includes('função') || desc.includes('function')) return 'create_code';
-    if (desc.includes('config') || desc.includes('configuração')) return 'create_config';
-    if (desc.includes('test') || desc.includes('teste')) return 'generate_tests';
-    if (desc.includes('contributing')) return 'create_contributing';
-    if (desc.includes('license') || desc.includes('licença')) return 'create_license';
-    if (desc.includes('changelog')) return 'create_changelog';
-    if (desc.includes('workflow') || desc.includes('github actions')) return 'create_github_workflows';
-    if (desc.includes('analisa') || desc.includes('analyze')) return 'analyze_code';
+    if (desc.includes("readme")) return "create_readme";
+    if (desc.includes("documentação") || desc.includes("documentation"))
+      return "create_documentation";
+    if (
+      desc.includes("código") ||
+      desc.includes("code") ||
+      desc.includes("função") ||
+      desc.includes("function")
+    )
+      return "create_code";
+    if (desc.includes("config") || desc.includes("configuração")) return "create_config";
+    if (desc.includes("test") || desc.includes("teste")) return "generate_tests";
+    if (desc.includes("contributing")) return "create_contributing";
+    if (desc.includes("license") || desc.includes("licença")) return "create_license";
+    if (desc.includes("changelog")) return "create_changelog";
+    if (desc.includes("workflow") || desc.includes("github actions"))
+      return "create_github_workflows";
+    if (desc.includes("analisa") || desc.includes("analyze")) return "analyze_code";
 
-    return 'create_documentation'; // Default
+    return "create_documentation"; // Default
   }
 
   /**
    * Gerar README.md
    */
-  async generateReadme(repoData, additionalContext = '') {
+  async generateReadme(repoData, additionalContext = "") {
     const { info, packageJson, mainFiles } = repoData;
 
-    const dependencies = packageJson?.dependencies 
-      ? Object.keys(packageJson.dependencies).slice(0, 5).join(', ')
-      : 'N/A';
+    const dependencies = packageJson?.dependencies
+      ? Object.keys(packageJson.dependencies).slice(0, 5).join(", ")
+      : "N/A";
 
     const readme = `# ${info.name}
 
-${info.description || 'Projeto incrível'}
+${info.description || "Projeto incrível"}
 
 ## 📋 Descrição
 
-${info.description || 'Este é um projeto bem estruturado e profissional.'}
+${info.description || "Este é um projeto bem estruturado e profissional."}
 
 ## 🌟 Features
 
@@ -125,20 +133,20 @@ Para suporte, abra uma issue ou entre em contato.
 
 ---
 
-**Última atualização:** ${new Date().toLocaleDateString('pt-BR')}
+**Última atualização:** ${new Date().toLocaleDateString("pt-BR")}
 `;
 
     return {
-      filename: 'README.md',
+      filename: "README.md",
       content: readme,
-      description: 'README.md profissional gerado automaticamente',
+      description: "README.md profissional gerado automaticamente",
     };
   }
 
   /**
    * Gerar Documentação
    */
-  async generateDocumentation(repoData, additionalContext = '') {
+  async generateDocumentation(repoData, additionalContext = "") {
     const { info, packageJson, mainFiles } = repoData;
 
     const documentation = `# 📚 Documentação - ${info.name}
@@ -154,11 +162,11 @@ Para suporte, abra uma issue ou entre em contato.
 
 ## Visão Geral
 
-${info.description || 'Projeto bem estruturado'}
+${info.description || "Projeto bem estruturado"}
 
 **Tecnologias:**
-- Linguagem: ${info.language || 'JavaScript'}
-- Framework: ${packageJson?.dependencies?.react ? 'React' : 'Node.js'}
+- Linguagem: ${info.language || "JavaScript"}
+- Framework: ${packageJson?.dependencies?.react ? "React" : "Node.js"}
 - Dependências: ${Object.keys(packageJson?.dependencies || {}).length}
 
 ## Instalação
@@ -262,9 +270,9 @@ Crie \`config.json\`:
 `;
 
     return {
-      filename: 'DOCUMENTATION.md',
+      filename: "DOCUMENTATION.md",
       content: documentation,
-      description: 'Documentação completa gerada automaticamente',
+      description: "Documentação completa gerada automaticamente",
     };
   }
 
@@ -350,9 +358,9 @@ Sugestões são bem-vindas! Abra uma issue para discutir.
 `;
 
     return {
-      filename: 'CONTRIBUTING.md',
+      filename: "CONTRIBUTING.md",
       content: contributing,
-      description: 'Guia de contribuição gerado automaticamente',
+      description: "Guia de contribuição gerado automaticamente",
     };
   }
 
@@ -366,7 +374,7 @@ Sugestões são bem-vindas! Abra uma issue para discutir.
 
 Todas as mudanças notáveis neste projeto serão documentadas neste arquivo.
 
-## [1.0.0] - ${new Date().toISOString().split('T')[0]}
+## [1.0.0] - ${new Date().toISOString().split("T")[0]}
 
 ### Added
 - ✨ Versão inicial do projeto
@@ -400,9 +408,9 @@ Este projeto segue [Semantic Versioning](https://semver.org/).
 `;
 
     return {
-      filename: 'CHANGELOG.md',
+      filename: "CHANGELOG.md",
       content: changelog,
-      description: 'Changelog gerado automaticamente',
+      description: "Changelog gerado automaticamente",
     };
   }
 
@@ -418,16 +426,16 @@ Este projeto segue [Semantic Versioning](https://semver.org/).
       let result;
 
       switch (taskType) {
-        case 'create_readme':
+        case "create_readme":
           result = await this.generateReadme(repoData, aiResponse);
           break;
-        case 'create_documentation':
+        case "create_documentation":
           result = await this.generateDocumentation(repoData, aiResponse);
           break;
-        case 'create_contributing':
+        case "create_contributing":
           result = await this.generateContributing(repoData);
           break;
-        case 'create_changelog':
+        case "create_changelog":
           result = await this.generateChangelog(repoData);
           break;
         default:
@@ -451,4 +459,3 @@ Este projeto segue [Semantic Versioning](https://semver.org/).
 }
 
 module.exports = TaskExecutor;
-
