@@ -4,7 +4,7 @@
  * Economia radical de API: 70% hit rate = 65% redução de custo
  */
 
-const crypto = require('crypto');
+const crypto = require("crypto");
 
 class IntelligentCache {
   constructor(options = {}) {
@@ -17,11 +17,11 @@ class IntelligentCache {
 
     // TTL adaptativo por categoria
     this.ttlConfig = {
-      'specialist-response': 86400, // 24h para respostas especializadas
-      'general-knowledge': 25200, // 7h para conhecimento geral
-      'user-context': 3600, // 1h para contexto do usuário
-      'real-time-data': 300, // 5min para dados em tempo real
-      'system-config': 2592000, // 30 dias para configuração
+      "specialist-response": 86400, // 24h para respostas especializadas
+      "general-knowledge": 25200, // 7h para conhecimento geral
+      "user-context": 3600, // 1h para contexto do usuário
+      "real-time-data": 300, // 5min para dados em tempo real
+      "system-config": 2592000, // 30 dias para configuração
     };
 
     // Estatísticas
@@ -43,7 +43,7 @@ class IntelligentCache {
    */
   generateKey(agentId, prompt, context = {}) {
     const hash = crypto
-      .createHash('sha256')
+      .createHash("sha256")
       .update(
         JSON.stringify({
           agentId,
@@ -51,7 +51,7 @@ class IntelligentCache {
           contextHash: this._hashContext(context),
         })
       )
-      .digest('hex');
+      .digest("hex");
 
     return `${agentId}:${hash}`;
   }
@@ -102,7 +102,7 @@ class IntelligentCache {
    * @param {*} value - Valor a armazenar
    * @param {string} category - Categoria (para TTL)
    */
-  set(key, value, category = 'general-knowledge') {
+  set(key, value, category = "general-knowledge") {
     const size = this._estimateSize(value);
 
     // Verificar limite de memória
@@ -238,10 +238,7 @@ class IntelligentCache {
    * Hash do Contexto
    */
   _hashContext(context) {
-    return crypto
-      .createHash('sha256')
-      .update(JSON.stringify(context))
-      .digest('hex');
+    return crypto.createHash("sha256").update(JSON.stringify(context)).digest("hex");
   }
 
   /**
@@ -249,9 +246,7 @@ class IntelligentCache {
    */
   getStats() {
     const hitRate =
-      this.stats.totalRequests > 0
-        ? (this.stats.hits / this.stats.totalRequests) * 100
-        : 0;
+      this.stats.totalRequests > 0 ? (this.stats.hits / this.stats.totalRequests) * 100 : 0;
 
     const memoryUsage = (this.currentMemory / this.maxMemory) * 100;
 
@@ -262,11 +257,11 @@ class IntelligentCache {
       hits: this.stats.hits,
       misses: this.stats.misses,
       totalRequests: this.stats.totalRequests,
-      hitRate: hitRate.toFixed(2) + '%',
+      hitRate: hitRate.toFixed(2) + "%",
       evictions: this.stats.evictions,
-      memoryUsage: memoryUsage.toFixed(2) + '%',
+      memoryUsage: memoryUsage.toFixed(2) + "%",
       cacheSize: this.cache.size,
-      estimatedSavings: '$' + estimatedSavings.toFixed(2),
+      estimatedSavings: "$" + estimatedSavings.toFixed(2),
       apiCallsSaved: this.stats.apiCallsSaved,
     };
   }
@@ -312,4 +307,3 @@ Timestamp: ${new Date().toISOString()}
 }
 
 module.exports = IntelligentCache;
-

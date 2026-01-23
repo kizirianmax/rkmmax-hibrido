@@ -4,8 +4,8 @@
  * Suporta número ilimitado de especialistas
  */
 
-const SpecialistFactory = require('./SpecialistFactory');
-const SpecialistRegistry = require('./SpecialistRegistry');
+const SpecialistFactory = require("./SpecialistFactory");
+const SpecialistRegistry = require("./SpecialistRegistry");
 
 class SpecialistLoader {
   constructor() {
@@ -19,7 +19,7 @@ class SpecialistLoader {
   async loadConfigsFromFile(filePath) {
     try {
       // Em ambiente Node.js
-      if (typeof require !== 'undefined') {
+      if (typeof require !== "undefined") {
         const configs = require(filePath);
         this.loadedConfigs = configs;
         return configs;
@@ -41,7 +41,7 @@ class SpecialistLoader {
    */
   async registerAllFromConfig(configData) {
     if (!configData || !configData.specialists) {
-      throw new Error('Invalid config data: missing specialists array');
+      throw new Error("Invalid config data: missing specialists array");
     }
 
     const registered = [];
@@ -168,7 +168,7 @@ class SpecialistLoader {
 ╚════════════════════════════════════════╝
 
 Total Specialists: ${stats.totalSpecialists}
-Config Loaded: ${stats.configLoaded ? 'Yes' : 'No'}
+Config Loaded: ${stats.configLoaded ? "Yes" : "No"}
 
 Specialists by Category:
 `;
@@ -210,4 +210,3 @@ Specialists by Category:
 }
 
 module.exports = SpecialistLoader;
-

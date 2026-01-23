@@ -3,7 +3,7 @@
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-  font-family: 'Inter', Arial, sans-serif;
+  font-family: "Inter", Arial, sans-serif;
 }
 
 /* Fundo geral */
@@ -24,12 +24,14 @@ body {
   background: #1e293b;
   border-radius: 16px;
   padding: 24px;
-  box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
   margin-top: 20px;
 }
 
 /* Títulos */
-h1, h2, h3 {
+h1,
+h2,
+h3 {
   color: #38bdf8;
   margin-bottom: 16px;
   font-weight: 600;
@@ -61,7 +63,7 @@ p {
 
 .btn:hover {
   transform: translateY(-2px);
-  box-shadow: 0 6px 16px rgba(59,130,246,0.4);
+  box-shadow: 0 6px 16px rgba(59, 130, 246, 0.4);
 }
 
 /* Cards (ex: planos) */
@@ -89,7 +91,8 @@ p {
 }
 
 /* Inputs */
-input, select {
+input,
+select {
   width: 100%;
   padding: 12px;
   margin: 8px 0;
@@ -100,10 +103,11 @@ input, select {
   font-size: 14px;
 }
 
-input:focus, select:focus {
+input:focus,
+select:focus {
   outline: none;
   border-color: #38bdf8;
-  box-shadow: 0 0 6px rgba(56,189,248,0.6);
+  box-shadow: 0 0 6px rgba(56, 189, 248, 0.6);
 }
 
 /* Links */

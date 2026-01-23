@@ -4,17 +4,17 @@
  * Coordena: Análise → Seleção de Especialista → Geração de Código → Validação → Commit
  */
 
-import SecurityValidator from './SecurityValidator.js';
-import AuditLogger from './AuditLogger.js';
-import GitHubAutomation from './GitHubAutomation.js';
-import SpecialistSelector from './SpecialistSelector.js';
+import SecurityValidator from "./SecurityValidator.js";
+import AuditLogger from "./AuditLogger.js";
+import GitHubAutomation from "./GitHubAutomation.js";
+import SpecialistSelector from "./SpecialistSelector.js";
 
 class AutomationEngine {
   constructor(config = {}) {
     this.config = {
       maxRetries: config.maxRetries || 3,
       timeout: config.timeout || 30000,
-      aiModel: config.aiModel || 'gemini-2.0-flash',
+      aiModel: config.aiModel || "gemini-2.0-flash",
       temperature: config.temperature || 0.7,
       ...config,
     };
@@ -22,7 +22,7 @@ class AutomationEngine {
     this.validator = new SecurityValidator();
     this.auditLogger = new AuditLogger();
     this.specialistSelector = new SpecialistSelector();
-    
+
     // GitHub será inicializado quando necessário
     this.gitHub = null;
   }
@@ -35,7 +35,7 @@ class AutomationEngine {
       this.gitHub = new GitHubAutomation(token);
       return true;
     } catch (error) {
-      console.error('Erro ao inicializar GitHub:', error);
+      console.error("Erro ao inicializar GitHub:", error);
       return false;
     }
   }
@@ -48,7 +48,7 @@ class AutomationEngine {
       userId: request.userId,
       username: request.username,
       command: request.command,
-      mode: request.mode || 'OPTIMIZED',
+      mode: request.mode || "OPTIMIZED",
       selectedSpecialist: request.selectedSpecialist,
       description: request.description,
       ipAddress: request.ipAddress,
@@ -58,7 +58,7 @@ class AutomationEngine {
 
     const result = {
       automationId,
-      status: 'INITIATED',
+      status: "INITIATED",
       steps: [],
       errors: [],
     };
@@ -68,16 +68,16 @@ class AutomationEngine {
       console.log(`\n📋 FASE 1: Análise do comando`);
       const analysis = await this.analyzeCommand(request.command);
       result.steps.push({
-        phase: 'ANALYSIS',
-        status: 'COMPLETED',
+        phase: "ANALYSIS",
+        status: "COMPLETED",
         details: analysis,
       });
 
       // Fase 2: Seleção de especialista
       console.log(`\n🎯 FASE 2: Seleção de especialista`);
       let specialist;
-      
-      if (request.mode === 'HYBRID' && request.selectedSpecialist) {
+
+      if (request.mode === "HYBRID" && request.selectedSpecialist) {
         specialist = request.selectedSpecialist;
         console.log(`✅ Especialista selecionado manualmente: ${specialist}`);
       } else {
@@ -89,23 +89,19 @@ class AutomationEngine {
       }
 
       result.steps.push({
-        phase: 'SPECIALIST_SELECTION',
-        status: 'COMPLETED',
+        phase: "SPECIALIST_SELECTION",
+        status: "COMPLETED",
         specialist,
         mode: request.mode,
       });
 
       // Fase 3: Geração de código
       console.log(`\n💻 FASE 3: Geração de código`);
-      const codeGeneration = await this.generateCode(
-        analysis,
-        specialist,
-        request.repositoryInfo
-      );
-      
+      const codeGeneration = await this.generateCode(analysis, specialist, request.repositoryInfo);
+
       result.steps.push({
-        phase: 'CODE_GENERATION',
-        status: 'COMPLETED',
+        phase: "CODE_GENERATION",
+        status: "COMPLETED",
         filesGenerated: codeGeneration.files.length,
         linesOfCode: codeGeneration.totalLines,
       });
@@ -113,12 +109,12 @@ class AutomationEngine {
       // Fase 4: Validação de segurança
       console.log(`\n🔐 FASE 4: Validação de segurança`);
       const securityValidation = await this.validateCode(codeGeneration.files);
-      
+
       if (!securityValidation.isValid) {
-        result.status = 'BLOCKED';
+        result.status = "BLOCKED";
         result.errors.push({
-          phase: 'SECURITY_VALIDATION',
-          message: 'Código bloqueado por validação de segurança',
+          phase: "SECURITY_VALIDATION",
+          message: "Código bloqueado por validação de segurança",
           details: securityValidation,
         });
 
@@ -135,15 +131,15 @@ class AutomationEngine {
       }
 
       result.steps.push({
-        phase: 'SECURITY_VALIDATION',
-        status: 'COMPLETED',
+        phase: "SECURITY_VALIDATION",
+        status: "COMPLETED",
         warnings: securityValidation.warnings.length,
       });
 
       // Fase 5: Commit + Push
       console.log(`\n📝 FASE 5: Commit + Push`);
       let commitResult = null;
-      
+
       if (request.repositoryInfo && this.gitHub) {
         commitResult = await this.commitAndPush(
           codeGeneration.files,
@@ -153,8 +149,8 @@ class AutomationEngine {
         );
 
         result.steps.push({
-          phase: 'GIT_COMMIT',
-          status: 'COMPLETED',
+          phase: "GIT_COMMIT",
+          status: "COMPLETED",
           commitHash: commitResult.commit.sha,
           filesChanged: commitResult.filesChanged,
         });
@@ -163,24 +159,20 @@ class AutomationEngine {
       // Fase 6: Criar PR (opcional)
       console.log(`\n🔀 FASE 6: Criar Pull Request (opcional)`);
       let prResult = null;
-      
+
       if (request.createPR && this.gitHub && commitResult) {
-        prResult = await this.createPullRequest(
-          analysis,
-          specialist,
-          request.repositoryInfo
-        );
+        prResult = await this.createPullRequest(analysis, specialist, request.repositoryInfo);
 
         result.steps.push({
-          phase: 'CREATE_PR',
-          status: 'COMPLETED',
+          phase: "CREATE_PR",
+          status: "COMPLETED",
           prNumber: prResult.pr.number,
           prUrl: prResult.pr.url,
         });
       }
 
       // Sucesso!
-      result.status = 'SUCCESS';
+      result.status = "SUCCESS";
       result.output = {
         files: codeGeneration.files,
         commit: commitResult?.commit,
@@ -191,7 +183,7 @@ class AutomationEngine {
       this.auditLogger.logAutomationCompletion({
         automationId,
         userId: request.userId,
-        status: 'SUCCESS',
+        status: "SUCCESS",
         totalDuration: result.totalDuration,
         commitHash: commitResult?.commit.sha,
         prUrl: prResult?.pr.url,
@@ -206,7 +198,7 @@ class AutomationEngine {
     } catch (error) {
       console.error(`❌ Erro na automação: ${error.message}`);
 
-      result.status = 'FAILED';
+      result.status = "FAILED";
       result.errors.push({
         message: error.message,
         stack: error.stack,
@@ -219,7 +211,7 @@ class AutomationEngine {
         errorType: error.constructor.name,
         errorMessage: error.message,
         errorStack: error.stack,
-        phase: result.steps[result.steps.length - 1]?.phase || 'UNKNOWN',
+        phase: result.steps[result.steps.length - 1]?.phase || "UNKNOWN",
       });
 
       return result;
@@ -232,16 +224,17 @@ class AutomationEngine {
   async analyzeCommand(command) {
     // Aqui seria chamada uma IA para analisar o comando
     // Por enquanto, análise simples
-    
-    const keywords = command.toLowerCase().split(' ');
-    
-    let taskType = 'GENERAL';
-    if (command.includes('componente') || command.includes('component')) taskType = 'COMPONENT';
-    if (command.includes('função') || command.includes('function')) taskType = 'FUNCTION';
-    if (command.includes('teste') || command.includes('test')) taskType = 'TEST';
-    if (command.includes('estilo') || command.includes('style')) taskType = 'STYLE';
-    if (command.includes('documentação') || command.includes('documentation')) taskType = 'DOCUMENTATION';
-    if (command.includes('refatorar') || command.includes('refactor')) taskType = 'REFACTOR';
+
+    const keywords = command.toLowerCase().split(" ");
+
+    let taskType = "GENERAL";
+    if (command.includes("componente") || command.includes("component")) taskType = "COMPONENT";
+    if (command.includes("função") || command.includes("function")) taskType = "FUNCTION";
+    if (command.includes("teste") || command.includes("test")) taskType = "TEST";
+    if (command.includes("estilo") || command.includes("style")) taskType = "STYLE";
+    if (command.includes("documentação") || command.includes("documentation"))
+      taskType = "DOCUMENTATION";
+    if (command.includes("refatorar") || command.includes("refactor")) taskType = "REFACTOR";
 
     return {
       command,
@@ -258,7 +251,7 @@ class AutomationEngine {
   async generateCode(analysis, specialist, repositoryInfo) {
     // Aqui seria chamada a IA (Gemini, GROQ, etc)
     // Por enquanto, simulação
-    
+
     console.log(`🤖 Gerando código com ${specialist}...`);
 
     // Simular geração de código
@@ -271,7 +264,7 @@ class AutomationEngine {
 
     return {
       files,
-      totalLines: files.reduce((sum, f) => sum + f.content.split('\n').length, 0),
+      totalLines: files.reduce((sum, f) => sum + f.content.split("\n").length, 0),
       specialist,
     };
   }
@@ -288,18 +281,18 @@ class AutomationEngine {
       console.log(`❌ Validação falhou!`);
       return {
         isValid: false,
-        severity: 'critical',
-        errors: validation.details.flatMap(d => d.errors),
-        warnings: validation.details.flatMap(d => d.warnings),
+        severity: "critical",
+        errors: validation.details.flatMap((d) => d.errors),
+        warnings: validation.details.flatMap((d) => d.warnings),
       };
     }
 
     console.log(`✅ Código validado com sucesso!`);
     return {
       isValid: true,
-      severity: 'none',
+      severity: "none",
       errors: [],
-      warnings: validation.details.flatMap(d => d.warnings),
+      warnings: validation.details.flatMap((d) => d.warnings),
     };
   }
 
@@ -310,7 +303,7 @@ class AutomationEngine {
     console.log(`📝 Fazendo commit + push...`);
 
     if (!this.gitHub) {
-      throw new Error('GitHub não inicializado');
+      throw new Error("GitHub não inicializado");
     }
 
     const result = await this.gitHub.commitAndPush(
@@ -318,7 +311,7 @@ class AutomationEngine {
       repositoryInfo.repo,
       files,
       message,
-      repositoryInfo.branch || 'main',
+      repositoryInfo.branch || "main",
       {
         name: `${specialist} Bot`,
         email: `${specialist.toLowerCase()}@rkmmax.com`,
@@ -337,7 +330,7 @@ class AutomationEngine {
     console.log(`🔀 Criando Pull Request...`);
 
     if (!this.gitHub) {
-      throw new Error('GitHub não inicializado');
+      throw new Error("GitHub não inicializado");
     }
 
     const branchName = `automation/${specialist.toLowerCase()}/${Date.now()}`;
@@ -348,7 +341,7 @@ class AutomationEngine {
       `[${specialist}] ${analysis.commitMessage}`,
       `Automação executada por ${specialist}\n\nTarefa: ${analysis.description}`,
       branchName,
-      repositoryInfo.branch || 'main'
+      repositoryInfo.branch || "main"
     );
 
     console.log(`✅ PR criado: ${pr.url}`);
@@ -360,10 +353,12 @@ class AutomationEngine {
    * Obter histórico de automações
    */
   getAutomationHistory(userId, limit = 50) {
-    return this.auditLogger.searchLogs({
-      type: 'AUTOMATION_REQUEST',
-      userId,
-    }).slice(-limit);
+    return this.auditLogger
+      .searchLogs({
+        type: "AUTOMATION_REQUEST",
+        userId,
+      })
+      .slice(-limit);
   }
 
   /**
@@ -374,19 +369,20 @@ class AutomationEngine {
 
     const stats = {
       totalAutomations: logs.length,
-      successfulAutomations: logs.filter(l => l.status === 'SUCCESS').length,
-      failedAutomations: logs.filter(l => l.status === 'FAILED').length,
-      blockedAutomations: logs.filter(l => l.status === 'BLOCKED').length,
+      successfulAutomations: logs.filter((l) => l.status === "SUCCESS").length,
+      failedAutomations: logs.filter((l) => l.status === "FAILED").length,
+      blockedAutomations: logs.filter((l) => l.status === "BLOCKED").length,
       byMode: {},
       bySpecialist: {},
     };
 
-    logs.forEach(log => {
+    logs.forEach((log) => {
       if (log.mode) {
         stats.byMode[log.mode] = (stats.byMode[log.mode] || 0) + 1;
       }
       if (log.selectedSpecialist) {
-        stats.bySpecialist[log.selectedSpecialist] = (stats.bySpecialist[log.selectedSpecialist] || 0) + 1;
+        stats.bySpecialist[log.selectedSpecialist] =
+          (stats.bySpecialist[log.selectedSpecialist] || 0) + 1;
       }
     });
 

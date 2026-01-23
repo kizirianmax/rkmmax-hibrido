@@ -6,8 +6,8 @@
 
 class MultimodalProcessor {
   constructor() {
-    this.supportedAudioFormats = ['mp3', 'wav', 'mp4', 'webm', 'ogg', 'm4a'];
-    this.supportedImageFormats = ['png', 'jpg', 'jpeg', 'gif', 'webp', 'bmp'];
+    this.supportedAudioFormats = ["mp3", "wav", "mp4", "webm", "ogg", "m4a"];
+    this.supportedImageFormats = ["png", "jpg", "jpeg", "gif", "webp", "bmp"];
     this.maxAudioSize = 25 * 1024 * 1024; // 25MB
     this.maxImageSize = 20 * 1024 * 1024; // 20MB
   }
@@ -15,7 +15,7 @@ class MultimodalProcessor {
   /**
    * Processar áudio (Speech-to-Text)
    */
-  async processAudio(audioBuffer, format = 'mp3') {
+  async processAudio(audioBuffer, format = "mp3") {
     console.log(`🎤 Processando áudio (${format})...`);
 
     // Validar formato
@@ -35,7 +35,7 @@ class MultimodalProcessor {
       console.log(`✅ Áudio transcrito: "${transcript.substring(0, 50)}..."`);
 
       return {
-        type: 'audio',
+        type: "audio",
         format,
         transcript,
         confidence: 0.95, // Confiança estimada
@@ -52,18 +52,18 @@ class MultimodalProcessor {
   async transcribeAudio(audioBuffer, format) {
     try {
       // Converter buffer para base64
-      const base64Audio = audioBuffer.toString('base64');
+      const base64Audio = audioBuffer.toString("base64");
 
       // Chamar API de transcription (simulado)
       // Em produção, usar Google Cloud Speech-to-Text ou similar
-      
-      const response = await fetch('/api/transcribe', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+
+      const response = await fetch("/api/transcribe", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           audio: base64Audio,
           format,
-          language: 'pt-BR',
+          language: "pt-BR",
         }),
       });
 
@@ -93,7 +93,7 @@ class MultimodalProcessor {
   /**
    * Processar imagem (Vision)
    */
-  async processImage(imageBuffer, format = 'png') {
+  async processImage(imageBuffer, format = "png") {
     console.log(`📸 Processando imagem (${format})...`);
 
     // Validar formato
@@ -113,7 +113,7 @@ class MultimodalProcessor {
       console.log(`✅ Imagem analisada: ${analysis.description}`);
 
       return {
-        type: 'image',
+        type: "image",
         format,
         analysis,
         size: imageBuffer.length,
@@ -129,22 +129,22 @@ class MultimodalProcessor {
   async analyzeImage(imageBuffer, format) {
     try {
       // Converter buffer para base64
-      const base64Image = imageBuffer.toString('base64');
+      const base64Image = imageBuffer.toString("base64");
 
       // Chamar API de Vision (simulado)
       // Em produção, usar Google Cloud Vision ou similar
-      
-      const response = await fetch('/api/vision-analyze', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+
+      const response = await fetch("/api/vision-analyze", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           image: base64Image,
           format,
           features: [
-            'LABEL_DETECTION',
-            'TEXT_DETECTION',
-            'OBJECT_LOCALIZATION',
-            'SAFE_SEARCH_DETECTION',
+            "LABEL_DETECTION",
+            "TEXT_DETECTION",
+            "OBJECT_LOCALIZATION",
+            "SAFE_SEARCH_DETECTION",
           ],
         }),
       });
@@ -208,15 +208,13 @@ class MultimodalProcessor {
   /**
    * Extrair texto de imagem (OCR)
    */
-  async extractTextFromImage(imageBuffer, format = 'png') {
+  async extractTextFromImage(imageBuffer, format = "png") {
     console.log(`📄 Extraindo texto da imagem...`);
 
     const analysis = await this.analyzeImage(imageBuffer, format);
 
     if (analysis.textDetection && analysis.textDetection.length > 0) {
-      const extractedText = analysis.textDetection
-        .map(item => item.text)
-        .join('\n');
+      const extractedText = analysis.textDetection.map((item) => item.text).join("\n");
 
       return {
         success: true,
@@ -227,15 +225,15 @@ class MultimodalProcessor {
 
     return {
       success: false,
-      text: '',
-      message: 'Nenhum texto encontrado na imagem',
+      text: "",
+      message: "Nenhum texto encontrado na imagem",
     };
   }
 
   /**
    * Descrever imagem
    */
-  async describeImage(imageBuffer, format = 'png') {
+  async describeImage(imageBuffer, format = "png") {
     console.log(`📸 Descrevendo imagem...`);
 
     const analysis = await this.analyzeImage(imageBuffer, format);
@@ -251,7 +249,7 @@ class MultimodalProcessor {
   /**
    * Detectar código em imagem
    */
-  async detectCodeInImage(imageBuffer, format = 'png') {
+  async detectCodeInImage(imageBuffer, format = "png") {
     console.log(`💻 Detectando código na imagem...`);
 
     const textResult = await this.extractTextFromImage(imageBuffer, format);
@@ -259,7 +257,7 @@ class MultimodalProcessor {
     if (!textResult.success) {
       return {
         success: false,
-        code: '',
+        code: "",
         language: null,
       };
     }
@@ -280,16 +278,16 @@ class MultimodalProcessor {
    */
   detectProgrammingLanguage(code) {
     const patterns = {
-      'javascript': /const|let|var|function|=>|async|await/,
-      'python': /def|import|class|if __name__|print\(/,
-      'java': /public class|public static|import java/,
-      'cpp': /#include|std::|int main/,
-      'csharp': /using|namespace|public class|async Task/,
-      'go': /package main|func|import/,
-      'rust': /fn |let |pub |impl /,
-      'sql': /SELECT|INSERT|UPDATE|DELETE|FROM|WHERE/,
-      'html': /<!DOCTYPE|<html|<body|<div/,
-      'css': /@media|\.class|#id|{.*:.*;}/,
+      javascript: /const|let|var|function|=>|async|await/,
+      python: /def|import|class|if __name__|print\(/,
+      java: /public class|public static|import java/,
+      cpp: /#include|std::|int main/,
+      csharp: /using|namespace|public class|async Task/,
+      go: /package main|func|import/,
+      rust: /fn |let |pub |impl /,
+      sql: /SELECT|INSERT|UPDATE|DELETE|FROM|WHERE/,
+      html: /<!DOCTYPE|<html|<body|<div/,
+      css: /@media|\.class|#id|{.*:.*;}/,
     };
 
     for (const [lang, pattern] of Object.entries(patterns)) {
@@ -305,7 +303,7 @@ class MultimodalProcessor {
    * Validar arquivo de áudio
    */
   validateAudioFile(filename, size) {
-    const ext = filename.split('.').pop().toLowerCase();
+    const ext = filename.split(".").pop().toLowerCase();
 
     if (!this.supportedAudioFormats.includes(ext)) {
       return {
@@ -328,7 +326,7 @@ class MultimodalProcessor {
    * Validar arquivo de imagem
    */
   validateImageFile(filename, size) {
-    const ext = filename.split('.').pop().toLowerCase();
+    const ext = filename.split(".").pop().toLowerCase();
 
     if (!this.supportedImageFormats.includes(ext)) {
       return {
@@ -355,12 +353,12 @@ class MultimodalProcessor {
       audio: {
         formats: this.supportedAudioFormats,
         maxSize: this.maxAudioSize,
-        features: ['Speech-to-Text', 'Transcription', 'Language Detection'],
+        features: ["Speech-to-Text", "Transcription", "Language Detection"],
       },
       image: {
         formats: this.supportedImageFormats,
         maxSize: this.maxImageSize,
-        features: ['OCR', 'Object Detection', 'Label Detection', 'Code Detection'],
+        features: ["OCR", "Object Detection", "Label Detection", "Code Detection"],
       },
     };
   }

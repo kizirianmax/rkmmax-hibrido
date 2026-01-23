@@ -1,6 +1,6 @@
 /**
  * SECRET MANAGER - Gerenciador Seguro de Credenciais
- * 
+ *
  * ⚠️ SEGURANÇA CRÍTICA:
  * - Nunca loga chaves completas
  * - Nunca expõe credenciais em console.log
@@ -25,19 +25,22 @@ class SecretManager {
       this.secrets = {
         // GEMINI API
         gemini: {
-          apiKey: this._getEnvVar('REACT_APP_GEMINI_API_KEY', 'VITE_GEMINI_API_KEY'),
+          apiKey: this._getEnvVar("REACT_APP_GEMINI_API_KEY", "VITE_GEMINI_API_KEY"),
           isConfigured: false,
         },
         // GROQ API
         groq: {
-          apiKey: this._getEnvVar('REACT_APP_GROQ_API_KEY', 'VITE_GROQ_API_KEY'),
+          apiKey: this._getEnvVar("REACT_APP_GROQ_API_KEY", "VITE_GROQ_API_KEY"),
           isConfigured: false,
         },
         // GITHUB OAUTH
         github: {
-          clientId: this._getEnvVar('REACT_APP_GITHUB_CLIENT_ID', 'VITE_GITHUB_CLIENT_ID'),
-          clientSecret: this._getEnvVar('REACT_APP_GITHUB_CLIENT_SECRET', 'VITE_GITHUB_CLIENT_SECRET'),
-          redirectUri: this._getEnvVar('REACT_APP_GITHUB_REDIRECT_URI', 'VITE_GITHUB_REDIRECT_URI'),
+          clientId: this._getEnvVar("REACT_APP_GITHUB_CLIENT_ID", "VITE_GITHUB_CLIENT_ID"),
+          clientSecret: this._getEnvVar(
+            "REACT_APP_GITHUB_CLIENT_SECRET",
+            "VITE_GITHUB_CLIENT_SECRET"
+          ),
+          redirectUri: this._getEnvVar("REACT_APP_GITHUB_REDIRECT_URI", "VITE_GITHUB_REDIRECT_URI"),
           isConfigured: false,
         },
       };
@@ -46,16 +49,16 @@ class SecretManager {
       this._validateSecrets();
 
       // 📊 LOG SEGURO (sem expor chaves)
-      console.log('🔐 Secret Manager inicializado:', {
-        gemini: this.secrets.gemini.isConfigured ? '✅ Configurado' : '❌ Não configurado',
-        groq: this.secrets.groq.isConfigured ? '✅ Configurado' : '❌ Não configurado',
-        github: this.secrets.github.isConfigured ? '✅ Configurado' : '❌ Não configurado',
+      console.log("🔐 Secret Manager inicializado:", {
+        gemini: this.secrets.gemini.isConfigured ? "✅ Configurado" : "❌ Não configurado",
+        groq: this.secrets.groq.isConfigured ? "✅ Configurado" : "❌ Não configurado",
+        github: this.secrets.github.isConfigured ? "✅ Configurado" : "❌ Não configurado",
       });
 
       this.initialized = true;
       return true;
     } catch (error) {
-      console.error('🔴 Erro ao inicializar Secret Manager:', error.message);
+      console.error("🔴 Erro ao inicializar Secret Manager:", error.message);
       this.initialized = false;
       return false;
     }
@@ -83,28 +86,28 @@ class SecretManager {
     // Validar Gemini
     if (this.secrets.gemini.apiKey) {
       this.secrets.gemini.isConfigured = true;
-      console.log('✅ Gemini API configurada');
+      console.log("✅ Gemini API configurada");
     } else {
-      console.warn('⚠️ Gemini API não configurada - Vision e Especialista 54 desabilitados');
-      this.validationErrors.push('GEMINI_API_KEY');
+      console.warn("⚠️ Gemini API não configurada - Vision e Especialista 54 desabilitados");
+      this.validationErrors.push("GEMINI_API_KEY");
     }
 
     // Validar GROQ
     if (this.secrets.groq.apiKey) {
       this.secrets.groq.isConfigured = true;
-      console.log('✅ GROQ API configurada');
+      console.log("✅ GROQ API configurada");
     } else {
-      console.warn('⚠️ GROQ API não configurada - Fallback desabilitado');
-      this.validationErrors.push('GROQ_API_KEY');
+      console.warn("⚠️ GROQ API não configurada - Fallback desabilitado");
+      this.validationErrors.push("GROQ_API_KEY");
     }
 
     // Validar GitHub OAuth
     if (this.secrets.github.clientId && this.secrets.github.clientSecret) {
       this.secrets.github.isConfigured = true;
-      console.log('✅ GitHub OAuth configurado');
+      console.log("✅ GitHub OAuth configurado");
     } else {
-      console.warn('⚠️ GitHub OAuth não configurado - Autenticação GitHub desabilitada');
-      this.validationErrors.push('GITHUB_OAUTH');
+      console.warn("⚠️ GitHub OAuth não configurado - Autenticação GitHub desabilitada");
+      this.validationErrors.push("GITHUB_OAUTH");
     }
   }
 
@@ -112,9 +115,9 @@ class SecretManager {
    * OBTER CREDENCIAL SEGURA
    * Retorna chave sem expor em logs
    */
-  getSecret(service, field = 'apiKey') {
+  getSecret(service, field = "apiKey") {
     if (!this.initialized) {
-      console.error('🔴 Secret Manager não inicializado!');
+      console.error("🔴 Secret Manager não inicializado!");
       return null;
     }
 
@@ -136,7 +139,7 @@ class SecretManager {
    * Mostra apenas primeiros e últimos caracteres
    */
   _maskKey(key) {
-    if (!key || key.length < 8) return '***';
+    if (!key || key.length < 8) return "***";
     return `${key.substring(0, 4)}...${key.substring(key.length - 4)}`;
   }
 
@@ -168,7 +171,7 @@ class SecretManager {
    */
   getAllSecrets() {
     if (!this.initialized) {
-      console.error('🔴 Secret Manager não inicializado!');
+      console.error("🔴 Secret Manager não inicializado!");
       return null;
     }
     return this.secrets;

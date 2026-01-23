@@ -5,7 +5,7 @@
  * Otimizado para Vercel FREE
  */
 
-const AgentBase = require('./AgentBase');
+const AgentBase = require("./AgentBase");
 
 class SpecialistFactory {
   /**
@@ -19,14 +19,14 @@ class SpecialistFactory {
       description,
       capabilities,
       category,
-      mode = 'MANUAL',
+      mode = "MANUAL",
       apiEndpoint,
       systemPrompt,
     } = specialistConfig;
 
     // Validar configuração
     if (!id || !name || !role) {
-      throw new Error('Missing required specialist configuration: id, name, role');
+      throw new Error("Missing required specialist configuration: id, name, role");
     }
 
     // Criar classe dinâmica que herda de AgentBase
@@ -39,9 +39,9 @@ class SpecialistFactory {
           mode,
         });
 
-        this.description = description || '';
+        this.description = description || "";
         this.capabilities = capabilities || [];
-        this.category = category || 'general';
+        this.category = category || "general";
         this.apiEndpoint = apiEndpoint || null;
         this.systemPrompt = systemPrompt || this._generateDefaultSystemPrompt();
       }
@@ -67,7 +67,7 @@ class SpecialistFactory {
           // Simular chamada HTTP
           // Em produção, isso seria um fetch/axios real
           return {
-            status: 'success',
+            status: "success",
             response: `Response from ${this.name}: ${prompt.substring(0, 50)}...`,
             timestamp: Date.now(),
           };
@@ -85,7 +85,7 @@ class SpecialistFactory {
         await new Promise((resolve) => setTimeout(resolve, Math.random() * 100));
 
         return {
-          status: 'success',
+          status: "success",
           response: `[${this.name}] ${prompt.substring(0, 100)}...`,
           timestamp: Date.now(),
         };
@@ -96,7 +96,7 @@ class SpecialistFactory {
        */
       _generateDefaultSystemPrompt() {
         return `You are ${this.name}, a specialist in ${this.role}.
-Your capabilities: ${this.capabilities.join(', ')}.
+Your capabilities: ${this.capabilities.join(", ")}.
 Category: ${this.category}.
 Always provide accurate, helpful, and safe responses.`;
       }
@@ -136,84 +136,84 @@ Always provide accurate, helpful, and safe responses.`;
   static createDefaultSpecialists() {
     const defaultConfigs = [
       {
-        id: 'didak',
-        name: 'Didak',
-        role: 'Especialista em Didática',
-        description: 'Ensino e metodologias de aprendizado',
-        capabilities: ['teaching', 'curriculum-design', 'assessment'],
-        category: 'education',
+        id: "didak",
+        name: "Didak",
+        role: "Especialista em Didática",
+        description: "Ensino e metodologias de aprendizado",
+        capabilities: ["teaching", "curriculum-design", "assessment"],
+        category: "education",
       },
       {
-        id: 'code',
-        name: 'Code Master',
-        role: 'Especialista em Programação',
-        description: 'Desenvolvimento de software e coding',
-        capabilities: ['code', 'debugging', 'architecture'],
-        category: 'technical',
+        id: "code",
+        name: "Code Master",
+        role: "Especialista em Programação",
+        description: "Desenvolvimento de software e coding",
+        capabilities: ["code", "debugging", "architecture"],
+        category: "technical",
       },
       {
-        id: 'design',
-        name: 'Design Pro',
-        role: 'Especialista em Design',
-        description: 'UI/UX e design visual',
-        capabilities: ['design', 'ui', 'ux'],
-        category: 'creative',
+        id: "design",
+        name: "Design Pro",
+        role: "Especialista em Design",
+        description: "UI/UX e design visual",
+        capabilities: ["design", "ui", "ux"],
+        category: "creative",
       },
       {
-        id: 'marketing',
-        name: 'Marketing Guru',
-        role: 'Especialista em Marketing',
-        description: 'Estratégia e tática de marketing',
-        capabilities: ['marketing', 'sales', 'strategy'],
-        category: 'business',
+        id: "marketing",
+        name: "Marketing Guru",
+        role: "Especialista em Marketing",
+        description: "Estratégia e tática de marketing",
+        capabilities: ["marketing", "sales", "strategy"],
+        category: "business",
       },
       {
-        id: 'data',
-        name: 'Data Analyst',
-        role: 'Especialista em Análise de Dados',
-        description: 'Análise, visualização e insights de dados',
-        capabilities: ['data-analysis', 'statistics', 'visualization'],
-        category: 'technical',
+        id: "data",
+        name: "Data Analyst",
+        role: "Especialista em Análise de Dados",
+        description: "Análise, visualização e insights de dados",
+        capabilities: ["data-analysis", "statistics", "visualization"],
+        category: "technical",
       },
       {
-        id: 'security',
-        name: 'Security Expert',
-        role: 'Especialista em Segurança',
-        description: 'Segurança da informação e criptografia',
-        capabilities: ['security', 'encryption', 'compliance'],
-        category: 'technical',
+        id: "security",
+        name: "Security Expert",
+        role: "Especialista em Segurança",
+        description: "Segurança da informação e criptografia",
+        capabilities: ["security", "encryption", "compliance"],
+        category: "technical",
       },
       {
-        id: 'performance',
-        name: 'Performance Tuner',
-        role: 'Especialista em Performance',
-        description: 'Otimização e benchmarking',
-        capabilities: ['performance', 'optimization', 'profiling'],
-        category: 'technical',
+        id: "performance",
+        name: "Performance Tuner",
+        role: "Especialista em Performance",
+        description: "Otimização e benchmarking",
+        capabilities: ["performance", "optimization", "profiling"],
+        category: "technical",
       },
       {
-        id: 'accessibility',
-        name: 'A11y Specialist',
-        role: 'Especialista em Acessibilidade',
-        description: 'WCAG e design acessível',
-        capabilities: ['accessibility', 'wcag', 'inclusive-design'],
-        category: 'technical',
+        id: "accessibility",
+        name: "A11y Specialist",
+        role: "Especialista em Acessibilidade",
+        description: "WCAG e design acessível",
+        capabilities: ["accessibility", "wcag", "inclusive-design"],
+        category: "technical",
       },
       {
-        id: 'writing',
-        name: 'Tech Writer',
-        role: 'Especialista em Escrita Técnica',
-        description: 'Documentação e conteúdo técnico',
-        capabilities: ['technical-writing', 'documentation', 'content'],
-        category: 'creative',
+        id: "writing",
+        name: "Tech Writer",
+        role: "Especialista em Escrita Técnica",
+        description: "Documentação e conteúdo técnico",
+        capabilities: ["technical-writing", "documentation", "content"],
+        category: "creative",
       },
       {
-        id: 'business',
-        name: 'Business Analyst',
-        role: 'Especialista em Negócios',
-        description: 'Análise de negócios e estratégia',
-        capabilities: ['business', 'analysis', 'strategy'],
-        category: 'business',
+        id: "business",
+        name: "Business Analyst",
+        role: "Especialista em Negócios",
+        description: "Análise de negócios e estratégia",
+        capabilities: ["business", "analysis", "strategy"],
+        category: "business",
       },
     ];
 
@@ -224,13 +224,13 @@ Always provide accurate, helpful, and safe responses.`;
    * Validar Configuração de Especialista
    */
   static validateConfig(config) {
-    const required = ['id', 'name', 'role'];
+    const required = ["id", "name", "role"];
     const missing = required.filter((field) => !config[field]);
 
     if (missing.length > 0) {
       return {
         valid: false,
-        errors: [`Missing required fields: ${missing.join(', ')}`],
+        errors: [`Missing required fields: ${missing.join(", ")}`],
       };
     }
 
@@ -242,4 +242,3 @@ Always provide accurate, helpful, and safe responses.`;
 }
 
 module.exports = SpecialistFactory;
-

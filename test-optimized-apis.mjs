@@ -60,7 +60,7 @@ const OptimizedAPIManager = class {
     return {
       apiKey: this.config.groqKey,
       models: {
-        'llama-3.1-70b-versatile': {
+        'openai/gpt-oss-120b': {
           maxTokens: 8000,
           costPer1kTokens: 0.00027,
           description: 'Fallback rápido',
@@ -71,7 +71,7 @@ const OptimizedAPIManager = class {
           description: 'Fallback para tarefas médias',
         },
       },
-      defaultModel: 'llama-3.1-70b-versatile',
+      defaultModel: 'openai/gpt-oss-120b',
     };
   }
 

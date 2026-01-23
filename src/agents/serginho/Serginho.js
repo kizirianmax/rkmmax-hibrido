@@ -5,17 +5,17 @@
  * Gerenciamento de cache global
  */
 
-const AgentBase = require('../core/AgentBase');
-const SpecialistRegistry = require('../core/SpecialistRegistry');
-const IntelligentCache = require('../../cache/IntelligentCache');
+const AgentBase = require("../core/AgentBase");
+const SpecialistRegistry = require("../core/SpecialistRegistry");
+const IntelligentCache = require("../../cache/IntelligentCache");
 
 class Serginho extends AgentBase {
   constructor(config = {}) {
     super({
-      id: 'serginho',
-      name: 'Serginho',
-      role: 'Orquestrador Principal',
-      mode: 'AUTONOMOUS',
+      id: "serginho",
+      name: "Serginho",
+      role: "Orquestrador Principal",
+      mode: "AUTONOMOUS",
       ...config,
     });
 
@@ -51,10 +51,10 @@ class Serginho extends AgentBase {
       // 1. VALIDAÇÃO DE SEGURANÇA
       const securityAnalysis = this.modelArmor.analyzePrompt(prompt);
 
-      if (securityAnalysis.recommendation === 'BLOCK') {
+      if (securityAnalysis.recommendation === "BLOCK") {
         return {
-          status: 'BLOCKED',
-          reason: 'Prompt violates security policies',
+          status: "BLOCKED",
+          reason: "Prompt violates security policies",
           violations: securityAnalysis.violations,
           timestamp: Date.now(),
         };
@@ -65,12 +65,12 @@ class Serginho extends AgentBase {
       const cachedResponse = this.cache.get(cacheKey);
 
       if (cachedResponse) {
-        this._addToHistory(prompt, cachedResponse, 'CACHE', null);
+        this._addToHistory(prompt, cachedResponse, "CACHE", null);
         return {
-          status: 'SUCCESS',
-          source: 'CACHE',
+          status: "SUCCESS",
+          source: "CACHE",
           response: cachedResponse,
-          agent: 'serginho',
+          agent: "serginho",
           timestamp: Date.now(),
         };
       }
@@ -80,35 +80,31 @@ class Serginho extends AgentBase {
 
       if (!selectedSpecialist) {
         return {
-          status: 'ERROR',
-          reason: 'No suitable specialist found',
+          status: "ERROR",
+          reason: "No suitable specialist found",
           timestamp: Date.now(),
         };
       }
 
       // 4. DELEGAÇÃO PARA ESPECIALISTA
-      const result = await this._delegateToSpecialist(
-        selectedSpecialist,
-        prompt,
-        context
-      );
+      const result = await this._delegateToSpecialist(selectedSpecialist, prompt, context);
 
       // 5. ARMAZENAR EM CACHE GLOBAL
-      this.globalCache.set(cacheKey, result.response, 'specialist-response');
+      this.globalCache.set(cacheKey, result.response, "specialist-response");
 
       // 6. ADICIONAR AO HISTÓRICO
-      this._addToHistory(prompt, result.response, 'AUTONOMOUS', null);
+      this._addToHistory(prompt, result.response, "AUTONOMOUS", null);
 
       return {
-        status: 'SUCCESS',
-        source: 'SPECIALIST',
+        status: "SUCCESS",
+        source: "SPECIALIST",
         response: result.response,
         agent: selectedSpecialist.id,
         timestamp: Date.now(),
       };
     } catch (error) {
       return {
-        status: 'ERROR',
+        status: "ERROR",
         error: error.message,
         timestamp: Date.now(),
       };
@@ -127,7 +123,7 @@ class Serginho extends AgentBase {
 
     if (candidates.length === 0) {
       // Fallback: usar especialista genérico
-      return this.registry.getSpecialistMetadata('didak');
+      return this.registry.getSpecialistMetadata("didak");
     }
 
     // Selecionar melhor candidato baseado em:
@@ -151,18 +147,18 @@ class Serginho extends AgentBase {
 
     // Mapeamento simples de intenção → capacidade
     const intentMap = {
-      'código|programação|javascript|python|java': 'code',
-      'design|ui|ux|interface|visual': 'design',
-      'marketing|vendas|negócio|estratégia': 'marketing',
-      'dados|análise|estatística|gráfico': 'data-analysis',
-      'segurança|vulnerabilidade|criptografia': 'security',
-      'performance|otimização|velocidade': 'performance',
-      'acessibilidade|wcag|a11y': 'accessibility',
-      'documentação|escrita|conteúdo': 'technical-writing',
+      "código|programação|javascript|python|java": "code",
+      "design|ui|ux|interface|visual": "design",
+      "marketing|vendas|negócio|estratégia": "marketing",
+      "dados|análise|estatística|gráfico": "data-analysis",
+      "segurança|vulnerabilidade|criptografia": "security",
+      "performance|otimização|velocidade": "performance",
+      "acessibilidade|wcag|a11y": "accessibility",
+      "documentação|escrita|conteúdo": "technical-writing",
     };
 
     for (const [keywords, capability] of Object.entries(intentMap)) {
-      const regex = new RegExp(keywords, 'i');
+      const regex = new RegExp(keywords, "i");
       if (regex.test(lowerPrompt)) {
         return {
           primaryCapability: capability,
@@ -173,7 +169,7 @@ class Serginho extends AgentBase {
 
     // Default: didática (ensino)
     return {
-      primaryCapability: 'teaching',
+      primaryCapability: "teaching",
       confidence: 0.5,
     };
   }
@@ -185,7 +181,7 @@ class Serginho extends AgentBase {
     let score = 0;
 
     // Modo AUTONOMOUS é preferido
-    if (specialist.mode === 'AUTONOMOUS') {
+    if (specialist.mode === "AUTONOMOUS") {
       score += 50;
     }
 
@@ -237,7 +233,7 @@ class Serginho extends AgentBase {
    */
   async _callAPI(prompt, context) {
     // Serginho delega para especialistas, não chama API diretamente
-    throw new Error('Serginho does not call API directly. Use process() instead.');
+    throw new Error("Serginho does not call API directly. Use process() instead.");
   }
 
   /**
@@ -333,4 +329,3 @@ class TaskRouter {
 }
 
 module.exports = Serginho;
-
