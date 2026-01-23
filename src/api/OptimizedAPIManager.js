@@ -97,7 +97,7 @@ class OptimizedAPIManager {
       baseURL: 'https://api.groq.com/openai/v1',
       isConfigured: !!apiKey,
       models: {
-        'llama-3.1-70b-versatile': {
+        'openai/gpt-oss-120b': {
           maxTokens: 8000,
           costPer1kTokens: 0.00027,
           description: 'Fallback rápido para tarefas simples',
@@ -112,7 +112,7 @@ class OptimizedAPIManager {
           tier: 'fallback',
         },
       },
-      defaultModel: 'llama-3.1-70b-versatile',
+      defaultModel: 'openai/gpt-oss-120b',
     };
   }
 
@@ -131,7 +131,7 @@ class OptimizedAPIManager {
       console.warn('⚠️ Providers não inicializados corretamente!');
       return {
         provider: 'groq',
-        model: 'llama-3.1-70b-versatile',
+        model: 'openai/gpt-oss-120b',
       };
     }
 
