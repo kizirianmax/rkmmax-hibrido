@@ -22,11 +22,3 @@ Esta documentação define o padrão de inteligência unificado para o ecossiste
 
 A quarta camada (ABNT) e o suporte ao RKMMAX.app estão ativos em todos os níveis.
 
-| Tier | Stack Tecnológica | Limite Diário | Preço Mensal |
-| :--- | :--- | :--- | :--- |
-| **Básico** | Gemini 2.5 Pro + light model | 100 msg | R$ 79,90 |
-| **Intermediário** | Gemini 2.5 Pro + powerful model | 300 msg | R$ 119,90 |
-| **Premium** | Gemini 2.5 Pro + fastest model | 600 msg | R$ 179,90 |
-| **Ultra** | Gemini 2.5 Pro + Claude + Gemini 3 Pro + Groq | 2000 msg | R$ 299,90 |
-| **Dev** | Ultra + Google Max Potential | 3000 msg | R$ 499,90 |
-
