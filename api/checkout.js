@@ -24,8 +24,7 @@ export default async function handler(req, res) {
 
   // Se não tiver STRIPE configurado ainda, responde de forma segura
   if (!process.env.STRIPE_SECRET_KEY_RKMMAX) {
-    const body =
-      typeof req.body === "string" ? JSON.parse(req.body || "{}") : (req.body || {});
+    const body = typeof req.body === "string" ? JSON.parse(req.body || "{}") : req.body || {};
     return res.status(200).json({
       ok: true,
       reason: "fallback_no_stripe_env",
@@ -38,8 +37,7 @@ export default async function handler(req, res) {
   });
 
   try {
-    const body =
-      typeof req.body === "string" ? JSON.parse(req.body || "{}") : (req.body || {});
+    const body = typeof req.body === "string" ? JSON.parse(req.body || "{}") : req.body || {};
     const { lookupKey } = body;
 
     if (!lookupKey) {
@@ -62,8 +60,7 @@ export default async function handler(req, res) {
     const proto = (req.headers["x-forwarded-proto"] || "https").toString();
     const hostHdr = req.headers["x-forwarded-host"] || req.headers.host;
     const vercelHost = process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : undefined;
-    const site =
-      process.env.SITE_URL || process.env.URL || vercelHost || `${proto}://${hostHdr}`;
+    const site = process.env.SITE_URL || process.env.URL || vercelHost || `${proto}://${hostHdr}`;
 
     const successUrl = `${site}/success?session_id={CHECKOUT_SESSION_ID}`;
     const cancelUrl = `${site}/pricing`;

@@ -19,11 +19,7 @@ const PLANS = {
       icon: "🔹",
       name: "Básico",
       price: "R$ 25,00/mês",
-      features: [
-        "Essenciais ilimitados",
-        "Acesso ao orquestrador",
-        "Suporte básico",
-      ],
+      features: ["Essenciais ilimitados", "Acesso ao orquestrador", "Suporte básico"],
       payLink: process.env.REACT_APP_STRIPE_PAYMENT_LINK_BASIC_BR || "",
       priceId: null,
       cta: "Assinar Básico",
@@ -33,11 +29,7 @@ const PLANS = {
       icon: "⚡",
       name: "Intermediário",
       price: "R$ 50,00/mês",
-      features: [
-        "Recursos avançados + voz",
-        "Limites diários maiores",
-        "Suporte via chat",
-      ],
+      features: ["Recursos avançados + voz", "Limites diários maiores", "Suporte via chat"],
       payLink: process.env.REACT_APP_STRIPE_PAYMENT_LINK_INTERMEDIATE_BR || "",
       priceId: null,
       cta: "Assinar Intermediário",
@@ -94,13 +86,13 @@ const PLANS = {
 export default function PlansScreen() {
   // Admin mode: permite alternar entre BR/US
   const [isAdminMode, setIsAdminMode] = useState(() => {
-    return localStorage.getItem('rkmmax_admin') === 'true';
+    return localStorage.getItem("rkmmax_admin") === "true";
   });
   const [adminRegion, setAdminRegion] = useState(() => {
-    return localStorage.getItem('rkmmax_admin_region') || 'BR';
+    return localStorage.getItem("rkmmax_admin_region") || "BR";
   });
   const [logoClicks, setLogoClicks] = useState(0);
-  
+
   const detectedRegion = useMemo(detectRegion, []);
   const region = isAdminMode ? adminRegion : detectedRegion;
   const [loading, setLoading] = useState("");
@@ -109,17 +101,17 @@ export default function PlansScreen() {
   // Ativar modo admin: clicar 3x no logo
   React.useEffect(() => {
     if (logoClicks >= 3 && !isAdminMode) {
-      localStorage.setItem('rkmmax_admin', 'true');
+      localStorage.setItem("rkmmax_admin", "true");
       setIsAdminMode(true);
       setLogoClicks(0);
-      alert('🔧 Modo Admin Ativado!');
+      alert("🔧 Modo Admin Ativado!");
     }
   }, [logoClicks, isAdminMode]);
 
   const toggleAdminRegion = () => {
-    const newRegion = adminRegion === 'BR' ? 'US' : 'BR';
+    const newRegion = adminRegion === "BR" ? "US" : "BR";
     setAdminRegion(newRegion);
-    localStorage.setItem('rkmmax_admin_region', newRegion);
+    localStorage.setItem("rkmmax_admin_region", newRegion);
   };
 
   async function startCheckout(plan) {
@@ -162,10 +154,10 @@ export default function PlansScreen() {
 
   return (
     <main className="container" style={{ maxWidth: 980, margin: "40px auto", padding: 16 }}>
-      <header style={{ marginBottom: 24, position: 'relative' }}>
-        <h1 
-          style={{ margin: 0, cursor: 'pointer', display: 'inline-block' }}
-          onClick={() => setLogoClicks(prev => prev + 1)}
+      <header style={{ marginBottom: 24, position: "relative" }}>
+        <h1
+          style={{ margin: 0, cursor: "pointer", display: "inline-block" }}
+          onClick={() => setLogoClicks((prev) => prev + 1)}
           title="Clique 3x para ativar modo admin"
         >
           Escolha seu Plano
@@ -173,54 +165,56 @@ export default function PlansScreen() {
         <p style={{ opacity: 0.8, margin: "8px 0 0" }}>
           Região detectada: <b>{region}</b>
         </p>
-        
+
         {/* Botão Admin - só aparece quando ativado */}
         {isAdminMode && (
-          <div style={{
-            position: 'fixed',
-            top: 20,
-            right: 20,
-            zIndex: 9999,
-            background: '#1a1a1a',
-            color: 'white',
-            padding: '12px 16px',
-            borderRadius: 8,
-            boxShadow: '0 4px 12px rgba(0,0,0,0.3)',
-            display: 'flex',
-            alignItems: 'center',
-            gap: 12
-          }}>
+          <div
+            style={{
+              position: "fixed",
+              top: 20,
+              right: 20,
+              zIndex: 9999,
+              background: "#1a1a1a",
+              color: "white",
+              padding: "12px 16px",
+              borderRadius: 8,
+              boxShadow: "0 4px 12px rgba(0,0,0,0.3)",
+              display: "flex",
+              alignItems: "center",
+              gap: 12,
+            }}
+          >
             <span style={{ fontSize: 12, opacity: 0.8 }}>🔧 ADMIN</span>
             <button
               onClick={toggleAdminRegion}
               style={{
-                background: adminRegion === 'BR' ? '#0070f3' : '#10b981',
-                color: 'white',
-                border: 'none',
-                padding: '6px 12px',
+                background: adminRegion === "BR" ? "#0070f3" : "#10b981",
+                color: "white",
+                border: "none",
+                padding: "6px 12px",
                 borderRadius: 6,
-                cursor: 'pointer',
-                fontWeight: 'bold',
-                fontSize: 14
+                cursor: "pointer",
+                fontWeight: "bold",
+                fontSize: 14,
               }}
             >
-              {adminRegion === 'BR' ? '🇧🇷 BR' : '🇺🇸 US'}
+              {adminRegion === "BR" ? "🇧🇷 BR" : "🇺🇸 US"}
             </button>
             <button
               onClick={() => {
-                localStorage.removeItem('rkmmax_admin');
-                localStorage.removeItem('rkmmax_admin_region');
+                localStorage.removeItem("rkmmax_admin");
+                localStorage.removeItem("rkmmax_admin_region");
                 setIsAdminMode(false);
-                alert('Modo admin desativado');
+                alert("Modo admin desativado");
               }}
               style={{
-                background: '#ef4444',
-                color: 'white',
-                border: 'none',
-                padding: '6px 10px',
+                background: "#ef4444",
+                color: "white",
+                border: "none",
+                padding: "6px 10px",
                 borderRadius: 6,
-                cursor: 'pointer',
-                fontSize: 12
+                cursor: "pointer",
+                fontSize: 12,
               }}
               title="Desativar modo admin"
             >
@@ -274,8 +268,11 @@ export default function PlansScreen() {
                 padding: "10px 14px",
                 borderRadius: 10,
                 border: "none",
-                background:
-                  p.planKey.includes("prem") ? "#6e2cf4" : p.planKey.includes("inter") ? "#4f8cff" : "#2eb88a",
+                background: p.planKey.includes("prem")
+                  ? "#6e2cf4"
+                  : p.planKey.includes("inter")
+                    ? "#4f8cff"
+                    : "#2eb88a",
                 color: "white",
                 fontWeight: 600,
                 cursor: "pointer",
@@ -293,4 +290,3 @@ export default function PlansScreen() {
     </main>
   );
 }
-

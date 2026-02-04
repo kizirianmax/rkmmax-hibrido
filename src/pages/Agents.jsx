@@ -35,8 +35,8 @@ export default function AgentsPage() {
             borderRadius: 12,
           }}
         >
-          <strong>Serginho</strong> está disponível em <strong>todos os planos</strong> e
-          coordena os especialistas. Os demais agentes ficam liberados para uso no plano{" "}
+          <strong>Serginho</strong> está disponível em <strong>todos os planos</strong> e coordena
+          os especialistas. Os demais agentes ficam liberados para uso no plano{" "}
           <strong>Premium</strong>.
         </p>
 
@@ -54,10 +54,7 @@ export default function AgentsPage() {
             return (
               <div key={agent.id} style={{ position: "relative" }}>
                 {/* Card sempre visível */}
-                <AgentCard
-                  agent={agent}
-                  onClick={() => (locked ? goPricing() : goChat(agent))}
-                />
+                <AgentCard agent={agent} onClick={() => (locked ? goPricing() : goChat(agent))} />
 
                 {/* Selo no canto: “Livre” para Serginho, “Premium” para especialistas */}
                 <div
@@ -69,9 +66,7 @@ export default function AgentsPage() {
                     padding: "6px 10px",
                     borderRadius: 999,
                     border: locked ? "1px solid #94a3b8" : "1px solid #22c55e",
-                    background: locked
-                      ? "rgba(255,255,255,.8)"
-                      : "rgba(34,197,94,.1)",
+                    background: locked ? "rgba(255,255,255,.8)" : "rgba(34,197,94,.1)",
                     backdropFilter: "blur(2px)",
                     fontSize: 12,
                     fontWeight: 600,

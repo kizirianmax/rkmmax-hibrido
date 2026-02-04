@@ -23,9 +23,15 @@ function writeConsent(val) {
 }
 
 // APIs utilitárias (se você usa em outros lugares)
-export function getConsent() { return readConsent(); }
-export function acceptConsent() { writeConsent(true); }
-export function revokeConsent() { writeConsent(false); }
+export function getConsent() {
+  return readConsent();
+}
+export function acceptConsent() {
+  writeConsent(true);
+}
+export function revokeConsent() {
+  writeConsent(false);
+}
 
 export default function useConsent() {
   // inicia falso e ajusta no efeito → evita mismatch em SSR/hydration
@@ -43,8 +49,14 @@ export default function useConsent() {
     return () => window.removeEventListener("storage", onStorage);
   }, []);
 
-  const accept = () => { writeConsent(true);  setAccepted(true);  };
-  const revoke = () => { writeConsent(false); setAccepted(false); };
+  const accept = () => {
+    writeConsent(true);
+    setAccepted(true);
+  };
+  const revoke = () => {
+    writeConsent(false);
+    setAccepted(false);
+  };
 
   return { accepted, accept, revoke };
 }

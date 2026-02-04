@@ -12,7 +12,7 @@ export default function OptionalSignupBanner() {
     // Verificar se já cadastrou ou dispensou
     const hasEmail = localStorage.getItem("user_email");
     const dismissed = localStorage.getItem("signup_banner_dismissed");
-    
+
     if (!hasEmail && !dismissed) {
       // Mostrar banner após 10 segundos de uso
       const timer = setTimeout(() => {
@@ -25,7 +25,7 @@ export default function OptionalSignupBanner() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
     if (!email || !email.includes("@")) {
       setMessage("Por favor, insira um e-mail válido");
       return;
@@ -36,16 +36,16 @@ export default function OptionalSignupBanner() {
     try {
       // Salvar e-mail no localStorage
       localStorage.setItem("user_email", email);
-      
+
       // Enviar para o backend
-      await fetch('/api/save-email', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email })
+      await fetch("/api/save-email", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email }),
       });
 
       setMessage("✅ E-mail salvo! Você receberá atualizações.");
-      
+
       // Fechar banner após 2 segundos
       setTimeout(() => {
         setIsVisible(false);
@@ -68,20 +68,14 @@ export default function OptionalSignupBanner() {
   return (
     <div className="signup-banner">
       <div className="signup-banner-content">
-        <button 
-          className="signup-banner-close" 
-          onClick={handleDismiss}
-          aria-label="Fechar"
-        >
+        <button className="signup-banner-close" onClick={handleDismiss} aria-label="Fechar">
           ✕
         </button>
-        
+
         <div className="signup-banner-icon">📧</div>
-        
-        <h3 className="signup-banner-title">
-          Quer receber atualizações?
-        </h3>
-        
+
+        <h3 className="signup-banner-title">Quer receber atualizações?</h3>
+
         <p className="signup-banner-text">
           Deixe seu e-mail para saber quando lançarmos novos recursos e melhorias!
         </p>
@@ -95,11 +89,7 @@ export default function OptionalSignupBanner() {
             className="signup-banner-input"
             disabled={isSubmitting}
           />
-          <button 
-            type="submit" 
-            className="signup-banner-button"
-            disabled={isSubmitting}
-          >
+          <button type="submit" className="signup-banner-button" disabled={isSubmitting}>
             {isSubmitting ? "Salvando..." : "Cadastrar"}
           </button>
         </form>
@@ -110,14 +100,10 @@ export default function OptionalSignupBanner() {
           </p>
         )}
 
-        <button 
-          className="signup-banner-skip" 
-          onClick={handleDismiss}
-        >
+        <button className="signup-banner-skip" onClick={handleDismiss}>
           Agora não
         </button>
       </div>
     </div>
   );
 }
-

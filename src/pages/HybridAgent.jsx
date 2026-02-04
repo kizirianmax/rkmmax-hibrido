@@ -1,5 +1,5 @@
-import { useState, useRef, useEffect } from 'react';
-import '../styles/HybridAgent.css';
+import { useState, useRef, useEffect } from "react";
+import "../styles/HybridAgent.css";
 
 /**
  * HYBRID AGENT PAGE
@@ -7,37 +7,38 @@ import '../styles/HybridAgent.css';
  * Usa /api/chat que funciona no Vercel
  */
 export default function HybridAgent() {
-  const [mode, setMode] = useState('manual');
-  const [input, setInput] = useState('');
+  const [mode, setMode] = useState("manual");
+  const [input, setInput] = useState("");
   const [messages, setMessages] = useState([
     {
       id: 1,
-      type: 'system',
-      content: '🤖 Bem-vindo ao RKMMAX Híbrido v2.0.0 - Sistema Inteligente de Agentes',
+      type: "system",
+      content: "🤖 Bem-vindo ao RKMMAX Híbrido v2.0.0 - Sistema Inteligente de Agentes",
       timestamp: new Date(),
     },
     {
       id: 2,
-      type: 'agent',
-      agent: 'Serginho',
-      content: 'Olá! Sou Serginho, seu orquestrador de IA. Descreva a tarefa que deseja executar e eu faço!',
+      type: "agent",
+      agent: "Serginho",
+      content:
+        "Olá! Sou Serginho, seu orquestrador de IA. Descreva a tarefa que deseja executar e eu faço!",
       timestamp: new Date(),
     },
   ]);
   const [loading, setLoading] = useState(false);
-  const [selectedAgent, setSelectedAgent] = useState('Serginho');
+  const [selectedAgent, setSelectedAgent] = useState("Serginho");
   const messagesEndRef = useRef(null);
 
   const agents = [
-    { id: 'serginho', name: 'Serginho', role: 'Orquestrador', icon: '🤖' },
-    { id: 'researcher', name: 'Pesquisador', role: 'Análise', icon: '🔍' },
-    { id: 'writer', name: 'Escritor', role: 'Conteúdo', icon: '✍️' },
-    { id: 'developer', name: 'Dev', role: 'Código', icon: '💻' },
-    { id: 'designer', name: 'Designer', role: 'Visual', icon: '🎨' },
+    { id: "serginho", name: "Serginho", role: "Orquestrador", icon: "🤖" },
+    { id: "researcher", name: "Pesquisador", role: "Análise", icon: "🔍" },
+    { id: "writer", name: "Escritor", role: "Conteúdo", icon: "✍️" },
+    { id: "developer", name: "Dev", role: "Código", icon: "💻" },
+    { id: "designer", name: "Designer", role: "Visual", icon: "🎨" },
   ];
 
   const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   };
 
   useEffect(() => {
@@ -50,31 +51,31 @@ export default function HybridAgent() {
     // Adicionar mensagem do usuário
     const userMessage = {
       id: messages.length + 1,
-      type: 'user',
+      type: "user",
       content: input,
       timestamp: new Date(),
     };
 
     setMessages((prev) => [...prev, userMessage]);
     const userInput = input;
-    setInput('');
+    setInput("");
     setLoading(true);
 
     try {
       // Chamar /api/chat que funciona
-      const response = await fetch('https://kizirianmax.site/api/chat', {
-        method: 'POST',
+      const response = await fetch("https://kizirianmax.site/api/chat", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({
           messages: [
-            ...messages.map(msg => ({
-              role: msg.type === 'user' ? 'user' : 'assistant',
+            ...messages.map((msg) => ({
+              role: msg.type === "user" ? "user" : "assistant",
               content: msg.content,
             })),
             {
-              role: 'user',
+              role: "user",
               content: userInput,
             },
           ],
@@ -88,12 +89,12 @@ export default function HybridAgent() {
       }
 
       const data = await response.json();
-      const aiResponse = data.response || data.message || 'Sem resposta';
+      const aiResponse = data.response || data.message || "Sem resposta";
 
       // Adicionar resposta do agente
       const agentMessage = {
         id: messages.length + 2,
-        type: 'agent',
+        type: "agent",
         agent: selectedAgent,
         content: aiResponse,
         timestamp: new Date(),
@@ -103,10 +104,10 @@ export default function HybridAgent() {
 
       setMessages((prev) => [...prev, agentMessage]);
     } catch (error) {
-      console.error('Erro:', error);
+      console.error("Erro:", error);
       const errorMessage = {
         id: messages.length + 2,
-        type: 'error',
+        type: "error",
         content: `❌ Erro: ${error.message}`,
         timestamp: new Date(),
       };
@@ -117,7 +118,7 @@ export default function HybridAgent() {
   };
 
   const handleKeyPress = (e) => {
-    if (e.key === 'Enter' && !e.shiftKey) {
+    if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
       handleSendMessage();
     }
@@ -133,7 +134,7 @@ export default function HybridAgent() {
             {agents.map((agent) => (
               <button
                 key={agent.id}
-                className={`agent-button ${selectedAgent === agent.name ? 'active' : ''}`}
+                className={`agent-button ${selectedAgent === agent.name ? "active" : ""}`}
                 onClick={() => setSelectedAgent(agent.name)}
               >
                 <span className="agent-icon">{agent.icon}</span>
@@ -151,14 +152,14 @@ export default function HybridAgent() {
           <h3>MODO</h3>
           <div className="mode-buttons">
             <button
-              className={`mode-btn ${mode === 'manual' ? 'active' : ''}`}
-              onClick={() => setMode('manual')}
+              className={`mode-btn ${mode === "manual" ? "active" : ""}`}
+              onClick={() => setMode("manual")}
             >
               🎮 Manual
             </button>
             <button
-              className={`mode-btn ${mode === 'optimized' ? 'active' : ''}`}
-              onClick={() => setMode('optimized')}
+              className={`mode-btn ${mode === "optimized" ? "active" : ""}`}
+              onClick={() => setMode("optimized")}
             >
               ⚡ Otimizado
             </button>
@@ -178,7 +179,7 @@ export default function HybridAgent() {
         <div className="hybrid-messages">
           {messages.map((msg) => (
             <div key={msg.id} className={`message message-${msg.type}`}>
-              {msg.type === 'agent' && (
+              {msg.type === "agent" && (
                 <div className="message-agent">
                   <span className="agent-badge">{msg.agent}</span>
                 </div>
@@ -218,11 +219,10 @@ export default function HybridAgent() {
             onClick={handleSendMessage}
             disabled={loading || !input.trim()}
           >
-            {loading ? '⏳ Processando...' : '📤 Enviar'}
+            {loading ? "⏳ Processando..." : "📤 Enviar"}
           </button>
         </div>
       </div>
     </div>
   );
 }
-

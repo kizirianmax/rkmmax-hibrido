@@ -39,9 +39,7 @@ export default function Auth() {
             Entrar
           </button>
         </form>
-        {message && (
-          <p className="mt-4 text-center text-sm text-yellow-400">{message}</p>
-        )}
+        {message && <p className="mt-4 text-center text-sm text-yellow-400">{message}</p>}
       </div>
     </div>
   );
