@@ -16,7 +16,7 @@ class SecurityValidator {
         /DELETE\s+FROM/i,
         /TRUNCATE\s+TABLE/i,
       ],
-      
+
       // Credenciais expostas
       credentials: [
         /process\.env\.[A-Z_]+/,
@@ -28,7 +28,7 @@ class SecurityValidator {
         /private_key/i,
         /bearer\s+[a-z0-9]{40,}/i,
       ],
-      
+
       // Código malicioso
       malicious: [
         /eval\s*\(/,
@@ -40,7 +40,7 @@ class SecurityValidator {
         /\.shell\s*\(/,
         /\.exec\s*\(/,
       ],
-      
+
       // Acesso a arquivos críticos
       criticalFiles: [
         /\.git\//,
@@ -51,7 +51,7 @@ class SecurityValidator {
         /package-lock\.json/,
         /yarn\.lock/,
       ],
-      
+
       // Modificações perigosas
       dangerousModifications: [
         /delete\s+.*\.git/i,
@@ -61,36 +61,36 @@ class SecurityValidator {
     };
 
     this.criticalFiles = [
-      '.git',
-      '.github',
-      'node_modules',
-      '.env',
-      '.env.production',
-      '.env.local',
-      'package-lock.json',
-      'yarn.lock',
-      'vercel.json',
-      'firebase.json',
+      ".git",
+      ".github",
+      "node_modules",
+      ".env",
+      ".env.production",
+      ".env.local",
+      "package-lock.json",
+      "yarn.lock",
+      "vercel.json",
+      "firebase.json",
     ];
 
     this.allowedExtensions = [
-      '.js',
-      '.jsx',
-      '.ts',
-      '.tsx',
-      '.json',
-      '.css',
-      '.scss',
-      '.html',
-      '.md',
-      '.py',
-      '.go',
-      '.java',
-      '.rb',
-      '.php',
-      '.sql',
-      '.yml',
-      '.yaml',
+      ".js",
+      ".jsx",
+      ".ts",
+      ".tsx",
+      ".json",
+      ".css",
+      ".scss",
+      ".html",
+      ".md",
+      ".py",
+      ".go",
+      ".java",
+      ".rb",
+      ".php",
+      ".sql",
+      ".yml",
+      ".yaml",
     ];
   }
 
@@ -102,7 +102,7 @@ class SecurityValidator {
       isValid: true,
       errors: [],
       warnings: [],
-      severity: 'none', // none, low, medium, high, critical
+      severity: "none", // none, low, medium, high, critical
       details: {
         codeLength: code.length,
         filePath,
@@ -113,11 +113,11 @@ class SecurityValidator {
     // 1. Verificar extensão do arquivo
     if (!this.isAllowedExtension(filePath)) {
       results.isValid = false;
-      results.severity = 'critical';
+      results.severity = "critical";
       results.errors.push({
-        type: 'INVALID_FILE_EXTENSION',
+        type: "INVALID_FILE_EXTENSION",
         message: `Extensão de arquivo não permitida: ${filePath}`,
-        severity: 'critical',
+        severity: "critical",
       });
       return results;
     }
@@ -125,11 +125,11 @@ class SecurityValidator {
     // 2. Verificar se é arquivo crítico
     if (this.isCriticalFile(filePath)) {
       results.isValid = false;
-      results.severity = 'critical';
+      results.severity = "critical";
       results.errors.push({
-        type: 'CRITICAL_FILE_MODIFICATION',
+        type: "CRITICAL_FILE_MODIFICATION",
         message: `Não é permitido modificar arquivo crítico: ${filePath}`,
-        severity: 'critical',
+        severity: "critical",
       });
       return results;
     }
@@ -138,11 +138,11 @@ class SecurityValidator {
     const patternCheck = this.checkBlockedPatterns(code);
     if (patternCheck.found.length > 0) {
       results.isValid = false;
-      results.severity = 'critical';
+      results.severity = "critical";
       results.errors.push({
-        type: 'BLOCKED_PATTERN_DETECTED',
-        message: `Padrões perigosos detectados: ${patternCheck.found.join(', ')}`,
-        severity: 'critical',
+        type: "BLOCKED_PATTERN_DETECTED",
+        message: `Padrões perigosos detectados: ${patternCheck.found.join(", ")}`,
+        severity: "critical",
         patterns: patternCheck.details,
       });
       return results;
@@ -152,11 +152,11 @@ class SecurityValidator {
     const credentialCheck = this.checkCredentials(code);
     if (credentialCheck.found.length > 0) {
       results.isValid = false;
-      results.severity = 'critical';
+      results.severity = "critical";
       results.errors.push({
-        type: 'CREDENTIALS_EXPOSED',
-        message: `Credenciais potencialmente expostas: ${credentialCheck.found.join(', ')}`,
-        severity: 'critical',
+        type: "CREDENTIALS_EXPOSED",
+        message: `Credenciais potencialmente expostas: ${credentialCheck.found.join(", ")}`,
+        severity: "critical",
         credentials: credentialCheck.details,
       });
       return results;
@@ -166,18 +166,18 @@ class SecurityValidator {
     const syntaxCheck = this.checkSyntax(code, filePath);
     if (!syntaxCheck.isValid) {
       results.warnings.push({
-        type: 'SYNTAX_WARNING',
+        type: "SYNTAX_WARNING",
         message: syntaxCheck.message,
-        severity: 'medium',
+        severity: "medium",
       });
     }
 
     // 6. Verificar tamanho do arquivo
     if (code.length > 1000000) {
       results.warnings.push({
-        type: 'FILE_TOO_LARGE',
+        type: "FILE_TOO_LARGE",
         message: `Arquivo muito grande (${code.length} bytes)`,
-        severity: 'low',
+        severity: "low",
       });
     }
 
@@ -203,7 +203,7 @@ class SecurityValidator {
 
     for (const file of files) {
       const validation = await this.validateCode(file.content, file.path);
-      
+
       results.details.push({
         path: file.path,
         ...validation,
@@ -228,7 +228,7 @@ class SecurityValidator {
    * Verificar extensão permitida
    */
   isAllowedExtension(filePath) {
-    const ext = filePath.substring(filePath.lastIndexOf('.'));
+    const ext = filePath.substring(filePath.lastIndexOf("."));
     return this.allowedExtensions.includes(ext.toLowerCase());
   }
 
@@ -236,8 +236,8 @@ class SecurityValidator {
    * Verificar se é arquivo crítico
    */
   isCriticalFile(filePath) {
-    return this.criticalFiles.some(critical => 
-      filePath.includes(critical) || filePath.startsWith(critical)
+    return this.criticalFiles.some(
+      (critical) => filePath.includes(critical) || filePath.startsWith(critical)
     );
   }
 
@@ -273,7 +273,7 @@ class SecurityValidator {
     const details = [];
 
     for (const pattern of this.blockedPatterns.credentials) {
-      const matches = code.match(new RegExp(pattern, 'g'));
+      const matches = code.match(new RegExp(pattern, "g"));
       if (matches) {
         found.push(...matches);
         details.push({
@@ -283,10 +283,10 @@ class SecurityValidator {
       }
     }
 
-    return { 
-      found: [...new Set(found)], 
+    return {
+      found: [...new Set(found)],
       details,
-      riskLevel: found.length > 0 ? 'CRITICAL' : 'SAFE',
+      riskLevel: found.length > 0 ? "CRITICAL" : "SAFE",
     };
   }
 
@@ -294,14 +294,14 @@ class SecurityValidator {
    * Verificar sintaxe básica
    */
   checkSyntax(code, filePath) {
-    const ext = filePath.substring(filePath.lastIndexOf('.'));
-    
+    const ext = filePath.substring(filePath.lastIndexOf("."));
+
     // Verificações básicas por tipo de arquivo
-    if (['.js', '.jsx', '.ts', '.tsx'].includes(ext)) {
+    if ([".js", ".jsx", ".ts", ".tsx"].includes(ext)) {
       // Verificar chaves balanceadas
       const openBraces = (code.match(/{/g) || []).length;
       const closeBraces = (code.match(/}/g) || []).length;
-      
+
       if (openBraces !== closeBraces) {
         return {
           isValid: false,
@@ -312,7 +312,7 @@ class SecurityValidator {
       // Verificar parênteses balanceados
       const openParens = (code.match(/\(/g) || []).length;
       const closeParens = (code.match(/\)/g) || []).length;
-      
+
       if (openParens !== closeParens) {
         return {
           isValid: false,
@@ -321,7 +321,7 @@ class SecurityValidator {
       }
     }
 
-    if (['.json'].includes(ext)) {
+    if ([".json"].includes(ext)) {
       try {
         JSON.parse(code);
       } catch (error) {
@@ -342,32 +342,32 @@ class SecurityValidator {
     const warnings = [];
 
     // Verificar console.log em produção
-    if (code.includes('console.log') && !filePath.includes('test')) {
+    if (code.includes("console.log") && !filePath.includes("test")) {
       warnings.push({
-        type: 'CONSOLE_LOG_IN_PRODUCTION',
-        message: 'console.log detectado em código de produção',
-        severity: 'low',
-        suggestion: 'Use logger apropriado em vez de console.log',
+        type: "CONSOLE_LOG_IN_PRODUCTION",
+        message: "console.log detectado em código de produção",
+        severity: "low",
+        suggestion: "Use logger apropriado em vez de console.log",
       });
     }
 
     // Verificar TODO/FIXME
-    if (code.includes('TODO') || code.includes('FIXME')) {
+    if (code.includes("TODO") || code.includes("FIXME")) {
       warnings.push({
-        type: 'UNFINISHED_CODE',
-        message: 'Código com TODO/FIXME detectado',
-        severity: 'low',
-        suggestion: 'Remova comentários TODO/FIXME antes de fazer commit',
+        type: "UNFINISHED_CODE",
+        message: "Código com TODO/FIXME detectado",
+        severity: "low",
+        suggestion: "Remova comentários TODO/FIXME antes de fazer commit",
       });
     }
 
     // Verificar comentários de debug
-    if (code.includes('debugger')) {
+    if (code.includes("debugger")) {
       warnings.push({
-        type: 'DEBUG_STATEMENT',
-        message: 'Declaração debugger detectada',
-        severity: 'medium',
-        suggestion: 'Remova debugger antes de fazer commit',
+        type: "DEBUG_STATEMENT",
+        message: "Declaração debugger detectada",
+        severity: "medium",
+        suggestion: "Remova debugger antes de fazer commit",
       });
     }
 
@@ -385,18 +385,18 @@ class SecurityValidator {
         passed: validationResults.validFiles,
         failed: validationResults.invalidFiles,
         warnings: validationResults.warnings,
-        overallStatus: validationResults.isValid ? 'SAFE' : 'BLOCKED',
+        overallStatus: validationResults.isValid ? "SAFE" : "BLOCKED",
       },
       details: validationResults.details,
-      recommendation: validationResults.isValid 
-        ? '✅ Código aprovado para commit'
-        : '❌ Código bloqueado - Corrija os erros antes de fazer commit',
+      recommendation: validationResults.isValid
+        ? "✅ Código aprovado para commit"
+        : "❌ Código bloqueado - Corrija os erros antes de fazer commit",
     };
   }
 }
 
 // Exportar
-if (typeof module !== 'undefined' && module.exports) {
+if (typeof module !== "undefined" && module.exports) {
   module.exports = SecurityValidator;
 }
 

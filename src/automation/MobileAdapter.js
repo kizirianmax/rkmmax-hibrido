@@ -5,7 +5,7 @@
  */
 
 class MobileAdapter {
-  constructor(platform = 'react-native') {
+  constructor(platform = "react-native") {
     this.platform = platform; // 'react-native' ou 'flutter'
     this.nativeModules = {};
     this.bridgeReady = false;
@@ -17,9 +17,9 @@ class MobileAdapter {
   async initializeBridge() {
     console.log(`🌉 Inicializando ponte para ${this.platform}...`);
 
-    if (this.platform === 'react-native') {
+    if (this.platform === "react-native") {
       this.initializeReactNativeBridge();
-    } else if (this.platform === 'flutter') {
+    } else if (this.platform === "flutter") {
       this.initializeFlutterBridge();
     }
 
@@ -38,14 +38,14 @@ class MobileAdapter {
     this.nativeModules = {
       AudioRecorder: {
         startRecording: async () => ({ success: true }),
-        stopRecording: async () => ({ uri: 'file://...' }),
+        stopRecording: async () => ({ uri: "file://..." }),
       },
       CameraModule: {
-        takePicture: async () => ({ uri: 'file://...' }),
-        pickImage: async () => ({ uri: 'file://...' }),
+        takePicture: async () => ({ uri: "file://..." }),
+        pickImage: async () => ({ uri: "file://..." }),
       },
       FileSystem: {
-        readFile: async (path) => ({ content: '' }),
+        readFile: async (path) => ({ content: "" }),
         writeFile: async (path, content) => ({ success: true }),
       },
     };
@@ -61,14 +61,14 @@ class MobileAdapter {
     this.nativeModules = {
       AudioRecorder: {
         startRecording: async () => ({ success: true }),
-        stopRecording: async () => ({ uri: 'file://...' }),
+        stopRecording: async () => ({ uri: "file://..." }),
       },
       CameraModule: {
-        takePicture: async () => ({ uri: 'file://...' }),
-        pickImage: async () => ({ uri: 'file://...' }),
+        takePicture: async () => ({ uri: "file://..." }),
+        pickImage: async () => ({ uri: "file://..." }),
       },
       FileSystem: {
-        readFile: async (path) => ({ content: '' }),
+        readFile: async (path) => ({ content: "" }),
         writeFile: async (path, content) => ({ success: true }),
       },
     };
@@ -84,7 +84,7 @@ class MobileAdapter {
       await this.nativeModules.AudioRecorder.startRecording();
 
       // Aguardar duração
-      await new Promise(resolve => setTimeout(resolve, duration * 1000));
+      await new Promise((resolve) => setTimeout(resolve, duration * 1000));
 
       const result = await this.nativeModules.AudioRecorder.stopRecording();
 
@@ -165,7 +165,7 @@ class MobileAdapter {
   async getDeviceInfo() {
     return {
       platform: this.platform,
-      os: this.platform === 'react-native' ? 'iOS/Android' : 'iOS/Android',
+      os: this.platform === "react-native" ? "iOS/Android" : "iOS/Android",
       bridgeReady: this.bridgeReady,
       capabilities: {
         audio: true,
@@ -252,14 +252,14 @@ class MobileAdapter {
    * Obter permissões (multiplataforma)
    */
   async requestPermissions(permissions = []) {
-    console.log(`🔐 Solicitando permissões: ${permissions.join(', ')}`);
+    console.log(`🔐 Solicitando permissões: ${permissions.join(", ")}`);
 
     // Em produção, usar react-native-permissions ou permission_handler
 
     return {
       success: true,
       permissions: permissions.reduce((acc, perm) => {
-        acc[perm] = 'granted';
+        acc[perm] = "granted";
         return acc;
       }, {}),
     };
@@ -288,7 +288,7 @@ class MobileAdapter {
 
     return {
       isConnected: true,
-      type: 'wifi', // 'wifi', 'cellular', 'none'
+      type: "wifi", // 'wifi', 'cellular', 'none'
     };
   }
 
@@ -301,7 +301,7 @@ class MobileAdapter {
     return {
       level: 100,
       isCharging: false,
-      state: 'full',
+      state: "full",
     };
   }
 }

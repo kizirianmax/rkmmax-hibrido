@@ -1,5 +1,5 @@
 // api/send-email.js
-import { Resend } from 'resend';
+import { Resend } from "resend";
 
 /**
  * Endpoint para enviar e-mails via Resend
@@ -12,7 +12,7 @@ function applyCORS(req, res) {
   res.setHeader("Access-Control-Allow-Methods", "POST,OPTIONS");
   res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
   res.setHeader("Cache-Control", "no-store");
-  
+
   if (req.method === "OPTIONS") {
     res.status(204).end();
     return true;
@@ -30,13 +30,13 @@ export default async function handler(req, res) {
 
   try {
     const RESEND_API_KEY = process.env.RESEND_API_KEY;
-    const FROM_EMAIL = process.env.FROM_EMAIL || 'onboarding@resend.dev'; // Email padrão do Resend
+    const FROM_EMAIL = process.env.FROM_EMAIL || "onboarding@resend.dev"; // Email padrão do Resend
 
     if (!RESEND_API_KEY) {
-      console.error('❌ RESEND_API_KEY não configurada');
-      return res.status(500).json({ 
-        ok: false, 
-        error: 'RESEND_API_KEY não configurada. Adicione no Vercel.' 
+      console.error("❌ RESEND_API_KEY não configurada");
+      return res.status(500).json({
+        ok: false,
+        error: "RESEND_API_KEY não configurada. Adicione no Vercel.",
       });
     }
 
@@ -44,20 +44,20 @@ export default async function handler(req, res) {
     const { to, subject, html, text, type } = body;
 
     if (!to || !subject) {
-      return res.status(400).json({ 
-        ok: false, 
-        error: "Missing required fields: to, subject" 
+      return res.status(400).json({
+        ok: false,
+        error: "Missing required fields: to, subject",
       });
     }
 
     // Inicializar Resend
     const resend = new Resend(RESEND_API_KEY);
 
-    console.log('📧 Enviando e-mail via Resend:', {
+    console.log("📧 Enviando e-mail via Resend:", {
       to,
       subject,
-      type: type || 'generic',
-      timestamp: new Date().toISOString()
+      type: type || "generic",
+      timestamp: new Date().toISOString(),
     });
 
     // Enviar e-mail
@@ -66,32 +66,30 @@ export default async function handler(req, res) {
       to: Array.isArray(to) ? to : [to],
       subject,
       html: html || text,
-      text: text || html?.replace(/<[^>]*>/g, '') // Fallback: remover HTML tags
+      text: text || html?.replace(/<[^>]*>/g, ""), // Fallback: remover HTML tags
     });
 
     if (error) {
-      console.error('❌ Erro Resend:', error);
-      return res.status(400).json({ 
-        ok: false, 
-        error: error.message || 'Erro ao enviar e-mail' 
+      console.error("❌ Erro Resend:", error);
+      return res.status(400).json({
+        ok: false,
+        error: error.message || "Erro ao enviar e-mail",
       });
     }
 
-    console.log('✅ E-mail enviado com sucesso:', data);
+    console.log("✅ E-mail enviado com sucesso:", data);
 
-    return res.status(200).json({ 
-      ok: true, 
-      message: 'Email sent successfully',
+    return res.status(200).json({
+      ok: true,
+      message: "Email sent successfully",
       emailId: data.id,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     });
-
   } catch (error) {
-    console.error('❌ Erro ao enviar e-mail:', error);
-    return res.status(500).json({ 
-      ok: false, 
-      error: error.message || 'Internal server error' 
+    console.error("❌ Erro ao enviar e-mail:", error);
+    return res.status(500).json({
+      ok: false,
+      error: error.message || "Internal server error",
     });
   }
 }
-

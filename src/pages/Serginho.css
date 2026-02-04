@@ -31,7 +31,7 @@
 .avatar-large {
   width: 48px;
   height: 48px;
-  borderRadius: 50%;
+  borderradius: 50%;
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   display: flex;
   align-items: center;
@@ -264,7 +264,7 @@
   resize: none;
   min-height: 44px;
   max-height: 80px;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   line-height: 1.4;
 }
 
@@ -358,7 +358,8 @@
 }
 
 @keyframes pulse {
-  0%, 100% {
+  0%,
+  100% {
     opacity: 0.4;
     transform: scale(0.8);
   }
@@ -369,7 +370,8 @@
 }
 
 @keyframes pulse-red {
-  0%, 100% {
+  0%,
+  100% {
     box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7);
   }
   50% {
@@ -464,8 +466,6 @@
   }
 }
 
-
-
 /* Welcome Card Compacto - Fixo no topo */
 .welcome-container-compact {
   position: sticky;
@@ -524,23 +524,22 @@
     top: 65px;
     padding: 6px 16px;
   }
-  
+
   .welcome-card-compact {
     padding: 10px 12px;
     border-radius: 12px;
   }
-  
+
   .avatar-compact {
     width: 40px;
     height: 40px;
   }
-  
+
   .welcome-info-compact h3 {
     font-size: 14px;
   }
-  
+
   .welcome-info-compact p {
     font-size: 12px;
   }
 }
-

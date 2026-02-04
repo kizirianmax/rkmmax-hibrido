@@ -14,15 +14,17 @@ export function AuthProvider({ children }) {
 
   useEffect(() => {
     const init = async () => {
-      const { data: { session } } = await supabase.auth.getSession();
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
       setUser(session?.user ?? null);
       setLoading(false);
     };
     init();
 
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      (_event, session) => setUser(session?.user ?? null)
-    );
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, session) => setUser(session?.user ?? null));
 
     return () => subscription.unsubscribe();
   }, []);
@@ -32,11 +34,7 @@ export function AuthProvider({ children }) {
     setUser(null);
   };
 
-  return (
-    <AuthContext.Provider value={{ user, loading, signOut }}>
-      {children}
-    </AuthContext.Provider>
-  );
+  return <AuthContext.Provider value={{ user, loading, signOut }}>{children}</AuthContext.Provider>;
 }
 
 export function useAuth() {

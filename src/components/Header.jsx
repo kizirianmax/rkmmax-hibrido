@@ -14,10 +14,7 @@ export default function Header() {
         justifyContent: "space-between",
       }}
     >
-      <Link
-        to="/"
-        style={{ fontWeight: 800, textDecoration: "none", color: "#111" }}
-      >
+      <Link to="/" style={{ fontWeight: 800, textDecoration: "none", color: "#111" }}>
         <span className="brand-full">{BRAND.lockup}</span>
         <span className="brand-short">{BRAND.shortLockup}</span>
       </Link>
@@ -25,7 +22,9 @@ export default function Header() {
       <nav className="nav" style={{ display: "flex", gap: 12 }}>
         <NavLink to="/">Home</NavLink>
         <NavLink to="/serginho">Serginho</NavLink>
-        <NavLink to="/hybrid" title="Sistema Híbrido Otimizado">🤖 Híbrido</NavLink>
+        <NavLink to="/hybrid" title="Sistema Híbrido Otimizado">
+          🤖 Híbrido
+        </NavLink>
         <NavLink to="/specialists">Especialistas</NavLink>
         <NavLink to="/projects">Projetos</NavLink>
         <NavLink to="/study">Study Lab</NavLink>

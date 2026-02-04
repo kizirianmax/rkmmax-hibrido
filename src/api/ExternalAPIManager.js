@@ -1,6 +1,6 @@
 /**
  * EXTERNAL API MANAGER
- * 
+ *
  * Gerencia integrações com múltiplas APIs:
  * - OpenAI (GPT-4, GPT-3.5)
  * - Anthropic (Claude)
@@ -39,16 +39,16 @@ class ExternalAPIManager {
    */
   initOpenAI() {
     if (!this.config.openaiKey) return null;
-    
+
     return {
       apiKey: this.config.openaiKey,
-      baseURL: 'https://api.openai.com/v1',
+      baseURL: "https://api.openai.com/v1",
       models: {
-        'gpt-4': { maxTokens: 8192, costPer1kTokens: 0.03 },
-        'gpt-4-turbo': { maxTokens: 128000, costPer1kTokens: 0.01 },
-        'gpt-3.5-turbo': { maxTokens: 4096, costPer1kTokens: 0.0005 },
+        "gpt-4": { maxTokens: 8192, costPer1kTokens: 0.03 },
+        "gpt-4-turbo": { maxTokens: 128000, costPer1kTokens: 0.01 },
+        "gpt-3.5-turbo": { maxTokens: 4096, costPer1kTokens: 0.0005 },
       },
-      defaultModel: 'gpt-3.5-turbo',
+      defaultModel: "gpt-3.5-turbo",
     };
   }
 
@@ -57,16 +57,16 @@ class ExternalAPIManager {
    */
   initAnthropic() {
     if (!this.config.anthropicKey) return null;
-    
+
     return {
       apiKey: this.config.anthropicKey,
-      baseURL: 'https://api.anthropic.com/v1',
+      baseURL: "https://api.anthropic.com/v1",
       models: {
-        'claude-3-opus': { maxTokens: 200000, costPer1kTokens: 0.015 },
-        'claude-3-sonnet': { maxTokens: 200000, costPer1kTokens: 0.003 },
-        'claude-3-haiku': { maxTokens: 200000, costPer1kTokens: 0.00025 },
+        "claude-3-opus": { maxTokens: 200000, costPer1kTokens: 0.015 },
+        "claude-3-sonnet": { maxTokens: 200000, costPer1kTokens: 0.003 },
+        "claude-3-haiku": { maxTokens: 200000, costPer1kTokens: 0.00025 },
       },
-      defaultModel: 'claude-3-sonnet',
+      defaultModel: "claude-3-sonnet",
     };
   }
 
@@ -75,15 +75,15 @@ class ExternalAPIManager {
    */
   initGoogle() {
     if (!this.config.googleKey) return null;
-    
+
     return {
       apiKey: this.config.googleKey,
-      baseURL: 'https://generativelanguage.googleapis.com/v1',
+      baseURL: "https://generativelanguage.googleapis.com/v1",
       models: {
-        'gemini-pro': { maxTokens: 32768, costPer1kTokens: 0.0005 },
-        'gemini-pro-vision': { maxTokens: 4096, costPer1kTokens: 0.001 },
+        "gemini-pro": { maxTokens: 32768, costPer1kTokens: 0.0005 },
+        "gemini-pro-vision": { maxTokens: 4096, costPer1kTokens: 0.001 },
       },
-      defaultModel: 'gemini-pro',
+      defaultModel: "gemini-pro",
     };
   }
 
@@ -92,16 +92,16 @@ class ExternalAPIManager {
    */
   initGroq() {
     if (!this.config.groqKey) return null;
-    
+
     return {
       apiKey: this.config.groqKey,
-      baseURL: 'https://api.groq.com/openai/v1',
+      baseURL: "https://api.groq.com/openai/v1",
       models: {
-        'llama-2-70b': { maxTokens: 4096, costPer1kTokens: 0.0001 },
-        'mixtral-8x7b': { maxTokens: 4096, costPer1kTokens: 0.00015 },
-        'llama-2-13b': { maxTokens: 4096, costPer1kTokens: 0.00005 },
+        "llama-2-70b": { maxTokens: 4096, costPer1kTokens: 0.0001 },
+        "mixtral-8x7b": { maxTokens: 4096, costPer1kTokens: 0.00015 },
+        "llama-2-13b": { maxTokens: 4096, costPer1kTokens: 0.00005 },
       },
-      defaultModel: 'llama-2-70b',
+      defaultModel: "llama-2-70b",
     };
   }
 
@@ -109,13 +109,13 @@ class ExternalAPIManager {
    * CHAMAR API COM FALLBACK
    */
   async callWithFallback(prompt, options = {}) {
-    const providers = ['openai', 'anthropic', 'google', 'groq'];
+    const providers = ["openai", "anthropic", "google", "groq"];
     const errors = [];
 
     for (const provider of providers) {
       try {
         if (!this.providers[provider]) continue;
-        
+
         const result = await this.call(provider, prompt, options);
         return {
           success: true,
@@ -153,16 +153,16 @@ class ExternalAPIManager {
     let result;
 
     switch (provider) {
-      case 'openai':
+      case "openai":
         result = await this.callOpenAI(prompt, options);
         break;
-      case 'anthropic':
+      case "anthropic":
         result = await this.callAnthropic(prompt, options);
         break;
-      case 'google':
+      case "google":
         result = await this.callGoogle(prompt, options);
         break;
-      case 'groq':
+      case "groq":
         result = await this.callGroq(prompt, options);
         break;
       default:
@@ -187,14 +187,14 @@ class ExternalAPIManager {
     const maxTokens = options.maxTokens || 1000;
 
     const response = await fetch(`${this.providers.openai.baseURL}/chat/completions`, {
-      method: 'POST',
+      method: "POST",
       headers: {
-        'Authorization': `Bearer ${this.providers.openai.apiKey}`,
-        'Content-Type': 'application/json',
+        Authorization: `Bearer ${this.providers.openai.apiKey}`,
+        "Content-Type": "application/json",
       },
       body: JSON.stringify({
         model,
-        messages: [{ role: 'user', content: prompt }],
+        messages: [{ role: "user", content: prompt }],
         max_tokens: maxTokens,
         temperature: options.temperature || 0.7,
       }),
@@ -221,16 +221,16 @@ class ExternalAPIManager {
     const maxTokens = options.maxTokens || 1000;
 
     const response = await fetch(`${this.providers.anthropic.baseURL}/messages`, {
-      method: 'POST',
+      method: "POST",
       headers: {
-        'x-api-key': this.providers.anthropic.apiKey,
-        'anthropic-version': '2023-06-01',
-        'Content-Type': 'application/json',
+        "x-api-key": this.providers.anthropic.apiKey,
+        "anthropic-version": "2023-06-01",
+        "Content-Type": "application/json",
       },
       body: JSON.stringify({
         model,
         max_tokens: maxTokens,
-        messages: [{ role: 'user', content: prompt }],
+        messages: [{ role: "user", content: prompt }],
       }),
     });
 
@@ -243,8 +243,9 @@ class ExternalAPIManager {
       text: data.content[0].text,
       model,
       tokens: data.usage.input_tokens + data.usage.output_tokens,
-      cost: ((data.usage.input_tokens + data.usage.output_tokens) / 1000) * 
-             this.providers.anthropic.models[model].costPer1kTokens,
+      cost:
+        ((data.usage.input_tokens + data.usage.output_tokens) / 1000) *
+        this.providers.anthropic.models[model].costPer1kTokens,
     };
   }
 
@@ -257,8 +258,8 @@ class ExternalAPIManager {
     const response = await fetch(
       `${this.providers.google.baseURL}/models/${model}:generateContent?key=${this.providers.google.apiKey}`,
       {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           contents: [{ parts: [{ text: prompt }] }],
           generationConfig: {
@@ -293,14 +294,14 @@ class ExternalAPIManager {
     const maxTokens = options.maxTokens || 1000;
 
     const response = await fetch(`${this.providers.groq.baseURL}/chat/completions`, {
-      method: 'POST',
+      method: "POST",
       headers: {
-        'Authorization': `Bearer ${this.providers.groq.apiKey}`,
-        'Content-Type': 'application/json',
+        Authorization: `Bearer ${this.providers.groq.apiKey}`,
+        "Content-Type": "application/json",
       },
       body: JSON.stringify({
         model,
-        messages: [{ role: 'user', content: prompt }],
+        messages: [{ role: "user", content: prompt }],
         max_tokens: maxTokens,
         temperature: options.temperature || 0.7,
       }),
@@ -340,10 +341,10 @@ class ExternalAPIManager {
    */
   getProvidersStatus() {
     return {
-      openai: this.providers.openai ? 'available' : 'not-configured',
-      anthropic: this.providers.anthropic ? 'available' : 'not-configured',
-      google: this.providers.google ? 'available' : 'not-configured',
-      groq: this.providers.groq ? 'available' : 'not-configured',
+      openai: this.providers.openai ? "available" : "not-configured",
+      anthropic: this.providers.anthropic ? "available" : "not-configured",
+      google: this.providers.google ? "available" : "not-configured",
+      groq: this.providers.groq ? "available" : "not-configured",
     };
   }
 
@@ -427,4 +428,3 @@ class ExternalAPIManager {
 }
 
 module.exports = ExternalAPIManager;
-

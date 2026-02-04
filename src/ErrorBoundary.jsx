@@ -12,13 +12,13 @@ export default class ErrorBoundary extends React.Component {
 
   componentDidCatch(error, info) {
     console.error("App crash:", error, info);
-    
+
     // Send to Sentry
     captureError(error, {
       componentStack: info.componentStack,
       url: window.location.href,
     });
-    
+
     // Track in analytics
     trackEvent(Events.ERROR_OCCURRED, {
       error: error.message,
@@ -45,9 +45,15 @@ export default class ErrorBoundary extends React.Component {
           <>
             <p>Tente atualizar a página.</p>
             <div style={{ display: "flex", gap: 12, marginTop: 12 }}>
-              <button onClick={this.reset} style={btn}>Tentar novamente</button>
-              <a href="/" style={btnLink}>Ir para a Home</a>
-              <button onClick={this.reload} style={btn}>Recarregar</button>
+              <button onClick={this.reset} style={btn}>
+                Tentar novamente
+              </button>
+              <a href="/" style={btnLink}>
+                Ir para a Home
+              </a>
+              <button onClick={this.reload} style={btn}>
+                Recarregar
+              </button>
             </div>
             <p style={{ marginTop: 12 }}>
               Precisa de detalhes? <a href="?debug=1">abrir com ?debug=1</a>.
@@ -56,9 +62,7 @@ export default class ErrorBoundary extends React.Component {
         ) : (
           <>
             <h2>Detalhes</h2>
-            <pre style={{ whiteSpace: "pre-wrap" }}>
-              {String(error?.message || error)}
-            </pre>
+            <pre style={{ whiteSpace: "pre-wrap" }}>{String(error?.message || error)}</pre>
             {error?.stack && (
               <>
                 <h3>Stack</h3>
@@ -80,4 +84,9 @@ const btn = {
   cursor: "pointer",
   fontWeight: 600,
 };
-const btnLink = { ...btn, background: "transparent", textDecoration: "none", display: "inline-block" };
+const btnLink = {
+  ...btn,
+  background: "transparent",
+  textDecoration: "none",
+  display: "inline-block",
+};

@@ -4,7 +4,6 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { initSentry } from "./lib/sentry.js";
 import { initAnalytics } from "./lib/analytics.js";
 
-
 import Header from "./components/Header.jsx";
 import BrandTitle from "./components/BrandTitle.jsx";
 import PlanGate from "./components/PlanGate.jsx";
@@ -51,15 +50,13 @@ export default function App() {
     <BrowserRouter>
       <BrandTitle />
       <Header />
-      
+
       {/* Onboarding para novos usuários */}
-      {showOnboarding && (
-        <Onboarding onComplete={() => setShowOnboarding(false)} />
-      )}
-      
+      {showOnboarding && <Onboarding onComplete={() => setShowOnboarding(false)} />}
+
       {/* Banner de cadastro opcional */}
       <OptionalSignupBanner />
-      
+
       {/* Banner de consentimento GDPR/LGPD */}
       <ConsentBanner />
 
@@ -100,7 +97,7 @@ export default function App() {
         {/* Subscription Management */}
         <Route path="/subscription" element={<Subscription />} />
         <Route path="/assinatura" element={<Navigate to="/subscription" replace />} />
-         {/* Sistema Híbrido */}
+        {/* Sistema Híbrido */}
         <Route path="/hybrid" element={<HybridAgentSimple />} />
         <Route path="/agent" element={<HybridAgentSimple />} />
         <Route path="/github-callback" element={<GitHubCallback />} />

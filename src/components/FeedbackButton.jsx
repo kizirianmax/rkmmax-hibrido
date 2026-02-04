@@ -13,7 +13,7 @@ export default function FeedbackButton() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
     if (!feedback.trim()) {
       alert("Por favor, descreva o problema ou sugestão.");
       return;
@@ -232,4 +232,3 @@ export default function FeedbackButton() {
     </div>
   );
 }
-
