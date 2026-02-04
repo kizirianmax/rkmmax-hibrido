@@ -13,14 +13,16 @@ const ASSETS = [
 self.addEventListener("install", (event) => {
   event.waitUntil((async () => {
     const cache = await caches.open(STATIC_CACHE);
-    // Cachear apenas o que existe, ignorando falhas
-    await Promise.allSettled(
-      ASSETS.map(asset => 
-        cache.add(asset).catch(err => {
-          console.warn(`⚠️ Failed to cache ${asset}:`, err.message);
-        })
-      )
+    // Cachear apenas o que existe, ignorando falhas parciais
+    const results = await Promise.allSettled(
+      ASSETS.map(asset => cache.add(asset))
     );
+    // Log apenas as falhas
+    results.forEach((result, index) => {
+      if (result.status === 'rejected') {
+        console.warn(`⚠️ Failed to cache ${ASSETS[index]}:`, result.reason?.message || result.reason);
+      }
+    });
     console.log("✅ Service Worker installed successfully");
   })());
   self.skipWaiting();

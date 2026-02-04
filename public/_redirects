@@ -1,4 +1,4 @@
-# SPA Fallback - todas as rotas devem cair no index.html
-# API routes are handled by Vercel serverless functions in /api directory
-/api/*  200
+# SPA Fallback for Vercel deployment
+# All non-API routes fall back to index.html for React Router
+# API routes in /api directory are automatically handled by Vercel
 /*      /index.html  200
