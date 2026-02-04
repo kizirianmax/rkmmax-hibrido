@@ -1,21 +1,27 @@
 // /public/service-worker.js
-const VERSION = "v1.1";
+const VERSION = "v1.2";
 const STATIC_CACHE = `rkmmax-static-${VERSION}`;
 const RUNTIME_CACHE = `rkmmax-runtime-${VERSION}`;
 
 const ASSETS = [
-  "/",                 // SPA shell
+  "/",
   "/index.html",
-  "/manifest.json",
-  "/avatars/serginho-192.png",
-  "/avatars/serginho-512.png"
+  "/manifest.json"
 ];
 
 // Instala e pré-cacheia os assets essenciais
 self.addEventListener("install", (event) => {
   event.waitUntil((async () => {
     const cache = await caches.open(STATIC_CACHE);
-    await cache.addAll(ASSETS);
+    // Cachear apenas o que existe, ignorando falhas
+    await Promise.allSettled(
+      ASSETS.map(asset => 
+        cache.add(asset).catch(err => {
+          console.warn(`⚠️ Failed to cache ${asset}:`, err.message);
+        })
+      )
+    );
+    console.log("✅ Service Worker installed successfully");
   })());
   self.skipWaiting();
 });
@@ -29,6 +35,7 @@ self.addEventListener("activate", (event) => {
         .filter(k => k !== STATIC_CACHE && k !== RUNTIME_CACHE)
         .map(k => caches.delete(k))
     );
+    console.log("✅ Service Worker activated");
   })());
   self.clients.claim();
 });

@@ -1,1 +1,3 @@
-/*    /index.html   200
+# SPA Fallback - todas as rotas devem cair no index.html
+/api/*  200
+/*      /index.html  200
