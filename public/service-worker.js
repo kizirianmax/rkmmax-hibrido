@@ -20,7 +20,7 @@ self.addEventListener("install", (event) => {
     // Log apenas as falhas
     results.forEach((result, index) => {
       if (result.status === 'rejected') {
-        console.warn(`⚠️ Failed to cache ${ASSETS[index]}:`, result.reason?.message || result.reason);
+        console.warn(`⚠️ Failed to cache ${ASSETS[index]}:`, result.reason);
       }
     });
     console.log("✅ Service Worker installed successfully");
