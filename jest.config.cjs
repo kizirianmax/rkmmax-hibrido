@@ -13,7 +13,8 @@ module.exports = {
   // AMBIENTE E SETUP
   // ============================================
   testEnvironment: 'node',
-  setupFilesAfterEnv: ['<rootDir>/jest.setup.js'],
+  testEnvironmentOptions: {},
+  setupFilesAfterEnv: ['<rootDir>/jest.setup.cjs'],
   
   // ============================================
   // TIMEOUT E PERFORMANCE
@@ -49,6 +50,8 @@ module.exports = {
   testMatch: [
     '<rootDir>/src/**/__tests__/**/*.{js,jsx}',
     '<rootDir>/src/**/*.{spec,test}.{js,jsx}',
+    '<rootDir>/api/**/__tests__/**/*.{js,jsx}',
+    '<rootDir>/api/**/*.{spec,test}.{js,jsx}',
   ],
   testPathIgnorePatterns: [
     '/node_modules/',

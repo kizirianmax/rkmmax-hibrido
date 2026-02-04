@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites name="jest tests" tests="29" failures="0" errors="0" time="3.769">
+  <testsuite name="CircuitBreaker" errors="0" failures="0" skipped="0" timestamp="2026-02-04T23:30:02" time="1.467" tests="6">
+    <testcase classname="CircuitBreaker" name="should execute function successfully" time="0.005">
+    </testcase>
+    <testcase classname="CircuitBreaker" name="should timeout if function takes too long" time="1.022">
+    </testcase>
+    <testcase classname="CircuitBreaker" name="should open circuit after threshold failures" time="0.009">
+    </testcase>
+    <testcase classname="CircuitBreaker" name="should use fallback when circuit is open" time="0.006">
+    </testcase>
+    <testcase classname="CircuitBreaker" name="should return correct stats" time="0.002">
+    </testcase>
+    <testcase classname="CircuitBreaker" name="should reset circuit correctly" time="0.006">
+    </testcase>
+  </testsuite>
+  <testsuite name="PerformanceMetrics" errors="0" failures="0" skipped="0" timestamp="2026-02-04T23:30:04" time="0.327" tests="13">
+    <testcase classname="PerformanceMetrics" name="should record successful request" time="0.002">
+    </testcase>
+    <testcase classname="PerformanceMetrics" name="should record failed request" time="0.001">
+    </testcase>
+    <testcase classname="PerformanceMetrics" name="should track engine usage" time="0.001">
+    </testcase>
+    <testcase classname="PerformanceMetrics" name="should calculate response time statistics" time="0.001">
+    </testcase>
+    <testcase classname="PerformanceMetrics" name="should track cache statistics" time="0.002">
+    </testcase>
+    <testcase classname="PerformanceMetrics" name="should calculate success rate correctly" time="0.001">
+    </testcase>
+    <testcase classname="PerformanceMetrics" name="should track recent errors" time="0.001">
+    </testcase>
+    <testcase classname="PerformanceMetrics" name="should limit response time history to 1000" time="0.001">
+    </testcase>
+    <testcase classname="PerformanceMetrics" name="should limit error history to 100" time="0.001">
+    </testcase>
+    <testcase classname="PerformanceMetrics" name="should calculate P95 and P99 correctly" time="0.002">
+    </testcase>
+    <testcase classname="PerformanceMetrics" name="should handle zero requests gracefully" time="0.002">
+    </testcase>
+    <testcase classname="PerformanceMetrics" name="should reset metrics correctly" time="0.001">
+    </testcase>
+    <testcase classname="PerformanceMetrics" name="should export to Sentry format" time="0.002">
+    </testcase>
+  </testsuite>
+  <testsuite name="SmartCache" errors="0" failures="0" skipped="0" timestamp="2026-02-04T23:30:04" time="1.928" tests="10">
+    <testcase classname="SmartCache" name="should store and retrieve cached values" time="0.003">
+    </testcase>
+    <testcase classname="SmartCache" name="should return null for cache miss" time="0.001">
+    </testcase>
+    <testcase classname="SmartCache" name="should expire old entries" time="1.102">
+    </testcase>
+    <testcase classname="SmartCache" name="should evict oldest entry when max size reached" time="0.001">
+    </testcase>
+    <testcase classname="SmartCache" name="should calculate hit rate correctly" time="0.002">
+    </testcase>
+    <testcase classname="SmartCache" name="should provide accurate stats" time="0.003">
+    </testcase>
+    <testcase classname="SmartCache" name="should generate consistent keys for same messages" time="0.001">
+    </testcase>
+    <testcase classname="SmartCache" name="should generate different keys for different messages" time="0.001">
+    </testcase>
+    <testcase classname="SmartCache" name="should clear all cache" time="0.002">
+    </testcase>
+    <testcase classname="SmartCache" name="should cleanup expired entries" time="0.604">
+    </testcase>
+  </testsuite>
+</testsuites>
