@@ -4,11 +4,11 @@
  * Otimizado para Vercel FREE
  */
 
-const Serginho = require('./serginho/Serginho');
-const SpecialistLoader = require('./core/SpecialistLoader');
-const SpecialistFactory = require('./core/SpecialistFactory');
-const SpecialistRegistry = require('./core/SpecialistRegistry');
-const AgentBase = require('./core/AgentBase');
+const Serginho = require("./serginho/Serginho");
+const SpecialistLoader = require("./core/SpecialistLoader");
+const SpecialistFactory = require("./core/SpecialistFactory");
+const SpecialistRegistry = require("./core/SpecialistRegistry");
+const AgentBase = require("./core/AgentBase");
 
 /**
  * Sistema de Agentes Híbrido
@@ -26,11 +26,11 @@ class HybridAgentSystem {
    */
   async initialize(configPath = null) {
     try {
-      console.log('🚀 Inicializando Sistema Híbrido de Agentes...');
+      console.log("🚀 Inicializando Sistema Híbrido de Agentes...");
 
       // 1. Criar Serginho (Orquestrador)
       this.serginho = new Serginho();
-      console.log('✅ Serginho criado');
+      console.log("✅ Serginho criado");
 
       // 2. Carregar Configurações de Especialistas
       if (configPath) {
@@ -53,7 +53,7 @@ class HybridAgentSystem {
       }
 
       this.initialized = true;
-      console.log('✅ Sistema Híbrido inicializado com sucesso!');
+      console.log("✅ Sistema Híbrido inicializado com sucesso!");
 
       return {
         success: true,
@@ -61,7 +61,7 @@ class HybridAgentSystem {
         specialists: specialists.length,
       };
     } catch (error) {
-      console.error('❌ Erro ao inicializar sistema:', error);
+      console.error("❌ Erro ao inicializar sistema:", error);
       return {
         success: false,
         error: error.message,
@@ -74,52 +74,52 @@ class HybridAgentSystem {
    */
   _getDefaultConfigs() {
     return {
-      version: '1.0.0',
+      version: "1.0.0",
       specialists: [
         {
-          id: 'didak',
-          name: 'Didak',
-          role: 'Especialista em Didática',
-          description: 'Ensino e metodologias de aprendizado',
-          capabilities: ['teaching', 'curriculum-design', 'assessment'],
-          category: 'education',
-          mode: 'MANUAL',
+          id: "didak",
+          name: "Didak",
+          role: "Especialista em Didática",
+          description: "Ensino e metodologias de aprendizado",
+          capabilities: ["teaching", "curriculum-design", "assessment"],
+          category: "education",
+          mode: "MANUAL",
         },
         {
-          id: 'code',
-          name: 'Code Master',
-          role: 'Especialista em Programação',
-          description: 'Desenvolvimento de software e coding',
-          capabilities: ['code', 'debugging', 'architecture'],
-          category: 'technical',
-          mode: 'AUTONOMOUS',
+          id: "code",
+          name: "Code Master",
+          role: "Especialista em Programação",
+          description: "Desenvolvimento de software e coding",
+          capabilities: ["code", "debugging", "architecture"],
+          category: "technical",
+          mode: "AUTONOMOUS",
         },
         {
-          id: 'design',
-          name: 'Design Pro',
-          role: 'Especialista em Design',
-          description: 'UI/UX e design visual',
-          capabilities: ['design', 'ui', 'ux'],
-          category: 'creative',
-          mode: 'MANUAL',
+          id: "design",
+          name: "Design Pro",
+          role: "Especialista em Design",
+          description: "UI/UX e design visual",
+          capabilities: ["design", "ui", "ux"],
+          category: "creative",
+          mode: "MANUAL",
         },
         {
-          id: 'marketing',
-          name: 'Marketing Guru',
-          role: 'Especialista em Marketing',
-          description: 'Estratégia e tática de marketing',
-          capabilities: ['marketing', 'sales', 'strategy'],
-          category: 'business',
-          mode: 'AUTONOMOUS',
+          id: "marketing",
+          name: "Marketing Guru",
+          role: "Especialista em Marketing",
+          description: "Estratégia e tática de marketing",
+          capabilities: ["marketing", "sales", "strategy"],
+          category: "business",
+          mode: "AUTONOMOUS",
         },
         {
-          id: 'data',
-          name: 'Data Analyst',
-          role: 'Especialista em Análise de Dados',
-          description: 'Análise, visualização e insights de dados',
-          capabilities: ['data-analysis', 'statistics', 'visualization'],
-          category: 'technical',
-          mode: 'AUTONOMOUS',
+          id: "data",
+          name: "Data Analyst",
+          role: "Especialista em Análise de Dados",
+          description: "Análise, visualização e insights de dados",
+          capabilities: ["data-analysis", "statistics", "visualization"],
+          category: "technical",
+          mode: "AUTONOMOUS",
         },
       ],
     };
@@ -131,8 +131,8 @@ class HybridAgentSystem {
   async process(prompt, context = {}) {
     if (!this.initialized) {
       return {
-        status: 'ERROR',
-        error: 'System not initialized. Call initialize() first.',
+        status: "ERROR",
+        error: "System not initialized. Call initialize() first.",
       };
     }
 
@@ -169,7 +169,7 @@ class HybridAgentSystem {
    */
   generateGlobalReport() {
     if (!this.initialized) {
-      return 'System not initialized';
+      return "System not initialized";
     }
 
     return `
@@ -191,7 +191,7 @@ Timestamp: ${new Date().toISOString()}
     }
     this.loader.registry.unloadAll();
     this.initialized = false;
-    console.log('✅ Sistema desligado');
+    console.log("✅ Sistema desligado");
   }
 }
 
@@ -215,4 +215,3 @@ module.exports = {
     return system;
   },
 };
-

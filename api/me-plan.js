@@ -26,10 +26,7 @@ export default async function handler(req, res) {
 
   // email via header (x-user-email) ou query (?email=)
   const emailHeader = req.headers["x-user-email"] || req.headers["X-User-Email"];
-  const email = (emailHeader || req.query?.email || "")
-    .toString()
-    .trim()
-    .toLowerCase();
+  const email = (emailHeader || req.query?.email || "").toString().trim().toLowerCase();
 
   // Se faltar ENV do Supabase, responde fallback (sem tentar importar o pacote)
   if (!process.env.SUPABASE_URL || !process.env.SUPABASE_SERVICE_ROLE_KEY) {
@@ -56,10 +53,7 @@ export default async function handler(req, res) {
     });
   }
 
-  const supabase = createClient(
-    process.env.SUPABASE_URL,
-    process.env.SUPABASE_SERVICE_ROLE_KEY
-  );
+  const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_SERVICE_ROLE_KEY);
 
   try {
     const { data, error } = await supabase

@@ -60,7 +60,7 @@ const OptimizedAPIManager = class {
     return {
       apiKey: this.config.groqKey,
       models: {
-        'llama-3.1-70b-versatile': {
+        'openai/gpt-oss-120b': {
           maxTokens: 8000,
           costPer1kTokens: 0.00027,
           description: 'Fallback rápido',
@@ -71,7 +71,7 @@ const OptimizedAPIManager = class {
           description: 'Fallback para tarefas médias',
         },
       },
-      defaultModel: 'llama-3.1-70b-versatile',
+      defaultModel: 'openai/gpt-oss-120b',
     };
   }
 
@@ -239,7 +239,7 @@ test('Comparação de custos - Flash Lite mais barato que Pro', () => {
 
 test('Comparação de custos - Groq competitivo', () => {
   const costs = manager.compareCosts(1000);
-  const groqCost = costs.groq['llama-3.1-70b-versatile'];
+  const groqCost = costs.groq['openai/gpt-oss-120b'];
   const flashCost = costs.gemini['gemini-2.5-flash-lite'];
   if (groqCost > flashCost * 2) throw new Error('Groq muito caro');
 });

@@ -4,26 +4,40 @@
  * Mostra: Histórico, Estatísticas, Controles, Configurações
  */
 
-import React, { useState, useEffect } from 'react';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Badge } from '@/components/ui/badge';
-import { Loader2, Send, Mic, Image as ImageIcon, AlertCircle, CheckCircle, Clock } from 'lucide-react';
+import React, { useState, useEffect } from "react";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Badge } from "@/components/ui/badge";
+import {
+  Loader2,
+  Send,
+  Mic,
+  Image as ImageIcon,
+  AlertCircle,
+  CheckCircle,
+  Clock,
+} from "lucide-react";
 
 export default function AutomationDashboard() {
-  const [command, setCommand] = useState('');
-  const [selectedMode, setSelectedMode] = useState('OPTIMIZED');
-  const [selectedSpecialist, setSelectedSpecialist] = useState('');
+  const [command, setCommand] = useState("");
+  const [selectedMode, setSelectedMode] = useState("OPTIMIZED");
+  const [selectedSpecialist, setSelectedSpecialist] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [automations, setAutomations] = useState([]);
   const [stats, setStats] = useState(null);
   const [specialists, setSpecialists] = useState([]);
-  const [userPlan, setUserPlan] = useState('basic');
+  const [userPlan, setUserPlan] = useState("basic");
   const [dailyUsage, setDailyUsage] = useState({
     automations: 0,
     aiRequests: 0,
@@ -44,11 +58,11 @@ export default function AutomationDashboard() {
    */
   const loadSpecialists = async () => {
     try {
-      const response = await fetch('/api/automation?action=specialists');
+      const response = await fetch("/api/automation?action=specialists");
       const data = await response.json();
       setSpecialists(data.specialists || []);
     } catch (error) {
-      console.error('Erro ao carregar especialistas:', error);
+      console.error("Erro ao carregar especialistas:", error);
     }
   };
 
@@ -61,7 +75,7 @@ export default function AutomationDashboard() {
       const data = await response.json();
       setAutomations(data.automations || []);
     } catch (error) {
-      console.error('Erro ao carregar histórico:', error);
+      console.error("Erro ao carregar histórico:", error);
     }
   };
 
@@ -74,7 +88,7 @@ export default function AutomationDashboard() {
       const data = await response.json();
       setStats(data.stats);
     } catch (error) {
-      console.error('Erro ao carregar estatísticas:', error);
+      console.error("Erro ao carregar estatísticas:", error);
     }
   };
 
@@ -83,42 +97,42 @@ export default function AutomationDashboard() {
    */
   const handleExecuteAutomation = async () => {
     if (!command.trim()) {
-      alert('Digite um comando');
+      alert("Digite um comando");
       return;
     }
 
     setIsLoading(true);
 
     try {
-      const response = await fetch('/api/automation', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+      const response = await fetch("/api/automation", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          action: 'execute',
-          userId: 'user123',
-          username: 'User',
+          action: "execute",
+          userId: "user123",
+          username: "User",
           command,
           mode: selectedMode,
           selectedSpecialist: selectedSpecialist || undefined,
           description: command,
-          creditsUsed: selectedMode === 'OPTIMIZED' ? 5 : selectedMode === 'HYBRID' ? 3 : 1,
+          creditsUsed: selectedMode === "OPTIMIZED" ? 5 : selectedMode === "HYBRID" ? 3 : 1,
         }),
       });
 
       const data = await response.json();
 
       if (data.success) {
-        setCommand('');
-        setSelectedSpecialist('');
+        setCommand("");
+        setSelectedSpecialist("");
         loadAutomationHistory();
         loadStats();
-        alert('✅ Automação executada com sucesso!');
+        alert("✅ Automação executada com sucesso!");
       } else {
         alert(`❌ Erro: ${data.error}`);
       }
     } catch (error) {
-      console.error('Erro ao executar automação:', error);
-      alert('Erro ao executar automação');
+      console.error("Erro ao executar automação:", error);
+      alert("Erro ao executar automação");
     } finally {
       setIsLoading(false);
     }
@@ -135,20 +149,20 @@ export default function AutomationDashboard() {
 
       mediaRecorder.ondataavailable = (e) => chunks.push(e.data);
       mediaRecorder.onstop = async () => {
-        const blob = new Blob(chunks, { type: 'audio/mp3' });
+        const blob = new Blob(chunks, { type: "audio/mp3" });
         const reader = new FileReader();
 
         reader.onload = async (e) => {
-          const audioBase64 = e.target.result.split(',')[1];
+          const audioBase64 = e.target.result.split(",")[1];
 
           // Processar áudio
-          const response = await fetch('/api/multimodal', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+          const response = await fetch("/api/multimodal", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
-              action: 'process-audio',
+              action: "process-audio",
               audio: audioBase64,
-              format: 'mp3',
+              format: "mp3",
             }),
           });
 
@@ -167,12 +181,12 @@ export default function AutomationDashboard() {
       // Parar após 30 segundos
       setTimeout(() => {
         mediaRecorder.stop();
-        stream.getTracks().forEach(track => track.stop());
+        stream.getTracks().forEach((track) => track.stop());
         setRecordingAudio(false);
       }, 30000);
     } catch (error) {
-      console.error('Erro ao gravar áudio:', error);
-      alert('Erro ao acessar microfone');
+      console.error("Erro ao gravar áudio:", error);
+      alert("Erro ao acessar microfone");
     }
   };
 
@@ -186,16 +200,16 @@ export default function AutomationDashboard() {
     const reader = new FileReader();
 
     reader.onload = async (event) => {
-      const imageBase64 = event.target.result.split(',')[1];
+      const imageBase64 = event.target.result.split(",")[1];
 
       // Processar imagem
-      const response = await fetch('/api/multimodal', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+      const response = await fetch("/api/multimodal", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          action: 'detect-code',
+          action: "detect-code",
           image: imageBase64,
-          format: file.type.split('/')[1],
+          format: file.type.split("/")[1],
         }),
       });
 
@@ -214,14 +228,14 @@ export default function AutomationDashboard() {
    */
   const getStatusColor = (status) => {
     switch (status) {
-      case 'SUCCESS':
-        return 'bg-green-100 text-green-800';
-      case 'FAILED':
-        return 'bg-red-100 text-red-800';
-      case 'BLOCKED':
-        return 'bg-yellow-100 text-yellow-800';
+      case "SUCCESS":
+        return "bg-green-100 text-green-800";
+      case "FAILED":
+        return "bg-red-100 text-red-800";
+      case "BLOCKED":
+        return "bg-yellow-100 text-yellow-800";
       default:
-        return 'bg-gray-100 text-gray-800';
+        return "bg-gray-100 text-gray-800";
     }
   };
 
@@ -230,11 +244,11 @@ export default function AutomationDashboard() {
    */
   const getStatusIcon = (status) => {
     switch (status) {
-      case 'SUCCESS':
+      case "SUCCESS":
         return <CheckCircle className="w-4 h-4" />;
-      case 'FAILED':
+      case "FAILED":
         return <AlertCircle className="w-4 h-4" />;
-      case 'BLOCKED':
+      case "BLOCKED":
         return <Clock className="w-4 h-4" />;
       default:
         return <Clock className="w-4 h-4" />;
@@ -253,9 +267,15 @@ export default function AutomationDashboard() {
         {/* Tabs */}
         <Tabs defaultValue="execute" className="w-full">
           <TabsList className="grid w-full grid-cols-3 bg-slate-800 border border-slate-700">
-            <TabsTrigger value="execute" className="text-white">Executar</TabsTrigger>
-            <TabsTrigger value="history" className="text-white">Histórico</TabsTrigger>
-            <TabsTrigger value="stats" className="text-white">Estatísticas</TabsTrigger>
+            <TabsTrigger value="execute" className="text-white">
+              Executar
+            </TabsTrigger>
+            <TabsTrigger value="history" className="text-white">
+              Histórico
+            </TabsTrigger>
+            <TabsTrigger value="stats" className="text-white">
+              Estatísticas
+            </TabsTrigger>
           </TabsList>
 
           {/* TAB: Executar Automação */}
@@ -298,11 +318,11 @@ export default function AutomationDashboard() {
                     className="border-slate-600 text-white hover:bg-slate-700"
                   >
                     <Mic className="w-4 h-4 mr-2" />
-                    {recordingAudio ? 'Gravando...' : 'Voz'}
+                    {recordingAudio ? "Gravando..." : "Voz"}
                   </Button>
 
                   <Button
-                    onClick={() => document.getElementById('imageInput')?.click()}
+                    onClick={() => document.getElementById("imageInput")?.click()}
                     disabled={isLoading}
                     variant="outline"
                     className="border-slate-600 text-white hover:bg-slate-700"
@@ -319,9 +339,7 @@ export default function AutomationDashboard() {
                     className="hidden"
                   />
 
-                  {selectedImage && (
-                    <Badge className="bg-green-600">{selectedImage}</Badge>
-                  )}
+                  {selectedImage && <Badge className="bg-green-600">{selectedImage}</Badge>}
                 </div>
 
                 {/* Seleção de modo */}
@@ -333,15 +351,23 @@ export default function AutomationDashboard() {
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent className="bg-slate-700 border-slate-600">
-                        <SelectItem value="MANUAL" className="text-white">Manual (1 crédito)</SelectItem>
-                        <SelectItem value="HYBRID" className="text-white">Híbrido (3 créditos)</SelectItem>
-                        <SelectItem value="OPTIMIZED" className="text-white">Otimizado (5 créditos)</SelectItem>
+                        <SelectItem value="MANUAL" className="text-white">
+                          Manual (1 crédito)
+                        </SelectItem>
+                        <SelectItem value="HYBRID" className="text-white">
+                          Híbrido (3 créditos)
+                        </SelectItem>
+                        <SelectItem value="OPTIMIZED" className="text-white">
+                          Otimizado (5 créditos)
+                        </SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
 
                   <div className="space-y-2">
-                    <label className="text-sm font-medium text-white">Especialista (opcional)</label>
+                    <label className="text-sm font-medium text-white">
+                      Especialista (opcional)
+                    </label>
                     <Select value={selectedSpecialist} onValueChange={setSelectedSpecialist}>
                       <SelectTrigger className="bg-slate-700 border-slate-600 text-white">
                         <SelectValue placeholder="Automático" />
@@ -402,7 +428,7 @@ export default function AutomationDashboard() {
                           <div className="flex-1">
                             <p className="text-white font-medium">{auto.command}</p>
                             <p className="text-sm text-slate-400">
-                              {new Date(auto.timestamp).toLocaleString('pt-BR')}
+                              {new Date(auto.timestamp).toLocaleString("pt-BR")}
                             </p>
                           </div>
                           <Badge className={getStatusColor(auto.status)}>
@@ -412,7 +438,8 @@ export default function AutomationDashboard() {
                         </div>
                         {auto.selectedSpecialist && (
                           <p className="text-sm text-slate-300">
-                            Especialista: <span className="font-medium">{auto.selectedSpecialist}</span>
+                            Especialista:{" "}
+                            <span className="font-medium">{auto.selectedSpecialist}</span>
                           </p>
                         )}
                       </div>
@@ -455,7 +482,9 @@ export default function AutomationDashboard() {
                     <CardTitle className="text-white">Automações Bem-Sucedidas</CardTitle>
                   </CardHeader>
                   <CardContent>
-                    <p className="text-3xl font-bold text-green-400">{stats.successfulAutomations}</p>
+                    <p className="text-3xl font-bold text-green-400">
+                      {stats.successfulAutomations}
+                    </p>
                   </CardContent>
                 </Card>
 

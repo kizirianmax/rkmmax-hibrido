@@ -32,7 +32,11 @@ async function parseResponse(res) {
     throw new Error(`HTTP ${res.status} ${res.statusText} — ${text?.slice(0, 400)}`);
   }
   if (ct.includes("application/json")) {
-    try { return JSON.parse(text); } catch { return { raw: text }; }
+    try {
+      return JSON.parse(text);
+    } catch {
+      return { raw: text };
+    }
   }
   return text;
 }
@@ -65,8 +69,8 @@ export async function callFn(name, init) {
 
 export function backendInfo() {
   return {
-    provider: PROVIDER,          // "auto" | "vercel" | "netlify"
-    vercelBase: API_BASE,        // "/api"
+    provider: PROVIDER, // "auto" | "vercel" | "netlify"
+    vercelBase: API_BASE, // "/api"
     netlifyBase: NF_BASE_RAW || null, // ex: "https://seusite.netlify.app"
   };
 }

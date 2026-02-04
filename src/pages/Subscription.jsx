@@ -32,7 +32,11 @@ export default function Subscription() {
   };
 
   const handleCancelSubscription = () => {
-    if (window.confirm("Tem certeza que deseja cancelar sua assinatura? Você perderá acesso aos recursos Premium.")) {
+    if (
+      window.confirm(
+        "Tem certeza que deseja cancelar sua assinatura? Você perderá acesso aos recursos Premium."
+      )
+    ) {
       alert("Para cancelar, acesse o portal de gerenciamento de assinatura.");
       handleManageSubscription();
     }
@@ -87,7 +91,7 @@ export default function Subscription() {
         {/* Detalhes da assinatura */}
         <section className="subscription-section">
           <h2>💳 Detalhes da Assinatura</h2>
-          
+
           <div className="subscription-card">
             <div className="subscription-card-header">
               <div>
@@ -225,15 +229,37 @@ export default function Subscription() {
               <div>{new Date().toLocaleDateString("pt-BR")}</div>
               <div>Plano Premium - Mensal</div>
               <div>R$ 90,00</div>
-              <div><span className="badge badge-paid">Pago</span></div>
-              <div><button onClick={() => alert('Download de PDF em desenvolvimento')} className="link" style={{background: 'none', border: 'none', cursor: 'pointer'}}>Baixar PDF</button></div>
+              <div>
+                <span className="badge badge-paid">Pago</span>
+              </div>
+              <div>
+                <button
+                  onClick={() => alert("Download de PDF em desenvolvimento")}
+                  className="link"
+                  style={{ background: "none", border: "none", cursor: "pointer" }}
+                >
+                  Baixar PDF
+                </button>
+              </div>
             </div>
             <div className="invoice-row">
-              <div>{new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toLocaleDateString("pt-BR")}</div>
+              <div>
+                {new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toLocaleDateString("pt-BR")}
+              </div>
               <div>Plano Premium - Mensal</div>
               <div>R$ 90,00</div>
-              <div><span className="badge badge-paid">Pago</span></div>
-              <div><button onClick={() => alert('Download de PDF em desenvolvimento')} className="link" style={{background: 'none', border: 'none', cursor: 'pointer'}}>Baixar PDF</button></div>
+              <div>
+                <span className="badge badge-paid">Pago</span>
+              </div>
+              <div>
+                <button
+                  onClick={() => alert("Download de PDF em desenvolvimento")}
+                  className="link"
+                  style={{ background: "none", border: "none", cursor: "pointer" }}
+                >
+                  Baixar PDF
+                </button>
+              </div>
             </div>
           </div>
         </section>
@@ -292,4 +318,3 @@ export default function Subscription() {
     </div>
   );
 }
-

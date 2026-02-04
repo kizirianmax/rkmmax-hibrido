@@ -1,24 +1,24 @@
 /**
  * INICIALIZAÇÃO SEGURA DE CREDENCIAIS
- * 
+ *
  * Este arquivo deve ser importado NO INÍCIO da aplicação
  * para garantir que todas as credenciais sejam validadas
  * antes de qualquer uso
  */
 
-import secretManager from './SecretManager';
+import secretManager from "./SecretManager";
 
 /**
  * INICIALIZAR E VALIDAR TODAS AS CREDENCIAIS
  */
 export function initializeSecrets() {
-  console.log('🔐 Inicializando gerenciador de segredos...');
+  console.log("🔐 Inicializando gerenciador de segredos...");
 
   // Inicializar Secret Manager
   const initialized = secretManager.initialize();
 
   if (!initialized) {
-    console.error('🔴 Falha ao inicializar Secret Manager!');
+    console.error("🔴 Falha ao inicializar Secret Manager!");
     return false;
   }
 
@@ -26,15 +26,15 @@ export function initializeSecrets() {
   const status = secretManager.getStatus();
 
   // Log seguro do status
-  console.log('🔐 Status de credenciais:', {
-    gemini: status.services.gemini ? '✅' : '❌',
-    groq: status.services.groq ? '✅' : '❌',
-    github: status.services.github ? '✅' : '❌',
+  console.log("🔐 Status de credenciais:", {
+    gemini: status.services.gemini ? "✅" : "❌",
+    groq: status.services.groq ? "✅" : "❌",
+    github: status.services.github ? "✅" : "❌",
   });
 
   // Avisar sobre credenciais faltando
   if (status.errors.length > 0) {
-    console.warn('⚠️ Credenciais faltando:', status.errors);
+    console.warn("⚠️ Credenciais faltando:", status.errors);
   }
 
   return true;

@@ -1,14 +1,14 @@
 /**
  * RKMMAX GENIUS PROMPTS + KIZI INTEGRATION
  * Sistema de prompts de nível gênio para superar ChatGPT
- * 
+ *
  * Características:
  * - Chain-of-Thought (raciocínio profundo)
  * - Self-Reflection (auto-avaliação)
  * - Few-Shot Learning (exemplos)
  * - Metacognição avançada
  * - KIZI Personality Integration
- * 
+ *
  * Otimizações de custo:
  * - Prompts compactos mas poderosos
  * - Reutilização de contexto
@@ -78,7 +78,12 @@ Responda em Português Brasileiro com excelência absoluta.`;
 /**
  * ESPECIALISTAS - Gênios em suas áreas
  */
-export const SPECIALIST_GENIUS_PROMPT = (specialistName, specialistDescription, specialistCategory, specialistSystemPrompt) => `Você é ${specialistName}, ${specialistDescription}.
+export const SPECIALIST_GENIUS_PROMPT = (
+  specialistName,
+  specialistDescription,
+  specialistCategory,
+  specialistSystemPrompt
+) => `Você é ${specialistName}, ${specialistDescription}.
 
 IDENTIDADE:
 - Você é KIZI 2.5 Pro operando como ${specialistName}
@@ -244,7 +249,7 @@ Resposta GÊNIO ✅:
 - [ ] Remarketing Facebook
 
 **ROI Esperado:** +300% em 30 dias! 💰"
-`
+`,
 };
 
 /**
@@ -265,13 +270,13 @@ NUNCA mostre tags como <thinking>, <self-check> ou qualquer processo interno. Re
  */
 export function buildGeniusPrompt(type, options = {}) {
   let basePrompt;
-  
+
   switch (type) {
-    case 'serginho':
+    case "serginho":
       basePrompt = SERGINHO_GENIUS_PROMPT;
       break;
-    
-    case 'specialist':
+
+    case "specialist":
       basePrompt = SPECIALIST_GENIUS_PROMPT(
         options.name,
         options.description,
@@ -279,15 +284,15 @@ export function buildGeniusPrompt(type, options = {}) {
         options.systemPrompt
       );
       break;
-    
-    case 'hybrid':
+
+    case "hybrid":
       basePrompt = HYBRID_GENIUS_PROMPT;
       break;
-    
+
     default:
       basePrompt = SERGINHO_GENIUS_PROMPT;
   }
-  
+
   // Adicionar self-reflection
   return basePrompt + SELF_REFLECTION_SUFFIX;
 }
@@ -301,5 +306,5 @@ export default {
   HYBRID_GENIUS_PROMPT,
   FEW_SHOT_EXAMPLES,
   SELF_REFLECTION_SUFFIX,
-  buildGeniusPrompt
+  buildGeniusPrompt,
 };

@@ -7,32 +7,32 @@
 class GitHubBot {
   constructor(token) {
     this.token = token || process.env.GITHUB_TOKEN;
-    this.baseUrl = 'https://api.github.com';
+    this.baseUrl = "https://api.github.com";
     this.headers = {
-      'Accept': 'application/vnd.github.v3+json',
-      'Authorization': `token ${this.token}`,
-      'User-Agent': 'RKMMAX-Bot',
+      Accept: "application/vnd.github.v3+json",
+      Authorization: `token ${this.token}`,
+      "User-Agent": "RKMMAX-Bot",
     };
 
     // Padrões de comando reconhecidos
     this.commandPatterns = {
-      'rkmmax': /^@?rkmmax\s+(.+)$/i,
-      'help': /^@?rkmmax\s+help$/i,
-      'status': /^@?rkmmax\s+status$/i,
-      'automate': /^@?rkmmax\s+automate\s+(.+)$/i,
-      'review': /^@?rkmmax\s+review$/i,
-      'test': /^@?rkmmax\s+test$/i,
+      rkmmax: /^@?rkmmax\s+(.+)$/i,
+      help: /^@?rkmmax\s+help$/i,
+      status: /^@?rkmmax\s+status$/i,
+      automate: /^@?rkmmax\s+automate\s+(.+)$/i,
+      review: /^@?rkmmax\s+review$/i,
+      test: /^@?rkmmax\s+test$/i,
     };
 
     this.supportedCommands = [
-      'help',
-      'status',
-      'automate <comando>',
-      'review',
-      'test',
-      'fix <issue>',
-      'document',
-      'refactor',
+      "help",
+      "status",
+      "automate <comando>",
+      "review",
+      "test",
+      "fix <issue>",
+      "document",
+      "refactor",
     ];
   }
 
@@ -47,22 +47,22 @@ class GitHubBot {
     let result = null;
 
     // Issue comentado
-    if (payload.action === 'created' && payload.comment) {
+    if (payload.action === "created" && payload.comment) {
       result = await this.handleIssueComment(payload);
     }
 
     // PR comentado
-    if (payload.action === 'created' && payload.review) {
+    if (payload.action === "created" && payload.review) {
       result = await this.handlePullRequestReview(payload);
     }
 
     // Issue aberta
-    if (payload.action === 'opened' && payload.issue) {
+    if (payload.action === "opened" && payload.issue) {
       result = await this.handleIssueOpened(payload);
     }
 
     // PR aberta
-    if (payload.action === 'opened' && payload.pull_request) {
+    if (payload.action === "opened" && payload.pull_request) {
       result = await this.handlePullRequestOpened(payload);
     }
 
@@ -84,37 +84,32 @@ class GitHubBot {
     const command = this.parseCommand(comment.body);
 
     if (!command) {
-      return { processed: false, reason: 'Não é comando RKMMAX' };
+      return { processed: false, reason: "Não é comando RKMMAX" };
     }
 
     console.log(`🎯 Comando detectado: ${command.type}`);
 
     // Processar comando
-    let response = '';
+    let response = "";
 
     switch (command.type) {
-      case 'help':
+      case "help":
         response = this.getHelpMessage();
         break;
 
-      case 'automate':
-        response = await this.handleAutomateCommand(
-          owner,
-          repo,
-          issueNumber,
-          command.args
-        );
+      case "automate":
+        response = await this.handleAutomateCommand(owner, repo, issueNumber, command.args);
         break;
 
-      case 'review':
+      case "review":
         response = await this.handleReviewCommand(owner, repo, issueNumber);
         break;
 
-      case 'test':
+      case "test":
         response = await this.handleTestCommand(owner, repo, issueNumber);
         break;
 
-      case 'status':
+      case "status":
         response = this.getStatusMessage();
         break;
 
@@ -147,20 +142,14 @@ class GitHubBot {
     const command = this.parseCommand(review.body);
 
     if (!command) {
-      return { processed: false, reason: 'Não é comando RKMMAX' };
+      return { processed: false, reason: "Não é comando RKMMAX" };
     }
 
     // Processar comando
-    let response = '';
+    let response = "";
 
-    if (command.type === 'automate') {
-      response = await this.handleAutomateCommand(
-        owner,
-        repo,
-        prNumber,
-        command.args,
-        true
-      );
+    if (command.type === "automate") {
+      response = await this.handleAutomateCommand(owner, repo, prNumber, command.args, true);
     }
 
     // Postar resposta
@@ -185,21 +174,22 @@ class GitHubBot {
     console.log(`📋 Issue aberta: #${issueNumber}`);
 
     // Verificar se issue menciona RKMMAX
-    if (!issue.body.includes('rkmmax') && !issue.body.includes('RKMMAX')) {
+    if (!issue.body.includes("rkmmax") && !issue.body.includes("RKMMAX")) {
       return { processed: false };
     }
 
     // Postar mensagem de boas-vindas
-    const welcome = `👋 Olá! Sou o **RKMMAX Bot**. Você pode me pedir para automatizar tarefas nesta issue!\n\n` +
-                   `Comandos disponíveis:\n` +
-                   `- \`@rkmmax automate <tarefa>\` - Automatizar uma tarefa\n` +
-                   `- \`@rkmmax review\` - Revisar código\n` +
-                   `- \`@rkmmax test\` - Executar testes\n` +
-                   `- \`@rkmmax help\` - Mostrar ajuda`;
+    const welcome =
+      `👋 Olá! Sou o **RKMMAX Bot**. Você pode me pedir para automatizar tarefas nesta issue!\n\n` +
+      `Comandos disponíveis:\n` +
+      `- \`@rkmmax automate <tarefa>\` - Automatizar uma tarefa\n` +
+      `- \`@rkmmax review\` - Revisar código\n` +
+      `- \`@rkmmax test\` - Executar testes\n` +
+      `- \`@rkmmax help\` - Mostrar ajuda`;
 
     await this.postComment(owner, repo, issueNumber, welcome);
 
-    return { processed: true, action: 'welcome_posted' };
+    return { processed: true, action: "welcome_posted" };
   }
 
   /**
@@ -214,16 +204,17 @@ class GitHubBot {
     console.log(`🔀 PR aberta: #${prNumber}`);
 
     // Postar mensagem de boas-vindas
-    const welcome = `👋 Olá! Sou o **RKMMAX Bot**. Posso ajudar a revisar e melhorar este PR!\n\n` +
-                   `Comandos disponíveis:\n` +
-                   `- \`@rkmmax review\` - Revisar código\n` +
-                   `- \`@rkmmax test\` - Executar testes\n` +
-                   `- \`@rkmmax automate <tarefa>\` - Automatizar uma tarefa\n` +
-                   `- \`@rkmmax help\` - Mostrar ajuda`;
+    const welcome =
+      `👋 Olá! Sou o **RKMMAX Bot**. Posso ajudar a revisar e melhorar este PR!\n\n` +
+      `Comandos disponíveis:\n` +
+      `- \`@rkmmax review\` - Revisar código\n` +
+      `- \`@rkmmax test\` - Executar testes\n` +
+      `- \`@rkmmax automate <tarefa>\` - Automatizar uma tarefa\n` +
+      `- \`@rkmmax help\` - Mostrar ajuda`;
 
     await this.postPullRequestComment(owner, repo, prNumber, welcome);
 
-    return { processed: true, action: 'welcome_posted' };
+    return { processed: true, action: "welcome_posted" };
   }
 
   /**
@@ -235,11 +226,12 @@ class GitHubBot {
     // Aqui seria chamada a AutomationEngine
     // Por enquanto, retorna mensagem de confirmação
 
-    const response = `✅ **Automação iniciada!**\n\n` +
-                    `Tarefa: ${args}\n` +
-                    `Repositório: ${owner}/${repo}\n` +
-                    `${isPR ? `PR: #${number}` : `Issue: #${number}`}\n\n` +
-                    `Estou processando sua solicitação... Aguarde! ⏳`;
+    const response =
+      `✅ **Automação iniciada!**\n\n` +
+      `Tarefa: ${args}\n` +
+      `Repositório: ${owner}/${repo}\n` +
+      `${isPR ? `PR: #${number}` : `Issue: #${number}`}\n\n` +
+      `Estou processando sua solicitação... Aguarde! ⏳`;
 
     return response;
   }
@@ -250,13 +242,14 @@ class GitHubBot {
   async handleReviewCommand(owner, repo, number) {
     console.log(`🔍 Processando review`);
 
-    const response = `🔍 **Iniciando revisão de código...**\n\n` +
-                    `Vou analisar:\n` +
-                    `- Qualidade do código\n` +
-                    `- Segurança\n` +
-                    `- Performance\n` +
-                    `- Boas práticas\n\n` +
-                    `Aguarde o resultado... ⏳`;
+    const response =
+      `🔍 **Iniciando revisão de código...**\n\n` +
+      `Vou analisar:\n` +
+      `- Qualidade do código\n` +
+      `- Segurança\n` +
+      `- Performance\n` +
+      `- Boas práticas\n\n` +
+      `Aguarde o resultado... ⏳`;
 
     return response;
   }
@@ -267,12 +260,13 @@ class GitHubBot {
   async handleTestCommand(owner, repo, number) {
     console.log(`🧪 Processando testes`);
 
-    const response = `🧪 **Executando testes...**\n\n` +
-                    `Rodando:\n` +
-                    `- Testes unitários\n` +
-                    `- Testes de integração\n` +
-                    `- Linting\n\n` +
-                    `Aguarde o resultado... ⏳`;
+    const response =
+      `🧪 **Executando testes...**\n\n` +
+      `Rodando:\n` +
+      `- Testes unitários\n` +
+      `- Testes de integração\n` +
+      `- Linting\n\n` +
+      `Aguarde o resultado... ⏳`;
 
     return response;
   }
@@ -288,7 +282,7 @@ class GitHubBot {
       if (match) {
         return {
           type,
-          args: match[1] || '',
+          args: match[1] || "",
         };
       }
     }
@@ -324,11 +318,13 @@ class GitHubBot {
    * Obter mensagem de status
    */
   getStatusMessage() {
-    return `✅ **RKMMAX Bot está online!**\n\n` +
-           `Status: Operacional\n` +
-           `Versão: 1.0.0\n` +
-           `Especialistas disponíveis: 54\n\n` +
-           `Digite \`@rkmmax help\` para ver os comandos disponíveis.`;
+    return (
+      `✅ **RKMMAX Bot está online!**\n\n` +
+      `Status: Operacional\n` +
+      `Versão: 1.0.0\n` +
+      `Especialistas disponíveis: 54\n\n` +
+      `Digite \`@rkmmax help\` para ver os comandos disponíveis.`
+    );
   }
 
   /**
@@ -339,7 +335,7 @@ class GitHubBot {
       const response = await fetch(
         `${this.baseUrl}/repos/${owner}/${repo}/issues/${issueNumber}/comments`,
         {
-          method: 'POST',
+          method: "POST",
           headers: this.headers,
           body: JSON.stringify({ body }),
         }
@@ -365,7 +361,7 @@ class GitHubBot {
       const response = await fetch(
         `${this.baseUrl}/repos/${owner}/${repo}/pulls/${prNumber}/comments`,
         {
-          method: 'POST',
+          method: "POST",
           headers: this.headers,
           body: JSON.stringify({ body }),
         }
@@ -391,7 +387,7 @@ class GitHubBot {
       const response = await fetch(
         `${this.baseUrl}/repos/${owner}/${repo}/issues/${issueNumber}/labels`,
         {
-          method: 'POST',
+          method: "POST",
           headers: this.headers,
           body: JSON.stringify({ labels }),
         }
@@ -414,14 +410,11 @@ class GitHubBot {
    */
   async createIssue(owner, repo, title, body, labels = []) {
     try {
-      const response = await fetch(
-        `${this.baseUrl}/repos/${owner}/${repo}/issues`,
-        {
-          method: 'POST',
-          headers: this.headers,
-          body: JSON.stringify({ title, body, labels }),
-        }
-      );
+      const response = await fetch(`${this.baseUrl}/repos/${owner}/${repo}/issues`, {
+        method: "POST",
+        headers: this.headers,
+        body: JSON.stringify({ title, body, labels }),
+      });
 
       if (!response.ok) {
         throw new Error(`Erro ao criar issue: ${response.status}`);
@@ -442,14 +435,11 @@ class GitHubBot {
    */
   async closeIssue(owner, repo, issueNumber) {
     try {
-      const response = await fetch(
-        `${this.baseUrl}/repos/${owner}/${repo}/issues/${issueNumber}`,
-        {
-          method: 'PATCH',
-          headers: this.headers,
-          body: JSON.stringify({ state: 'closed' }),
-        }
-      );
+      const response = await fetch(`${this.baseUrl}/repos/${owner}/${repo}/issues/${issueNumber}`, {
+        method: "PATCH",
+        headers: this.headers,
+        body: JSON.stringify({ state: "closed" }),
+      });
 
       if (!response.ok) {
         throw new Error(`Erro ao fechar issue: ${response.status}`);
