@@ -3,35 +3,50 @@
  * Testes unitários para motor de automação
  */
 
-// Mock dependencies before importing
-jest.mock("../SecurityValidator.js", () => {
-  return jest.fn().mockImplementation(() => ({
+// Mock all dependencies BEFORE importing the module
+jest.mock("../SecurityValidator.js", () => ({
+  __esModule: true,
+  default: jest.fn().mockImplementation(() => ({
     validateFiles: jest.fn().mockResolvedValue({
       isValid: true,
-      details: [{ errors: [], warnings: [] }],
+      errors: [],
+      warnings: [],
     }),
-  }));
-});
+  })),
+}));
 
-jest.mock("../AuditLogger.js", () => {
-  return jest.fn().mockImplementation(() => ({
-    logAutomationRequest: jest.fn(() => "LOG_123"),
-    logSecurityValidation: jest.fn(),
-    logAutomationCompletion: jest.fn(),
-    logError: jest.fn(),
-    searchLogs: jest.fn(() => []),
-  }));
-});
+jest.mock("../AuditLogger.js", () => ({
+  __esModule: true,
+  default: jest.fn().mockImplementation(() => ({
+    logAutomationStarted: jest.fn(),
+    logAutomationCompleted: jest.fn(),
+    logAutomationFailed: jest.fn(),
+    getAutomationHistory: jest.fn().mockReturnValue([]),
+    getAutomationStats: jest.fn().mockReturnValue({
+      totalAutomations: 0,
+      successfulAutomations: 0,
+      failedAutomations: 0,
+    }),
+  })),
+}));
 
-jest.mock("../GitHubAutomation.js", () => {
-  return jest.fn().mockImplementation(() => ({}));
-});
+jest.mock("../GitHubAutomation.js", () => ({
+  __esModule: true,
+  default: jest.fn().mockImplementation(() => ({
+    createPullRequest: jest.fn().mockResolvedValue({ success: true }),
+  })),
+}));
 
-jest.mock("../SpecialistSelector.js", () => {
-  return jest.fn().mockImplementation(() => ({
-    selectSpecialist: jest.fn().mockResolvedValue("Frontend"),
-  }));
-});
+jest.mock("../SpecialistSelector.js", () => ({
+  __esModule: true,
+  default: jest.fn().mockImplementation(() => ({
+    selectSpecialist: jest.fn().mockResolvedValue({
+      specialist: "Frontend",
+      confidence: 0.95,
+      reasoning: "Test reasoning",
+    }),
+  })),
+}));
 
 import AutomationEngine from "../AutomationEngine.js";
 
@@ -147,10 +162,11 @@ describe("AutomationEngine", () => {
     });
 
     test("deve rejeitar código perigoso", async () => {
-      // Mock validator to return invalid
+      // Override the mock for this specific test
       engine.validator.validateFiles = jest.fn().mockResolvedValue({
         isValid: false,
-        details: [{ errors: ["dangerous code"], warnings: [] }],
+        errors: [{ message: "Dangerous code detected" }],
+        warnings: [],
       });
 
       const files = [
@@ -219,10 +235,20 @@ describe("AutomationEngine", () => {
     });
 
     test("deve bloquear código perigoso", async () => {
-      // Mock validator to return invalid
+      engine.generateCode = async () => ({
+        files: [
+          {
+            path: "dangerous.js",
+            content: 'exec("rm -rf /");',
+          },
+        ],
+        totalLines: 1,
+      });
+
       engine.validator.validateFiles = jest.fn().mockResolvedValue({
         isValid: false,
-        details: [{ errors: ["dangerous code"], warnings: [] }],
+        errors: [{ message: "Dangerous code" }],
+        warnings: [],
       });
 
       const request = {
