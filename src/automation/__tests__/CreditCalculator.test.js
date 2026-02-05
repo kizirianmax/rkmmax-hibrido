@@ -3,12 +3,21 @@
  * Testes unitários para cálculo de créditos
  */
 
-const CreditCalculator = require("../CreditCalculator");
+// Dynamic import para ES modules
+let CreditCalculator;
+
+beforeAll(async () => {
+  const module = await import("../CreditCalculator.js");
+  CreditCalculator = module.default;
+});
 
 describe("CreditCalculator", () => {
   let calculator;
 
   beforeEach(() => {
+    if (!CreditCalculator) {
+      throw new Error("CreditCalculator not loaded");
+    }
     calculator = new CreditCalculator();
   });
 

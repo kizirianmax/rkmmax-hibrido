@@ -3,12 +3,21 @@
  * Testes unitários para validação de código
  */
 
-const SecurityValidator = require("../SecurityValidator");
+// Dynamic import para ES modules
+let SecurityValidator;
+
+beforeAll(async () => {
+  const module = await import("../SecurityValidator.js");
+  SecurityValidator = module.default;
+});
 
 describe("SecurityValidator", () => {
   let validator;
 
   beforeEach(() => {
+    if (!SecurityValidator) {
+      throw new Error("SecurityValidator not loaded");
+    }
     validator = new SecurityValidator();
   });
 
