@@ -4,49 +4,71 @@
  */
 
 // Mock all dependencies BEFORE importing the module
-jest.mock("../SecurityValidator.js", () => ({
-  __esModule: true,
-  default: jest.fn().mockImplementation(() => ({
-    validateFiles: jest.fn().mockResolvedValue({
-      isValid: true,
-      errors: [],
-      warnings: [],
-    }),
-  })),
-}));
+jest.mock("../SecurityValidator.js", () => {
+  return {
+    __esModule: true,
+    default: class MockSecurityValidator {
+      constructor() {
+        this.validateFiles = async () => ({
+          isValid: true,
+          errors: [],
+          warnings: [],
+          details: [],
+        });
+      }
+    },
+  };
+});
 
-jest.mock("../AuditLogger.js", () => ({
-  __esModule: true,
-  default: jest.fn().mockImplementation(() => ({
-    logAutomationStarted: jest.fn(),
-    logAutomationCompleted: jest.fn(),
-    logAutomationFailed: jest.fn(),
-    getAutomationHistory: jest.fn().mockReturnValue([]),
-    getAutomationStats: jest.fn().mockReturnValue({
-      totalAutomations: 0,
-      successfulAutomations: 0,
-      failedAutomations: 0,
-    }),
-  })),
-}));
+jest.mock("../AuditLogger.js", () => {
+  return {
+    __esModule: true,
+    default: class MockAuditLogger {
+      constructor() {
+        this.logAutomationRequest = () => "mock-automation-id";
+        this.logSecurityValidation = () => {};
+        this.logAutomationCompletion = () => {};
+        this.logError = () => {};
+        this.searchLogs = () => [];
+        this.logAutomationStarted = () => {};
+        this.logAutomationCompleted = () => {};
+        this.logAutomationFailed = () => {};
+        this.getAutomationHistory = () => [];
+        this.getAutomationStats = () => ({
+          totalPlans: 0,
+          successfulAutomations: 0,
+          failedAutomations: 0,
+        });
+      }
+    },
+  };
+});
 
-jest.mock("../GitHubAutomation.js", () => ({
-  __esModule: true,
-  default: jest.fn().mockImplementation(() => ({
-    createPullRequest: jest.fn().mockResolvedValue({ success: true }),
-  })),
-}));
+jest.mock("../GitHubAutomation.js", () => {
+  return {
+    __esModule: true,
+    default: class MockGitHubAutomation {
+      constructor() {
+        this.createPullRequest = async () => ({ success: true });
+      }
+    },
+  };
+});
 
-jest.mock("../SpecialistSelector.js", () => ({
-  __esModule: true,
-  default: jest.fn().mockImplementation(() => ({
-    selectSpecialist: jest.fn().mockResolvedValue({
-      specialist: "Frontend",
-      confidence: 0.95,
-      reasoning: "Test reasoning",
-    }),
-  })),
-}));
+jest.mock("../SpecialistSelector.js", () => {
+  return {
+    __esModule: true,
+    default: class MockSpecialistSelector {
+      constructor() {
+        this.selectSpecialist = async () => ({
+          specialist: "Frontend",
+          confidence: 0.95,
+          reasoning: "Test reasoning",
+        });
+      }
+    },
+  };
+});
 
 import AutomationEngine from "../AutomationEngine.js";
 
