@@ -10,7 +10,9 @@
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
-    "test": "echo 'Tests disabled - using production build only'",
+    "test": "jest --coverage --maxWorkers=50%",
+    "test:watch": "jest --watch",
+    "test:ci": "jest --ci --coverage --maxWorkers=2",
     "eject": "react-scripts eject",
     "lint": "eslint src/ api/ --ext .js,.jsx",
     "lint:fix": "eslint src/ api/ --ext .js,.jsx --fix",
@@ -47,13 +49,20 @@
     ]
   },
   "devDependencies": {
+    "@babel/preset-env": "^7.29.0",
+    "@babel/preset-react": "^7.28.5",
     "@testing-library/jest-dom": "^6.9.1",
     "@testing-library/react": "^16.3.0",
     "@testing-library/user-event": "^14.6.1",
+    "babel-jest": "^30.2.0",
     "eslint": "^8.57.1",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-react": "^7.37.5",
     "eslint-plugin-react-hooks": "^7.0.1",
+    "jest": "^27.5.1",
+    "jest-environment-jsdom": "^27.5.1",
+    "jest-environment-node": "^27.5.1",
+    "jest-junit": "^16.0.0",
     "prettier": "^3.6.2",
     "source-map-explorer": "^2.5.3"
   }
