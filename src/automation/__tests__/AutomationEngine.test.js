@@ -7,7 +7,7 @@
 jest.mock("../AuditLogger.js", () => ({
   __esModule: true,
   default: jest.fn().mockImplementation(() => ({
-    logAutomationRequest: jest.fn().mockReturnValue("mock-automation-id"),
+    logAutomationRequest: jest.fn().mockReturnValue("LOG_mock-automation-id"),
     logSecurityValidation: jest.fn(),
     logAutomationCompletion: jest.fn(),
     logError: jest.fn(),
