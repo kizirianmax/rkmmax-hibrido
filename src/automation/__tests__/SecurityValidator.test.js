@@ -3,7 +3,7 @@
  * Testes unitários para validação de código
  */
 
-const SecurityValidator = require("../SecurityValidator");
+import SecurityValidator from "../SecurityValidator";
 
 describe("SecurityValidator", () => {
   let validator;

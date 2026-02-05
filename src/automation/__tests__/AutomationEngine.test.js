@@ -3,12 +3,54 @@
  * Testes unitários para motor de automação
  */
 
-const AutomationEngine = require("../AutomationEngine");
+// Mock all dependencies BEFORE importing the module
+jest.mock("../SecurityValidator.js", () => ({
+  __esModule: true,
+  default: jest.fn().mockImplementation(() => ({
+    validateFiles: jest.fn().mockResolvedValue({
+      isValid: true,
+      errors: [],
+      warnings: [],
+    }),
+  })),
+}));
+
+jest.mock("../AuditLogger.js", () => ({
+  __esModule: true,
+  default: jest.fn().mockImplementation(() => ({
+    logAutomationRequest: jest.fn(() => `LOG_${Date.now()}`),
+    logSecurityValidation: jest.fn(),
+    logAutomationCompletion: jest.fn(),
+    logError: jest.fn(),
+    searchLogs: jest.fn(() => [])
+  })),
+}));
+
+jest.mock("../GitHubAutomation.js", () => ({
+  __esModule: true,
+  default: jest.fn().mockImplementation(() => ({
+    createPullRequest: jest.fn().mockResolvedValue({ success: true }),
+  })),
+}));
+
+jest.mock("../SpecialistSelector.js", () => ({
+  __esModule: true,
+  default: jest.fn().mockImplementation(() => ({
+    selectSpecialist: jest.fn().mockResolvedValue({
+      specialist: "Frontend",
+      confidence: 0.95,
+      reasoning: "Test reasoning",
+    }),
+  })),
+}));
+
+import AutomationEngine from "../AutomationEngine.js";
 
 describe("AutomationEngine", () => {
   let engine;
 
   beforeEach(() => {
+    jest.clearAllMocks();
     engine = new AutomationEngine({
       aiModel: "gemini-2.0-flash",
       temperature: 0.7,
