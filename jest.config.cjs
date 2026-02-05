@@ -12,7 +12,7 @@ module.exports = {
   // ============================================
   // AMBIENTE E SETUP
   // ============================================
-  testEnvironment: 'node',
+  testEnvironment: 'jsdom',
   setupFilesAfterEnv: ['<rootDir>/jest.setup.js'],
   
   // ============================================
