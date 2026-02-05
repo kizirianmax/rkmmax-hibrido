@@ -3,12 +3,16 @@
  * Testes unitários para motor de automação
  */
 
-const AutomationEngine = require("../AutomationEngine");
+// Mock AuditLogger before importing
+jest.mock("../AuditLogger.js");
+
+import AutomationEngine from "../AutomationEngine.js";
 
 describe("AutomationEngine", () => {
   let engine;
 
   beforeEach(() => {
+    jest.clearAllMocks();
     engine = new AutomationEngine({
       aiModel: "gemini-2.0-flash",
       temperature: 0.7,
