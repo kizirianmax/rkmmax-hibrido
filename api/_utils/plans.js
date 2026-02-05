@@ -1,5 +1,5 @@
 // api/_utils/plans.js
-import meta from "./plans.json" assert { type: "json" };
+import meta from "./plans.json" with { type: "json" };
 
 // Mapeia os price_ids (ENV) para cada chave do JSON
 const PRICE_IDS = {
