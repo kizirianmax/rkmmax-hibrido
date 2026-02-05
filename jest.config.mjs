@@ -8,12 +8,22 @@
  * - Watch mode infinito
  */
 
-module.exports = {
+export default {
   // ============================================
   // AMBIENTE E SETUP
   // ============================================
   testEnvironment: 'node',
-  setupFilesAfterEnv: ['<rootDir>/jest.setup.js'],
+  setupFilesAfterEnv: ['<rootDir>/jest.setup.mjs'],
+  
+  // ============================================
+  // ES MODULES SUPPORT
+  // ============================================
+  extensionsToTreatAsEsm: ['.jsx'],
+  moduleNameMapper: {
+    '^(\\.{1,2}/.*)\\.js$': '$1',
+    '^@/(.*)$': '<rootDir>/src/$1',
+    '\\.(css|less|scss|sass)$': 'identity-obj-proxy',
+  },
   
   // ============================================
   // TIMEOUT E PERFORMANCE
@@ -55,20 +65,12 @@ module.exports = {
     '/build/',
     '/.vercel/',
   ],
-  moduleNameMapper: {
-    '^@/(.*)$': '<rootDir>/src/$1',
-    '\\.(css|less|scss|sass)$': 'identity-obj-proxy',
-  },
   
   // ============================================
   // TRANSFORMAÇÃO
   // ============================================
-  transform: {
-    '^.+\\.(js|jsx)$': 'babel-jest',
-  },
-  transformIgnorePatterns: [
-    'node_modules/(?!(recharts|victory|d3-.*|internmap|delaunay-triangulate|robust-predicates)/)',
-  ],
+  transform: {},
+  transformIgnorePatterns: [],
   
   // ============================================
   // CACHE
@@ -86,20 +88,7 @@ module.exports = {
   // ============================================
   // REPORTERS
   // ============================================
-  reporters: [
-    'default',
-    [
-      'jest-junit',
-      {
-        outputDirectory: './test-results',
-        outputName: 'junit.xml',
-        classNameTemplate: '{classname}',
-        titleTemplate: '{title}',
-        ancestorSeparator: ' › ',
-        usePathAsClassName: true,
-      },
-    ],
-  ],
+  reporters: ['default'],
   
   // ============================================
   // VERBOSE
@@ -115,4 +104,3 @@ module.exports = {
     },
   },
 };
-

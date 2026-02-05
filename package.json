@@ -10,7 +10,9 @@
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
-    "test": "echo 'Tests disabled - using production build only'",
+    "test": "NODE_OPTIONS='--experimental-vm-modules' npx jest --no-coverage",
+    "test:watch": "NODE_OPTIONS='--experimental-vm-modules' npx jest --watch",
+    "test:coverage": "NODE_OPTIONS='--experimental-vm-modules' npx jest",
     "eject": "react-scripts eject",
     "lint": "eslint src/ api/ --ext .js,.jsx",
     "lint:fix": "eslint src/ api/ --ext .js,.jsx --fix",
