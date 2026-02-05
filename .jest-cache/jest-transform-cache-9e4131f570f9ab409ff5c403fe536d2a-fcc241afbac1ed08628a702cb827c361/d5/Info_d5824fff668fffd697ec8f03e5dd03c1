@@ -1,0 +1,124 @@
+9a4afe6e952b97ea62cebb4827e67e03
+/* istanbul ignore next */
+function cov_9ax3nkl55() {
+  var path = "/home/runner/work/rkmmax-hibrido/rkmmax-hibrido/src/pages/Info.jsx";
+  var hash = "bd174c409b47f4e0eb7f1ef926ee1778ec49f8bb";
+  var global = new Function("return this")();
+  var gcv = "__coverage__";
+  var coverageData = {
+    path: "/home/runner/work/rkmmax-hibrido/rkmmax-hibrido/src/pages/Info.jsx",
+    statementMap: {
+      "0": {
+        start: {
+          line: 4,
+          column: 2
+        },
+        end: {
+          line: 16,
+          column: 4
+        }
+      }
+    },
+    fnMap: {
+      "0": {
+        name: "Info",
+        decl: {
+          start: {
+            line: 3,
+            column: 24
+          },
+          end: {
+            line: 3,
+            column: 28
+          }
+        },
+        loc: {
+          start: {
+            line: 3,
+            column: 31
+          },
+          end: {
+            line: 17,
+            column: 1
+          }
+        },
+        line: 3
+      }
+    },
+    branchMap: {},
+    s: {
+      "0": 0
+    },
+    f: {
+      "0": 0
+    },
+    b: {},
+    _coverageSchema: "1a1c01bbd47fc00a2c39e90264f33305004495a9",
+    hash: "bd174c409b47f4e0eb7f1ef926ee1778ec49f8bb"
+  };
+  var coverage = global[gcv] || (global[gcv] = {});
+  if (!coverage[path] || coverage[path].hash !== hash) {
+    coverage[path] = coverageData;
+  }
+  var actualCoverage = coverage[path];
+  {
+    // @ts-ignore
+    cov_9ax3nkl55 = function () {
+      return actualCoverage;
+    };
+  }
+  return actualCoverage;
+}
+cov_9ax3nkl55();
+import React from "react";
+/* istanbul ignore next */
+import { jsx as _jsx, Fragment as _Fragment, jsxs as _jsxs } from "react/jsx-runtime";
+export default function Info() {
+  /* istanbul ignore next */
+  cov_9ax3nkl55().f[0]++;
+  cov_9ax3nkl55().s[0]++;
+  return /*#__PURE__*/ /* istanbul ignore next */_jsxs(
+  /* istanbul ignore next */
+  _Fragment,
+  /* istanbul ignore next */
+  {
+    children: [/*#__PURE__*/
+    /* istanbul ignore next */
+    _jsx(
+    /* istanbul ignore next */
+    "h1",
+    /* istanbul ignore next */
+    {
+      className: "title-hero",
+      children: "Info"
+    }), /*#__PURE__*/
+    /* istanbul ignore next */
+    _jsx(
+    /* istanbul ignore next */
+    "p",
+    /* istanbul ignore next */
+    {
+      className: "page-sub",
+      children: "RKMMAX \xE9 um conjunto de agentes especialistas coordenados pelo Serginho."
+    }), /*#__PURE__*/
+    /* istanbul ignore next */
+    _jsx(
+    /* istanbul ignore next */
+    "div",
+    /* istanbul ignore next */
+    {
+      className: "agent-card",
+      children: /*#__PURE__*/
+      /* istanbul ignore next */
+      _jsx(
+      /* istanbul ignore next */
+      "p",
+      /* istanbul ignore next */
+      {
+        className: "agent-desc",
+        children: "Privacidade, velocidade e alto padr\xE3o visual. Integra\xE7\xE3o com Stripe para pagamentos."
+      })
+    })]
+  });
+}
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJuYW1lcyI6WyJjb3ZfOWF4M25rbDU1IiwiYWN0dWFsQ292ZXJhZ2UiLCJSZWFjdCIsImpzeCIsIl9qc3giLCJGcmFnbWVudCIsIl9GcmFnbWVudCIsImpzeHMiLCJfanN4cyIsIkluZm8iLCJmIiwicyIsImNoaWxkcmVuIiwiY2xhc3NOYW1lIl0sInNvdXJjZXMiOlsiSW5mby5qc3giXSwic291cmNlc0NvbnRlbnQiOlsiaW1wb3J0IFJlYWN0IGZyb20gXCJyZWFjdFwiO1xuXG5leHBvcnQgZGVmYXVsdCBmdW5jdGlvbiBJbmZvKCkge1xuICByZXR1cm4gKFxuICAgIDw+XG4gICAgICA8aDEgY2xhc3NOYW1lPVwidGl0bGUtaGVyb1wiPkluZm88L2gxPlxuICAgICAgPHAgY2xhc3NOYW1lPVwicGFnZS1zdWJcIj5cbiAgICAgICAgUktNTUFYIMOpIHVtIGNvbmp1bnRvIGRlIGFnZW50ZXMgZXNwZWNpYWxpc3RhcyBjb29yZGVuYWRvcyBwZWxvIFNlcmdpbmhvLlxuICAgICAgPC9wPlxuICAgICAgPGRpdiBjbGFzc05hbWU9XCJhZ2VudC1jYXJkXCI+XG4gICAgICAgIDxwIGNsYXNzTmFtZT1cImFnZW50LWRlc2NcIj5cbiAgICAgICAgICBQcml2YWNpZGFkZSwgdmVsb2NpZGFkZSBlIGFsdG8gcGFkcsOjbyB2aXN1YWwuIEludGVncmHDp8OjbyBjb20gU3RyaXBlIHBhcmEgcGFnYW1lbnRvcy5cbiAgICAgICAgPC9wPlxuICAgICAgPC9kaXY+XG4gICAgPC8+XG4gICk7XG59XG4iXSwibWFwcGluZ3MiOiI7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7OztJQWVZO0lBQUFBLGFBQUEsWUFBQUEsQ0FBQTtNQUFBLE9BQUFDLGNBQUE7SUFBQTtFQUFBO0VBQUEsT0FBQUEsY0FBQTtBQUFBO0FBQUFELGFBQUE7QUFmWixPQUFPRSxLQUFLLE1BQU0sT0FBTztBQUFDO0FBQUEsU0FBQUMsR0FBQSxJQUFBQyxJQUFBLEVBQUFDLFFBQUEsSUFBQUMsU0FBQSxFQUFBQyxJQUFBLElBQUFDLEtBQUE7QUFFMUIsZUFBZSxTQUFTQyxJQUFJQSxDQUFBLEVBQUc7RUFBQTtFQUFBVCxhQUFBLEdBQUFVLENBQUE7RUFBQVYsYUFBQSxHQUFBVyxDQUFBO0VBQzdCLG9CQUNFLDJCQUFBSCxLQUFBO0VBQUE7RUFBQUYsU0FBQTtFQUFBO0VBQUE7SUFBQU0sUUFBQTtJQUNFO0lBQUFSLElBQUE7SUFBQTtJQUFBO0lBQUE7SUFBQTtNQUFJUyxTQUFTLEVBQUMsWUFBWTtNQUFBRCxRQUFBLEVBQUM7SUFBSSxDQUFJLENBQUM7SUFDcEM7SUFBQVIsSUFBQTtJQUFBO0lBQUE7SUFBQTtJQUFBO01BQUdTLFNBQVMsRUFBQyxVQUFVO01BQUFELFFBQUEsRUFBQztJQUV4QixDQUFHLENBQUM7SUFDSjtJQUFBUixJQUFBO0lBQUE7SUFBQTtJQUFBO0lBQUE7TUFBS1MsU0FBUyxFQUFDLFlBQVk7TUFBQUQsUUFBQTtNQUN6QjtNQUFBUixJQUFBO01BQUE7TUFBQTtNQUFBO01BQUE7UUFBR1MsU0FBUyxFQUFDLFlBQVk7UUFBQUQsUUFBQSxFQUFDO01BRTFCLENBQUc7SUFBQyxDQUNELENBQUM7RUFBQSxDQUNOLENBQUM7QUFFUCIsImlnbm9yZUxpc3QiOltdfQ==

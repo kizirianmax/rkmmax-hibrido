@@ -5,7 +5,15 @@
 
 import AutomationEngine from "../AutomationEngine.js";
 
-// Mock the AuditLogger module
+// Mock all dependencies
+jest.mock("../SecurityValidator.js", () => ({
+  __esModule: true,
+  default: jest.fn().mockImplementation(() => ({
+    validateCode: jest.fn().mockResolvedValue({ isValid: true, errors: [] }),
+    validateFiles: jest.fn().mockResolvedValue({ isValid: true, invalidFiles: 0, validFiles: 1 }),
+  })),
+}));
+
 jest.mock("../AuditLogger.js", () => ({
   __esModule: true,
   default: jest.fn().mockImplementation(() => ({
@@ -14,22 +22,26 @@ jest.mock("../AuditLogger.js", () => ({
     logAutomationCompletion: jest.fn(),
     logError: jest.fn(),
     searchLogs: jest.fn().mockReturnValue([]),
-    logAutomationStarted: jest.fn(),
-    logAutomationCompleted: jest.fn(),
-    logAutomationFailed: jest.fn(),
-    getAutomationHistory: jest.fn().mockReturnValue([]),
-    getAutomationStats: jest.fn().mockReturnValue({
-      totalAutomations: 0,
-      successfulAutomations: 0,
-      failedAutomations: 0,
-    }),
   })),
+}));
+
+jest.mock("../SpecialistSelector.js", () => ({
+  __esModule: true,
+  default: jest.fn().mockImplementation(() => ({
+    selectSpecialist: jest.fn().mockReturnValue({ specialist: "Frontend", confidence: 0.95 }),
+  })),
+}));
+
+jest.mock("../GitHubAutomation.js", () => ({
+  __esModule: true,
+  default: jest.fn().mockImplementation(() => ({})),
 }));
 
 describe("AutomationEngine", () => {
   let engine;
 
   beforeEach(() => {
+    jest.clearAllMocks();
     engine = new AutomationEngine({
       aiModel: "gemini-2.0-flash",
       temperature: 0.7,

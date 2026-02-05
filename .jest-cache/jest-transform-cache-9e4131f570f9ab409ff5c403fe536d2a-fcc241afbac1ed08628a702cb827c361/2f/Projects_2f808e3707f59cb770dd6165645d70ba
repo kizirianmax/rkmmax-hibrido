@@ -1,0 +1,130 @@
+8c4f4f3352d9adff3373963cbad5f1d9
+/* istanbul ignore next */
+function cov_zbqkobx3r() {
+  var path = "/home/runner/work/rkmmax-hibrido/rkmmax-hibrido/src/pages/Projects.jsx";
+  var hash = "8cd9f233dfb61fbb4aa7390b78df033818e17a4e";
+  var global = new Function("return this")();
+  var gcv = "__coverage__";
+  var coverageData = {
+    path: "/home/runner/work/rkmmax-hibrido/rkmmax-hibrido/src/pages/Projects.jsx",
+    statementMap: {
+      "0": {
+        start: {
+          line: 5,
+          column: 2
+        },
+        end: {
+          line: 14,
+          column: 4
+        }
+      }
+    },
+    fnMap: {
+      "0": {
+        name: "Projects",
+        decl: {
+          start: {
+            line: 4,
+            column: 24
+          },
+          end: {
+            line: 4,
+            column: 32
+          }
+        },
+        loc: {
+          start: {
+            line: 4,
+            column: 35
+          },
+          end: {
+            line: 15,
+            column: 1
+          }
+        },
+        line: 4
+      }
+    },
+    branchMap: {},
+    s: {
+      "0": 0
+    },
+    f: {
+      "0": 0
+    },
+    b: {},
+    _coverageSchema: "1a1c01bbd47fc00a2c39e90264f33305004495a9",
+    hash: "8cd9f233dfb61fbb4aa7390b78df033818e17a4e"
+  };
+  var coverage = global[gcv] || (global[gcv] = {});
+  if (!coverage[path] || coverage[path].hash !== hash) {
+    coverage[path] = coverageData;
+  }
+  var actualCoverage = coverage[path];
+  {
+    // @ts-ignore
+    cov_zbqkobx3r = function () {
+      return actualCoverage;
+    };
+  }
+  return actualCoverage;
+}
+cov_zbqkobx3r();
+// src/pages/Projects.jsx
+import React from "react";
+/* istanbul ignore next */
+import { jsx as _jsx, jsxs as _jsxs } from "react/jsx-runtime";
+export default function Projects() {
+  /* istanbul ignore next */
+  cov_zbqkobx3r().f[0]++;
+  cov_zbqkobx3r().s[0]++;
+  return /*#__PURE__*/ /* istanbul ignore next */_jsxs(
+  /* istanbul ignore next */
+  "main",
+  /* istanbul ignore next */
+  {
+    style: {
+      maxWidth: 720,
+      margin: "40px auto",
+      padding: 16
+    },
+    children: [/*#__PURE__*/
+    /* istanbul ignore next */
+    _jsx(
+    /* istanbul ignore next */
+    "h1",
+    /* istanbul ignore next */
+    {
+      style: {
+        fontSize: 32,
+        fontWeight: 800,
+        marginBottom: 16
+      },
+      children: "Projetos"
+    }), /*#__PURE__*/
+    /* istanbul ignore next */
+    _jsx(
+    /* istanbul ignore next */
+    "p",
+    /* istanbul ignore next */
+    {
+      style: {
+        color: "#64748b",
+        marginBottom: 24
+      },
+      children: "Gerencie seus projetos com IA. Serginho e os especialistas trabalham juntos para entregar resultados de qualidade."
+    }), /*#__PURE__*/
+    /* istanbul ignore next */
+    _jsx(
+    /* istanbul ignore next */
+    "p",
+    /* istanbul ignore next */
+    {
+      style: {
+        color: "#64748b"
+      },
+      children: "Em breve: dashboard de projetos."
+    })]
+  });
+}
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJuYW1lcyI6WyJjb3ZfemJxa29ieDNyIiwiYWN0dWFsQ292ZXJhZ2UiLCJSZWFjdCIsImpzeCIsIl9qc3giLCJqc3hzIiwiX2pzeHMiLCJQcm9qZWN0cyIsImYiLCJzIiwic3R5bGUiLCJtYXhXaWR0aCIsIm1hcmdpbiIsInBhZGRpbmciLCJjaGlsZHJlbiIsImZvbnRTaXplIiwiZm9udFdlaWdodCIsIm1hcmdpbkJvdHRvbSIsImNvbG9yIl0sInNvdXJjZXMiOlsiUHJvamVjdHMuanN4Il0sInNvdXJjZXNDb250ZW50IjpbIi8vIHNyYy9wYWdlcy9Qcm9qZWN0cy5qc3hcbmltcG9ydCBSZWFjdCBmcm9tIFwicmVhY3RcIjtcblxuZXhwb3J0IGRlZmF1bHQgZnVuY3Rpb24gUHJvamVjdHMoKSB7XG4gIHJldHVybiAoXG4gICAgPG1haW4gc3R5bGU9e3sgbWF4V2lkdGg6IDcyMCwgbWFyZ2luOiBcIjQwcHggYXV0b1wiLCBwYWRkaW5nOiAxNiB9fT5cbiAgICAgIDxoMSBzdHlsZT17eyBmb250U2l6ZTogMzIsIGZvbnRXZWlnaHQ6IDgwMCwgbWFyZ2luQm90dG9tOiAxNiB9fT5Qcm9qZXRvczwvaDE+XG4gICAgICA8cCBzdHlsZT17eyBjb2xvcjogXCIjNjQ3NDhiXCIsIG1hcmdpbkJvdHRvbTogMjQgfX0+XG4gICAgICAgIEdlcmVuY2llIHNldXMgcHJvamV0b3MgY29tIElBLiBTZXJnaW5obyBlIG9zIGVzcGVjaWFsaXN0YXMgdHJhYmFsaGFtIGp1bnRvcyBwYXJhIGVudHJlZ2FyXG4gICAgICAgIHJlc3VsdGFkb3MgZGUgcXVhbGlkYWRlLlxuICAgICAgPC9wPlxuICAgICAgPHAgc3R5bGU9e3sgY29sb3I6IFwiIzY0NzQ4YlwiIH19PkVtIGJyZXZlOiBkYXNoYm9hcmQgZGUgcHJvamV0b3MuPC9wPlxuICAgIDwvbWFpbj5cbiAgKTtcbn1cbiJdLCJtYXBwaW5ncyI6Ijs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7O0lBZVk7SUFBQUEsYUFBQSxZQUFBQSxDQUFBO01BQUEsT0FBQUMsY0FBQTtJQUFBO0VBQUE7RUFBQSxPQUFBQSxjQUFBO0FBQUE7QUFBQUQsYUFBQTtBQWZaO0FBQ0EsT0FBT0UsS0FBSyxNQUFNLE9BQU87QUFBQztBQUFBLFNBQUFDLEdBQUEsSUFBQUMsSUFBQSxFQUFBQyxJQUFBLElBQUFDLEtBQUE7QUFFMUIsZUFBZSxTQUFTQyxRQUFRQSxDQUFBLEVBQUc7RUFBQTtFQUFBUCxhQUFBLEdBQUFRLENBQUE7RUFBQVIsYUFBQSxHQUFBUyxDQUFBO0VBQ2pDLG9CQUNFLDJCQUFBSCxLQUFBO0VBQUE7RUFBQTtFQUFBO0VBQUE7SUFBTUksS0FBSyxFQUFFO01BQUVDLFFBQVEsRUFBRSxHQUFHO01BQUVDLE1BQU0sRUFBRSxXQUFXO01BQUVDLE9BQU8sRUFBRTtJQUFHLENBQUU7SUFBQUMsUUFBQTtJQUMvRDtJQUFBVixJQUFBO0lBQUE7SUFBQTtJQUFBO0lBQUE7TUFBSU0sS0FBSyxFQUFFO1FBQUVLLFFBQVEsRUFBRSxFQUFFO1FBQUVDLFVBQVUsRUFBRSxHQUFHO1FBQUVDLFlBQVksRUFBRTtNQUFHLENBQUU7TUFBQUgsUUFBQSxFQUFDO0lBQVEsQ0FBSSxDQUFDO0lBQzdFO0lBQUFWLElBQUE7SUFBQTtJQUFBO0lBQUE7SUFBQTtNQUFHTSxLQUFLLEVBQUU7UUFBRVEsS0FBSyxFQUFFLFNBQVM7UUFBRUQsWUFBWSxFQUFFO01BQUcsQ0FBRTtNQUFBSCxRQUFBLEVBQUM7SUFHbEQsQ0FBRyxDQUFDO0lBQ0o7SUFBQVYsSUFBQTtJQUFBO0lBQUE7SUFBQTtJQUFBO01BQUdNLEtBQUssRUFBRTtRQUFFUSxLQUFLLEVBQUU7TUFBVSxDQUFFO01BQUFKLFFBQUEsRUFBQztJQUFnQyxDQUFHLENBQUM7RUFBQSxDQUNoRSxDQUFDO0FBRVgiLCJpZ25vcmVMaXN0IjpbXX0=

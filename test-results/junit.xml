@@ -1,0 +1,697 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites name="jest tests" tests="128" failures="20" errors="0" time="3.633">
+  <testsuite name="AutomationEngine" errors="0" failures="14" skipped="0" timestamp="2026-02-05T13:31:59" time="0.55" tests="25">
+    <testcase classname="AutomationEngine › initialization" name="deve inicializar com configurações padrão" time="0.004">
+    </testcase>
+    <testcase classname="AutomationEngine › initialization" name="deve inicializar componentes" time="0.002">
+    </testcase>
+    <testcase classname="AutomationEngine › analyzeCommand" name="deve analisar comando simples" time="0.001">
+    </testcase>
+    <testcase classname="AutomationEngine › analyzeCommand" name="deve detectar tipo de tarefa COMPONENT" time="0.001">
+    </testcase>
+    <testcase classname="AutomationEngine › analyzeCommand" name="deve detectar tipo de tarefa FUNCTION" time="0.001">
+    </testcase>
+    <testcase classname="AutomationEngine › analyzeCommand" name="deve detectar tipo de tarefa TEST" time="0.001">
+    </testcase>
+    <testcase classname="AutomationEngine › analyzeCommand" name="deve detectar tipo de tarefa REFACTOR" time="0.004">
+      <failure>Error: expect(received).toBe(expected) // Object.is equality
+
+Expected: &quot;REFACTOR&quot;
+Received: &quot;GENERAL&quot;
+    at Object.&lt;anonymous&gt; (/home/runner/work/rkmmax-hibrido/rkmmax-hibrido/src/automation/__tests__/AutomationEngine.test.js:84:33)
+    at processTicksAndRejections (node:internal/process/task_queues:103:5)</failure>
+    </testcase>
+    <testcase classname="AutomationEngine › analyzeCommand" name="deve extrair keywords do comando" time="0.002">
+    </testcase>
+    <testcase classname="AutomationEngine › generateCode" name="deve gerar código" time="0.017">
+    </testcase>
+    <testcase classname="AutomationEngine › generateCode" name="arquivo gerado deve ter conteúdo" time="0.002">
+    </testcase>
+    <testcase classname="AutomationEngine › validateCode" name="deve validar código gerado" time="0.003">
+    </testcase>
+    <testcase classname="AutomationEngine › validateCode" name="deve rejeitar código perigoso" time="0.003">
+    </testcase>
+    <testcase classname="AutomationEngine › executeAutomation" name="deve executar automação completa" time="0.013">
+      <failure>TypeError: this.auditLogger.logAutomationRequest is not a function
+    at AutomationEngine.executeAutomation (/home/runner/work/rkmmax-hibrido/rkmmax-hibrido/src/automation/AutomationEngine.js:47:43)
+    at Object.&lt;anonymous&gt; (/home/runner/work/rkmmax-hibrido/rkmmax-hibrido/src/automation/__tests__/AutomationEngine.test.js:169:35)
+    at Promise.then.completed (/home/runner/work/rkmmax-hibrido/rkmmax-hibrido/node_modules/jest-circus/build/utils.js:391:28)
+    at new Promise (&lt;anonymous&gt;)
+    at callAsyncCircusFn (/home/runner/work/rkmmax-hibrido/rkmmax-hibrido/node_modules/jest-circus/build/utils.js:316:10)
+    at _callCircusTest (/home/runner/work/rkmmax-hibrido/rkmmax-hibrido/node_modules/jest-circus/build/run.js:218:40)
+    at processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at _runTest (/home/runner/work/rkmmax-hibrido/rkmmax-hibrido/node_modules/jest-circus/build/run.js:155:3)
+    at _runTestsForDescribeBlock (/home/runner/work/rkmmax-hibrido/rkmmax-hibrido/node_modules/jest-circus/build/run.js:66:9)
+    at _runTestsForDescribeBlock (/home/runner/work/rkmmax-hibrido/rkmmax-hibrido/node_modules/jest-circus/build/run.js:60:9)
+    at _runTestsForDescribeBlock (/home/runner/work/rkmmax-hibrido/rkmmax-hibrido/node_modules/jest-circus/build/run.js:60:9)
+    at run (/home/runner/work/rkmmax-hibrido/rkmmax-hibrido/node_modules/jest-circus/build/run.js:25:3)
+    at runAndTransformResultsToJestFormat (/home/runner/work/rkmmax-hibrido/rkmmax-hibrido/node_modules/jest-circus/build/legacy-code-todo-rewrite/jestAdapterInit.js:170:21)
+    at jestAdapter (/home/runner/work/rkmmax-hibrido/rkmmax-hibrido/node_modules/jest-circus/build/legacy-code-todo-rewrite/jestAdapter.js:82:19)
+    at runTestInternal (/home/runner/work/rkmmax-hibrido/rkmmax-hibrido/node_modules/jest-runner/build/runTest.js:389:16)
+    at runTest (/home/runner/work/rkmmax-hibrido/rkmmax-hibrido/node_modules/jest-runner/build/runTest.js:475:34)</failure>
+    </testcase>
+    <testcase classname="AutomationEngine › executeAutomation" name="deve retornar automationId" time="0.001">
+      <failure>TypeError: this.auditLogger.logAutomationRequest is not a function
+    at AutomationEngine.executeAutomation (/home/runner/work/rkmmax-hibrido/rkmmax-hibrido/src/automation/AutomationEngine.js:47:43)
+    at Object.&lt;anonymous&gt; (/home/runner/work/rkmmax-hibrido/rkmmax-hibrido/src/automation/__tests__/AutomationEngine.test.js:184:35)
+    at Promise.then.completed (/home/runner/work/rkmmax-hibrido/rkmmax-hibrido/node_modules/jest-circus/build/utils.js:391:28)
+    at new Promise (&lt;anonymous&gt;)
+    at callAsyncCircusFn (/home/runner/work/rkmmax-hibrido/rkmmax-hibrido/node_modules/jest-circus/build/utils.js:316:10)
+    at _callCircusTest (/home/runner/work/rkmmax-hibrido/rkmmax-hibrido/node_modules/jest-circus/build/run.js:218:40)
+    at processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at _runTest (/home/runner/work/rkmmax-hibrido/rkmmax-hibrido/node_modules/jest-circus/build/run.js:155:3)
+    at _runTestsForDescribeBlock (/home/runner/work/rkmmax-hibrido/rkmmax-hibrido/node_modules/jest-circus/build/run.js:66:9)
+    at _runTestsForDescribeBlock (/home/runner/work/rkmmax-hibrido/rkmmax-hibrido/node_modules/jest-circus/build/run.js:60:9)
+    at _runTestsForDescribeBlock (/home/runner/work/rkmmax-hibrido/rkmmax-hibrido/node_modules/jest-circus/build/run.js:60:9)
+    at run (/home/runner/work/rkmmax-hibrido/rkmmax-hibrido/node_modules/jest-circus/build/run.js:25:3)
+    at runAndTransformResultsToJestFormat (/home/runner/work/rkmmax-hibrido/rkmmax-hibrido/node_modules/jest-circus/build/legacy-code-todo-rewrite/jestAdapterInit.js:170:21)
+    at jestAdapter (/home/runner/work/rkmmax-hibrido/rkmmax-hibrido/node_modules/jest-circus/build/legacy-code-todo-rewrite/jestAdapter.js:82:19)
+    at runTestInternal (/home/runner/work/rkmmax-hibrido/rkmmax-hibrido/node_modules/jest-runner/build/runTest.js:389:16)
+    at runTest (/home/runner/work/rkmmax-hibrido/rkmmax-hibrido/node_modules/jest-runner/build/runTest.js:475:34)</failure>
+    </testcase>
+    <testcase classname="AutomationEngine › executeAutomation" name="deve incluir fases de execução" time="0.001">
+      <failure>TypeError: this.auditLogger.logAutomationRequest is not a function
+    at AutomationEngine.executeAutomation (/home/runner/work/rkmmax-hibrido/rkmmax-hibrido/src/automation/AutomationEngine.js:47:43)
+    at Object.&lt;anonymous&gt; (/home/runner/work/rkmmax-hibrido/rkmmax-hibrido/src/automation/__tests__/AutomationEngine.test.js:197:35)
+    at Promise.then.completed (/home/runner/work/rkmmax-hibrido/rkmmax-hibrido/node_modules/jest-circus/build/utils.js:391:28)
+    at new Promise (&lt;anonymous&gt;)
+    at callAsyncCircusFn (/home/runner/work/rkmmax-hibrido/rkmmax-hibrido/node_modules/jest-circus/build/utils.js:316:10)
+    at _callCircusTest (/home/runner/work/rkmmax-hibrido/rkmmax-hibrido/node_modules/jest-circus/build/run.js:218:40)
+    at processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at _runTest (/home/runner/work/rkmmax-hibrido/rkmmax-hibrido/node_modules/jest-circus/build/run.js:155:3)
+    at _runTestsForDescribeBlock (/home/runner/work/rkmmax-hibrido/rkmmax-hibrido/node_modules/jest-circus/build/run.js:66:9)
+    at _runTestsForDescribeBlock (/home/runner/work/rkmmax-hibrido/rkmmax-hibrido/node_modules/jest-circus/build/run.js:60:9)
+    at _runTestsForDescribeBlock (/home/runner/work/rkmmax-hibrido/rkmmax-hibrido/node_modules/jest-circus/build/run.js:60:9)
+    at run (/home/runner/work/rkmmax-hibrido/rkmmax-hibrido/node_modules/jest-circus/build/run.js:25:3)
+    at runAndTransformResultsToJestFormat (/home/runner/work/rkmmax-hibrido/rkmmax-hibrido/node_modules/jest-circus/build/legacy-code-todo-rewrite/jestAdapterInit.js:170:21)
+    at jestAdapter (/home/runner/work/rkmmax-hibrido/rkmmax-hibrido/node_modules/jest-circus/build/legacy-code-todo-rewrite/jestAdapter.js:82:19)
+    at runTestInternal (/home/runner/work/rkmmax-hibrido/rkmmax-hibrido/node_modules/jest-runner/build/runTest.js:389:16)
+    at runTest (/home/runner/work/rkmmax-hibrido/rkmmax-hibrido/node_modules/jest-runner/build/runTest.js:475:34)</failure>
+    </testcase>
+    <testcase classname="AutomationEngine › executeAutomation" name="deve bloquear código perigoso" time="0.001">
+      <failure>TypeError: this.auditLogger.logAutomationRequest is not a function
+    at AutomationEngine.executeAutomation (/home/runner/work/rkmmax-hibrido/rkmmax-hibrido/src/automation/AutomationEngine.js:47:43)
+    at Object.&lt;anonymous&gt; (/home/runner/work/rkmmax-hibrido/rkmmax-hibrido/src/automation/__tests__/AutomationEngine.test.js:224:35)
+    at Promise.then.completed (/home/runner/work/rkmmax-hibrido/rkmmax-hibrido/node_modules/jest-circus/build/utils.js:391:28)
+    at new Promise (&lt;anonymous&gt;)
+    at callAsyncCircusFn (/home/runner/work/rkmmax-hibrido/rkmmax-hibrido/node_modules/jest-circus/build/utils.js:316:10)
+    at _callCircusTest (/home/runner/work/rkmmax-hibrido/rkmmax-hibrido/node_modules/jest-circus/build/run.js:218:40)
+    at processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at _runTest (/home/runner/work/rkmmax-hibrido/rkmmax-hibrido/node_modules/jest-circus/build/run.js:155:3)
+    at _runTestsForDescribeBlock (/home/runner/work/rkmmax-hibrido/rkmmax-hibrido/node_modules/jest-circus/build/run.js:66:9)
+    at _runTestsForDescribeBlock (/home/runner/work/rkmmax-hibrido/rkmmax-hibrido/node_modules/jest-circus/build/run.js:60:9)
+    at _runTestsForDescribeBlock (/home/runner/work/rkmmax-hibrido/rkmmax-hibrido/node_modules/jest-circus/build/run.js:60:9)
+    at run (/home/runner/work/rkmmax-hibrido/rkmmax-hibrido/node_modules/jest-circus/build/run.js:25:3)
+    at runAndTransformResultsToJestFormat (/home/runner/work/rkmmax-hibrido/rkmmax-hibrido/node_modules/jest-circus/build/legacy-code-todo-rewrite/jestAdapterInit.js:170:21)
+    at jestAdapter (/home/runner/work/rkmmax-hibrido/rkmmax-hibrido/node_modules/jest-circus/build/legacy-code-todo-rewrite/jestAdapter.js:82:19)
+    at runTestInternal (/home/runner/work/rkmmax-hibrido/rkmmax-hibrido/node_modules/jest-runner/build/runTest.js:389:16)
+    at runTest (/home/runner/work/rkmmax-hibrido/rkmmax-hibrido/node_modules/jest-runner/build/runTest.js:475:34)</failure>
+    </testcase>
+    <testcase classname="AutomationEngine › getAutomationHistory" name="deve retornar histórico de automações" time="0.001">
+      <failure>TypeError: this.auditLogger.searchLogs is not a function
+    at AutomationEngine.getAutomationHistory (/home/runner/work/rkmmax-hibrido/rkmmax-hibrido/src/automation/AutomationEngine.js:357:8)
+    at Object.&lt;anonymous&gt; (/home/runner/work/rkmmax-hibrido/rkmmax-hibrido/src/automation/__tests__/AutomationEngine.test.js:233:30)
+    at Promise.then.completed (/home/runner/work/rkmmax-hibrido/rkmmax-hibrido/node_modules/jest-circus/build/utils.js:391:28)
+    at new Promise (&lt;anonymous&gt;)
+    at callAsyncCircusFn (/home/runner/work/rkmmax-hibrido/rkmmax-hibrido/node_modules/jest-circus/build/utils.js:316:10)
+    at _callCircusTest (/home/runner/work/rkmmax-hibrido/rkmmax-hibrido/node_modules/jest-circus/build/run.js:218:40)
+    at processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at _runTest (/home/runner/work/rkmmax-hibrido/rkmmax-hibrido/node_modules/jest-circus/build/run.js:155:3)
+    at _runTestsForDescribeBlock (/home/runner/work/rkmmax-hibrido/rkmmax-hibrido/node_modules/jest-circus/build/run.js:66:9)
+    at _runTestsForDescribeBlock (/home/runner/work/rkmmax-hibrido/rkmmax-hibrido/node_modules/jest-circus/build/run.js:60:9)
+    at _runTestsForDescribeBlock (/home/runner/work/rkmmax-hibrido/rkmmax-hibrido/node_modules/jest-circus/build/run.js:60:9)
+    at run (/home/runner/work/rkmmax-hibrido/rkmmax-hibrido/node_modules/jest-circus/build/run.js:25:3)
+    at runAndTransformResultsToJestFormat (/home/runner/work/rkmmax-hibrido/rkmmax-hibrido/node_modules/jest-circus/build/legacy-code-todo-rewrite/jestAdapterInit.js:170:21)
+    at jestAdapter (/home/runner/work/rkmmax-hibrido/rkmmax-hibrido/node_modules/jest-circus/build/legacy-code-todo-rewrite/jestAdapter.js:82:19)
+    at runTestInternal (/home/runner/work/rkmmax-hibrido/rkmmax-hibrido/node_modules/jest-runner/build/runTest.js:389:16)
+    at runTest (/home/runner/work/rkmmax-hibrido/rkmmax-hibrido/node_modules/jest-runner/build/runTest.js:475:34)</failure>
+    </testcase>
+    <testcase classname="AutomationEngine › getAutomationStats" name="deve retornar estatísticas" time="0.001">
+      <failure>TypeError: this.auditLogger.searchLogs is not a function
+    at AutomationEngine.getAutomationStats (/home/runner/work/rkmmax-hibrido/rkmmax-hibrido/src/automation/AutomationEngine.js:368:35)
+    at Object.&lt;anonymous&gt; (/home/runner/work/rkmmax-hibrido/rkmmax-hibrido/src/automation/__tests__/AutomationEngine.test.js:241:28)
+    at Promise.then.completed (/home/runner/work/rkmmax-hibrido/rkmmax-hibrido/node_modules/jest-circus/build/utils.js:391:28)
+    at new Promise (&lt;anonymous&gt;)
+    at callAsyncCircusFn (/home/runner/work/rkmmax-hibrido/rkmmax-hibrido/node_modules/jest-circus/build/utils.js:316:10)
+    at _callCircusTest (/home/runner/work/rkmmax-hibrido/rkmmax-hibrido/node_modules/jest-circus/build/run.js:218:40)
+    at processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at _runTest (/home/runner/work/rkmmax-hibrido/rkmmax-hibrido/node_modules/jest-circus/build/run.js:155:3)
+    at _runTestsForDescribeBlock (/home/runner/work/rkmmax-hibrido/rkmmax-hibrido/node_modules/jest-circus/build/run.js:66:9)
+    at _runTestsForDescribeBlock (/home/runner/work/rkmmax-hibrido/rkmmax-hibrido/node_modules/jest-circus/build/run.js:60:9)
+    at _runTestsForDescribeBlock (/home/runner/work/rkmmax-hibrido/rkmmax-hibrido/node_modules/jest-circus/build/run.js:60:9)
+    at run (/home/runner/work/rkmmax-hibrido/rkmmax-hibrido/node_modules/jest-circus/build/run.js:25:3)
+    at runAndTransformResultsToJestFormat (/home/runner/work/rkmmax-hibrido/rkmmax-hibrido/node_modules/jest-circus/build/legacy-code-todo-rewrite/jestAdapterInit.js:170:21)
+    at jestAdapter (/home/runner/work/rkmmax-hibrido/rkmmax-hibrido/node_modules/jest-circus/build/legacy-code-todo-rewrite/jestAdapter.js:82:19)
+    at runTestInternal (/home/runner/work/rkmmax-hibrido/rkmmax-hibrido/node_modules/jest-runner/build/runTest.js:389:16)
+    at runTest (/home/runner/work/rkmmax-hibrido/rkmmax-hibrido/node_modules/jest-runner/build/runTest.js:475:34)</failure>
+    </testcase>
+    <testcase classname="AutomationEngine › Modo Híbrido" name="deve permitir seleção manual de especialista" time="0.001">
+      <failure>TypeError: this.auditLogger.logAutomationRequest is not a function
+    at AutomationEngine.executeAutomation (/home/runner/work/rkmmax-hibrido/rkmmax-hibrido/src/automation/AutomationEngine.js:47:43)
+    at Object.&lt;anonymous&gt; (/home/runner/work/rkmmax-hibrido/rkmmax-hibrido/src/automation/__tests__/AutomationEngine.test.js:260:35)
+    at Promise.then.completed (/home/runner/work/rkmmax-hibrido/rkmmax-hibrido/node_modules/jest-circus/build/utils.js:391:28)
+    at new Promise (&lt;anonymous&gt;)
+    at callAsyncCircusFn (/home/runner/work/rkmmax-hibrido/rkmmax-hibrido/node_modules/jest-circus/build/utils.js:316:10)
+    at _callCircusTest (/home/runner/work/rkmmax-hibrido/rkmmax-hibrido/node_modules/jest-circus/build/run.js:218:40)
+    at processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at _runTest (/home/runner/work/rkmmax-hibrido/rkmmax-hibrido/node_modules/jest-circus/build/run.js:155:3)
+    at _runTestsForDescribeBlock (/home/runner/work/rkmmax-hibrido/rkmmax-hibrido/node_modules/jest-circus/build/run.js:66:9)
+    at _runTestsForDescribeBlock (/home/runner/work/rkmmax-hibrido/rkmmax-hibrido/node_modules/jest-circus/build/run.js:60:9)
+    at _runTestsForDescribeBlock (/home/runner/work/rkmmax-hibrido/rkmmax-hibrido/node_modules/jest-circus/build/run.js:60:9)
+    at run (/home/runner/work/rkmmax-hibrido/rkmmax-hibrido/node_modules/jest-circus/build/run.js:25:3)
+    at runAndTransformResultsToJestFormat (/home/runner/work/rkmmax-hibrido/rkmmax-hibrido/node_modules/jest-circus/build/legacy-code-todo-rewrite/jestAdapterInit.js:170:21)
+    at jestAdapter (/home/runner/work/rkmmax-hibrido/rkmmax-hibrido/node_modules/jest-circus/build/legacy-code-todo-rewrite/jestAdapter.js:82:19)
+    at runTestInternal (/home/runner/work/rkmmax-hibrido/rkmmax-hibrido/node_modules/jest-runner/build/runTest.js:389:16)
+    at runTest (/home/runner/work/rkmmax-hibrido/rkmmax-hibrido/node_modules/jest-runner/build/runTest.js:475:34)</failure>
+    </testcase>
+    <testcase classname="AutomationEngine › Modo Híbrido" name="deve usar especialista selecionado em modo HYBRID" time="0.001">
+      <failure>TypeError: this.auditLogger.logAutomationRequest is not a function
+    at AutomationEngine.executeAutomation (/home/runner/work/rkmmax-hibrido/rkmmax-hibrido/src/automation/AutomationEngine.js:47:43)
+    at Object.&lt;anonymous&gt; (/home/runner/work/rkmmax-hibrido/rkmmax-hibrido/src/automation/__tests__/AutomationEngine.test.js:275:35)
+    at Promise.then.completed (/home/runner/work/rkmmax-hibrido/rkmmax-hibrido/node_modules/jest-circus/build/utils.js:391:28)
+    at new Promise (&lt;anonymous&gt;)
+    at callAsyncCircusFn (/home/runner/work/rkmmax-hibrido/rkmmax-hibrido/node_modules/jest-circus/build/utils.js:316:10)
+    at _callCircusTest (/home/runner/work/rkmmax-hibrido/rkmmax-hibrido/node_modules/jest-circus/build/run.js:218:40)
+    at processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at _runTest (/home/runner/work/rkmmax-hibrido/rkmmax-hibrido/node_modules/jest-circus/build/run.js:155:3)
+    at _runTestsForDescribeBlock (/home/runner/work/rkmmax-hibrido/rkmmax-hibrido/node_modules/jest-circus/build/run.js:66:9)
+    at _runTestsForDescribeBlock (/home/runner/work/rkmmax-hibrido/rkmmax-hibrido/node_modules/jest-circus/build/run.js:60:9)
+    at _runTestsForDescribeBlock (/home/runner/work/rkmmax-hibrido/rkmmax-hibrido/node_modules/jest-circus/build/run.js:60:9)
+    at run (/home/runner/work/rkmmax-hibrido/rkmmax-hibrido/node_modules/jest-circus/build/run.js:25:3)
+    at runAndTransformResultsToJestFormat (/home/runner/work/rkmmax-hibrido/rkmmax-hibrido/node_modules/jest-circus/build/legacy-code-todo-rewrite/jestAdapterInit.js:170:21)
+    at jestAdapter (/home/runner/work/rkmmax-hibrido/rkmmax-hibrido/node_modules/jest-circus/build/legacy-code-todo-rewrite/jestAdapter.js:82:19)
+    at runTestInternal (/home/runner/work/rkmmax-hibrido/rkmmax-hibrido/node_modules/jest-runner/build/runTest.js:389:16)
+    at runTest (/home/runner/work/rkmmax-hibrido/rkmmax-hibrido/node_modules/jest-runner/build/runTest.js:475:34)</failure>
+    </testcase>
+    <testcase classname="AutomationEngine › Modo Otimizado" name="deve selecionar especialista automaticamente em OPTIMIZED" time="0.001">
+      <failure>TypeError: this.auditLogger.logAutomationRequest is not a function
+    at AutomationEngine.executeAutomation (/home/runner/work/rkmmax-hibrido/rkmmax-hibrido/src/automation/AutomationEngine.js:47:43)
+    at Object.&lt;anonymous&gt; (/home/runner/work/rkmmax-hibrido/rkmmax-hibrido/src/automation/__tests__/AutomationEngine.test.js:291:35)
+    at Promise.then.completed (/home/runner/work/rkmmax-hibrido/rkmmax-hibrido/node_modules/jest-circus/build/utils.js:391:28)
+    at new Promise (&lt;anonymous&gt;)
+    at callAsyncCircusFn (/home/runner/work/rkmmax-hibrido/rkmmax-hibrido/node_modules/jest-circus/build/utils.js:316:10)
+    at _callCircusTest (/home/runner/work/rkmmax-hibrido/rkmmax-hibrido/node_modules/jest-circus/build/run.js:218:40)
+    at processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at _runTest (/home/runner/work/rkmmax-hibrido/rkmmax-hibrido/node_modules/jest-circus/build/run.js:155:3)
+    at _runTestsForDescribeBlock (/home/runner/work/rkmmax-hibrido/rkmmax-hibrido/node_modules/jest-circus/build/run.js:66:9)
+    at _runTestsForDescribeBlock (/home/runner/work/rkmmax-hibrido/rkmmax-hibrido/node_modules/jest-circus/build/run.js:60:9)
+    at _runTestsForDescribeBlock (/home/runner/work/rkmmax-hibrido/rkmmax-hibrido/node_modules/jest-circus/build/run.js:60:9)
+    at run (/home/runner/work/rkmmax-hibrido/rkmmax-hibrido/node_modules/jest-circus/build/run.js:25:3)
+    at runAndTransformResultsToJestFormat (/home/runner/work/rkmmax-hibrido/rkmmax-hibrido/node_modules/jest-circus/build/legacy-code-todo-rewrite/jestAdapterInit.js:170:21)
+    at jestAdapter (/home/runner/work/rkmmax-hibrido/rkmmax-hibrido/node_modules/jest-circus/build/legacy-code-todo-rewrite/jestAdapter.js:82:19)
+    at runTestInternal (/home/runner/work/rkmmax-hibrido/rkmmax-hibrido/node_modules/jest-runner/build/runTest.js:389:16)
+    at runTest (/home/runner/work/rkmmax-hibrido/rkmmax-hibrido/node_modules/jest-runner/build/runTest.js:475:34)</failure>
+    </testcase>
+    <testcase classname="AutomationEngine › Error Handling" name="deve capturar erros durante execução" time="0.001">
+      <failure>TypeError: this.auditLogger.logAutomationRequest is not a function
+    at AutomationEngine.executeAutomation (/home/runner/work/rkmmax-hibrido/rkmmax-hibrido/src/automation/AutomationEngine.js:47:43)
+    at Object.&lt;anonymous&gt; (/home/runner/work/rkmmax-hibrido/rkmmax-hibrido/src/automation/__tests__/AutomationEngine.test.js:312:35)
+    at Promise.then.completed (/home/runner/work/rkmmax-hibrido/rkmmax-hibrido/node_modules/jest-circus/build/utils.js:391:28)
+    at new Promise (&lt;anonymous&gt;)
+    at callAsyncCircusFn (/home/runner/work/rkmmax-hibrido/rkmmax-hibrido/node_modules/jest-circus/build/utils.js:316:10)
+    at _callCircusTest (/home/runner/work/rkmmax-hibrido/rkmmax-hibrido/node_modules/jest-circus/build/run.js:218:40)
+    at processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at _runTest (/home/runner/work/rkmmax-hibrido/rkmmax-hibrido/node_modules/jest-circus/build/run.js:155:3)
+    at _runTestsForDescribeBlock (/home/runner/work/rkmmax-hibrido/rkmmax-hibrido/node_modules/jest-circus/build/run.js:66:9)
+    at _runTestsForDescribeBlock (/home/runner/work/rkmmax-hibrido/rkmmax-hibrido/node_modules/jest-circus/build/run.js:60:9)
+    at _runTestsForDescribeBlock (/home/runner/work/rkmmax-hibrido/rkmmax-hibrido/node_modules/jest-circus/build/run.js:60:9)
+    at run (/home/runner/work/rkmmax-hibrido/rkmmax-hibrido/node_modules/jest-circus/build/run.js:25:3)
+    at runAndTransformResultsToJestFormat (/home/runner/work/rkmmax-hibrido/rkmmax-hibrido/node_modules/jest-circus/build/legacy-code-todo-rewrite/jestAdapterInit.js:170:21)
+    at jestAdapter (/home/runner/work/rkmmax-hibrido/rkmmax-hibrido/node_modules/jest-circus/build/legacy-code-todo-rewrite/jestAdapter.js:82:19)
+    at runTestInternal (/home/runner/work/rkmmax-hibrido/rkmmax-hibrido/node_modules/jest-runner/build/runTest.js:389:16)
+    at runTest (/home/runner/work/rkmmax-hibrido/rkmmax-hibrido/node_modules/jest-runner/build/runTest.js:475:34)</failure>
+    </testcase>
+    <testcase classname="AutomationEngine › Error Handling" name="deve incluir mensagem de erro" time="0.001">
+      <failure>TypeError: this.auditLogger.logAutomationRequest is not a function
+    at AutomationEngine.executeAutomation (/home/runner/work/rkmmax-hibrido/rkmmax-hibrido/src/automation/AutomationEngine.js:47:43)
+    at Object.&lt;anonymous&gt; (/home/runner/work/rkmmax-hibrido/rkmmax-hibrido/src/automation/__tests__/AutomationEngine.test.js:330:35)
+    at Promise.then.completed (/home/runner/work/rkmmax-hibrido/rkmmax-hibrido/node_modules/jest-circus/build/utils.js:391:28)
+    at new Promise (&lt;anonymous&gt;)
+    at callAsyncCircusFn (/home/runner/work/rkmmax-hibrido/rkmmax-hibrido/node_modules/jest-circus/build/utils.js:316:10)
+    at _callCircusTest (/home/runner/work/rkmmax-hibrido/rkmmax-hibrido/node_modules/jest-circus/build/run.js:218:40)
+    at processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at _runTest (/home/runner/work/rkmmax-hibrido/rkmmax-hibrido/node_modules/jest-circus/build/run.js:155:3)
+    at _runTestsForDescribeBlock (/home/runner/work/rkmmax-hibrido/rkmmax-hibrido/node_modules/jest-circus/build/run.js:66:9)
+    at _runTestsForDescribeBlock (/home/runner/work/rkmmax-hibrido/rkmmax-hibrido/node_modules/jest-circus/build/run.js:60:9)
+    at _runTestsForDescribeBlock (/home/runner/work/rkmmax-hibrido/rkmmax-hibrido/node_modules/jest-circus/build/run.js:60:9)
+    at run (/home/runner/work/rkmmax-hibrido/rkmmax-hibrido/node_modules/jest-circus/build/run.js:25:3)
+    at runAndTransformResultsToJestFormat (/home/runner/work/rkmmax-hibrido/rkmmax-hibrido/node_modules/jest-circus/build/legacy-code-todo-rewrite/jestAdapterInit.js:170:21)
+    at jestAdapter (/home/runner/work/rkmmax-hibrido/rkmmax-hibrido/node_modules/jest-circus/build/legacy-code-todo-rewrite/jestAdapter.js:82:19)
+    at runTestInternal (/home/runner/work/rkmmax-hibrido/rkmmax-hibrido/node_modules/jest-runner/build/runTest.js:389:16)
+    at runTest (/home/runner/work/rkmmax-hibrido/rkmmax-hibrido/node_modules/jest-runner/build/runTest.js:475:34)</failure>
+    </testcase>
+    <testcase classname="AutomationEngine › Logging" name="deve registrar automação iniciada" time="0.001">
+      <failure>TypeError: this.auditLogger.logAutomationRequest is not a function
+    at AutomationEngine.executeAutomation (/home/runner/work/rkmmax-hibrido/rkmmax-hibrido/src/automation/AutomationEngine.js:47:43)
+    at Object.&lt;anonymous&gt; (/home/runner/work/rkmmax-hibrido/rkmmax-hibrido/src/automation/__tests__/AutomationEngine.test.js:345:35)
+    at Promise.then.completed (/home/runner/work/rkmmax-hibrido/rkmmax-hibrido/node_modules/jest-circus/build/utils.js:391:28)
+    at new Promise (&lt;anonymous&gt;)
+    at callAsyncCircusFn (/home/runner/work/rkmmax-hibrido/rkmmax-hibrido/node_modules/jest-circus/build/utils.js:316:10)
+    at _callCircusTest (/home/runner/work/rkmmax-hibrido/rkmmax-hibrido/node_modules/jest-circus/build/run.js:218:40)
+    at processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at _runTest (/home/runner/work/rkmmax-hibrido/rkmmax-hibrido/node_modules/jest-circus/build/run.js:155:3)
+    at _runTestsForDescribeBlock (/home/runner/work/rkmmax-hibrido/rkmmax-hibrido/node_modules/jest-circus/build/run.js:66:9)
+    at _runTestsForDescribeBlock (/home/runner/work/rkmmax-hibrido/rkmmax-hibrido/node_modules/jest-circus/build/run.js:60:9)
+    at _runTestsForDescribeBlock (/home/runner/work/rkmmax-hibrido/rkmmax-hibrido/node_modules/jest-circus/build/run.js:60:9)
+    at run (/home/runner/work/rkmmax-hibrido/rkmmax-hibrido/node_modules/jest-circus/build/run.js:25:3)
+    at runAndTransformResultsToJestFormat (/home/runner/work/rkmmax-hibrido/rkmmax-hibrido/node_modules/jest-circus/build/legacy-code-todo-rewrite/jestAdapterInit.js:170:21)
+    at jestAdapter (/home/runner/work/rkmmax-hibrido/rkmmax-hibrido/node_modules/jest-circus/build/legacy-code-todo-rewrite/jestAdapter.js:82:19)
+    at runTestInternal (/home/runner/work/rkmmax-hibrido/rkmmax-hibrido/node_modules/jest-runner/build/runTest.js:389:16)
+    at runTest (/home/runner/work/rkmmax-hibrido/rkmmax-hibrido/node_modules/jest-runner/build/runTest.js:475:34)</failure>
+    </testcase>
+    <testcase classname="AutomationEngine › Logging" name="deve registrar conclusão de automação" time="0.001">
+      <failure>TypeError: this.auditLogger.logAutomationRequest is not a function
+    at AutomationEngine.executeAutomation (/home/runner/work/rkmmax-hibrido/rkmmax-hibrido/src/automation/AutomationEngine.js:47:43)
+    at Object.&lt;anonymous&gt; (/home/runner/work/rkmmax-hibrido/rkmmax-hibrido/src/automation/__tests__/AutomationEngine.test.js:358:35)
+    at Promise.then.completed (/home/runner/work/rkmmax-hibrido/rkmmax-hibrido/node_modules/jest-circus/build/utils.js:391:28)
+    at new Promise (&lt;anonymous&gt;)
+    at callAsyncCircusFn (/home/runner/work/rkmmax-hibrido/rkmmax-hibrido/node_modules/jest-circus/build/utils.js:316:10)
+    at _callCircusTest (/home/runner/work/rkmmax-hibrido/rkmmax-hibrido/node_modules/jest-circus/build/run.js:218:40)
+    at processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at _runTest (/home/runner/work/rkmmax-hibrido/rkmmax-hibrido/node_modules/jest-circus/build/run.js:155:3)
+    at _runTestsForDescribeBlock (/home/runner/work/rkmmax-hibrido/rkmmax-hibrido/node_modules/jest-circus/build/run.js:66:9)
+    at _runTestsForDescribeBlock (/home/runner/work/rkmmax-hibrido/rkmmax-hibrido/node_modules/jest-circus/build/run.js:60:9)
+    at _runTestsForDescribeBlock (/home/runner/work/rkmmax-hibrido/rkmmax-hibrido/node_modules/jest-circus/build/run.js:60:9)
+    at run (/home/runner/work/rkmmax-hibrido/rkmmax-hibrido/node_modules/jest-circus/build/run.js:25:3)
+    at runAndTransformResultsToJestFormat (/home/runner/work/rkmmax-hibrido/rkmmax-hibrido/node_modules/jest-circus/build/legacy-code-todo-rewrite/jestAdapterInit.js:170:21)
+    at jestAdapter (/home/runner/work/rkmmax-hibrido/rkmmax-hibrido/node_modules/jest-circus/build/legacy-code-todo-rewrite/jestAdapter.js:82:19)
+    at runTestInternal (/home/runner/work/rkmmax-hibrido/rkmmax-hibrido/node_modules/jest-runner/build/runTest.js:389:16)
+    at runTest (/home/runner/work/rkmmax-hibrido/rkmmax-hibrido/node_modules/jest-runner/build/runTest.js:475:34)</failure>
+    </testcase>
+  </testsuite>
+  <testsuite name="FeedbackButton Component" errors="0" failures="1" skipped="0" timestamp="2026-02-05T13:31:59" time="0.431" tests="4">
+    <testcase classname="FeedbackButton Component" name="renders feedback button" time="0.06">
+    </testcase>
+    <testcase classname="FeedbackButton Component" name="opens feedback form when button is clicked" time="0.034">
+      <failure>TestingLibraryElementError: Found multiple elements with the text: /enviar feedback/i
+
+Here are the matching elements:
+
+Ignored nodes: comments, script, style
+&lt;h3
+  style=&quot;margin: 0px; font-size: 16px;&quot;
+&gt;
+  Enviar Feedback
+&lt;/h3&gt;
+
+Ignored nodes: comments, script, style
+&lt;button
+  style=&quot;width: 100%; padding: 10px 16px; background: rgb(99, 102, 241); color: white; border-radius: 8px; font-weight: 600; cursor: pointer; opacity: 1; font-size: 14px;&quot;
+  type=&quot;submit&quot;
+&gt;
+  Enviar Feedback
+&lt;/button&gt;
+
+(If this is intentional, then use the `*AllBy*` variant of the query (like `queryAllByText`, `getAllByText`, or `findAllByText`)).
+
+Ignored nodes: comments, script, style
+&lt;body&gt;
+  &lt;div&gt;
+    &lt;div
+      class=&quot;feedback-overlay&quot;
+      style=&quot;position: fixed; right: 16px; width: 360px; max-width: calc(100vw - 40px); background: white; border: 1px solid #e5e7eb; border-radius: 12px; box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15); padding: 20px; z-index: 60; pointer-events: auto;&quot;
+    &gt;
+      &lt;form&gt;
+        &lt;div
+          style=&quot;display: flex; justify-content: space-between; margin-bottom: 12px;&quot;
+        &gt;
+          &lt;h3
+            style=&quot;margin: 0px; font-size: 16px;&quot;
+          &gt;
+            Enviar Feedback
+          &lt;/h3&gt;
+          &lt;button
+            aria-label=&quot;Fechar&quot;
+            style=&quot;background: none; font-size: 20px; cursor: pointer; padding: 0px; opacity: 0.6;&quot;
+            type=&quot;button&quot;
+          &gt;
+            ×
+          &lt;/button&gt;
+        &lt;/div&gt;
+        &lt;div
+          style=&quot;margin-bottom: 12px;&quot;
+        &gt;
+          &lt;label
+            style=&quot;display: block; font-size: 13px; margin-bottom: 6px; font-weight: 500;&quot;
+          &gt;
+            Tipo
+          &lt;/label&gt;
+          &lt;select
+            style=&quot;width: 100%; padding: 8px 12px; border-radius: 8px; border: 1px solid #d1d5db; font-size: 14px;&quot;
+          &gt;
+            &lt;option
+              value=&quot;bug&quot;
+            &gt;
+              🐛 Bug / Erro
+            &lt;/option&gt;
+            &lt;option
+              value=&quot;feature&quot;
+            &gt;
+              💡 Sugestão
+            &lt;/option&gt;
+            &lt;option
+              value=&quot;question&quot;
+            &gt;
+              ❓ Dúvida
+            &lt;/option&gt;
+            &lt;option
+              value=&quot;other&quot;
+            &gt;
+              💬 Outro
+            &lt;/option&gt;
+          &lt;/select&gt;
+        &lt;/div&gt;
+        &lt;div
+          style=&quot;margin-bottom: 12px;&quot;
+        &gt;
+          &lt;label
+            style=&quot;display: block; font-size: 13px; margin-bottom: 6px; font-weight: 500;&quot;
+          &gt;
+            Descrição *
+          &lt;/label&gt;
+          &lt;textarea
+            placeholder=&quot;Descreva o problema ou sugestão...&quot;
+            required=&quot;&quot;
+            rows=&quot;4&quot;
+            style=&quot;width: 100%; padding: 8px 12px; border-radius: 8px; border: 1px solid #d1d5db; font-size: 14px; font-family: inherit; resize: vertical;&quot;
+          /&gt;
+        &lt;/div&gt;
+        &lt;div
+          style=&quot;margin-bottom: 16px;&quot;
+        &gt;
+          &lt;label
+            style=&quot;display: block; font-size: 13px; margin-bottom: 6px; font-weight: 500;&quot;
+          &gt;
+            E-mail (opcional)
+          &lt;/label&gt;
+          &lt;input
+            placeholder=&quot;seu@email.com&quot;
+            style=&quot;width: 100%; padding: 8px 12px; border-radius: 8px; border: 1px solid #d1d5db; font-size: 14px;&quot;
+            type=&quot;email&quot;
+            value=&quot;&quot;
+          /&gt;
+        &lt;/div&gt;
+        &lt;button
+          style=&quot;width: 100%; padding: 10px 16px; background: rgb(99, 102, 241); color: white; border-radius: 8px; font-weight: 600; cursor: pointer; opacity: 1; font-size: 14px;&quot;
+          type=&quot;submit&quot;
+        &gt;
+          Enviar Feedback
+        &lt;/button&gt;
+      &lt;/form&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+&lt;/body&gt;
+    at Object.getElementError (/home/runner/work/rkmmax-hibrido/rkmmax-hibrido/node_modules/@testing-library/dom/dist/config.js:37:19)
+    at getElementError (/home/runner/work/rkmmax-hibrido/rkmmax-hibrido/node_modules/@testing-library/dom/dist/query-helpers.js:20:35)
+    at getMultipleElementsFoundError (/home/runner/work/rkmmax-hibrido/rkmmax-hibrido/node_modules/@testing-library/dom/dist/query-helpers.js:23:10)
+    at /home/runner/work/rkmmax-hibrido/rkmmax-hibrido/node_modules/@testing-library/dom/dist/query-helpers.js:55:13
+    at getByText (/home/runner/work/rkmmax-hibrido/rkmmax-hibrido/node_modules/@testing-library/dom/dist/query-helpers.js:95:19)
+    at Object.&lt;anonymous&gt; (/home/runner/work/rkmmax-hibrido/rkmmax-hibrido/src/components/FeedbackButton.test.jsx:42:19)
+    at Promise.then.completed (/home/runner/work/rkmmax-hibrido/rkmmax-hibrido/node_modules/jest-circus/build/utils.js:391:28)
+    at new Promise (&lt;anonymous&gt;)
+    at callAsyncCircusFn (/home/runner/work/rkmmax-hibrido/rkmmax-hibrido/node_modules/jest-circus/build/utils.js:316:10)
+    at _callCircusTest (/home/runner/work/rkmmax-hibrido/rkmmax-hibrido/node_modules/jest-circus/build/run.js:218:40)
+    at _runTest (/home/runner/work/rkmmax-hibrido/rkmmax-hibrido/node_modules/jest-circus/build/run.js:155:3)
+    at _runTestsForDescribeBlock (/home/runner/work/rkmmax-hibrido/rkmmax-hibrido/node_modules/jest-circus/build/run.js:66:9)
+    at _runTestsForDescribeBlock (/home/runner/work/rkmmax-hibrido/rkmmax-hibrido/node_modules/jest-circus/build/run.js:60:9)
+    at run (/home/runner/work/rkmmax-hibrido/rkmmax-hibrido/node_modules/jest-circus/build/run.js:25:3)
+    at runAndTransformResultsToJestFormat (/home/runner/work/rkmmax-hibrido/rkmmax-hibrido/node_modules/jest-circus/build/legacy-code-todo-rewrite/jestAdapterInit.js:170:21)
+    at jestAdapter (/home/runner/work/rkmmax-hibrido/rkmmax-hibrido/node_modules/jest-circus/build/legacy-code-todo-rewrite/jestAdapter.js:82:19)
+    at runTestInternal (/home/runner/work/rkmmax-hibrido/rkmmax-hibrido/node_modules/jest-runner/build/runTest.js:389:16)
+    at runTest (/home/runner/work/rkmmax-hibrido/rkmmax-hibrido/node_modules/jest-runner/build/runTest.js:475:34)</failure>
+    </testcase>
+    <testcase classname="FeedbackButton Component" name="closes form when close button is clicked" time="0.029">
+    </testcase>
+    <testcase classname="FeedbackButton Component" name="submits feedback successfully" time="0.05">
+    </testcase>
+  </testsuite>
+  <testsuite name="MultimodalProcessor" errors="0" failures="1" skipped="0" timestamp="2026-02-05T13:32:00" time="0.207" tests="33">
+    <testcase classname="MultimodalProcessor › Audio Processing › validateAudioFile" name="deve aceitar formato MP3" time="0.002">
+    </testcase>
+    <testcase classname="MultimodalProcessor › Audio Processing › validateAudioFile" name="deve aceitar formato WAV" time="0.001">
+    </testcase>
+    <testcase classname="MultimodalProcessor › Audio Processing › validateAudioFile" name="deve rejeitar formato inválido" time="0.001">
+    </testcase>
+    <testcase classname="MultimodalProcessor › Audio Processing › validateAudioFile" name="deve rejeitar arquivo muito grande" time="0.001">
+    </testcase>
+    <testcase classname="MultimodalProcessor › Audio Processing › processAudio" name="deve processar áudio válido" time="0.006">
+    </testcase>
+    <testcase classname="MultimodalProcessor › Audio Processing › processAudio" name="deve rejeitar formato não suportado" time="0.013">
+    </testcase>
+    <testcase classname="MultimodalProcessor › Audio Processing › processAudio" name="deve rejeitar arquivo muito grande" time="0.003">
+    </testcase>
+    <testcase classname="MultimodalProcessor › Audio Processing › estimateAudioDuration" name="deve estimar duração do áudio" time="0.001">
+    </testcase>
+    <testcase classname="MultimodalProcessor › Image Processing › validateImageFile" name="deve aceitar formato PNG" time="0.001">
+    </testcase>
+    <testcase classname="MultimodalProcessor › Image Processing › validateImageFile" name="deve aceitar formato JPG" time="0.001">
+    </testcase>
+    <testcase classname="MultimodalProcessor › Image Processing › validateImageFile" name="deve rejeitar formato inválido" time="0.001">
+    </testcase>
+    <testcase classname="MultimodalProcessor › Image Processing › validateImageFile" name="deve rejeitar arquivo muito grande" time="0.001">
+    </testcase>
+    <testcase classname="MultimodalProcessor › Image Processing › processImage" name="deve processar imagem válida" time="0.002">
+    </testcase>
+    <testcase classname="MultimodalProcessor › Image Processing › processImage" name="deve rejeitar formato não suportado" time="0.002">
+    </testcase>
+    <testcase classname="MultimodalProcessor › Image Processing › extractTextFromImage" name="deve extrair texto da imagem" time="0.002">
+    </testcase>
+    <testcase classname="MultimodalProcessor › Image Processing › extractTextFromImage" name="deve retornar sucesso false quando nenhum texto é encontrado" time="0.002">
+    </testcase>
+    <testcase classname="MultimodalProcessor › Image Processing › describeImage" name="deve descrever imagem" time="0.002">
+    </testcase>
+    <testcase classname="MultimodalProcessor › Image Processing › detectCodeInImage" name="deve detectar código em imagem" time="0.003">
+    </testcase>
+    <testcase classname="MultimodalProcessor › Image Processing › detectCodeInImage" name="deve identificar linguagem JavaScript" time="0.002">
+    </testcase>
+    <testcase classname="MultimodalProcessor › Image Processing › detectCodeInImage" name="deve identificar linguagem Python" time="0.001">
+    </testcase>
+    <testcase classname="MultimodalProcessor › Image Processing › detectCodeInImage" name="deve identificar linguagem SQL" time="0.002">
+    </testcase>
+    <testcase classname="MultimodalProcessor › Image Processing › detectProgrammingLanguage" name="deve detectar JavaScript" time="0.001">
+    </testcase>
+    <testcase classname="MultimodalProcessor › Image Processing › detectProgrammingLanguage" name="deve detectar Python" time="0.001">
+    </testcase>
+    <testcase classname="MultimodalProcessor › Image Processing › detectProgrammingLanguage" name="deve detectar Java" time="0.002">
+      <failure>Error: expect(received).toBe(expected) // Object.is equality
+
+Expected: &quot;java&quot;
+Received: &quot;python&quot;
+    at Object.&lt;anonymous&gt; (/home/runner/work/rkmmax-hibrido/rkmmax-hibrido/src/automation/__tests__/MultimodalProcessor.test.js:268:26)
+    at Promise.then.completed (/home/runner/work/rkmmax-hibrido/rkmmax-hibrido/node_modules/jest-circus/build/utils.js:391:28)
+    at new Promise (&lt;anonymous&gt;)
+    at callAsyncCircusFn (/home/runner/work/rkmmax-hibrido/rkmmax-hibrido/node_modules/jest-circus/build/utils.js:316:10)
+    at _callCircusTest (/home/runner/work/rkmmax-hibrido/rkmmax-hibrido/node_modules/jest-circus/build/run.js:218:40)
+    at _runTest (/home/runner/work/rkmmax-hibrido/rkmmax-hibrido/node_modules/jest-circus/build/run.js:155:3)
+    at _runTestsForDescribeBlock (/home/runner/work/rkmmax-hibrido/rkmmax-hibrido/node_modules/jest-circus/build/run.js:66:9)
+    at _runTestsForDescribeBlock (/home/runner/work/rkmmax-hibrido/rkmmax-hibrido/node_modules/jest-circus/build/run.js:60:9)
+    at _runTestsForDescribeBlock (/home/runner/work/rkmmax-hibrido/rkmmax-hibrido/node_modules/jest-circus/build/run.js:60:9)
+    at _runTestsForDescribeBlock (/home/runner/work/rkmmax-hibrido/rkmmax-hibrido/node_modules/jest-circus/build/run.js:60:9)
+    at run (/home/runner/work/rkmmax-hibrido/rkmmax-hibrido/node_modules/jest-circus/build/run.js:25:3)
+    at runAndTransformResultsToJestFormat (/home/runner/work/rkmmax-hibrido/rkmmax-hibrido/node_modules/jest-circus/build/legacy-code-todo-rewrite/jestAdapterInit.js:170:21)
+    at jestAdapter (/home/runner/work/rkmmax-hibrido/rkmmax-hibrido/node_modules/jest-circus/build/legacy-code-todo-rewrite/jestAdapter.js:82:19)
+    at runTestInternal (/home/runner/work/rkmmax-hibrido/rkmmax-hibrido/node_modules/jest-runner/build/runTest.js:389:16)
+    at runTest (/home/runner/work/rkmmax-hibrido/rkmmax-hibrido/node_modules/jest-runner/build/runTest.js:475:34)</failure>
+    </testcase>
+    <testcase classname="MultimodalProcessor › Image Processing › detectProgrammingLanguage" name="deve detectar SQL" time="0.001">
+    </testcase>
+    <testcase classname="MultimodalProcessor › Image Processing › detectProgrammingLanguage" name="deve retornar null para linguagem desconhecida" time="0.001">
+    </testcase>
+    <testcase classname="MultimodalProcessor › Multimodal Processing" name="deve processar áudio e imagem simultaneamente" time="0.002">
+    </testcase>
+    <testcase classname="MultimodalProcessor › Multimodal Processing" name="deve combinar resultados corretamente" time="0.002">
+    </testcase>
+    <testcase classname="MultimodalProcessor › Support Information" name="deve retornar informações de suporte" time="0.001">
+    </testcase>
+    <testcase classname="MultimodalProcessor › Support Information" name="deve incluir tamanho máximo de arquivo" time="0.002">
+    </testcase>
+    <testcase classname="MultimodalProcessor › Support Information" name="deve listar features disponíveis" time="0.001">
+    </testcase>
+    <testcase classname="MultimodalProcessor › Error Handling" name="deve lançar erro para áudio inválido" time="0.002">
+    </testcase>
+    <testcase classname="MultimodalProcessor › Error Handling" name="deve lançar erro para imagem inválida" time="0.002">
+    </testcase>
+  </testsuite>
+  <testsuite name="SecurityValidator" errors="0" failures="4" skipped="0" timestamp="2026-02-05T13:32:00" time="0.171" tests="25">
+    <testcase classname="SecurityValidator › validateCode" name="deve aceitar código JavaScript válido" time="0.002">
+    </testcase>
+    <testcase classname="SecurityValidator › validateCode" name="deve rejeitar código com rm -rf" time="0.001">
+    </testcase>
+    <testcase classname="SecurityValidator › validateCode" name="deve rejeitar código com DROP TABLE" time="0.001">
+    </testcase>
+    <testcase classname="SecurityValidator › validateCode" name="deve detectar credenciais expostas" time="0.002">
+      <failure>Error: expect(received).toBe(expected) // Object.is equality
+
+Expected: false
+Received: true
+    at Object.&lt;anonymous&gt; (/home/runner/work/rkmmax-hibrido/rkmmax-hibrido/src/automation/__tests__/SecurityValidator.test.js:62:30)</failure>
+    </testcase>
+    <testcase classname="SecurityValidator › validateCode" name="deve rejeitar arquivo com extensão não permitida" time="0.001">
+    </testcase>
+    <testcase classname="SecurityValidator › validateCode" name="deve rejeitar modificação de arquivo crítico" time="0.001">
+      <failure>Error: expect(received).toBe(expected) // Object.is equality
+
+Expected: &quot;CRITICAL_FILE_MODIFICATION&quot;
+Received: &quot;INVALID_FILE_EXTENSION&quot;
+    at Object.&lt;anonymous&gt; (/home/runner/work/rkmmax-hibrido/rkmmax-hibrido/src/automation/__tests__/SecurityValidator.test.js:81:37)</failure>
+    </testcase>
+    <testcase classname="SecurityValidator › validateCode" name="deve avisar sobre console.log em produção" time="0.001">
+    </testcase>
+    <testcase classname="SecurityValidator › validateCode" name="deve avisar sobre TODO/FIXME" time="0.001">
+    </testcase>
+    <testcase classname="SecurityValidator › validateCode" name="deve detectar chaves desbalanceadas" time="0.001">
+    </testcase>
+    <testcase classname="SecurityValidator › validateCode" name="deve validar JSON válido" time="0.001">
+    </testcase>
+    <testcase classname="SecurityValidator › validateCode" name="deve rejeitar JSON inválido" time="0.001">
+    </testcase>
+    <testcase classname="SecurityValidator › validateFiles" name="deve validar múltiplos arquivos" time="0.001">
+    </testcase>
+    <testcase classname="SecurityValidator › validateFiles" name="deve bloquear se um arquivo for inválido" time="0.001">
+    </testcase>
+    <testcase classname="SecurityValidator › checkBlockedPatterns" name="deve detectar padrões destrutivos" time="0.001">
+    </testcase>
+    <testcase classname="SecurityValidator › checkBlockedPatterns" name="deve detectar código malicioso" time="0.001">
+    </testcase>
+    <testcase classname="SecurityValidator › checkBlockedPatterns" name="deve detectar acesso a arquivos críticos" time="0.001">
+    </testcase>
+    <testcase classname="SecurityValidator › checkCredentials" name="deve detectar API keys" time="0.001">
+      <failure>Error: expect(received).toBeGreaterThan(expected)
+
+Expected: &gt; 0
+Received:   0
+    at Object.&lt;anonymous&gt; (/home/runner/work/rkmmax-hibrido/rkmmax-hibrido/src/automation/__tests__/SecurityValidator.test.js:206:35)
+    at Promise.then.completed (/home/runner/work/rkmmax-hibrido/rkmmax-hibrido/node_modules/jest-circus/build/utils.js:391:28)
+    at new Promise (&lt;anonymous&gt;)
+    at callAsyncCircusFn (/home/runner/work/rkmmax-hibrido/rkmmax-hibrido/node_modules/jest-circus/build/utils.js:316:10)
+    at _callCircusTest (/home/runner/work/rkmmax-hibrido/rkmmax-hibrido/node_modules/jest-circus/build/run.js:218:40)
+    at _runTest (/home/runner/work/rkmmax-hibrido/rkmmax-hibrido/node_modules/jest-circus/build/run.js:155:3)
+    at _runTestsForDescribeBlock (/home/runner/work/rkmmax-hibrido/rkmmax-hibrido/node_modules/jest-circus/build/run.js:66:9)
+    at _runTestsForDescribeBlock (/home/runner/work/rkmmax-hibrido/rkmmax-hibrido/node_modules/jest-circus/build/run.js:60:9)
+    at _runTestsForDescribeBlock (/home/runner/work/rkmmax-hibrido/rkmmax-hibrido/node_modules/jest-circus/build/run.js:60:9)
+    at run (/home/runner/work/rkmmax-hibrido/rkmmax-hibrido/node_modules/jest-circus/build/run.js:25:3)
+    at runAndTransformResultsToJestFormat (/home/runner/work/rkmmax-hibrido/rkmmax-hibrido/node_modules/jest-circus/build/legacy-code-todo-rewrite/jestAdapterInit.js:170:21)
+    at jestAdapter (/home/runner/work/rkmmax-hibrido/rkmmax-hibrido/node_modules/jest-circus/build/legacy-code-todo-rewrite/jestAdapter.js:82:19)
+    at runTestInternal (/home/runner/work/rkmmax-hibrido/rkmmax-hibrido/node_modules/jest-runner/build/runTest.js:389:16)
+    at runTest (/home/runner/work/rkmmax-hibrido/rkmmax-hibrido/node_modules/jest-runner/build/runTest.js:475:34)</failure>
+    </testcase>
+    <testcase classname="SecurityValidator › checkCredentials" name="deve detectar tokens GitHub" time="0.001">
+      <failure>Error: expect(received).toBeGreaterThan(expected)
+
+Expected: &gt; 0
+Received:   0
+    at Object.&lt;anonymous&gt; (/home/runner/work/rkmmax-hibrido/rkmmax-hibrido/src/automation/__tests__/SecurityValidator.test.js:213:35)
+    at Promise.then.completed (/home/runner/work/rkmmax-hibrido/rkmmax-hibrido/node_modules/jest-circus/build/utils.js:391:28)
+    at new Promise (&lt;anonymous&gt;)
+    at callAsyncCircusFn (/home/runner/work/rkmmax-hibrido/rkmmax-hibrido/node_modules/jest-circus/build/utils.js:316:10)
+    at _callCircusTest (/home/runner/work/rkmmax-hibrido/rkmmax-hibrido/node_modules/jest-circus/build/run.js:218:40)
+    at _runTest (/home/runner/work/rkmmax-hibrido/rkmmax-hibrido/node_modules/jest-circus/build/run.js:155:3)
+    at _runTestsForDescribeBlock (/home/runner/work/rkmmax-hibrido/rkmmax-hibrido/node_modules/jest-circus/build/run.js:66:9)
+    at _runTestsForDescribeBlock (/home/runner/work/rkmmax-hibrido/rkmmax-hibrido/node_modules/jest-circus/build/run.js:60:9)
+    at _runTestsForDescribeBlock (/home/runner/work/rkmmax-hibrido/rkmmax-hibrido/node_modules/jest-circus/build/run.js:60:9)
+    at run (/home/runner/work/rkmmax-hibrido/rkmmax-hibrido/node_modules/jest-circus/build/run.js:25:3)
+    at runAndTransformResultsToJestFormat (/home/runner/work/rkmmax-hibrido/rkmmax-hibrido/node_modules/jest-circus/build/legacy-code-todo-rewrite/jestAdapterInit.js:170:21)
+    at jestAdapter (/home/runner/work/rkmmax-hibrido/rkmmax-hibrido/node_modules/jest-circus/build/legacy-code-todo-rewrite/jestAdapter.js:82:19)
+    at runTestInternal (/home/runner/work/rkmmax-hibrido/rkmmax-hibrido/node_modules/jest-runner/build/runTest.js:389:16)
+    at runTest (/home/runner/work/rkmmax-hibrido/rkmmax-hibrido/node_modules/jest-runner/build/runTest.js:475:34)</failure>
+    </testcase>
+    <testcase classname="SecurityValidator › checkSyntax" name="deve validar sintaxe JavaScript" time="0.001">
+    </testcase>
+    <testcase classname="SecurityValidator › checkSyntax" name="deve detectar chaves desbalanceadas" time="0.001">
+    </testcase>
+    <testcase classname="SecurityValidator › generateSecurityReport" name="deve gerar relatório de segurança" time="0.001">
+    </testcase>
+    <testcase classname="SecurityValidator › isAllowedExtension" name="deve permitir extensões válidas" time="0.001">
+    </testcase>
+    <testcase classname="SecurityValidator › isAllowedExtension" name="deve rejeitar extensões inválidas" time="0.001">
+    </testcase>
+    <testcase classname="SecurityValidator › isCriticalFile" name="deve identificar arquivos críticos" time="0">
+    </testcase>
+    <testcase classname="SecurityValidator › isCriticalFile" name="deve permitir arquivos normais" time="0">
+    </testcase>
+  </testsuite>
+  <testsuite name="CreditCalculator" errors="0" failures="0" skipped="0" timestamp="2026-02-05T13:32:00" time="0.175" tests="41">
+    <testcase classname="CreditCalculator › calculateAutomationCost" name="deve calcular custo para modo MANUAL" time="0.002">
+    </testcase>
+    <testcase classname="CreditCalculator › calculateAutomationCost" name="deve calcular custo para modo HYBRID" time="0.001">
+    </testcase>
+    <testcase classname="CreditCalculator › calculateAutomationCost" name="deve calcular custo para modo OPTIMIZED" time="0.001">
+    </testcase>
+    <testcase classname="CreditCalculator › calculateAutomationCost" name="custo OPTIMIZED deve ser maior que MANUAL" time="0">
+    </testcase>
+    <testcase classname="CreditCalculator › calculateAutomationCost" name="deve incluir breakdown de custos" time="0.001">
+    </testcase>
+    <testcase classname="CreditCalculator › estimateAICost" name="deve estimar custo com Gemini 2.0 Flash" time="0.001">
+    </testcase>
+    <testcase classname="CreditCalculator › estimateAICost" name="deve estimar custo com Gemini 2.5 Pro" time="0.001">
+    </testcase>
+    <testcase classname="CreditCalculator › estimateAICost" name="custo Gemini Pro deve ser maior que Flash" time="0.001">
+    </testcase>
+    <testcase classname="CreditCalculator › costToCredits" name="deve converter custo em créditos" time="0.001">
+    </testcase>
+    <testcase classname="CreditCalculator › costToCredits" name="deve arredondar para cima" time="0.001">
+    </testcase>
+    <testcase classname="CreditCalculator › calculateSellingPrice" name="deve calcular preço com 60% de margem" time="0.001">
+    </testcase>
+    <testcase classname="CreditCalculator › calculateSellingPrice" name="deve calcular preço com 40% de margem" time="0.001">
+    </testcase>
+    <testcase classname="CreditCalculator › calculateSellingPrice" name="margem 60% deve resultar em preço maior que 40%" time="0.001">
+    </testcase>
+    <testcase classname="CreditCalculator › getPlanInfo" name="deve retornar informações do plano Básico" time="0.001">
+    </testcase>
+    <testcase classname="CreditCalculator › getPlanInfo" name="deve retornar informações do plano Premium" time="0.001">
+    </testcase>
+    <testcase classname="CreditCalculator › getPlanInfo" name="deve retornar null para plano inválido" time="0.001">
+    </testcase>
+    <testcase classname="CreditCalculator › listAllPlans" name="deve listar todos os planos" time="0.001">
+    </testcase>
+    <testcase classname="CreditCalculator › listAllPlans" name="cada plano deve ter informações obrigatórias" time="0.002">
+    </testcase>
+    <testcase classname="CreditCalculator › checkDailyLimit" name="deve permitir uso dentro do limite" time="0.001">
+    </testcase>
+    <testcase classname="CreditCalculator › checkDailyLimit" name="deve bloquear quando limite de automações é atingido" time="0.002">
+    </testcase>
+    <testcase classname="CreditCalculator › checkDailyLimit" name="deve bloquear quando limite de créditos é atingido" time="0.001">
+    </testcase>
+    <testcase classname="CreditCalculator › checkDailyLimit" name="plano gratuito não deve ter limite" time="0.001">
+    </testcase>
+    <testcase classname="CreditCalculator › canUseSpecialist" name="deve permitir especialista no plano Premium" time="0.001">
+    </testcase>
+    <testcase classname="CreditCalculator › canUseSpecialist" name="deve bloquear especialista no plano Básico" time="0.001">
+    </testcase>
+    <testcase classname="CreditCalculator › canUseSpecialist" name="deve permitir 10 especialistas no plano Básico" time="0.001">
+    </testcase>
+    <testcase classname="CreditCalculator › canUseMode" name="deve permitir MANUAL em todos os planos" time="0.001">
+    </testcase>
+    <testcase classname="CreditCalculator › canUseMode" name="deve permitir OPTIMIZED apenas em planos intermediários" time="0.001">
+    </testcase>
+    <testcase classname="CreditCalculator › getRemainingCreditsToday" name="deve calcular créditos restantes" time="0.001">
+    </testcase>
+    <testcase classname="CreditCalculator › getRemainingCreditsToday" name="deve retornar 0 quando limite é atingido" time="0.001">
+    </testcase>
+    <testcase classname="CreditCalculator › getRemainingCreditsToday" name="plano gratuito deve retornar -1 (sem limite)" time="0.001">
+    </testcase>
+    <testcase classname="CreditCalculator › calculatePlanPrices" name="deve calcular preços para todos os planos" time="0.001">
+    </testcase>
+    <testcase classname="CreditCalculator › calculatePlanPrices" name="preço calculado deve respeitar margem" time="0.001">
+    </testcase>
+    <testcase classname="CreditCalculator › generatePricingReport" name="deve gerar relatório de preços" time="0.001">
+    </testcase>
+    <testcase classname="CreditCalculator › generatePricingReport" name="relatório deve incluir receita mensal" time="0.002">
+    </testcase>
+    <testcase classname="CreditCalculator › Margens de Lucro" name="Plano Básico deve ter 60% de margem" time="0">
+    </testcase>
+    <testcase classname="CreditCalculator › Margens de Lucro" name="Plano Intermediário deve ter 40% de margem" time="0">
+    </testcase>
+    <testcase classname="CreditCalculator › Margens de Lucro" name="Plano Premium deve ter 40% de margem" time="0.001">
+    </testcase>
+    <testcase classname="CreditCalculator › Limites Diários Rígidos" name="Plano Básico: 5 automações/dia" time="0">
+    </testcase>
+    <testcase classname="CreditCalculator › Limites Diários Rígidos" name="Plano Intermediário: 15 automações/dia" time="0.001">
+    </testcase>
+    <testcase classname="CreditCalculator › Limites Diários Rígidos" name="Plano Premium: 50 automações/dia" time="0.001">
+    </testcase>
+    <testcase classname="CreditCalculator › Limites Diários Rígidos" name="Plano Gratuito: sem limite" time="0.001">
+    </testcase>
+  </testsuite>
+</testsuites>

@@ -1,0 +1,378 @@
+65c7da762118c4871d6918d4a4b1ad9f
+/* istanbul ignore next */
+function cov_26oxdsgw7p() {
+  var path = "/home/runner/work/rkmmax-hibrido/rkmmax-hibrido/src/pages/Privacy.jsx";
+  var hash = "779633fadf5a5d12c708fe18c68c10771a783a09";
+  var global = new Function("return this")();
+  var gcv = "__coverage__";
+  var coverageData = {
+    path: "/home/runner/work/rkmmax-hibrido/rkmmax-hibrido/src/pages/Privacy.jsx",
+    statementMap: {
+      "0": {
+        start: {
+          line: 4,
+          column: 2
+        },
+        end: {
+          line: 62,
+          column: 4
+        }
+      }
+    },
+    fnMap: {
+      "0": {
+        name: "Privacy",
+        decl: {
+          start: {
+            line: 3,
+            column: 24
+          },
+          end: {
+            line: 3,
+            column: 31
+          }
+        },
+        loc: {
+          start: {
+            line: 3,
+            column: 34
+          },
+          end: {
+            line: 63,
+            column: 1
+          }
+        },
+        line: 3
+      }
+    },
+    branchMap: {},
+    s: {
+      "0": 0
+    },
+    f: {
+      "0": 0
+    },
+    b: {},
+    _coverageSchema: "1a1c01bbd47fc00a2c39e90264f33305004495a9",
+    hash: "779633fadf5a5d12c708fe18c68c10771a783a09"
+  };
+  var coverage = global[gcv] || (global[gcv] = {});
+  if (!coverage[path] || coverage[path].hash !== hash) {
+    coverage[path] = coverageData;
+  }
+  var actualCoverage = coverage[path];
+  {
+    // @ts-ignore
+    cov_26oxdsgw7p = function () {
+      return actualCoverage;
+    };
+  }
+  return actualCoverage;
+}
+cov_26oxdsgw7p();
+import React from "react";
+/* istanbul ignore next */
+import { jsx as _jsx, jsxs as _jsxs } from "react/jsx-runtime";
+export default function Privacy() {
+  /* istanbul ignore next */
+  cov_26oxdsgw7p().f[0]++;
+  cov_26oxdsgw7p().s[0]++;
+  return /*#__PURE__*/ /* istanbul ignore next */_jsxs(
+  /* istanbul ignore next */
+  "div",
+  /* istanbul ignore next */
+  {
+    style: {
+      maxWidth: "900px",
+      margin: "40px auto",
+      padding: "20px"
+    },
+    children: [/*#__PURE__*/
+    /* istanbul ignore next */
+    _jsx(
+    /* istanbul ignore next */
+    "h1",
+    /* istanbul ignore next */
+    {
+      children: "Pol\xEDtica de Privacidade"
+    }), /*#__PURE__*/
+    /* istanbul ignore next */
+    _jsx(
+    /* istanbul ignore next */
+    "h2",
+    /* istanbul ignore next */
+    {
+      children: "1. Introdu\xE7\xE3o"
+    }), /*#__PURE__*/
+    /* istanbul ignore next */
+    _jsx(
+    /* istanbul ignore next */
+    "p",
+    /* istanbul ignore next */
+    {
+      children: "A RKMMAX respeita sua privacidade. Esta Pol\xEDtica de Privacidade explica como coletamos, usamos e protegemos seus dados pessoais."
+    }), /*#__PURE__*/
+    /* istanbul ignore next */
+    _jsx(
+    /* istanbul ignore next */
+    "h2",
+    /* istanbul ignore next */
+    {
+      children: "2. Conformidade Legal"
+    }), /*#__PURE__*/
+    /* istanbul ignore next */
+    _jsx(
+    /* istanbul ignore next */
+    "p",
+    /* istanbul ignore next */
+    {
+      children: "Este site est\xE1 em conformidade com:"
+    }), /*#__PURE__*/
+    /* istanbul ignore next */
+    _jsxs(
+    /* istanbul ignore next */
+    "ul",
+    /* istanbul ignore next */
+    {
+      children: [/*#__PURE__*/
+      /* istanbul ignore next */
+      _jsxs(
+      /* istanbul ignore next */
+      "li",
+      /* istanbul ignore next */
+      {
+        children: [/*#__PURE__*/
+        /* istanbul ignore next */
+        _jsx(
+        /* istanbul ignore next */
+        "strong",
+        /* istanbul ignore next */
+        {
+          children: "GDPR (Regulamento Geral de Prote\xE7\xE3o de Dados)"
+        }), " - Uni\xE3o Europeia"]
+      }), /*#__PURE__*/
+      /* istanbul ignore next */
+      _jsxs(
+      /* istanbul ignore next */
+      "li",
+      /* istanbul ignore next */
+      {
+        children: [/*#__PURE__*/
+        /* istanbul ignore next */
+        _jsx(
+        /* istanbul ignore next */
+        "strong",
+        /* istanbul ignore next */
+        {
+          children: "LGPD (Lei Geral de Prote\xE7\xE3o de Dados)"
+        }), " - Brasil"]
+      }), /*#__PURE__*/
+      /* istanbul ignore next */
+      _jsxs(
+      /* istanbul ignore next */
+      "li",
+      /* istanbul ignore next */
+      {
+        children: [/*#__PURE__*/
+        /* istanbul ignore next */
+        _jsx(
+        /* istanbul ignore next */
+        "strong",
+        /* istanbul ignore next */
+        {
+          children: "Google Play Store"
+        }), " - Pol\xEDticas de Privacidade"]
+      })]
+    }), /*#__PURE__*/
+    /* istanbul ignore next */
+    _jsx(
+    /* istanbul ignore next */
+    "h2",
+    /* istanbul ignore next */
+    {
+      children: "3. Dados Coletados"
+    }), /*#__PURE__*/
+    /* istanbul ignore next */
+    _jsx(
+    /* istanbul ignore next */
+    "p",
+    /* istanbul ignore next */
+    {
+      children: "Coletamos apenas dados necess\xE1rios para:"
+    }), /*#__PURE__*/
+    /* istanbul ignore next */
+    _jsxs(
+    /* istanbul ignore next */
+    "ul",
+    /* istanbul ignore next */
+    {
+      children: [/*#__PURE__*/
+      /* istanbul ignore next */
+      _jsx(
+      /* istanbul ignore next */
+      "li",
+      /* istanbul ignore next */
+      {
+        children: "Autentica\xE7\xE3o e acesso \xE0 conta"
+      }), /*#__PURE__*/
+      /* istanbul ignore next */
+      _jsx(
+      /* istanbul ignore next */
+      "li",
+      /* istanbul ignore next */
+      {
+        children: "Melhorar a experi\xEAncia do usu\xE1rio"
+      }), /*#__PURE__*/
+      /* istanbul ignore next */
+      _jsx(
+      /* istanbul ignore next */
+      "li",
+      /* istanbul ignore next */
+      {
+        children: "Conformidade legal"
+      })]
+    }), /*#__PURE__*/
+    /* istanbul ignore next */
+    _jsx(
+    /* istanbul ignore next */
+    "h2",
+    /* istanbul ignore next */
+    {
+      children: "4. Uso de Dados"
+    }), /*#__PURE__*/
+    /* istanbul ignore next */
+    _jsx(
+    /* istanbul ignore next */
+    "p",
+    /* istanbul ignore next */
+    {
+      children: "Seus dados s\xE3o usados apenas para:"
+    }), /*#__PURE__*/
+    /* istanbul ignore next */
+    _jsxs(
+    /* istanbul ignore next */
+    "ul",
+    /* istanbul ignore next */
+    {
+      children: [/*#__PURE__*/
+      /* istanbul ignore next */
+      _jsx(
+      /* istanbul ignore next */
+      "li",
+      /* istanbul ignore next */
+      {
+        children: "Fornecer os servi\xE7os de IA"
+      }), /*#__PURE__*/
+      /* istanbul ignore next */
+      _jsx(
+      /* istanbul ignore next */
+      "li",
+      /* istanbul ignore next */
+      {
+        children: "Melhorar a qualidade do servi\xE7o"
+      }), /*#__PURE__*/
+      /* istanbul ignore next */
+      _jsx(
+      /* istanbul ignore next */
+      "li",
+      /* istanbul ignore next */
+      {
+        children: "Cumprir obriga\xE7\xF5es legais"
+      })]
+    }), /*#__PURE__*/
+    /* istanbul ignore next */
+    _jsx(
+    /* istanbul ignore next */
+    "h2",
+    /* istanbul ignore next */
+    {
+      children: "5. Direitos do Usu\xE1rio"
+    }), /*#__PURE__*/
+    /* istanbul ignore next */
+    _jsx(
+    /* istanbul ignore next */
+    "p",
+    /* istanbul ignore next */
+    {
+      children: "Voc\xEA tem direito a:"
+    }), /*#__PURE__*/
+    /* istanbul ignore next */
+    _jsxs(
+    /* istanbul ignore next */
+    "ul",
+    /* istanbul ignore next */
+    {
+      children: [/*#__PURE__*/
+      /* istanbul ignore next */
+      _jsx(
+      /* istanbul ignore next */
+      "li",
+      /* istanbul ignore next */
+      {
+        children: "Acessar seus dados pessoais"
+      }), /*#__PURE__*/
+      /* istanbul ignore next */
+      _jsx(
+      /* istanbul ignore next */
+      "li",
+      /* istanbul ignore next */
+      {
+        children: "Corrigir dados incorretos"
+      }), /*#__PURE__*/
+      /* istanbul ignore next */
+      _jsx(
+      /* istanbul ignore next */
+      "li",
+      /* istanbul ignore next */
+      {
+        children: "Solicitar exclus\xE3o de dados"
+      }), /*#__PURE__*/
+      /* istanbul ignore next */
+      _jsx(
+      /* istanbul ignore next */
+      "li",
+      /* istanbul ignore next */
+      {
+        children: "Portabilidade de dados"
+      })]
+    }), /*#__PURE__*/
+    /* istanbul ignore next */
+    _jsx(
+    /* istanbul ignore next */
+    "h2",
+    /* istanbul ignore next */
+    {
+      children: "6. Contato"
+    }), /*#__PURE__*/
+    /* istanbul ignore next */
+    _jsxs(
+    /* istanbul ignore next */
+    "p",
+    /* istanbul ignore next */
+    {
+      children: ["Para d\xFAvidas sobre privacidade, entre em contato: ", /*#__PURE__*/
+      /* istanbul ignore next */
+      _jsx(
+      /* istanbul ignore next */
+      "strong",
+      /* istanbul ignore next */
+      {
+        children: "suporte@kizirianmax.site"
+      })]
+    }), /*#__PURE__*/
+    /* istanbul ignore next */
+    _jsx(
+    /* istanbul ignore next */
+    "p",
+    /* istanbul ignore next */
+    {
+      style: {
+        marginTop: "40px",
+        fontSize: "12px",
+        color: "#999"
+      },
+      children: "\xDAltima atualiza\xE7\xE3o: 2 de novembro de 2025"
+    })]
+  });
+}
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJuYW1lcyI6WyJjb3ZfMjZveGRzZ3c3cCIsImFjdHVhbENvdmVyYWdlIiwiUmVhY3QiLCJqc3giLCJfanN4IiwianN4cyIsIl9qc3hzIiwiUHJpdmFjeSIsImYiLCJzIiwic3R5bGUiLCJtYXhXaWR0aCIsIm1hcmdpbiIsInBhZGRpbmciLCJjaGlsZHJlbiIsIm1hcmdpblRvcCIsImZvbnRTaXplIiwiY29sb3IiXSwic291cmNlcyI6WyJQcml2YWN5LmpzeCJdLCJzb3VyY2VzQ29udGVudCI6WyJpbXBvcnQgUmVhY3QgZnJvbSBcInJlYWN0XCI7XG5cbmV4cG9ydCBkZWZhdWx0IGZ1bmN0aW9uIFByaXZhY3koKSB7XG4gIHJldHVybiAoXG4gICAgPGRpdiBzdHlsZT17eyBtYXhXaWR0aDogXCI5MDBweFwiLCBtYXJnaW46IFwiNDBweCBhdXRvXCIsIHBhZGRpbmc6IFwiMjBweFwiIH19PlxuICAgICAgPGgxPlBvbMOtdGljYSBkZSBQcml2YWNpZGFkZTwvaDE+XG5cbiAgICAgIDxoMj4xLiBJbnRyb2R1w6fDo288L2gyPlxuICAgICAgPHA+XG4gICAgICAgIEEgUktNTUFYIHJlc3BlaXRhIHN1YSBwcml2YWNpZGFkZS4gRXN0YSBQb2zDrXRpY2EgZGUgUHJpdmFjaWRhZGUgZXhwbGljYSBjb21vIGNvbGV0YW1vcyxcbiAgICAgICAgdXNhbW9zIGUgcHJvdGVnZW1vcyBzZXVzIGRhZG9zIHBlc3NvYWlzLlxuICAgICAgPC9wPlxuXG4gICAgICA8aDI+Mi4gQ29uZm9ybWlkYWRlIExlZ2FsPC9oMj5cbiAgICAgIDxwPkVzdGUgc2l0ZSBlc3TDoSBlbSBjb25mb3JtaWRhZGUgY29tOjwvcD5cbiAgICAgIDx1bD5cbiAgICAgICAgPGxpPlxuICAgICAgICAgIDxzdHJvbmc+R0RQUiAoUmVndWxhbWVudG8gR2VyYWwgZGUgUHJvdGXDp8OjbyBkZSBEYWRvcyk8L3N0cm9uZz4gLSBVbmnDo28gRXVyb3BlaWFcbiAgICAgICAgPC9saT5cbiAgICAgICAgPGxpPlxuICAgICAgICAgIDxzdHJvbmc+TEdQRCAoTGVpIEdlcmFsIGRlIFByb3Rlw6fDo28gZGUgRGFkb3MpPC9zdHJvbmc+IC0gQnJhc2lsXG4gICAgICAgIDwvbGk+XG4gICAgICAgIDxsaT5cbiAgICAgICAgICA8c3Ryb25nPkdvb2dsZSBQbGF5IFN0b3JlPC9zdHJvbmc+IC0gUG9sw610aWNhcyBkZSBQcml2YWNpZGFkZVxuICAgICAgICA8L2xpPlxuICAgICAgPC91bD5cblxuICAgICAgPGgyPjMuIERhZG9zIENvbGV0YWRvczwvaDI+XG4gICAgICA8cD5Db2xldGFtb3MgYXBlbmFzIGRhZG9zIG5lY2Vzc8OhcmlvcyBwYXJhOjwvcD5cbiAgICAgIDx1bD5cbiAgICAgICAgPGxpPkF1dGVudGljYcOnw6NvIGUgYWNlc3NvIMOgIGNvbnRhPC9saT5cbiAgICAgICAgPGxpPk1lbGhvcmFyIGEgZXhwZXJpw6puY2lhIGRvIHVzdcOhcmlvPC9saT5cbiAgICAgICAgPGxpPkNvbmZvcm1pZGFkZSBsZWdhbDwvbGk+XG4gICAgICA8L3VsPlxuXG4gICAgICA8aDI+NC4gVXNvIGRlIERhZG9zPC9oMj5cbiAgICAgIDxwPlNldXMgZGFkb3Mgc8OjbyB1c2Fkb3MgYXBlbmFzIHBhcmE6PC9wPlxuICAgICAgPHVsPlxuICAgICAgICA8bGk+Rm9ybmVjZXIgb3Mgc2VydmnDp29zIGRlIElBPC9saT5cbiAgICAgICAgPGxpPk1lbGhvcmFyIGEgcXVhbGlkYWRlIGRvIHNlcnZpw6dvPC9saT5cbiAgICAgICAgPGxpPkN1bXByaXIgb2JyaWdhw6fDtWVzIGxlZ2FpczwvbGk+XG4gICAgICA8L3VsPlxuXG4gICAgICA8aDI+NS4gRGlyZWl0b3MgZG8gVXN1w6FyaW88L2gyPlxuICAgICAgPHA+Vm9jw6ogdGVtIGRpcmVpdG8gYTo8L3A+XG4gICAgICA8dWw+XG4gICAgICAgIDxsaT5BY2Vzc2FyIHNldXMgZGFkb3MgcGVzc29haXM8L2xpPlxuICAgICAgICA8bGk+Q29ycmlnaXIgZGFkb3MgaW5jb3JyZXRvczwvbGk+XG4gICAgICAgIDxsaT5Tb2xpY2l0YXIgZXhjbHVzw6NvIGRlIGRhZG9zPC9saT5cbiAgICAgICAgPGxpPlBvcnRhYmlsaWRhZGUgZGUgZGFkb3M8L2xpPlxuICAgICAgPC91bD5cblxuICAgICAgPGgyPjYuIENvbnRhdG88L2gyPlxuICAgICAgPHA+XG4gICAgICAgIFBhcmEgZMO6dmlkYXMgc29icmUgcHJpdmFjaWRhZGUsIGVudHJlIGVtIGNvbnRhdG86IDxzdHJvbmc+c3Vwb3J0ZUBraXppcmlhbm1heC5zaXRlPC9zdHJvbmc+XG4gICAgICA8L3A+XG5cbiAgICAgIDxwIHN0eWxlPXt7IG1hcmdpblRvcDogXCI0MHB4XCIsIGZvbnRTaXplOiBcIjEycHhcIiwgY29sb3I6IFwiIzk5OVwiIH19PlxuICAgICAgICDDmmx0aW1hIGF0dWFsaXphw6fDo286IDIgZGUgbm92ZW1icm8gZGUgMjAyNVxuICAgICAgPC9wPlxuICAgIDwvZGl2PlxuICApO1xufVxuIl0sIm1hcHBpbmdzIjoiOzs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7SUFlWTtJQUFBQSxjQUFBLFlBQUFBLENBQUE7TUFBQSxPQUFBQyxjQUFBO0lBQUE7RUFBQTtFQUFBLE9BQUFBLGNBQUE7QUFBQTtBQUFBRCxjQUFBO0FBZlosT0FBT0UsS0FBSyxNQUFNLE9BQU87QUFBQztBQUFBLFNBQUFDLEdBQUEsSUFBQUMsSUFBQSxFQUFBQyxJQUFBLElBQUFDLEtBQUE7QUFFMUIsZUFBZSxTQUFTQyxPQUFPQSxDQUFBLEVBQUc7RUFBQTtFQUFBUCxjQUFBLEdBQUFRLENBQUE7RUFBQVIsY0FBQSxHQUFBUyxDQUFBO0VBQ2hDLG9CQUNFLDJCQUFBSCxLQUFBO0VBQUE7RUFBQTtFQUFBO0VBQUE7SUFBS0ksS0FBSyxFQUFFO01BQUVDLFFBQVEsRUFBRSxPQUFPO01BQUVDLE1BQU0sRUFBRSxXQUFXO01BQUVDLE9BQU8sRUFBRTtJQUFPLENBQUU7SUFBQUMsUUFBQTtJQUN0RTtJQUFBVixJQUFBO0lBQUE7SUFB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
