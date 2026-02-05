@@ -3,57 +3,65 @@
  * Testes unitários para motor de automação
  */
 
-// Mock all dependencies BEFORE importing the module
-jest.mock("../SecurityValidator.js", () => ({
-  __esModule: true,
-  default: jest.fn().mockImplementation(() => ({
+// Mock dependencies ANTES de importar
+jest.mock("../SecurityValidator.js", () => {
+  return jest.fn().mockImplementation(() => ({
     validateFiles: jest.fn().mockResolvedValue({
       isValid: true,
-      errors: [],
-      warnings: [],
+      details: [{ errors: [], warnings: [] }],
     }),
-  })),
-}));
+  }));
+});
 
-jest.mock("../AuditLogger.js", () => ({
-  __esModule: true,
-  default: jest.fn().mockImplementation(() => ({
-    logAutomationStarted: jest.fn(),
-    logAutomationCompleted: jest.fn(),
-    logAutomationFailed: jest.fn(),
-    getAutomationHistory: jest.fn().mockReturnValue([]),
-    getAutomationStats: jest.fn().mockReturnValue({
-      totalAutomations: 0,
-      successfulAutomations: 0,
-      failedAutomations: 0,
+jest.mock("../AuditLogger.js", () => {
+  return jest.fn().mockImplementation(() => ({
+    logAutomationRequest: jest.fn(() => "LOG_123"),
+    logSecurityValidation: jest.fn(),
+    logAutomationCompletion: jest.fn(),
+    logError: jest.fn(),
+    searchLogs: jest.fn(() => []),
+  }));
+});
+
+jest.mock("../GitHubAutomation.js", () => {
+  return jest.fn().mockImplementation(() => ({
+    createBranch: jest.fn().mockResolvedValue(true),
+    commitFiles: jest.fn().mockResolvedValue(true),
+    createPullRequest: jest.fn().mockResolvedValue({ number: 1, html_url: "https://github.com/test/pr/1" }),
+  }));
+});
+
+jest.mock("../SpecialistSelector.js", () => {
+  return jest.fn().mockImplementation(() => ({
+    selectSpecialist: jest.fn((keywords) => {
+      if (keywords.includes("componente") || keywords.includes("login")) return "Frontend";
+      if (keywords.includes("função") || keywords.includes("autenticação")) return "Backend";
+      if (keywords.includes("teste")) return "QA";
+      if (keywords.includes("refatora")) return "Architect";
+      return "Frontend";
     }),
-  })),
-}));
+    getSpecialistCapabilities: jest.fn(() => ({
+      languages: ["JavaScript", "React"],
+      frameworks: ["React", "Next.js"],
+    })),
+  }));
+});
 
-jest.mock("../GitHubAutomation.js", () => ({
-  __esModule: true,
-  default: jest.fn().mockImplementation(() => ({
-    createPullRequest: jest.fn().mockResolvedValue({ success: true }),
-  })),
-}));
+// Dynamic import para ES modules
+let AutomationEngine;
 
-jest.mock("../SpecialistSelector.js", () => ({
-  __esModule: true,
-  default: jest.fn().mockImplementation(() => ({
-    selectSpecialist: jest.fn().mockResolvedValue({
-      specialist: "Frontend",
-      confidence: 0.95,
-      reasoning: "Test reasoning",
-    }),
-  })),
-}));
-
-import AutomationEngine from "../AutomationEngine.js";
+beforeAll(async () => {
+  const module = await import("../AutomationEngine.js");
+  AutomationEngine = module.default;
+});
 
 describe("AutomationEngine", () => {
   let engine;
 
   beforeEach(() => {
+    if (!AutomationEngine) {
+      throw new Error("AutomationEngine not loaded");
+    }
     engine = new AutomationEngine({
       aiModel: "gemini-2.0-flash",
       temperature: 0.7,

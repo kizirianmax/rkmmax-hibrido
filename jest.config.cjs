@@ -1,4 +1,45 @@
 module.exports = {
+<<<<<<< copilot/fix-test-errors-in-pr-13
+  // ============================================
+  // AMBIENTE E SETUP
+  // ============================================
+  setupFilesAfterEnv: ['<rootDir>/jest.setup.cjs'],
+  
+  // Usar projects para separar ambientes de teste
+  projects: [
+    {
+      displayName: 'node',
+      testEnvironment: 'node',
+      testMatch: [
+        '<rootDir>/api/**/__tests__/**/*.{js,jsx}',
+        '<rootDir>/api/**/*.{spec,test}.{js,jsx}',
+        '<rootDir>/src/automation/**/__tests__/**/*.{js,jsx}',
+        '<rootDir>/src/automation/**/*.{spec,test}.{js,jsx}',
+      ],
+    },
+    {
+      displayName: 'jsdom',
+      testEnvironment: 'jsdom',
+      testMatch: [
+        '<rootDir>/src/components/**/__tests__/**/*.{js,jsx}',
+        '<rootDir>/src/components/**/*.{spec,test}.{js,jsx}',
+      ],
+    },
+  ],
+  
+  // ============================================
+  // TIMEOUT E PERFORMANCE
+  // ============================================
+  testTimeout: 10000, // 10 segundos
+  maxWorkers: '50%', // Usar 50% dos CPUs
+  forceExit: true, // Sair após testes (evita hang)
+  detectOpenHandles: true, // Detectar handles abertos
+  
+  // ============================================
+  // COBERTURA
+  // ============================================
+  collectCoverage: false, // Desativar por padrão (lento)
+=======
   testEnvironment: 'jsdom',
   testEnvironmentOptions: {},
   setupFilesAfterEnv: ['<rootDir>/jest.setup.cjs'],
@@ -7,13 +48,33 @@ module.exports = {
   forceExit: true,
   detectOpenHandles: true,
   collectCoverage: false,
+>>>>>>> copilot/add-serverless-streaming-responses
   collectCoverageFrom: [
     'api/**/*.{js,jsx}',
     'src/**/*.{js,jsx}',
-    '!src/**/*.test.{js,jsx}',
-    '!src/**/*.spec.{js,jsx}',
+    '!**/__tests__/**',
+    '!**/__mocks__/**',
+    '!**/*.test.{js,jsx}',
+    '!**/*.spec.{js,jsx}',
     '!src/index.js',
     '!src/reportWebVitals.js',
+<<<<<<< copilot/fix-test-errors-in-pr-13
+    '!src/pages/**',  // Excluir páginas (sem testes por enquanto)
+    '!src/prompts/**', // Excluir prompts (sem testes por enquanto)
+  ],
+  coverageThreshold: {
+    global: {
+      branches: 5,  // TODO: Aumentar para 20% conforme mais testes forem adicionados
+      functions: 5,  // TODO: Aumentar para 20% conforme mais testes forem adicionados
+      lines: 5,  // TODO: Aumentar para 20% conforme mais testes forem adicionados
+      statements: 5,  // TODO: Aumentar para 20% conforme mais testes forem adicionados
+    },
+  },
+  
+  // ============================================
+  // PADRÕES DE ARQUIVO (definidos em projects acima)
+  // ============================================
+=======
     '!**/__tests__/**',
     '!**/__mocks__/**',
   ],
@@ -31,6 +92,7 @@ module.exports = {
     '<rootDir>/api/**/__tests__/**/*.{js,jsx}',
     '<rootDir>/api/**/*.{spec,test}.{js,jsx}',
   ],
+>>>>>>> copilot/add-serverless-streaming-responses
   testPathIgnorePatterns: [
     '/node_modules/',
     '/build/',

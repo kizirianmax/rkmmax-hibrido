@@ -3,12 +3,21 @@
  * Testes unitários para processamento multimodal
  */
 
-const MultimodalProcessor = require("../MultimodalProcessor");
+// Dynamic import para ES modules
+let MultimodalProcessor;
+
+beforeAll(async () => {
+  const module = await import("../MultimodalProcessor.js");
+  MultimodalProcessor = module.default;
+});
 
 describe("MultimodalProcessor", () => {
   let processor;
 
   beforeEach(() => {
+    if (!MultimodalProcessor) {
+      throw new Error("MultimodalProcessor not loaded");
+    }
     processor = new MultimodalProcessor();
   });
 
