@@ -3,12 +3,46 @@
  * Testes unitários para motor de automação
  */
 
-const AutomationEngine = require("../AutomationEngine");
+// Mock AuditLogger, SecurityValidator, SpecialistSelector, GitHubAutomation
+jest.mock("../AuditLogger.js");
+jest.mock("../SecurityValidator.js");
+jest.mock("../SpecialistSelector.js");
+jest.mock("../GitHubAutomation.js");
+
+import AutomationEngine from "../AutomationEngine";
+import AuditLogger from "../AuditLogger";
+import SecurityValidator from "../SecurityValidator";
+import SpecialistSelector from "../SpecialistSelector";
 
 describe("AutomationEngine", () => {
   let engine;
 
   beforeEach(() => {
+    // Clear all mocks before each test
+    jest.clearAllMocks();
+    
+    // Setup AuditLogger mock
+    AuditLogger.mockImplementation(() => ({
+      logAutomationRequest: jest.fn().mockReturnValue("LOG_123"),
+      logSecurityValidation: jest.fn().mockReturnValue("LOG_124"),
+      logAutomationCompletion: jest.fn().mockReturnValue("LOG_125"),
+      logError: jest.fn().mockReturnValue("LOG_126"),
+      searchLogs: jest.fn().mockReturnValue([]),
+    }));
+    
+    // Setup SecurityValidator mock
+    SecurityValidator.mockImplementation(() => ({
+      validateFiles: jest.fn().mockResolvedValue({
+        isValid: true,
+        details: [],
+      }),
+    }));
+    
+    // Setup SpecialistSelector mock
+    SpecialistSelector.mockImplementation(() => ({
+      selectSpecialist: jest.fn().mockResolvedValue("Frontend"),
+    }));
+    
     engine = new AutomationEngine({
       aiModel: "gemini-2.0-flash",
       temperature: 0.7,

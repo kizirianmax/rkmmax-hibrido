@@ -3,7 +3,7 @@
  * Testes unitários para cálculo de créditos
  */
 
-const CreditCalculator = require("../CreditCalculator");
+import CreditCalculator from "../CreditCalculator";
 
 describe("CreditCalculator", () => {
   let calculator;
