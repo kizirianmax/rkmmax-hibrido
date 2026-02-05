@@ -1,14 +1,5 @@
-/**
- * JEST CONFIGURATION - OTIMIZADO PARA ESTABILIDADE
- * 
- * Configuração robusta para evitar problemas de:
- * - EMFILE: Too many open files
- * - Memory leaks
- * - Timeouts
- * - Watch mode infinito
- */
-
 module.exports = {
+<<<<<<< copilot/fix-test-errors-in-pr-13
   // ============================================
   // AMBIENTE E SETUP
   // ============================================
@@ -48,6 +39,16 @@ module.exports = {
   // COBERTURA
   // ============================================
   collectCoverage: false, // Desativar por padrão (lento)
+=======
+  testEnvironment: 'jsdom',
+  testEnvironmentOptions: {},
+  setupFilesAfterEnv: ['<rootDir>/jest.setup.cjs'],
+  testTimeout: 10000,
+  maxWorkers: '50%',
+  forceExit: true,
+  detectOpenHandles: true,
+  collectCoverage: false,
+>>>>>>> copilot/add-serverless-streaming-responses
   collectCoverageFrom: [
     'api/**/*.{js,jsx}',
     'src/**/*.{js,jsx}',
@@ -57,6 +58,7 @@ module.exports = {
     '!**/*.spec.{js,jsx}',
     '!src/index.js',
     '!src/reportWebVitals.js',
+<<<<<<< copilot/fix-test-errors-in-pr-13
     '!src/pages/**',  // Excluir páginas (sem testes por enquanto)
     '!src/prompts/**', // Excluir prompts (sem testes por enquanto)
   ],
@@ -72,6 +74,25 @@ module.exports = {
   // ============================================
   // PADRÕES DE ARQUIVO (definidos em projects acima)
   // ============================================
+=======
+    '!**/__tests__/**',
+    '!**/__mocks__/**',
+  ],
+  coverageThreshold: {
+    global: {
+      branches: 10,
+      functions: 10,
+      lines: 10,
+      statements: 10,
+    },
+  },
+  testMatch: [
+    '<rootDir>/src/**/__tests__/**/*.{js,jsx}',
+    '<rootDir>/src/**/*.{spec,test}.{js,jsx}',
+    '<rootDir>/api/**/__tests__/**/*.{js,jsx}',
+    '<rootDir>/api/**/*.{spec,test}.{js,jsx}',
+  ],
+>>>>>>> copilot/add-serverless-streaming-responses
   testPathIgnorePatterns: [
     '/node_modules/',
     '/build/',
@@ -79,35 +100,19 @@ module.exports = {
   ],
   moduleNameMapper: {
     '^@/(.*)$': '<rootDir>/src/$1',
-    '\\.(css|less|scss|sass)$': 'identity-obj-proxy',
+    '\.(css|less|scss|sass)$': 'identity-obj-proxy',
   },
-  
-  // ============================================
-  // TRANSFORMAÇÃO
-  // ============================================
   transform: {
-    '^.+\\.(js|jsx)$': 'babel-jest',
+    '^.+\.(js|jsx)$': 'babel-jest',
   },
   transformIgnorePatterns: [
     'node_modules/(?!(recharts|victory|d3-.*|internmap|delaunay-triangulate|robust-predicates)/)',
   ],
-  
-  // ============================================
-  // CACHE
-  // ============================================
   cache: true,
   cacheDirectory: '<rootDir>/.jest-cache',
-  
-  // ============================================
-  // LIMPEZA
-  // ============================================
-  clearMocks: true, // Limpar mocks entre testes
-  resetMocks: true, // Reset mocks entre testes
-  restoreMocks: true, // Restaurar mocks entre testes
-  
-  // ============================================
-  // REPORTERS
-  // ============================================
+  clearMocks: true,
+  resetMocks: true,
+  restoreMocks: true,
   reporters: [
     'default',
     [
@@ -122,19 +127,10 @@ module.exports = {
       },
     ],
   ],
-  
-  // ============================================
-  // VERBOSE
-  // ============================================
   verbose: true,
-  
-  // ============================================
-  // GLOBALS
-  // ============================================
   globals: {
     'ts-jest': {
       isolatedModules: true,
     },
   },
 };
-
