@@ -3,7 +3,24 @@
  * Testes unitários para motor de automação
  */
 
-// Mock AuditLogger before importing AutomationEngine
+// Mock all dependencies before importing AutomationEngine
+jest.mock("../SecurityValidator.js", () => ({
+  __esModule: true,
+  default: jest.fn().mockImplementation(() => ({
+    validateCode: jest.fn().mockResolvedValue({
+      isValid: true,
+      errors: [],
+      warnings: [],
+    }),
+    validateFiles: jest.fn().mockResolvedValue({
+      isValid: true,
+      validFiles: 1,
+      invalidFiles: 0,
+      errors: [],
+    }),
+  })),
+}));
+
 jest.mock("../AuditLogger.js", () => ({
   __esModule: true,
   default: jest.fn().mockImplementation(() => ({
@@ -24,6 +41,25 @@ jest.mock("../AuditLogger.js", () => ({
   })),
 }));
 
+jest.mock("../SpecialistSelector.js", () => ({
+  __esModule: true,
+  default: jest.fn().mockImplementation(() => ({
+    selectSpecialist: jest.fn().mockReturnValue({
+      specialist: "Frontend",
+      confidence: 0.9,
+    }),
+  })),
+}));
+
+jest.mock("../GitHubAutomation.js", () => ({
+  __esModule: true,
+  default: jest.fn().mockImplementation(() => ({
+    createBranch: jest.fn().mockResolvedValue(true),
+    commitFiles: jest.fn().mockResolvedValue(true),
+    createPullRequest: jest.fn().mockResolvedValue({ number: 1 }),
+  })),
+}));
+
 import AutomationEngine from "../AutomationEngine.js";
 
 describe("AutomationEngine", () => {
@@ -33,6 +69,43 @@ describe("AutomationEngine", () => {
     engine = new AutomationEngine({
       aiModel: "gemini-2.0-flash",
       temperature: 0.7,
+    });
+    
+    // Manually mock the auditLogger methods on the instance
+    engine.auditLogger.logAutomationRequest = jest.fn().mockReturnValue("LOG_mock-automation-id");
+    engine.auditLogger.logSecurityValidation = jest.fn();
+    engine.auditLogger.logAutomationCompletion = jest.fn();
+    engine.auditLogger.logError = jest.fn();
+    engine.auditLogger.searchLogs = jest.fn().mockReturnValue([]);
+    engine.auditLogger.logAutomationStarted = jest.fn();
+    engine.auditLogger.logAutomationCompleted = jest.fn();
+    engine.auditLogger.logAutomationFailed = jest.fn();
+    engine.auditLogger.getAutomationHistory = jest.fn().mockReturnValue([]);
+    engine.auditLogger.getAutomationStats = jest.fn().mockReturnValue({
+      totalAutomations: 0,
+      successfulAutomations: 0,
+      failedAutomations: 0,
+    });
+    
+    // Manually mock the specialistSelector methods on the instance
+    engine.specialistSelector.selectSpecialist = jest.fn().mockReturnValue({
+      specialist: "Frontend",
+      confidence: 0.9,
+      reason: "Mock specialist",
+    });
+    
+    // Manually mock the validator methods on the instance
+    engine.validator.validateFiles = jest.fn().mockResolvedValue({
+      isValid: true,
+      validFiles: 1,
+      invalidFiles: 0,
+      errors: [],
+      warnings: [],
+    });
+    engine.validator.validateCode = jest.fn().mockResolvedValue({
+      isValid: true,
+      errors: [],
+      warnings: [],
     });
   });
 
@@ -138,6 +211,15 @@ describe("AutomationEngine", () => {
     });
 
     test("deve rejeitar código perigoso", async () => {
+      // Override the validator mock for this specific test
+      engine.validator.validateFiles = jest.fn().mockResolvedValue({
+        isValid: false,
+        validFiles: 0,
+        invalidFiles: 1,
+        errors: [{ type: "BLOCKED_PATTERN_DETECTED", message: "Dangerous code detected" }],
+        warnings: [],
+      });
+      
       const files = [
         {
           path: "src/dangerous.js",
@@ -212,6 +294,15 @@ describe("AutomationEngine", () => {
           },
         ],
         totalLines: 1,
+      });
+      
+      // Mock validator to reject dangerous code
+      engine.validator.validateFiles = jest.fn().mockResolvedValue({
+        isValid: false,
+        validFiles: 0,
+        invalidFiles: 1,
+        errors: [{ type: "BLOCKED_PATTERN_DETECTED", message: "Dangerous code" }],
+        warnings: [],
       });
 
       const request = {

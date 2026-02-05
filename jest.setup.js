@@ -11,12 +11,12 @@
 // ============================================
 // 1. AUMENTAR FILE DESCRIPTOR LIMIT
 // ============================================
-const os = require('os');
-const fs = require('fs');
+import os from 'os';
+import fs from 'fs';
+import { execSync } from 'child_process';
 
 try {
   // Tentar aumentar limite (pode falhar em alguns ambientes)
-  const { execSync } = require('child_process');
   execSync('ulimit -n 4096', { stdio: 'ignore' });
 } catch (e) {
   // Ignorar erro se não conseguir
@@ -176,8 +176,6 @@ afterAll(() => {
 // ============================================
 // EXPORTAR PARA USO EM TESTES
 // ============================================
-module.exports = {
-  testTimeout: 10000,
-  forceExit: true,
-};
+export const testTimeout = 10000;
+export const forceExit = true;
 
