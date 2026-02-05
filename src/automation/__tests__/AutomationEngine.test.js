@@ -7,7 +7,7 @@ import AutomationEngine from "../AutomationEngine.js";
 
 // Mock AuditLogger
 const mockAuditLogger = {
-  logAutomationRequest: jest.fn().mockReturnValue(`LOG_${Date.now()}_mock`),
+  logAutomationRequest: jest.fn().mockReturnValue('LOG_12345_mock'),
   logSecurityValidation: jest.fn(),
   logAutomationCompletion: jest.fn(),
   logError: jest.fn(),
