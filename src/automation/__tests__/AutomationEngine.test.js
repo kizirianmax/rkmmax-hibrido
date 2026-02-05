@@ -23,7 +23,7 @@ jest.mock("../AuditLogger.js", () => ({
   })),
 }));
 
-const AutomationEngine = require("../AutomationEngine");
+import AutomationEngine from "../AutomationEngine.js";
 
 describe("AutomationEngine", () => {
   let engine;
