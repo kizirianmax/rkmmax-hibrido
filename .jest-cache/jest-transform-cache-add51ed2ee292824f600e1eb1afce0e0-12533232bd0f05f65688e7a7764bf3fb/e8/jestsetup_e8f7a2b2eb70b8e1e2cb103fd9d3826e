@@ -1,0 +1,184 @@
+1b301b3d5598cc3b60155740f6861cec
+/**
+ * JEST SETUP - CONFIGURAÇÃO INICIAL E LIMPEZA
+ * 
+ * Executa antes de cada suite de testes para:
+ * - Aumentar file descriptor limit
+ * - Configurar timeouts
+ * - Limpar recursos
+ * - Configurar mocks globais
+ */
+
+// ============================================
+// 1. AUMENTAR FILE DESCRIPTOR LIMIT
+// ============================================
+const os = require('os');
+const fs = require('fs');
+
+try {
+  // Tentar aumentar limite (pode falhar em alguns ambientes)
+  const { execSync } = require('child_process');
+  execSync('ulimit -n 4096', { stdio: 'ignore' });
+} catch (e) {
+  // Ignorar erro se não conseguir
+}
+
+// ============================================
+// 2. CONFIGURAR TIMEOUTS GLOBAIS
+// ============================================
+jest.setTimeout(10000); // 10 segundos por teste
+
+// ============================================
+// 3. SUPRIMIR WARNINGS
+// ============================================
+const originalWarn = console.warn;
+const originalError = console.error;
+
+// Suprimir warnings não críticos
+console.warn = (...args) => {
+  const message = args[0]?.toString() || '';
+  
+  // Ignorar warnings conhecidos
+  if (
+    message.includes('ExperimentalWarning') ||
+    message.includes('DeprecationWarning') ||
+    message.includes('MaxListenersExceededWarning')
+  ) {
+    return;
+  }
+  
+  originalWarn.apply(console, args);
+};
+
+console.error = (...args) => {
+  const message = args[0]?.toString() || '';
+  
+  // Ignorar erros não críticos
+  if (
+    message.includes('ECONNREFUSED') ||
+    message.includes('ETIMEDOUT')
+  ) {
+    return;
+  }
+  
+  originalError.apply(console, args);
+};
+
+// ============================================
+// 4. CLEANUP GLOBAL APÓS TESTES
+// ============================================
+afterAll(async () => {
+  // Limpar timers pendentes
+  jest.clearAllTimers();
+  
+  // Fechar conexões
+  if (global.agent) {
+    global.agent.destroy();
+  }
+  
+  // Limpar cache
+  if (global.cache) {
+    global.cache.clear();
+  }
+  
+  // Aguardar um pouco para limpeza
+  await new Promise(resolve => setTimeout(resolve, 100));
+});
+
+// ============================================
+// 5. CONFIGURAR MOCKS GLOBAIS
+// ============================================
+
+// Mock de fetch (se não disponível)
+if (typeof global.fetch === 'undefined') {
+  global.fetch = jest.fn();
+}
+
+// Mock de localStorage
+const localStorageMock = {
+  getItem: jest.fn(),
+  setItem: jest.fn(),
+  removeItem: jest.fn(),
+  clear: jest.fn(),
+};
+global.localStorage = localStorageMock;
+
+// Mock de sessionStorage
+const sessionStorageMock = {
+  getItem: jest.fn(),
+  setItem: jest.fn(),
+  removeItem: jest.fn(),
+  clear: jest.fn(),
+};
+global.sessionStorage = sessionStorageMock;
+
+// ============================================
+// 6. CONFIGURAR VARIÁVEIS DE AMBIENTE
+// ============================================
+process.env.NODE_ENV = 'test';
+process.env.REACT_APP_API_URL = 'http://localhost:3000';
+process.env.REACT_APP_GITHUB_TOKEN = 'test-token';
+process.env.REACT_APP_DEBUG_MODE = 'false';
+
+// ============================================
+// 7. CONFIGURAR HANDLERS DE ERRO
+// ============================================
+
+// Capturar unhandled promise rejections
+process.on('unhandledRejection', (reason, promise) => {
+  console.error('Unhandled Rejection at:', promise, 'reason:', reason);
+});
+
+// Capturar uncaught exceptions
+process.on('uncaughtException', (error) => {
+  console.error('Uncaught Exception:', error);
+});
+
+// ============================================
+// 8. CONFIGURAR PERFORMANCE MONITORING
+// ============================================
+const testStartTime = Date.now();
+
+afterAll(() => {
+  const duration = Date.now() - testStartTime;
+  console.log(`\n⏱️  Test suite completed in ${duration}ms`);
+  
+  // Avisar se testes demoraram muito
+  if (duration > 30000) {
+    console.warn('⚠️  Test suite took longer than 30 seconds');
+  }
+});
+
+// ============================================
+// 9. CONFIGURAR MEMORY MONITORING
+// ============================================
+const initialMemory = process.memoryUsage();
+
+afterAll(() => {
+  const finalMemory = process.memoryUsage();
+  const heapUsed = (finalMemory.heapUsed - initialMemory.heapUsed) / 1024 / 1024;
+  
+  console.log(`\n💾 Memory delta: ${heapUsed.toFixed(2)} MB`);
+  
+  // Avisar se memory leak
+  if (heapUsed > 50) {
+    console.warn('⚠️  Possible memory leak detected');
+  }
+});
+
+// ============================================
+// 10. RESTAURAR CONSOLE APÓS TESTES
+// ============================================
+afterAll(() => {
+  console.warn = originalWarn;
+  console.error = originalError;
+});
+
+// ============================================
+// EXPORTAR PARA USO EM TESTES
+// ============================================
+module.exports = {
+  testTimeout: 10000,
+  forceExit: true,
+};
+

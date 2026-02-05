@@ -13,7 +13,10 @@ module.exports = {
   // AMBIENTE E SETUP
   // ============================================
   testEnvironment: 'node',
-  setupFilesAfterEnv: ['<rootDir>/jest.setup.js'],
+  setupFilesAfterEnv: ['<rootDir>/jest.setup.cjs'],
+  
+  // Inject jest globals in ES modules
+  injectGlobals: true,
   
   // ============================================
   // TIMEOUT E PERFORMANCE
@@ -61,14 +64,10 @@ module.exports = {
   },
   
   // ============================================
-  // TRANSFORMAÇÃO
+  // TRANSFORMAÇÃO - Using native ES modules
   // ============================================
-  transform: {
-    '^.+\\.(js|jsx)$': 'babel-jest',
-  },
-  transformIgnorePatterns: [
-    'node_modules/(?!(recharts|victory|d3-.*|internmap|delaunay-triangulate|robust-predicates)/)',
-  ],
+  transform: {},
+  transformIgnorePatterns: [],
   
   // ============================================
   // CACHE
@@ -88,17 +87,6 @@ module.exports = {
   // ============================================
   reporters: [
     'default',
-    [
-      'jest-junit',
-      {
-        outputDirectory: './test-results',
-        outputName: 'junit.xml',
-        classNameTemplate: '{classname}',
-        titleTemplate: '{title}',
-        ancestorSeparator: ' › ',
-        usePathAsClassName: true,
-      },
-    ],
   ],
   
   // ============================================
