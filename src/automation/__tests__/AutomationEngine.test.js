@@ -3,12 +3,65 @@
  * Testes unitários para motor de automação
  */
 
-const AutomationEngine = require("../AutomationEngine");
+// Mock dependencies ANTES de importar
+jest.mock("../SecurityValidator.js", () => {
+  return jest.fn().mockImplementation(() => ({
+    validateFiles: jest.fn().mockResolvedValue({
+      isValid: true,
+      details: [{ errors: [], warnings: [] }],
+    }),
+  }));
+});
+
+jest.mock("../AuditLogger.js", () => {
+  return jest.fn().mockImplementation(() => ({
+    logAutomationRequest: jest.fn(() => "LOG_123"),
+    logSecurityValidation: jest.fn(),
+    logAutomationCompletion: jest.fn(),
+    logError: jest.fn(),
+    searchLogs: jest.fn(() => []),
+  }));
+});
+
+jest.mock("../GitHubAutomation.js", () => {
+  return jest.fn().mockImplementation(() => ({
+    createBranch: jest.fn().mockResolvedValue(true),
+    commitFiles: jest.fn().mockResolvedValue(true),
+    createPullRequest: jest.fn().mockResolvedValue({ number: 1, html_url: "https://github.com/test/pr/1" }),
+  }));
+});
+
+jest.mock("../SpecialistSelector.js", () => {
+  return jest.fn().mockImplementation(() => ({
+    selectSpecialist: jest.fn((keywords) => {
+      if (keywords.includes("componente") || keywords.includes("login")) return "Frontend";
+      if (keywords.includes("função") || keywords.includes("autenticação")) return "Backend";
+      if (keywords.includes("teste")) return "QA";
+      if (keywords.includes("refatora")) return "Architect";
+      return "Frontend";
+    }),
+    getSpecialistCapabilities: jest.fn(() => ({
+      languages: ["JavaScript", "React"],
+      frameworks: ["React", "Next.js"],
+    })),
+  }));
+});
+
+// Dynamic import para ES modules
+let AutomationEngine;
+
+beforeAll(async () => {
+  const module = await import("../AutomationEngine.js");
+  AutomationEngine = module.default;
+});
 
 describe("AutomationEngine", () => {
   let engine;
 
   beforeEach(() => {
+    if (!AutomationEngine) {
+      throw new Error("AutomationEngine not loaded");
+    }
     engine = new AutomationEngine({
       aiModel: "gemini-2.0-flash",
       temperature: 0.7,
