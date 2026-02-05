@@ -86,20 +86,7 @@ module.exports = {
   // ============================================
   // REPORTERS
   // ============================================
-  reporters: [
-    'default',
-    [
-      'jest-junit',
-      {
-        outputDirectory: './test-results',
-        outputName: 'junit.xml',
-        classNameTemplate: '{classname}',
-        titleTemplate: '{title}',
-        ancestorSeparator: ' › ',
-        usePathAsClassName: true,
-      },
-    ],
-  ],
+  reporters: ['default'],
   
   // ============================================
   // VERBOSE

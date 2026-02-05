@@ -3,12 +3,16 @@
  * Testes unitários para motor de automação
  */
 
-const AutomationEngine = require("../AutomationEngine");
+// Mock AuditLogger - Jest will automatically use the mock from __mocks__ directory
+jest.mock("../AuditLogger");
+
+import AutomationEngine from "../AutomationEngine.js";
 
 describe("AutomationEngine", () => {
   let engine;
 
   beforeEach(() => {
+    jest.clearAllMocks();
     engine = new AutomationEngine({
       aiModel: "gemini-2.0-flash",
       temperature: 0.7,
@@ -26,6 +30,11 @@ describe("AutomationEngine", () => {
       expect(engine.validator).toBeDefined();
       expect(engine.auditLogger).toBeDefined();
       expect(engine.specialistSelector).toBeDefined();
+    });
+
+    test("auditLogger deve ter métodos mockados", () => {
+      expect(engine.auditLogger.logAutomationRequest).toBeDefined();
+      expect(typeof engine.auditLogger.logAutomationRequest).toBe("function");
     });
   });
 
