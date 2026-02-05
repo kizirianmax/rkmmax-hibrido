@@ -3,21 +3,48 @@
  * Testes unitários para motor de automação
  */
 
-import AutomationEngine from "../AutomationEngine";
+// Mock all dependencies BEFORE importing the module
+jest.mock("../SecurityValidator.js", () => ({
+  __esModule: true,
+  default: jest.fn().mockImplementation(() => ({
+    validateFiles: jest.fn().mockResolvedValue({
+      isValid: true,
+      errors: [],
+      warnings: [],
+    }),
+  })),
+}));
 
-// Mock do AuditLogger com todos os métodos necessários
-const mockAuditLogger = {
-  logAutomationRequest: jest.fn(() => `LOG_${Date.now()}`),
-  logSecurityValidation: jest.fn(),
-  logAutomationCompletion: jest.fn(),
-  logError: jest.fn(),
-  searchLogs: jest.fn(() => [])
-};
+jest.mock("../AuditLogger.js", () => ({
+  __esModule: true,
+  default: jest.fn().mockImplementation(() => ({
+    logAutomationRequest: jest.fn(() => `LOG_${Date.now()}`),
+    logSecurityValidation: jest.fn(),
+    logAutomationCompletion: jest.fn(),
+    logError: jest.fn(),
+    searchLogs: jest.fn(() => [])
+  })),
+}));
 
-// Mock do AuditLogger antes de importar AutomationEngine
-jest.mock("../AuditLogger.js", () => {
-  return jest.fn().mockImplementation(() => mockAuditLogger);
-});
+jest.mock("../GitHubAutomation.js", () => ({
+  __esModule: true,
+  default: jest.fn().mockImplementation(() => ({
+    createPullRequest: jest.fn().mockResolvedValue({ success: true }),
+  })),
+}));
+
+jest.mock("../SpecialistSelector.js", () => ({
+  __esModule: true,
+  default: jest.fn().mockImplementation(() => ({
+    selectSpecialist: jest.fn().mockResolvedValue({
+      specialist: "Frontend",
+      confidence: 0.95,
+      reasoning: "Test reasoning",
+    }),
+  })),
+}));
+
+import AutomationEngine from "../AutomationEngine.js";
 
 describe("AutomationEngine", () => {
   let engine;

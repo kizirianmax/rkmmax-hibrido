@@ -8,7 +8,7 @@
  * - Watch mode infinito
  */
 
-module.exports = {
+export default {
   // ============================================
   // AMBIENTE E SETUP
   // ============================================
