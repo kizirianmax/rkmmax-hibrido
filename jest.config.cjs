@@ -62,10 +62,10 @@ module.exports = {
   ],
   coverageThreshold: {
     global: {
-      branches: 5,
-      functions: 5,
-      lines: 5,
-      statements: 5,
+      branches: 5,  // TODO: Aumentar para 20% conforme mais testes forem adicionados
+      functions: 5,  // TODO: Aumentar para 20% conforme mais testes forem adicionados
+      lines: 5,  // TODO: Aumentar para 20% conforme mais testes forem adicionados
+      statements: 5,  // TODO: Aumentar para 20% conforme mais testes forem adicionados
     },
   },
   
