@@ -3,12 +3,28 @@
  * Testes unitários para motor de automação
  */
 
-const AutomationEngine = require("../AutomationEngine");
+// Import dependencies first
+import AuditLogger from "../AuditLogger.js";
+import AutomationEngine from "../AutomationEngine.js";
+
+// Mock AuditLogger methods using spies
+jest.spyOn(AuditLogger.prototype, 'logAutomationRequest').mockReturnValue("mock-automation-id");
+jest.spyOn(AuditLogger.prototype, 'logSecurityValidation').mockImplementation(() => {});
+jest.spyOn(AuditLogger.prototype, 'logAutomationCompletion').mockImplementation(() => {});
+jest.spyOn(AuditLogger.prototype, 'logError').mockImplementation(() => {});
+jest.spyOn(AuditLogger.prototype, 'searchLogs').mockReturnValue([]);
+jest.spyOn(AuditLogger.prototype, 'getStatistics').mockReturnValue({
+  totalLogs: 0,
+  logTypes: {},
+  statusCounts: {},
+  userActivity: {},
+});
 
 describe("AutomationEngine", () => {
   let engine;
 
   beforeEach(() => {
+    jest.clearAllMocks();
     engine = new AutomationEngine({
       aiModel: "gemini-2.0-flash",
       temperature: 0.7,
@@ -26,6 +42,11 @@ describe("AutomationEngine", () => {
       expect(engine.validator).toBeDefined();
       expect(engine.auditLogger).toBeDefined();
       expect(engine.specialistSelector).toBeDefined();
+    });
+
+    test("auditLogger deve ter métodos mockados", () => {
+      expect(engine.auditLogger.logAutomationRequest).toBeDefined();
+      expect(typeof engine.auditLogger.logAutomationRequest).toBe("function");
     });
   });
 
