@@ -11,24 +11,19 @@
 // ============================================
 // 1. AUMENTAR FILE DESCRIPTOR LIMIT
 // ============================================
-const os = require('os');
-const fs = require('fs');
+import os from 'os';
+import fs from 'fs';
+import { execSync } from 'child_process';
 
 try {
   // Tentar aumentar limite (pode falhar em alguns ambientes)
-  const { execSync } = require('child_process');
   execSync('ulimit -n 4096', { stdio: 'ignore' });
 } catch (e) {
   // Ignorar erro se não conseguir
 }
 
 // ============================================
-// 2. CONFIGURAR TIMEOUTS GLOBAIS
-// ============================================
-jest.setTimeout(10000); // 10 segundos por teste
-
-// ============================================
-// 3. SUPRIMIR WARNINGS
+// 2. SUPRIMIR WARNINGS
 // ============================================
 const originalWarn = console.warn;
 const originalError = console.error;
@@ -64,11 +59,11 @@ console.error = (...args) => {
 };
 
 // ============================================
-// 4. CLEANUP GLOBAL APÓS TESTES
+// 3. CLEANUP GLOBAL APÓS TESTES
 // ============================================
 afterAll(async () => {
   // Limpar timers pendentes
-  jest.clearAllTimers();
+  // Note: jest.clearAllTimers() removed as it's not available in ES module setup
   
   // Fechar conexões
   if (global.agent) {
@@ -85,34 +80,35 @@ afterAll(async () => {
 });
 
 // ============================================
-// 5. CONFIGURAR MOCKS GLOBAIS
+// 4. CONFIGURAR MOCKS GLOBAIS
 // ============================================
 
+// Note: Mocks are commented out as they need to be in test files in ES module mode
 // Mock de fetch (se não disponível)
-if (typeof global.fetch === 'undefined') {
-  global.fetch = jest.fn();
-}
+// if (typeof global.fetch === 'undefined') {
+//   global.fetch = jest.fn();
+// }
 
 // Mock de localStorage
 const localStorageMock = {
-  getItem: jest.fn(),
-  setItem: jest.fn(),
-  removeItem: jest.fn(),
-  clear: jest.fn(),
+  getItem: () => null,
+  setItem: () => {},
+  removeItem: () => {},
+  clear: () => {},
 };
 global.localStorage = localStorageMock;
 
 // Mock de sessionStorage
 const sessionStorageMock = {
-  getItem: jest.fn(),
-  setItem: jest.fn(),
-  removeItem: jest.fn(),
-  clear: jest.fn(),
+  getItem: () => null,
+  setItem: () => {},
+  removeItem: () => {},
+  clear: () => {},
 };
 global.sessionStorage = sessionStorageMock;
 
 // ============================================
-// 6. CONFIGURAR VARIÁVEIS DE AMBIENTE
+// 5. CONFIGURAR VARIÁVEIS DE AMBIENTE
 // ============================================
 process.env.NODE_ENV = 'test';
 process.env.REACT_APP_API_URL = 'http://localhost:3000';
@@ -120,7 +116,7 @@ process.env.REACT_APP_GITHUB_TOKEN = 'test-token';
 process.env.REACT_APP_DEBUG_MODE = 'false';
 
 // ============================================
-// 7. CONFIGURAR HANDLERS DE ERRO
+// 6. CONFIGURAR HANDLERS DE ERRO
 // ============================================
 
 // Capturar unhandled promise rejections
@@ -134,7 +130,7 @@ process.on('uncaughtException', (error) => {
 });
 
 // ============================================
-// 8. CONFIGURAR PERFORMANCE MONITORING
+// 7. CONFIGURAR PERFORMANCE MONITORING
 // ============================================
 const testStartTime = Date.now();
 
@@ -149,7 +145,7 @@ afterAll(() => {
 });
 
 // ============================================
-// 9. CONFIGURAR MEMORY MONITORING
+// 8. CONFIGURAR MEMORY MONITORING
 // ============================================
 const initialMemory = process.memoryUsage();
 
@@ -166,18 +162,9 @@ afterAll(() => {
 });
 
 // ============================================
-// 10. RESTAURAR CONSOLE APÓS TESTES
+// 9. RESTAURAR CONSOLE APÓS TESTES
 // ============================================
 afterAll(() => {
   console.warn = originalWarn;
   console.error = originalError;
 });
-
-// ============================================
-// EXPORTAR PARA USO EM TESTES
-// ============================================
-module.exports = {
-  testTimeout: 10000,
-  forceExit: true,
-};
-
