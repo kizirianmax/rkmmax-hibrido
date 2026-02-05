@@ -3,18 +3,24 @@
  * Testes unitários para motor de automação
  */
 
-import AutomationEngine from "../AutomationEngine.js";
-
-// Mock AuditLogger
+// Mock AuditLogger before import with complete implementation
 jest.mock("../AuditLogger.js", () => {
-  return jest.fn().mockImplementation(() => ({
-    logAutomationRequest: jest.fn((data) => `LOG_${Date.now()}`),
-    logSecurityValidation: jest.fn(),
-    logAutomationCompletion: jest.fn(),
-    logError: jest.fn(),
-    searchLogs: jest.fn().mockResolvedValue([]),
-  }));
+  const mockAuditLogger = function() {
+    return {
+      logAutomationRequest: jest.fn((data) => `LOG_${Date.now()}`),
+      logSecurityValidation: jest.fn(),
+      logAutomationCompletion: jest.fn(),
+      logError: jest.fn(),
+      searchLogs: jest.fn(() => []),
+    };
+  };
+  return {
+    __esModule: true,
+    default: mockAuditLogger,
+  };
 });
+
+import AutomationEngine from "../AutomationEngine.js";
 
 describe("AutomationEngine", () => {
   let engine;

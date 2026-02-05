@@ -3,7 +3,7 @@
  * Testes unitários para processamento multimodal
  */
 
-const MultimodalProcessor = require("../MultimodalProcessor");
+import MultimodalProcessor from "../MultimodalProcessor.js";
 
 describe("MultimodalProcessor", () => {
   let processor;
