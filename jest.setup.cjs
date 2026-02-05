@@ -66,21 +66,56 @@ console.error = (...args) => {
 // ============================================
 // 4. CLEANUP GLOBAL APÓS TESTES
 // ============================================
+// ============================================
+// 8. CONFIGURAR PERFORMANCE MONITORING
+// ============================================
+const testStartTime = Date.now();
+
+// ============================================
+// 9. CONFIGURAR MEMORY MONITORING
+// ============================================
+const initialMemory = process.memoryUsage();
+
+// Consolidated afterAll hook for all cleanup operations
 afterAll(async () => {
-  // Limpar timers pendentes
+  // 1. Limpar timers pendentes
   jest.clearAllTimers();
   
-  // Fechar conexões
+  // 2. Fechar conexões
   if (global.agent) {
     global.agent.destroy();
   }
   
-  // Limpar cache
+  // 3. Limpar cache
   if (global.cache) {
     global.cache.clear();
   }
   
-  // Aguardar um pouco para limpeza
+  // 4. Performance monitoring
+  const duration = Date.now() - testStartTime;
+  console.log(`\n⏱️  Test suite completed in ${duration}ms`);
+  
+  // Avisar se testes demoraram muito
+  if (duration > 30000) {
+    console.warn('⚠️  Test suite took longer than 30 seconds');
+  }
+  
+  // 5. Memory monitoring
+  const finalMemory = process.memoryUsage();
+  const heapUsed = (finalMemory.heapUsed - initialMemory.heapUsed) / 1024 / 1024;
+  
+  console.log(`\n💾 Memory delta: ${heapUsed.toFixed(2)} MB`);
+  
+  // Avisar se memory leak
+  if (heapUsed > 50) {
+    console.warn('⚠️  Possible memory leak detected');
+  }
+  
+  // 6. Restaurar console
+  console.warn = originalWarn;
+  console.error = originalError;
+  
+  // 7. Aguardar um pouco para limpeza final
   await new Promise(resolve => setTimeout(resolve, 100));
 });
 
@@ -131,46 +166,6 @@ process.on('unhandledRejection', (reason, promise) => {
 // Capturar uncaught exceptions
 process.on('uncaughtException', (error) => {
   console.error('Uncaught Exception:', error);
-});
-
-// ============================================
-// 8. CONFIGURAR PERFORMANCE MONITORING
-// ============================================
-const testStartTime = Date.now();
-
-afterAll(() => {
-  const duration = Date.now() - testStartTime;
-  console.log(`\n⏱️  Test suite completed in ${duration}ms`);
-  
-  // Avisar se testes demoraram muito
-  if (duration > 30000) {
-    console.warn('⚠️  Test suite took longer than 30 seconds');
-  }
-});
-
-// ============================================
-// 9. CONFIGURAR MEMORY MONITORING
-// ============================================
-const initialMemory = process.memoryUsage();
-
-afterAll(() => {
-  const finalMemory = process.memoryUsage();
-  const heapUsed = (finalMemory.heapUsed - initialMemory.heapUsed) / 1024 / 1024;
-  
-  console.log(`\n💾 Memory delta: ${heapUsed.toFixed(2)} MB`);
-  
-  // Avisar se memory leak
-  if (heapUsed > 50) {
-    console.warn('⚠️  Possible memory leak detected');
-  }
-});
-
-// ============================================
-// 10. RESTAURAR CONSOLE APÓS TESTES
-// ============================================
-afterAll(() => {
-  console.warn = originalWarn;
-  console.error = originalError;
 });
 
 // ============================================
