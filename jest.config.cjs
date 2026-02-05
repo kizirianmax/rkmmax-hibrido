@@ -10,7 +10,7 @@
 
 module.exports = {
   // ============================================
-  // AMBIENTE E SETUP - USAR JSDOM PARA REACT
+  // AMBIENTE E SETUP
   // ============================================
   testEnvironment: 'jsdom',
   testEnvironmentOptions: {},
@@ -19,15 +19,15 @@ module.exports = {
   // ============================================
   // TIMEOUT E PERFORMANCE
   // ============================================
-  testTimeout: 10000, // 10 segundos
-  maxWorkers: '50%', // Usar 50% dos CPUs
-  forceExit: true, // Sair após testes (evita hang)
-  detectOpenHandles: true, // Detectar handles abertos
+  testTimeout: 10000,
+  maxWorkers: '50%',
+  forceExit: true,
+  detectOpenHandles: true,
   
   // ============================================
-  // COBERTURA - AJUSTADA PARA NOVOS TESTES
+  // COBERTURA - AJUSTADA PARA NOVO CÓDIGO
   // ============================================
-  collectCoverage: false, // Desativar por padrão (lento)
+  collectCoverage: false,
   collectCoverageFrom: [
     'api/**/*.{js,jsx}',
     'src/**/*.{js,jsx}',
@@ -85,9 +85,9 @@ module.exports = {
   // ============================================
   // LIMPEZA
   // ============================================
-  clearMocks: true, // Limpar mocks entre testes
-  resetMocks: true, // Reset mocks entre testes
-  restoreMocks: true, // Restaurar mocks entre testes
+  clearMocks: true,
+  resetMocks: true,
+  restoreMocks: true,
   
   // ============================================
   // REPORTERS
