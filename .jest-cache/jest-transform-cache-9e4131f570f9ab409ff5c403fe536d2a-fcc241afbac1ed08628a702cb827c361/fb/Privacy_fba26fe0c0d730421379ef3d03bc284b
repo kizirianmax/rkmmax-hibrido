@@ -1,0 +1,306 @@
+43bf943abca70f295b5f53e4081d53c0
+/* istanbul ignore next */
+function cov_26oxdsgw7p() {
+  var path = "/home/runner/work/rkmmax-hibrido/rkmmax-hibrido/src/pages/Privacy.jsx";
+  var hash = "779633fadf5a5d12c708fe18c68c10771a783a09";
+  var global = new Function("return this")();
+  var gcv = "__coverage__";
+  var coverageData = {
+    path: "/home/runner/work/rkmmax-hibrido/rkmmax-hibrido/src/pages/Privacy.jsx",
+    statementMap: {
+      "0": {
+        start: {
+          line: 4,
+          column: 2
+        },
+        end: {
+          line: 62,
+          column: 4
+        }
+      }
+    },
+    fnMap: {
+      "0": {
+        name: "Privacy",
+        decl: {
+          start: {
+            line: 3,
+            column: 24
+          },
+          end: {
+            line: 3,
+            column: 31
+          }
+        },
+        loc: {
+          start: {
+            line: 3,
+            column: 34
+          },
+          end: {
+            line: 63,
+            column: 1
+          }
+        },
+        line: 3
+      }
+    },
+    branchMap: {},
+    s: {
+      "0": 0
+    },
+    f: {
+      "0": 0
+    },
+    b: {},
+    _coverageSchema: "1a1c01bbd47fc00a2c39e90264f33305004495a9",
+    hash: "779633fadf5a5d12c708fe18c68c10771a783a09"
+  };
+  var coverage = global[gcv] || (global[gcv] = {});
+  if (!coverage[path] || coverage[path].hash !== hash) {
+    coverage[path] = coverageData;
+  }
+  var actualCoverage = coverage[path];
+  {
+    // @ts-ignore
+    cov_26oxdsgw7p = function () {
+      return actualCoverage;
+    };
+  }
+  return actualCoverage;
+}
+cov_26oxdsgw7p();
+import React from "react";
+export default function Privacy() {
+  /* istanbul ignore next */
+  cov_26oxdsgw7p().f[0]++;
+  cov_26oxdsgw7p().s[0]++;
+  return /*#__PURE__*/ /* istanbul ignore next */React.createElement(
+  /* istanbul ignore next */
+  "div",
+  /* istanbul ignore next */
+  {
+    style: {
+      maxWidth: "900px",
+      margin: "40px auto",
+      padding: "20px"
+    }
+  }, /*#__PURE__*/
+  /* istanbul ignore next */
+  React.createElement(
+  /* istanbul ignore next */
+  "h1",
+  /* istanbul ignore next */
+  null, "Pol\xEDtica de Privacidade"), /*#__PURE__*/
+  /* istanbul ignore next */
+  React.createElement(
+  /* istanbul ignore next */
+  "h2",
+  /* istanbul ignore next */
+  null, "1. Introdu\xE7\xE3o"), /*#__PURE__*/
+  /* istanbul ignore next */
+  React.createElement(
+  /* istanbul ignore next */
+  "p",
+  /* istanbul ignore next */
+  null, "A RKMMAX respeita sua privacidade. Esta Pol\xEDtica de Privacidade explica como coletamos, usamos e protegemos seus dados pessoais."), /*#__PURE__*/
+  /* istanbul ignore next */
+  React.createElement(
+  /* istanbul ignore next */
+  "h2",
+  /* istanbul ignore next */
+  null, "2. Conformidade Legal"), /*#__PURE__*/
+  /* istanbul ignore next */
+  React.createElement(
+  /* istanbul ignore next */
+  "p",
+  /* istanbul ignore next */
+  null, "Este site est\xE1 em conformidade com:"), /*#__PURE__*/
+  /* istanbul ignore next */
+  React.createElement(
+  /* istanbul ignore next */
+  "ul",
+  /* istanbul ignore next */
+  null, /*#__PURE__*/
+  /* istanbul ignore next */
+  React.createElement(
+  /* istanbul ignore next */
+  "li",
+  /* istanbul ignore next */
+  null, /*#__PURE__*/
+  /* istanbul ignore next */
+  React.createElement(
+  /* istanbul ignore next */
+  "strong",
+  /* istanbul ignore next */
+  null, "GDPR (Regulamento Geral de Prote\xE7\xE3o de Dados)"), " - Uni\xE3o Europeia"), /*#__PURE__*/
+  /* istanbul ignore next */
+  React.createElement(
+  /* istanbul ignore next */
+  "li",
+  /* istanbul ignore next */
+  null, /*#__PURE__*/
+  /* istanbul ignore next */
+  React.createElement(
+  /* istanbul ignore next */
+  "strong",
+  /* istanbul ignore next */
+  null, "LGPD (Lei Geral de Prote\xE7\xE3o de Dados)"), " - Brasil"), /*#__PURE__*/
+  /* istanbul ignore next */
+  React.createElement(
+  /* istanbul ignore next */
+  "li",
+  /* istanbul ignore next */
+  null, /*#__PURE__*/
+  /* istanbul ignore next */
+  React.createElement(
+  /* istanbul ignore next */
+  "strong",
+  /* istanbul ignore next */
+  null, "Google Play Store"), " - Pol\xEDticas de Privacidade")), /*#__PURE__*/
+  /* istanbul ignore next */
+  React.createElement(
+  /* istanbul ignore next */
+  "h2",
+  /* istanbul ignore next */
+  null, "3. Dados Coletados"), /*#__PURE__*/
+  /* istanbul ignore next */
+  React.createElement(
+  /* istanbul ignore next */
+  "p",
+  /* istanbul ignore next */
+  null, "Coletamos apenas dados necess\xE1rios para:"), /*#__PURE__*/
+  /* istanbul ignore next */
+  React.createElement(
+  /* istanbul ignore next */
+  "ul",
+  /* istanbul ignore next */
+  null, /*#__PURE__*/
+  /* istanbul ignore next */
+  React.createElement(
+  /* istanbul ignore next */
+  "li",
+  /* istanbul ignore next */
+  null, "Autentica\xE7\xE3o e acesso \xE0 conta"), /*#__PURE__*/
+  /* istanbul ignore next */
+  React.createElement(
+  /* istanbul ignore next */
+  "li",
+  /* istanbul ignore next */
+  null, "Melhorar a experi\xEAncia do usu\xE1rio"), /*#__PURE__*/
+  /* istanbul ignore next */
+  React.createElement(
+  /* istanbul ignore next */
+  "li",
+  /* istanbul ignore next */
+  null, "Conformidade legal")), /*#__PURE__*/
+  /* istanbul ignore next */
+  React.createElement(
+  /* istanbul ignore next */
+  "h2",
+  /* istanbul ignore next */
+  null, "4. Uso de Dados"), /*#__PURE__*/
+  /* istanbul ignore next */
+  React.createElement(
+  /* istanbul ignore next */
+  "p",
+  /* istanbul ignore next */
+  null, "Seus dados s\xE3o usados apenas para:"), /*#__PURE__*/
+  /* istanbul ignore next */
+  React.createElement(
+  /* istanbul ignore next */
+  "ul",
+  /* istanbul ignore next */
+  null, /*#__PURE__*/
+  /* istanbul ignore next */
+  React.createElement(
+  /* istanbul ignore next */
+  "li",
+  /* istanbul ignore next */
+  null, "Fornecer os servi\xE7os de IA"), /*#__PURE__*/
+  /* istanbul ignore next */
+  React.createElement(
+  /* istanbul ignore next */
+  "li",
+  /* istanbul ignore next */
+  null, "Melhorar a qualidade do servi\xE7o"), /*#__PURE__*/
+  /* istanbul ignore next */
+  React.createElement(
+  /* istanbul ignore next */
+  "li",
+  /* istanbul ignore next */
+  null, "Cumprir obriga\xE7\xF5es legais")), /*#__PURE__*/
+  /* istanbul ignore next */
+  React.createElement(
+  /* istanbul ignore next */
+  "h2",
+  /* istanbul ignore next */
+  null, "5. Direitos do Usu\xE1rio"), /*#__PURE__*/
+  /* istanbul ignore next */
+  React.createElement(
+  /* istanbul ignore next */
+  "p",
+  /* istanbul ignore next */
+  null, "Voc\xEA tem direito a:"), /*#__PURE__*/
+  /* istanbul ignore next */
+  React.createElement(
+  /* istanbul ignore next */
+  "ul",
+  /* istanbul ignore next */
+  null, /*#__PURE__*/
+  /* istanbul ignore next */
+  React.createElement(
+  /* istanbul ignore next */
+  "li",
+  /* istanbul ignore next */
+  null, "Acessar seus dados pessoais"), /*#__PURE__*/
+  /* istanbul ignore next */
+  React.createElement(
+  /* istanbul ignore next */
+  "li",
+  /* istanbul ignore next */
+  null, "Corrigir dados incorretos"), /*#__PURE__*/
+  /* istanbul ignore next */
+  React.createElement(
+  /* istanbul ignore next */
+  "li",
+  /* istanbul ignore next */
+  null, "Solicitar exclus\xE3o de dados"), /*#__PURE__*/
+  /* istanbul ignore next */
+  React.createElement(
+  /* istanbul ignore next */
+  "li",
+  /* istanbul ignore next */
+  null, "Portabilidade de dados")), /*#__PURE__*/
+  /* istanbul ignore next */
+  React.createElement(
+  /* istanbul ignore next */
+  "h2",
+  /* istanbul ignore next */
+  null, "6. Contato"), /*#__PURE__*/
+  /* istanbul ignore next */
+  React.createElement(
+  /* istanbul ignore next */
+  "p",
+  /* istanbul ignore next */
+  null, "Para d\xFAvidas sobre privacidade, entre em contato: ", /*#__PURE__*/
+  /* istanbul ignore next */
+  React.createElement(
+  /* istanbul ignore next */
+  "strong",
+  /* istanbul ignore next */
+  null, "suporte@kizirianmax.site")), /*#__PURE__*/
+  /* istanbul ignore next */
+  React.createElement(
+  /* istanbul ignore next */
+  "p",
+  /* istanbul ignore next */
+  {
+    style: {
+      marginTop: "40px",
+      fontSize: "12px",
+      color: "#999"
+    }
+  }, "\xDAltima atualiza\xE7\xE3o: 2 de novembro de 2025"));
+}
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJuYW1lcyI6WyJjb3ZfMjZveGRzZ3c3cCIsImFjdHVhbENvdmVyYWdlIiwiUmVhY3QiLCJQcml2YWN5IiwiZiIsInMiLCJjcmVhdGVFbGVtZW50Iiwic3R5bGUiLCJtYXhXaWR0aCIsIm1hcmdpbiIsInBhZGRpbmciLCJtYXJnaW5Ub3AiLCJmb250U2l6ZSIsImNvbG9yIl0sInNvdXJjZXMiOlsiUHJpdmFjeS5qc3giXSwic291cmNlc0NvbnRlbnQiOlsiaW1wb3J0IFJlYWN0IGZyb20gXCJyZWFjdFwiO1xuXG5leHBvcnQgZGVmYXVsdCBmdW5jdGlvbiBQcml2YWN5KCkge1xuICByZXR1cm4gKFxuICAgIDxkaXYgc3R5bGU9e3sgbWF4V2lkdGg6IFwiOTAwcHhcIiwgbWFyZ2luOiBcIjQwcHggYXV0b1wiLCBwYWRkaW5nOiBcIjIwcHhcIiB9fT5cbiAgICAgIDxoMT5Qb2zDrXRpY2EgZGUgUHJpdmFjaWRhZGU8L2gxPlxuXG4gICAgICA8aDI+MS4gSW50cm9kdcOnw6NvPC9oMj5cbiAgICAgIDxwPlxuICAgICAgICBBIFJLTU1BWCByZXNwZWl0YSBzdWEgcHJpdmFjaWRhZGUuIEVzdGEgUG9sw610aWNhIGRlIFByaXZhY2lkYWRlIGV4cGxpY2EgY29tbyBjb2xldGFtb3MsXG4gICAgICAgIHVzYW1vcyBlIHByb3RlZ2Vtb3Mgc2V1cyBkYWRvcyBwZXNzb2Fpcy5cbiAgICAgIDwvcD5cblxuICAgICAgPGgyPjIuIENvbmZvcm1pZGFkZSBMZWdhbDwvaDI+XG4gICAgICA8cD5Fc3RlIHNpdGUgZXN0w6EgZW0gY29uZm9ybWlkYWRlIGNvbTo8L3A+XG4gICAgICA8dWw+XG4gICAgICAgIDxsaT5cbiAgICAgICAgICA8c3Ryb25nPkdEUFIgKFJlZ3VsYW1lbnRvIEdlcmFsIGRlIFByb3Rlw6fDo28gZGUgRGFkb3MpPC9zdHJvbmc+IC0gVW5pw6NvIEV1cm9wZWlhXG4gICAgICAgIDwvbGk+XG4gICAgICAgIDxsaT5cbiAgICAgICAgICA8c3Ryb25nPkxHUEQgKExlaSBHZXJhbCBkZSBQcm90ZcOnw6NvIGRlIERhZG9zKTwvc3Ryb25nPiAtIEJyYXNpbFxuICAgICAgICA8L2xpPlxuICAgICAgICA8bGk+XG4gICAgICAgICAgPHN0cm9uZz5Hb29nbGUgUGxheSBTdG9yZTwvc3Ryb25nPiAtIFBvbMOtdGljYXMgZGUgUHJpdmFjaWRhZGVcbiAgICAgICAgPC9saT5cbiAgICAgIDwvdWw+XG5cbiAgICAgIDxoMj4zLiBEYWRvcyBDb2xldGFkb3M8L2gyPlxuICAgICAgPHA+Q29sZXRhbW9zIGFwZW5hcyBkYWRvcyBuZWNlc3PDoXJpb3MgcGFyYTo8L3A+XG4gICAgICA8dWw+XG4gICAgICAgIDxsaT5BdXRlbnRpY2HDp8OjbyBlIGFjZXNzbyDDoCBjb250YTwvbGk+XG4gICAgICAgIDxsaT5NZWxob3JhciBhIGV4cGVyacOqbmNpYSBkbyB1c3XDoXJpbzwvbGk+XG4gICAgICAgIDxsaT5Db25mb3JtaWRhZGUgbGVnYWw8L2xpPlxuICAgICAgPC91bD5cblxuICAgICAgPGgyPjQuIFVzbyBkZSBEYWRvczwvaDI+XG4gICAgICA8cD5TZXVzIGRhZG9zIHPDo28gdXNhZG9zIGFwZW5hcyBwYXJhOjwvcD5cbiAgICAgIDx1bD5cbiAgICAgICAgPGxpPkZvcm5lY2VyIG9zIHNlcnZpw6dvcyBkZSBJQTwvbGk+XG4gICAgICAgIDxsaT5NZWxob3JhciBhIHF1YWxpZGFkZSBkbyBzZXJ2acOnbzwvbGk+XG4gICAgICAgIDxsaT5DdW1wcmlyIG9icmlnYcOnw7VlcyBsZWdhaXM8L2xpPlxuICAgICAgPC91bD5cblxuICAgICAgPGgyPjUuIERpcmVpdG9zIGRvIFVzdcOhcmlvPC9oMj5cbiAgICAgIDxwPlZvY8OqIHRlbSBkaXJlaXRvIGE6PC9wPlxuICAgICAgPHVsPlxuICAgICAgICA8bGk+QWNlc3NhciBzZXVzIGRhZG9zIHBlc3NvYWlzPC9saT5cbiAgICAgICAgPGxpPkNvcnJpZ2lyIGRhZG9zIGluY29ycmV0b3M8L2xpPlxuICAgICAgICA8bGk+U29saWNpdGFyIGV4Y2x1c8OjbyBkZSBkYWRvczwvbGk+XG4gICAgICAgIDxsaT5Qb3J0YWJpbGlkYWRlIGRlIGRhZG9zPC9saT5cbiAgICAgIDwvdWw+XG5cbiAgICAgIDxoMj42LiBDb250YXRvPC9oMj5cbiAgICAgIDxwPlxuICAgICAgICBQYXJhIGTDunZpZGFzIHNvYnJlIHByaXZhY2lkYWRlLCBlbnRyZSBlbSBjb250YXRvOiA8c3Ryb25nPnN1cG9ydGVAa2l6aXJpYW5tYXguc2l0ZTwvc3Ryb25nPlxuICAgICAgPC9wPlxuXG4gICAgICA8cCBzdHlsZT17eyBtYXJnaW5Ub3A6IFwiNDBweFwiLCBmb250U2l6ZTogXCIxMnB4XCIsIGNvbG9yOiBcIiM5OTlcIiB9fT5cbiAgICAgICAgw5psdGltYSBhdHVhbGl6YcOnw6NvOiAyIGRlIG5vdmVtYnJvIGRlIDIwMjVcbiAgICAgIDwvcD5cbiAgICA8L2Rpdj5cbiAgKTtcbn1cbiJdLCJtYXBwaW5ncyI6Ijs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7O0lBZVk7SUFBQUEsY0FBQSxZQUFBQSxDQUFBO01BQUEsT0FBQUMsY0FBQTtJQUFBO0VBQUE7RUFBQSxPQUFBQSxjQUFBO0FBQUE7QUFBQUQsY0FBQTtBQWZaLE9BQU9FLEtBQUssTUFBTSxPQUFPO0FBRXpCLGVBQWUsU0FBU0MsT0FBT0EsQ0FBQSxFQUFHO0VBQUE7RUFBQUgsY0FBQSxHQUFBSSxDQUFBO0VBQUFKLGNBQUEsR0FBQUssQ0FBQTtFQUNoQyxvQkFDRSwyQkFBQUgsS0FBQSxDQUFBSSxhQUFBO0VBQUE7RUFBQTtFQUFBO0VBQUE7SUFBS0MsS0FBSyxFQUFFO01BQUVDLFFBQVEsRUFBRSxPQUFPO01BQUVDLE1BQU0sRUFBRSxXQUFXO01BQUVDLE9BQU8sRUFBRTtJQUFPO0VBQUU7RUFDdEU7RUFBQVIsS0FBQSxDQUFBSSxhQUFBO0VBQUE7RUFBQTtFQUFBO0VBQUEsTUFBSSw0QkFBMkIsQ0FBQztFQUVoQztFQUFBSixLQUFBLENBQUFJLGFBQUE7RUFBQTtFQUFBO0VBQUE7RUFBQSxNQUFJLHFCQUFpQixDQUFDO0VBQ3RCO0VBQUFKLEtBQUEsQ0FBQUksYUFBQTtFQUFBO0VBQUE7RUFBQTtFQUFBLE1BQUcscUlBR0EsQ0FBQztFQUVKO0VBQUFKLEtBQUEsQ0FBQUksYUFBQTtFQUFBO0VBQUE7RUFBQTtFQUFBLE1BQUksdUJBQXlCLENBQUM7RUFDOUI7RUFBQUosS0FBQSxDQUFBSSxhQUFBO0VBQUE7RUFBQTtFQUFBO0VBQUEsTUFBRyx3Q0FBc0MsQ0FBQztFQUMxQztFQUFBSixLQUFBLENBQUFJLGFBQUE7RUFBQTtFQUFBO0VBQUE7RUFBQTtFQUNFO0VBQUFKLEtBQUEsQ0FBQUksYUFBQTtFQUFBO0VBQUE7RUFBQTtFQUFBO0VBQ0U7RUFBQUosS0FBQSxDQUFBSSxhQUFBO0VBQUE7RUFBQTtFQUFBO0VBQUEsTUFBUSxxREFBcUQsQ0FBQyx3QkFDNUQsQ0FBQztFQUNMO0VBQUFKLEtBQUEsQ0FBQUksYUFBQTtFQUFBO0VBQUE7RUFBQTtFQUFBO0VBQ0U7RUFBQUosS0FBQSxDQUFBSSxhQUFBO0VBQUE7RUFBQTtFQUFBO0VBQUEsTUFBUSw2Q0FBNkMsQ0FBQyxhQUNwRCxDQUFDO0VBQ0w7RUFBQUosS0FBQSxDQUFBSSxhQUFBO0VBQUE7RUFBQTtFQUFBO0VBQUE7RUFDRTtFQUFBSixLQUFBLENBQUFJLGFBQUE7RUFBQTtFQUFBO0VBQUE7RUFBQSxNQUFRLG1CQUF5QixDQUFDLGtDQUNoQyxDQUNGLENBQUM7RUFFTDtFQUFBSixLQUFBLENBQUFJLGFBQUE7RUFBQTtFQUFBO0VBQUE7RUFBQSxNQUFJLG9CQUFzQixDQUFDO0VBQzNCO0VBQUFKLEtBQUEsQ0FBQUksYUFBQTtFQUFBO0VBQUE7RUFBQTtFQUFBLE1BQUcsNkNBQTJDLENBQUM7RUFDL0M7RUFBQUosS0FBQSxDQUFBSSxhQUFBO0VBQUE7RUFBQTtFQUFBO0VBQUE7RUFDRTtFQUFBSixLQUFBLENBQUFJLGFBQUE7RUFBQTtFQUFBO0VBQUE7RUFBQSxNQUFJLHdDQUFpQyxDQUFDO0VBQ3RDO0VBQUFKLEtBQUEsQ0FBQUksYUFBQTtFQUFBO0VBQUE7RUFBQTtFQUFBLE1BQUkseUNBQXFDLENBQUM7RUFDMUM7RUFBQUosS0FBQSxDQUFBSSxhQUFBO0VBQUE7RUFBQTtFQUFBO0VBQUEsTUFBSSxvQkFBc0IsQ0FDeEIsQ0FBQztFQUVMO0VBQUFKLEtBQUEsQ0FBQUksYUFBQTtFQUFBO0VBQUE7RUFBQTtFQUFBLE1BQUksaUJBQW1CLENBQUM7RUFDeEI7RUFBQUosS0FBQSxDQUFBSSxhQUFBO0VBQUE7RUFBQTtFQUFBO0VBQUEsTUFBRyx1Q0FBcUMsQ0FBQztFQUN6QztFQUFBSixLQUFBLENBQUFJLGFBQUE7RUFBQTtFQUFBO0VBQUE7RUFBQTtFQUNFO0VBQUFKLEtBQUEsQ0FBQUksYUFBQTtFQUFBO0VBQUE7RUFBQTtFQUFBLE1BQUksK0JBQThCLENBQUM7RUFDbkM7RUFBQUosS0FBQSxDQUFBSSxhQUFBO0VBQUE7RUFBQTtFQUFBO0VBQUEsTUFBSSxvQ0FBbUMsQ0FBQztFQUN4QztFQUFBSixLQUFBLENBQUFJLGFBQUE7RUFBQTtFQUFBO0VBQUE7RUFBQSxNQUFJLGlDQUE2QixDQUMvQixDQUFDO0VBRUw7RUFBQUosS0FBQSxDQUFBSSxhQUFBO0VBQUE7RUFBQTtFQUFBO0VBQUEsTUFBSSwyQkFBMEIsQ0FBQztFQUMvQjtFQUFBSixLQUFBLENBQUFJLGFBQUE7RUFBQTtFQUFBO0VBQUE7RUFBQSxNQUFHLHdCQUFzQixDQUFDO0VBQzFCO0VBQUFKLEtBQUEsQ0FBQUksYUFBQTtFQUFBO0VBQUE7RUFBQTtFQUFBO0VBQ0U7RUFBQUosS0FBQSxDQUFBSSxhQUFBO0VBQUE7RUFBQTtFQUFBO0VBQUEsTUFBSSw2QkFBK0IsQ0FBQztFQUNwQztFQUFBSixLQUFBLENBQUFJLGFBQUE7RUFBQTtFQUFBO0VBQUE7RUFBQSxNQUFJLDJCQUE2QixDQUFDO0VBQ2xDO0VBQUFKLEtBQUEsQ0FBQUksYUFBQTtFQUFBO0VBQUE7RUFBQTtFQUFBLE1BQUksZ0NBQStCLENBQUM7RUFDcEM7RUFBQUosS0FBQSxDQUFBSSxhQUFBO0VBQUE7RUFBQTtFQUFBO0VBQUEsTUFBSSx3QkFBMEIsQ0FDNUIsQ0FBQztFQUVMO0VBQUFKLEtBQUEsQ0FBQUksYUFBQTtFQUFBO0VBQUE7RUFBQTtFQUFBLE1BQUksWUFBYyxDQUFDO0VBQ25CO0VBQUFKLEtBQUEsQ0FBQUksYUFBQTtFQUFBO0VBQUE7RUFBQTtFQUFBLE1BQUcsdURBQ2lEO0VBQUE7RUFBQUosS0FBQSxDQUFBSSxhQUFBO0VBQUE7RUFBQTtFQUFBO0VBQUEsTUFBUSwwQkFBZ0MsQ0FDekYsQ0FBQztFQUVKO0VBQUFKLEtBQUEsQ0FBQUksYUFBQTtFQUFBO0VBQUE7RUFBQTtFQUFBO0lBQUdDLEtBQUssRUFBRTtNQUFFSSxTQUFTLEVBQUUsTUFBTTtNQUFFQyxRQUFRLEVBQUUsTUFBTTtNQUFFQyxLQUFLLEVBQUU7SUFBTztFQUFFLEdBQUMsb0RBRS9ELENBQ0EsQ0FBQztBQUVWIiwiaWdub3JlTGlzdCI6W119

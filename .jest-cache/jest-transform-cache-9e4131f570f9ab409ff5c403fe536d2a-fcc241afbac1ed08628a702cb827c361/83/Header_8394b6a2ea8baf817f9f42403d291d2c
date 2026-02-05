@@ -1,0 +1,171 @@
+bf03630fe38daed4b29f11a06b3c526c
+/* istanbul ignore next */
+function cov_2igb65lsvf() {
+  var path = "/home/runner/work/rkmmax-hibrido/rkmmax-hibrido/src/components/Header.jsx";
+  var hash = "2d0a9e1609c6c0856d7616171bd1ad5391b8ceab";
+  var global = new Function("return this")();
+  var gcv = "__coverage__";
+  var coverageData = {
+    path: "/home/runner/work/rkmmax-hibrido/rkmmax-hibrido/src/components/Header.jsx",
+    statementMap: {
+      "0": {
+        start: {
+          line: 7,
+          column: 2
+        },
+        end: {
+          line: 33,
+          column: 4
+        }
+      }
+    },
+    fnMap: {
+      "0": {
+        name: "Header",
+        decl: {
+          start: {
+            line: 6,
+            column: 24
+          },
+          end: {
+            line: 6,
+            column: 30
+          }
+        },
+        loc: {
+          start: {
+            line: 6,
+            column: 33
+          },
+          end: {
+            line: 34,
+            column: 1
+          }
+        },
+        line: 6
+      }
+    },
+    branchMap: {},
+    s: {
+      "0": 0
+    },
+    f: {
+      "0": 0
+    },
+    b: {},
+    _coverageSchema: "1a1c01bbd47fc00a2c39e90264f33305004495a9",
+    hash: "2d0a9e1609c6c0856d7616171bd1ad5391b8ceab"
+  };
+  var coverage = global[gcv] || (global[gcv] = {});
+  if (!coverage[path] || coverage[path].hash !== hash) {
+    coverage[path] = coverageData;
+  }
+  var actualCoverage = coverage[path];
+  {
+    // @ts-ignore
+    cov_2igb65lsvf = function () {
+      return actualCoverage;
+    };
+  }
+  return actualCoverage;
+}
+cov_2igb65lsvf();
+// src/components/Header.jsx
+import React from "react";
+import { Link, NavLink } from "react-router-dom";
+import { BRAND } from "../config/brand.js";
+export default function Header() {
+  /* istanbul ignore next */
+  cov_2igb65lsvf().f[0]++;
+  cov_2igb65lsvf().s[0]++;
+  return /*#__PURE__*/ /* istanbul ignore next */React.createElement(
+  /* istanbul ignore next */
+  "header",
+  /* istanbul ignore next */
+  {
+    style: {
+      padding: "10px 16px",
+      borderBottom: "1px solid #eee",
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "space-between"
+    }
+  }, /*#__PURE__*/
+  /* istanbul ignore next */
+  React.createElement(Link,
+  /* istanbul ignore next */
+  {
+    to: "/",
+    style: {
+      fontWeight: 800,
+      textDecoration: "none",
+      color: "#111"
+    }
+  }, /*#__PURE__*/
+  /* istanbul ignore next */
+  React.createElement(
+  /* istanbul ignore next */
+  "span",
+  /* istanbul ignore next */
+  {
+    className: "brand-full"
+  }, BRAND.lockup), /*#__PURE__*/
+  /* istanbul ignore next */
+  React.createElement(
+  /* istanbul ignore next */
+  "span",
+  /* istanbul ignore next */
+  {
+    className: "brand-short"
+  }, BRAND.shortLockup)), /*#__PURE__*/
+  /* istanbul ignore next */
+  React.createElement(
+  /* istanbul ignore next */
+  "nav",
+  /* istanbul ignore next */
+  {
+    className: "nav",
+    style: {
+      display: "flex",
+      gap: 12
+    }
+  }, /*#__PURE__*/
+  /* istanbul ignore next */
+  React.createElement(NavLink,
+  /* istanbul ignore next */
+  {
+    to: "/"
+  }, "Home"), /*#__PURE__*/
+  /* istanbul ignore next */
+  React.createElement(NavLink,
+  /* istanbul ignore next */
+  {
+    to: "/serginho"
+  }, "Serginho"), /*#__PURE__*/
+  /* istanbul ignore next */
+  React.createElement(NavLink,
+  /* istanbul ignore next */
+  {
+    to: "/hybrid",
+    title: "Sistema H\xEDbrido Otimizado"
+  }, "\uD83E\uDD16 H\xEDbrido"), /*#__PURE__*/
+  /* istanbul ignore next */
+  React.createElement(NavLink,
+  /* istanbul ignore next */
+  {
+    to: "/specialists"
+  }, "Especialistas"), /*#__PURE__*/
+  /* istanbul ignore next */
+  React.createElement(NavLink,
+  /* istanbul ignore next */
+  {
+    to: "/projects"
+  }, "Projetos"), /*#__PURE__*/
+  /* istanbul ignore next */
+  React.createElement(NavLink,
+  /* istanbul ignore next */
+  {
+    to: "/study"
+  }, "Study Lab")));
+}
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJuYW1lcyI6WyJjb3ZfMmlnYjY1bHN2ZiIsImFjdHVhbENvdmVyYWdlIiwiUmVhY3QiLCJMaW5rIiwiTmF2TGluayIsIkJSQU5EIiwiSGVhZGVyIiwiZiIsInMiLCJjcmVhdGVFbGVtZW50Iiwic3R5bGUiLCJwYWRkaW5nIiwiYm9yZGVyQm90dG9tIiwiZGlzcGxheSIsImFsaWduSXRlbXMiLCJqdXN0aWZ5Q29udGVudCIsInRvIiwiZm9udFdlaWdodCIsInRleHREZWNvcmF0aW9uIiwiY29sb3IiLCJjbGFzc05hbWUiLCJsb2NrdXAiLCJzaG9ydExvY2t1cCIsImdhcCIsInRpdGxlIl0sInNvdXJjZXMiOlsiSGVhZGVyLmpzeCJdLCJzb3VyY2VzQ29udGVudCI6WyIvLyBzcmMvY29tcG9uZW50cy9IZWFkZXIuanN4XG5pbXBvcnQgUmVhY3QgZnJvbSBcInJlYWN0XCI7XG5pbXBvcnQgeyBMaW5rLCBOYXZMaW5rIH0gZnJvbSBcInJlYWN0LXJvdXRlci1kb21cIjtcbmltcG9ydCB7IEJSQU5EIH0gZnJvbSBcIi4uL2NvbmZpZy9icmFuZC5qc1wiO1xuXG5leHBvcnQgZGVmYXVsdCBmdW5jdGlvbiBIZWFkZXIoKSB7XG4gIHJldHVybiAoXG4gICAgPGhlYWRlclxuICAgICAgc3R5bGU9e3tcbiAgICAgICAgcGFkZGluZzogXCIxMHB4IDE2cHhcIixcbiAgICAgICAgYm9yZGVyQm90dG9tOiBcIjFweCBzb2xpZCAjZWVlXCIsXG4gICAgICAgIGRpc3BsYXk6IFwiZmxleFwiLFxuICAgICAgICBhbGlnbkl0ZW1zOiBcImNlbnRlclwiLFxuICAgICAgICBqdXN0aWZ5Q29udGVudDogXCJzcGFjZS1iZXR3ZWVuXCIsXG4gICAgICB9fVxuICAgID5cbiAgICAgIDxMaW5rIHRvPVwiL1wiIHN0eWxlPXt7IGZvbnRXZWlnaHQ6IDgwMCwgdGV4dERlY29yYXRpb246IFwibm9uZVwiLCBjb2xvcjogXCIjMTExXCIgfX0+XG4gICAgICAgIDxzcGFuIGNsYXNzTmFtZT1cImJyYW5kLWZ1bGxcIj57QlJBTkQubG9ja3VwfTwvc3Bhbj5cbiAgICAgICAgPHNwYW4gY2xhc3NOYW1lPVwiYnJhbmQtc2hvcnRcIj57QlJBTkQuc2hvcnRMb2NrdXB9PC9zcGFuPlxuICAgICAgPC9MaW5rPlxuXG4gICAgICA8bmF2IGNsYXNzTmFtZT1cIm5hdlwiIHN0eWxlPXt7IGRpc3BsYXk6IFwiZmxleFwiLCBnYXA6IDEyIH19PlxuICAgICAgICA8TmF2TGluayB0bz1cIi9cIj5Ib21lPC9OYXZMaW5rPlxuICAgICAgICA8TmF2TGluayB0bz1cIi9zZXJnaW5ob1wiPlNlcmdpbmhvPC9OYXZMaW5rPlxuICAgICAgICA8TmF2TGluayB0bz1cIi9oeWJyaWRcIiB0aXRsZT1cIlNpc3RlbWEgSMOtYnJpZG8gT3RpbWl6YWRvXCI+XG4gICAgICAgICAg8J+kliBIw61icmlkb1xuICAgICAgICA8L05hdkxpbms+XG4gICAgICAgIDxOYXZMaW5rIHRvPVwiL3NwZWNpYWxpc3RzXCI+RXNwZWNpYWxpc3RhczwvTmF2TGluaz5cbiAgICAgICAgPE5hdkxpbmsgdG89XCIvcHJvamVjdHNcIj5Qcm9qZXRvczwvTmF2TGluaz5cbiAgICAgICAgPE5hdkxpbmsgdG89XCIvc3R1ZHlcIj5TdHVkeSBMYWI8L05hdkxpbms+XG4gICAgICA8L25hdj5cbiAgICA8L2hlYWRlcj5cbiAgKTtcbn1cbiJdLCJtYXBwaW5ncyI6Ijs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7O0lBZVk7SUFBQUEsY0FBQSxZQUFBQSxDQUFBO01BQUEsT0FBQUMsY0FBQTtJQUFBO0VBQUE7RUFBQSxPQUFBQSxjQUFBO0FBQUE7QUFBQUQsY0FBQTtBQWZaO0FBQ0EsT0FBT0UsS0FBSyxNQUFNLE9BQU87QUFDekIsU0FBU0MsSUFBSSxFQUFFQyxPQUFPLFFBQVEsa0JBQWtCO0FBQ2hELFNBQVNDLEtBQUssUUFBUSxvQkFBb0I7QUFFMUMsZUFBZSxTQUFTQyxNQUFNQSxDQUFBLEVBQUc7RUFBQTtFQUFBTixjQUFBLEdBQUFPLENBQUE7RUFBQVAsY0FBQSxHQUFBUSxDQUFBO0VBQy9CLG9CQUNFLDJCQUFBTixLQUFBLENBQUFPLGFBQUE7RUFBQTtFQUFBO0VBQUE7RUFBQTtJQUNFQyxLQUFLLEVBQUU7TUFDTEMsT0FBTyxFQUFFLFdBQVc7TUFDcEJDLFlBQVksRUFBRSxnQkFBZ0I7TUFDOUJDLE9BQU8sRUFBRSxNQUFNO01BQ2ZDLFVBQVUsRUFBRSxRQUFRO01BQ3BCQyxjQUFjLEVBQUU7SUFDbEI7RUFBRTtFQUVGO0VBQUFiLEtBQUEsQ0FBQU8sYUFBQSxDQUFDTixJQUFJO0VBQUE7RUFBQTtJQUFDYSxFQUFFLEVBQUMsR0FBRztJQUFDTixLQUFLLEVBQUU7TUFBRU8sVUFBVSxFQUFFLEdBQUc7TUFBRUMsY0FBYyxFQUFFLE1BQU07TUFBRUMsS0FBSyxFQUFFO0lBQU87RUFBRTtFQUM3RTtFQUFBakIsS0FBQSxDQUFBTyxhQUFBO0VBQUE7RUFBQTtFQUFBO0VBQUE7SUFBTVcsU0FBUyxFQUFDO0VBQVksR0FBRWYsS0FBSyxDQUFDZ0IsTUFBYSxDQUFDO0VBQ2xEO0VBQUFuQixLQUFBLENBQUFPLGFBQUE7RUFBQTtFQUFBO0VBQUE7RUFBQTtJQUFNVyxTQUFTLEVBQUM7RUFBYSxHQUFFZixLQUFLLENBQUNpQixXQUFrQixDQUNuRCxDQUFDO0VBRVA7RUFBQXBCLEtBQUEsQ0FBQU8sYUFBQTtFQUFBO0VBQUE7RUFBQTtFQUFBO0lBQUtXLFNBQVMsRUFBQyxLQUFLO0lBQUNWLEtBQUssRUFBRTtNQUFFRyxPQUFPLEVBQUUsTUFBTTtNQUFFVSxHQUFHLEVBQUU7SUFBRztFQUFFO0VBQ3ZEO0VBQUFyQixLQUFBLENBQUFPLGFBQUEsQ0FBQ0wsT0FBTztFQUFBO0VBQUE7SUFBQ1ksRUFBRSxFQUFDO0VBQUcsR0FBQyxNQUFhLENBQUM7RUFDOUI7RUFBQWQsS0FBQSxDQUFBTyxhQUFBLENBQUNMLE9BQU87RUFBQTtFQUFBO0lBQUNZLEVBQUUsRUFBQztFQUFXLEdBQUMsVUFBaUIsQ0FBQztFQUMxQztFQUFBZCxLQUFBLENBQUFPLGFBQUEsQ0FBQ0wsT0FBTztFQUFBO0VBQUE7SUFBQ1ksRUFBRSxFQUFDLFNBQVM7SUFBQ1EsS0FBSyxFQUFDO0VBQTJCLEdBQUMseUJBRS9DLENBQUM7RUFDVjtFQUFBdEIsS0FBQSxDQUFBTyxhQUFBLENBQUNMLE9BQU87RUFBQTtFQUFBO0lBQUNZLEVBQUUsRUFBQztFQUFjLEdBQUMsZUFBc0IsQ0FBQztFQUNsRDtFQUFBZCxLQUFBLENBQUFPLGFBQUEsQ0FBQ0wsT0FBTztFQUFBO0VBQUE7SUFBQ1ksRUFBRSxFQUFDO0VBQVcsR0FBQyxVQUFpQixDQUFDO0VBQzFDO0VBQUFkLEtBQUEsQ0FBQU8sYUFBQSxDQUFDTCxPQUFPO0VBQUE7RUFBQTtJQUFDWSxFQUFFLEVBQUM7RUFBUSxHQUFDLFdBQWtCLENBQ3BDLENBQ0MsQ0FBQztBQUViIiwiaWdub3JlTGlzdCI6W119

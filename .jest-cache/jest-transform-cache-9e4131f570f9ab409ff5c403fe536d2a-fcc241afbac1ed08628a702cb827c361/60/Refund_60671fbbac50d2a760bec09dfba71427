@@ -1,0 +1,294 @@
+3263df607e3f647c0acd800499aca331
+/* istanbul ignore next */
+function cov_1jn1gjdh9() {
+  var path = "/home/runner/work/rkmmax-hibrido/rkmmax-hibrido/src/pages/Refund.jsx";
+  var hash = "2b7ee172dbbf24bb333f3e8277201c99f10af482";
+  var global = new Function("return this")();
+  var gcv = "__coverage__";
+  var coverageData = {
+    path: "/home/runner/work/rkmmax-hibrido/rkmmax-hibrido/src/pages/Refund.jsx",
+    statementMap: {
+      "0": {
+        start: {
+          line: 4,
+          column: 2
+        },
+        end: {
+          line: 59,
+          column: 4
+        }
+      }
+    },
+    fnMap: {
+      "0": {
+        name: "Refund",
+        decl: {
+          start: {
+            line: 3,
+            column: 24
+          },
+          end: {
+            line: 3,
+            column: 30
+          }
+        },
+        loc: {
+          start: {
+            line: 3,
+            column: 33
+          },
+          end: {
+            line: 60,
+            column: 1
+          }
+        },
+        line: 3
+      }
+    },
+    branchMap: {},
+    s: {
+      "0": 0
+    },
+    f: {
+      "0": 0
+    },
+    b: {},
+    _coverageSchema: "1a1c01bbd47fc00a2c39e90264f33305004495a9",
+    hash: "2b7ee172dbbf24bb333f3e8277201c99f10af482"
+  };
+  var coverage = global[gcv] || (global[gcv] = {});
+  if (!coverage[path] || coverage[path].hash !== hash) {
+    coverage[path] = coverageData;
+  }
+  var actualCoverage = coverage[path];
+  {
+    // @ts-ignore
+    cov_1jn1gjdh9 = function () {
+      return actualCoverage;
+    };
+  }
+  return actualCoverage;
+}
+cov_1jn1gjdh9();
+import React from "react";
+export default function Refund() {
+  /* istanbul ignore next */
+  cov_1jn1gjdh9().f[0]++;
+  cov_1jn1gjdh9().s[0]++;
+  return /*#__PURE__*/ /* istanbul ignore next */React.createElement(
+  /* istanbul ignore next */
+  "div",
+  /* istanbul ignore next */
+  {
+    style: {
+      maxWidth: "900px",
+      margin: "40px auto",
+      padding: "20px"
+    }
+  }, /*#__PURE__*/
+  /* istanbul ignore next */
+  React.createElement(
+  /* istanbul ignore next */
+  "h1",
+  /* istanbul ignore next */
+  null, "Pol\xEDtica de Reembolso"), /*#__PURE__*/
+  /* istanbul ignore next */
+  React.createElement(
+  /* istanbul ignore next */
+  "h2",
+  /* istanbul ignore next */
+  null, "1. Direito de Reembolso"), /*#__PURE__*/
+  /* istanbul ignore next */
+  React.createElement(
+  /* istanbul ignore next */
+  "p",
+  /* istanbul ignore next */
+  null, "Voc\xEA tem direito a reembolso em at\xE9 7 dias ap\xF3s a compra, sem perguntas."), /*#__PURE__*/
+  /* istanbul ignore next */
+  React.createElement(
+  /* istanbul ignore next */
+  "h2",
+  /* istanbul ignore next */
+  null, "2. Como Solicitar Reembolso"), /*#__PURE__*/
+  /* istanbul ignore next */
+  React.createElement(
+  /* istanbul ignore next */
+  "p",
+  /* istanbul ignore next */
+  null, "Para solicitar reembolso:"), /*#__PURE__*/
+  /* istanbul ignore next */
+  React.createElement(
+  /* istanbul ignore next */
+  "ol",
+  /* istanbul ignore next */
+  null, /*#__PURE__*/
+  /* istanbul ignore next */
+  React.createElement(
+  /* istanbul ignore next */
+  "li",
+  /* istanbul ignore next */
+  null, "Envie um email para: ", /*#__PURE__*/
+  /* istanbul ignore next */
+  React.createElement(
+  /* istanbul ignore next */
+  "strong",
+  /* istanbul ignore next */
+  null, "suporte@kizirianmax.site")), /*#__PURE__*/
+  /* istanbul ignore next */
+  React.createElement(
+  /* istanbul ignore next */
+  "li",
+  /* istanbul ignore next */
+  null, "Inclua seu ID de pedido"), /*#__PURE__*/
+  /* istanbul ignore next */
+  React.createElement(
+  /* istanbul ignore next */
+  "li",
+  /* istanbul ignore next */
+  null, "Explique o motivo do reembolso"), /*#__PURE__*/
+  /* istanbul ignore next */
+  React.createElement(
+  /* istanbul ignore next */
+  "li",
+  /* istanbul ignore next */
+  null, "Aguarde resposta em at\xE9 48 horas")), /*#__PURE__*/
+  /* istanbul ignore next */
+  React.createElement(
+  /* istanbul ignore next */
+  "h2",
+  /* istanbul ignore next */
+  null, "3. Processamento"), /*#__PURE__*/
+  /* istanbul ignore next */
+  React.createElement(
+  /* istanbul ignore next */
+  "p",
+  /* istanbul ignore next */
+  null, "Reembolsos s\xE3o processados em:"), /*#__PURE__*/
+  /* istanbul ignore next */
+  React.createElement(
+  /* istanbul ignore next */
+  "ul",
+  /* istanbul ignore next */
+  null, /*#__PURE__*/
+  /* istanbul ignore next */
+  React.createElement(
+  /* istanbul ignore next */
+  "li",
+  /* istanbul ignore next */
+  null, /*#__PURE__*/
+  /* istanbul ignore next */
+  React.createElement(
+  /* istanbul ignore next */
+  "strong",
+  /* istanbul ignore next */
+  null, "Cart\xE3o de Cr\xE9dito:"), " 3-5 dias \xFAteis"), /*#__PURE__*/
+  /* istanbul ignore next */
+  React.createElement(
+  /* istanbul ignore next */
+  "li",
+  /* istanbul ignore next */
+  null, /*#__PURE__*/
+  /* istanbul ignore next */
+  React.createElement(
+  /* istanbul ignore next */
+  "strong",
+  /* istanbul ignore next */
+  null, "PayPal:"), " 1-2 dias \xFAteis"), /*#__PURE__*/
+  /* istanbul ignore next */
+  React.createElement(
+  /* istanbul ignore next */
+  "li",
+  /* istanbul ignore next */
+  null, /*#__PURE__*/
+  /* istanbul ignore next */
+  React.createElement(
+  /* istanbul ignore next */
+  "strong",
+  /* istanbul ignore next */
+  null, "Transfer\xEAncia Banc\xE1ria:"), " 5-10 dias \xFAteis")), /*#__PURE__*/
+  /* istanbul ignore next */
+  React.createElement(
+  /* istanbul ignore next */
+  "h2",
+  /* istanbul ignore next */
+  null, "4. Exce\xE7\xF5es"), /*#__PURE__*/
+  /* istanbul ignore next */
+  React.createElement(
+  /* istanbul ignore next */
+  "p",
+  /* istanbul ignore next */
+  null, "Reembolsos podem ser recusados se:"), /*#__PURE__*/
+  /* istanbul ignore next */
+  React.createElement(
+  /* istanbul ignore next */
+  "ul",
+  /* istanbul ignore next */
+  null, /*#__PURE__*/
+  /* istanbul ignore next */
+  React.createElement(
+  /* istanbul ignore next */
+  "li",
+  /* istanbul ignore next */
+  null, "Solicitado ap\xF3s 7 dias"), /*#__PURE__*/
+  /* istanbul ignore next */
+  React.createElement(
+  /* istanbul ignore next */
+  "li",
+  /* istanbul ignore next */
+  null, "Uso abusivo do servi\xE7o"), /*#__PURE__*/
+  /* istanbul ignore next */
+  React.createElement(
+  /* istanbul ignore next */
+  "li",
+  /* istanbul ignore next */
+  null, "Viola\xE7\xE3o dos Termos de Uso")), /*#__PURE__*/
+  /* istanbul ignore next */
+  React.createElement(
+  /* istanbul ignore next */
+  "h2",
+  /* istanbul ignore next */
+  null, "5. Aviso Especial - Vercel"), /*#__PURE__*/
+  /* istanbul ignore next */
+  React.createElement(
+  /* istanbul ignore next */
+  "p",
+  /* istanbul ignore next */
+  null, /*#__PURE__*/
+  /* istanbul ignore next */
+  React.createElement(
+  /* istanbul ignore next */
+  "strong",
+  /* istanbul ignore next */
+  null, "Reembolso em Andamento:"), " Existe um reembolso de USD 20,88 do AI Gateway do Vercel em processamento. Este valor ser\xE1 creditado automaticamente quando aprovado."), /*#__PURE__*/
+  /* istanbul ignore next */
+  React.createElement(
+  /* istanbul ignore next */
+  "h2",
+  /* istanbul ignore next */
+  null, "6. Contato"), /*#__PURE__*/
+  /* istanbul ignore next */
+  React.createElement(
+  /* istanbul ignore next */
+  "p",
+  /* istanbul ignore next */
+  null, "Para d\xFAvidas sobre reembolsos, entre em contato: ", /*#__PURE__*/
+  /* istanbul ignore next */
+  React.createElement(
+  /* istanbul ignore next */
+  "strong",
+  /* istanbul ignore next */
+  null, "suporte@kizirianmax.site")), /*#__PURE__*/
+  /* istanbul ignore next */
+  React.createElement(
+  /* istanbul ignore next */
+  "p",
+  /* istanbul ignore next */
+  {
+    style: {
+      marginTop: "40px",
+      fontSize: "12px",
+      color: "#999"
+    }
+  }, "\xDAltima atualiza\xE7\xE3o: 2 de novembro de 2025"));
+}
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJuYW1lcyI6WyJjb3ZfMWpuMWdqZGg5IiwiYWN0dWFsQ292ZXJhZ2UiLCJSZWFjdCIsIlJlZnVuZCIsImYiLCJzIiwiY3JlYXRlRWxlbWVudCIsInN0eWxlIiwibWF4V2lkdGgiLCJtYXJnaW4iLCJwYWRkaW5nIiwibWFyZ2luVG9wIiwiZm9udFNpemUiLCJjb2xvciJdLCJzb3VyY2VzIjpbIlJlZnVuZC5qc3giXSwic291cmNlc0NvbnRlbnQiOlsiaW1wb3J0IFJlYWN0IGZyb20gXCJyZWFjdFwiO1xuXG5leHBvcnQgZGVmYXVsdCBmdW5jdGlvbiBSZWZ1bmQoKSB7XG4gIHJldHVybiAoXG4gICAgPGRpdiBzdHlsZT17eyBtYXhXaWR0aDogXCI5MDBweFwiLCBtYXJnaW46IFwiNDBweCBhdXRvXCIsIHBhZGRpbmc6IFwiMjBweFwiIH19PlxuICAgICAgPGgxPlBvbMOtdGljYSBkZSBSZWVtYm9sc288L2gxPlxuXG4gICAgICA8aDI+MS4gRGlyZWl0byBkZSBSZWVtYm9sc288L2gyPlxuICAgICAgPHA+Vm9jw6ogdGVtIGRpcmVpdG8gYSByZWVtYm9sc28gZW0gYXTDqSA3IGRpYXMgYXDDs3MgYSBjb21wcmEsIHNlbSBwZXJndW50YXMuPC9wPlxuXG4gICAgICA8aDI+Mi4gQ29tbyBTb2xpY2l0YXIgUmVlbWJvbHNvPC9oMj5cbiAgICAgIDxwPlBhcmEgc29saWNpdGFyIHJlZW1ib2xzbzo8L3A+XG4gICAgICA8b2w+XG4gICAgICAgIDxsaT5cbiAgICAgICAgICBFbnZpZSB1bSBlbWFpbCBwYXJhOiA8c3Ryb25nPnN1cG9ydGVAa2l6aXJpYW5tYXguc2l0ZTwvc3Ryb25nPlxuICAgICAgICA8L2xpPlxuICAgICAgICA8bGk+SW5jbHVhIHNldSBJRCBkZSBwZWRpZG88L2xpPlxuICAgICAgICA8bGk+RXhwbGlxdWUgbyBtb3Rpdm8gZG8gcmVlbWJvbHNvPC9saT5cbiAgICAgICAgPGxpPkFndWFyZGUgcmVzcG9zdGEgZW0gYXTDqSA0OCBob3JhczwvbGk+XG4gICAgICA8L29sPlxuXG4gICAgICA8aDI+My4gUHJvY2Vzc2FtZW50bzwvaDI+XG4gICAgICA8cD5SZWVtYm9sc29zIHPDo28gcHJvY2Vzc2Fkb3MgZW06PC9wPlxuICAgICAgPHVsPlxuICAgICAgICA8bGk+XG4gICAgICAgICAgPHN0cm9uZz5DYXJ0w6NvIGRlIENyw6lkaXRvOjwvc3Ryb25nPiAzLTUgZGlhcyDDunRlaXNcbiAgICAgICAgPC9saT5cbiAgICAgICAgPGxpPlxuICAgICAgICAgIDxzdHJvbmc+UGF5UGFsOjwvc3Ryb25nPiAxLTIgZGlhcyDDunRlaXNcbiAgICAgICAgPC9saT5cbiAgICAgICAgPGxpPlxuICAgICAgICAgIDxzdHJvbmc+VHJhbnNmZXLDqm5jaWEgQmFuY8OhcmlhOjwvc3Ryb25nPiA1LTEwIGRpYXMgw7p0ZWlzXG4gICAgICAgIDwvbGk+XG4gICAgICA8L3VsPlxuXG4gICAgICA8aDI+NC4gRXhjZcOnw7VlczwvaDI+XG4gICAgICA8cD5SZWVtYm9sc29zIHBvZGVtIHNlciByZWN1c2Fkb3Mgc2U6PC9wPlxuICAgICAgPHVsPlxuICAgICAgICA8bGk+U29saWNpdGFkbyBhcMOzcyA3IGRpYXM8L2xpPlxuICAgICAgICA8bGk+VXNvIGFidXNpdm8gZG8gc2VydmnDp288L2xpPlxuICAgICAgICA8bGk+VmlvbGHDp8OjbyBkb3MgVGVybW9zIGRlIFVzbzwvbGk+XG4gICAgICA8L3VsPlxuXG4gICAgICA8aDI+NS4gQXZpc28gRXNwZWNpYWwgLSBWZXJjZWw8L2gyPlxuICAgICAgPHA+XG4gICAgICAgIDxzdHJvbmc+UmVlbWJvbHNvIGVtIEFuZGFtZW50bzo8L3N0cm9uZz4gRXhpc3RlIHVtIHJlZW1ib2xzbyBkZSBVU0QgMjAsODggZG8gQUkgR2F0ZXdheSBkb1xuICAgICAgICBWZXJjZWwgZW0gcHJvY2Vzc2FtZW50by4gRXN0ZSB2YWxvciBzZXLDoSBjcmVkaXRhZG8gYXV0b21hdGljYW1lbnRlIHF1YW5kbyBhcHJvdmFkby5cbiAgICAgIDwvcD5cblxuICAgICAgPGgyPjYuIENvbnRhdG88L2gyPlxuICAgICAgPHA+XG4gICAgICAgIFBhcmEgZMO6dmlkYXMgc29icmUgcmVlbWJvbHNvcywgZW50cmUgZW0gY29udGF0bzogPHN0cm9uZz5zdXBvcnRlQGtpemlyaWFubWF4LnNpdGU8L3N0cm9uZz5cbiAgICAgIDwvcD5cblxuICAgICAgPHAgc3R5bGU9e3sgbWFyZ2luVG9wOiBcIjQwcHhcIiwgZm9udFNpemU6IFwiMTJweFwiLCBjb2xvcjogXCIjOTk5XCIgfX0+XG4gICAgICAgIMOabHRpbWEgYXR1YWxpemHDp8OjbzogMiBkZSBub3ZlbWJybyBkZSAyMDI1XG4gICAgICA8L3A+XG4gICAgPC9kaXY+XG4gICk7XG59XG4iXSwibWFwcGluZ3MiOiI7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7OztJQWVZO0lBQUFBLGFBQUEsWUFBQUEsQ0FBQTtNQUFBLE9BQUFDLGNBQUE7SUFBQTtFQUFBO0VBQUEsT0FBQUEsY0FBQTtBQUFBO0FBQUFELGFBQUE7QUFmWixPQUFPRSxLQUFLLE1BQU0sT0FBTztBQUV6QixlQUFlLFNBQVNDLE1BQU1BLENBQUEsRUFBRztFQUFBO0VBQUFILGFBQUEsR0FBQUksQ0FBQTtFQUFBSixhQUFBLEdBQUFLLENBQUE7RUFDL0Isb0JBQ0UsMkJBQUFILEtBQUEsQ0FBQUksYUFBQTtFQUFBO0VBQUE7RUFBQTtFQUFBO0lBQUtDLEtBQUssRUFBRTtNQUFFQyxRQUFRLEVBQUUsT0FBTztNQUFFQyxNQUFNLEVBQUUsV0FBVztNQUFFQyxPQUFPLEVBQUU7SUFBTztFQUFFO0VBQ3RFO0VBQUFSLEtBQUEsQ0FBQUksYUFBQTtFQUFBO0VBQUE7RUFBQTtFQUFBLE1BQUksMEJBQXlCLENBQUM7RUFFOUI7RUFBQUosS0FBQSxDQUFBSSxhQUFBO0VBQUE7RUFBQTtFQUFBO0VBQUEsTUFBSSx5QkFBMkIsQ0FBQztFQUNoQztFQUFBSixLQUFBLENBQUFJLGFBQUE7RUFBQTtFQUFBO0VBQUE7RUFBQSxNQUFHLG1GQUEyRSxDQUFDO0VBRS9FO0VBQUFKLEtBQUEsQ0FBQUksYUFBQTtFQUFBO0VBQUE7RUFBQTtFQUFBLE1BQUksNkJBQStCLENBQUM7RUFDcEM7RUFBQUosS0FBQSxDQUFBSSxhQUFBO0VBQUE7RUFBQTtFQUFBO0VBQUEsTUFBRywyQkFBNEIsQ0FBQztFQUNoQztFQUFBSixLQUFBLENBQUFJLGFBQUE7RUFBQTtFQUFBO0VBQUE7RUFBQTtFQUNFO0VBQUFKLEtBQUEsQ0FBQUksYUFBQTtFQUFBO0VBQUE7RUFBQTtFQUFBLE1BQUksdUJBQ21CO0VBQUE7RUFBQUosS0FBQSxDQUFBSSxhQUFBO0VBQUE7RUFBQTtFQUFBO0VBQUEsTUFBUSwwQkFBZ0MsQ0FDM0QsQ0FBQztFQUNMO0VBQUFKLEtBQUEsQ0FBQUksYUFBQTtFQUFBO0VBQUE7RUFBQTtFQUFBLE1BQUkseUJBQTJCLENBQUM7RUFDaEM7RUFBQUosS0FBQSxDQUFBSSxhQUFBO0VBQUE7RUFBQTtFQUFBO0VBQUEsTUFBSSxnQ0FBa0MsQ0FBQztFQUN2QztFQUFBSixLQUFBLENBQUFJLGFBQUE7RUFBQTtFQUFBO0VBQUE7RUFBQSxNQUFJLHFDQUFvQyxDQUN0QyxDQUFDO0VBRUw7RUFBQUosS0FBQSxDQUFBSSxhQUFBO0VBQUE7RUFBQTtFQUFBO0VBQUEsTUFBSSxrQkFBb0IsQ0FBQztFQUN6QjtFQUFBSixLQUFBLENBQUFJLGFBQUE7RUFBQTtFQUFBO0VBQUE7RUFBQSxNQUFHLG1DQUFpQyxDQUFDO0VBQ3JDO0VBQUFKLEtBQUEsQ0FBQUksYUFBQTtFQUFBO0VBQUE7RUFBQTtFQUFBO0VBQ0U7RUFBQUosS0FBQSxDQUFBSSxhQUFBO0VBQUE7RUFBQTtFQUFBO0VBQUE7RUFDRTtFQUFBSixLQUFBLENBQUFJLGFBQUE7RUFBQTtFQUFBO0VBQUE7RUFBQSxNQUFRLDBCQUEwQixDQUFDLHNCQUNqQyxDQUFDO0VBQ0w7RUFBQUosS0FBQSxDQUFBSSxhQUFBO0VBQUE7RUFBQTtFQUFBO0VBQUE7RUFDRTtFQUFBSixLQUFBLENBQUFJLGFBQUE7RUFBQTtFQUFBO0VBQUE7RUFBQSxNQUFRLFNBQWUsQ0FBQyxzQkFDdEIsQ0FBQztFQUNMO0VBQUFKLEtBQUEsQ0FBQUksYUFBQTtFQUFBO0VBQUE7RUFBQTtFQUFBO0VBQ0U7RUFBQUosS0FBQSxDQUFBSSxhQUFBO0VBQUE7RUFBQTtFQUFBO0VBQUEsTUFBUSwrQkFBK0IsQ0FBQyx1QkFDdEMsQ0FDRixDQUFDO0VBRUw7RUFBQUosS0FBQSxDQUFBSSxhQUFBO0VBQUE7RUFBQTtFQUFBO0VBQUEsTUFBSSxtQkFBZSxDQUFDO0VBQ3BCO0VBQUFKLEtBQUEsQ0FBQUksYUFBQTtFQUFBO0VBQUE7RUFBQTtFQUFBLE1BQUcsb0NBQXFDLENBQUM7RUFDekM7RUFBQUosS0FBQSxDQUFBSSxhQUFBO0VBQUE7RUFBQTtFQUFBO0VBQUE7RUFDRTtFQUFBSixLQUFBLENBQUFJLGFBQUE7RUFBQTtFQUFBO0VBQUE7RUFBQSxNQUFJLDJCQUEwQixDQUFDO0VBQy9CO0VBQUFKLEtBQUEsQ0FBQUksYUFBQTtFQUFBO0VBQUE7RUFBQTtFQUFBLE1BQUksMkJBQTBCLENBQUM7RUFDL0I7RUFBQUosS0FBQSxDQUFBSSxhQUFBO0VBQUE7RUFBQTtFQUFBO0VBQUEsTUFBSSxrQ0FBOEIsQ0FDaEMsQ0FBQztFQUVMO0VBQUFKLEtBQUEsQ0FBQUksYUFBQTtFQUFBO0VBQUE7RUFBQTtFQUFBLE1BQUksNEJBQThCLENBQUM7RUFDbkM7RUFBQUosS0FBQSxDQUFBSSxhQUFBO0VBQUE7RUFBQTtFQUFBO0VBQUE7RUFDRTtFQUFBSixLQUFBLENBQUFJLGFBQUE7RUFBQTtFQUFBO0VBQUE7RUFBQSxNQUFRLHlCQUErQixDQUFDLDZJQUV2QyxDQUFDO0VBRUo7RUFBQUosS0FBQSxDQUFBSSxhQUFBO0VBQUE7RUFBQTtFQUFBO0VBQUEsTUFBSSxZQUFjLENBQUM7RUFDbkI7RUFBQUosS0FBQSxDQUFBSSxhQUFBO0VBQUE7RUFBQTtFQUFBO0VBQUEsTUFBRyxzREFDZ0Q7RUFBQTtFQUFBSixLQUFBLENBQUFJLGFBQUE7RUFBQTtFQUFBO0VBQUE7RUFBQSxNQUFRLDBCQUFnQyxDQUN4RixDQUFDO0VBRUo7RUFBQUosS0FBQSxDQUFBSSxhQUFBO0VBQUE7RUFBQTtFQUFBO0VBQUE7SUFBR0MsS0FBSyxFQUFFO01BQUVJLFNBQVMsRUFBRSxNQUFNO01BQUVDLFFBQVEsRUFBRSxNQUFNO01BQUVDLEtBQUssRUFBRTtJQUFPO0VBQUUsR0FBQyxvREFFL0QsQ0FDQSxDQUFDO0FBRVYiLCJpZ25vcmVMaXN0IjpbXX0=

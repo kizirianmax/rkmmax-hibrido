@@ -1,0 +1,124 @@
+ceeef14cb7e64513e061ff977d73e530
+/* istanbul ignore next */
+function cov_zbqkobx3r() {
+  var path = "/home/runner/work/rkmmax-hibrido/rkmmax-hibrido/src/pages/Projects.jsx";
+  var hash = "8cd9f233dfb61fbb4aa7390b78df033818e17a4e";
+  var global = new Function("return this")();
+  var gcv = "__coverage__";
+  var coverageData = {
+    path: "/home/runner/work/rkmmax-hibrido/rkmmax-hibrido/src/pages/Projects.jsx",
+    statementMap: {
+      "0": {
+        start: {
+          line: 5,
+          column: 2
+        },
+        end: {
+          line: 14,
+          column: 4
+        }
+      }
+    },
+    fnMap: {
+      "0": {
+        name: "Projects",
+        decl: {
+          start: {
+            line: 4,
+            column: 24
+          },
+          end: {
+            line: 4,
+            column: 32
+          }
+        },
+        loc: {
+          start: {
+            line: 4,
+            column: 35
+          },
+          end: {
+            line: 15,
+            column: 1
+          }
+        },
+        line: 4
+      }
+    },
+    branchMap: {},
+    s: {
+      "0": 0
+    },
+    f: {
+      "0": 0
+    },
+    b: {},
+    _coverageSchema: "1a1c01bbd47fc00a2c39e90264f33305004495a9",
+    hash: "8cd9f233dfb61fbb4aa7390b78df033818e17a4e"
+  };
+  var coverage = global[gcv] || (global[gcv] = {});
+  if (!coverage[path] || coverage[path].hash !== hash) {
+    coverage[path] = coverageData;
+  }
+  var actualCoverage = coverage[path];
+  {
+    // @ts-ignore
+    cov_zbqkobx3r = function () {
+      return actualCoverage;
+    };
+  }
+  return actualCoverage;
+}
+cov_zbqkobx3r();
+// src/pages/Projects.jsx
+import React from "react";
+export default function Projects() {
+  /* istanbul ignore next */
+  cov_zbqkobx3r().f[0]++;
+  cov_zbqkobx3r().s[0]++;
+  return /*#__PURE__*/ /* istanbul ignore next */React.createElement(
+  /* istanbul ignore next */
+  "main",
+  /* istanbul ignore next */
+  {
+    style: {
+      maxWidth: 720,
+      margin: "40px auto",
+      padding: 16
+    }
+  }, /*#__PURE__*/
+  /* istanbul ignore next */
+  React.createElement(
+  /* istanbul ignore next */
+  "h1",
+  /* istanbul ignore next */
+  {
+    style: {
+      fontSize: 32,
+      fontWeight: 800,
+      marginBottom: 16
+    }
+  }, "Projetos"), /*#__PURE__*/
+  /* istanbul ignore next */
+  React.createElement(
+  /* istanbul ignore next */
+  "p",
+  /* istanbul ignore next */
+  {
+    style: {
+      color: "#64748b",
+      marginBottom: 24
+    }
+  }, "Gerencie seus projetos com IA. Serginho e os especialistas trabalham juntos para entregar resultados de qualidade."), /*#__PURE__*/
+  /* istanbul ignore next */
+  React.createElement(
+  /* istanbul ignore next */
+  "p",
+  /* istanbul ignore next */
+  {
+    style: {
+      color: "#64748b"
+    }
+  }, "Em breve: dashboard de projetos."));
+}
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJuYW1lcyI6WyJjb3ZfemJxa29ieDNyIiwiYWN0dWFsQ292ZXJhZ2UiLCJSZWFjdCIsIlByb2plY3RzIiwiZiIsInMiLCJjcmVhdGVFbGVtZW50Iiwic3R5bGUiLCJtYXhXaWR0aCIsIm1hcmdpbiIsInBhZGRpbmciLCJmb250U2l6ZSIsImZvbnRXZWlnaHQiLCJtYXJnaW5Cb3R0b20iLCJjb2xvciJdLCJzb3VyY2VzIjpbIlByb2plY3RzLmpzeCJdLCJzb3VyY2VzQ29udGVudCI6WyIvLyBzcmMvcGFnZXMvUHJvamVjdHMuanN4XG5pbXBvcnQgUmVhY3QgZnJvbSBcInJlYWN0XCI7XG5cbmV4cG9ydCBkZWZhdWx0IGZ1bmN0aW9uIFByb2plY3RzKCkge1xuICByZXR1cm4gKFxuICAgIDxtYWluIHN0eWxlPXt7IG1heFdpZHRoOiA3MjAsIG1hcmdpbjogXCI0MHB4IGF1dG9cIiwgcGFkZGluZzogMTYgfX0+XG4gICAgICA8aDEgc3R5bGU9e3sgZm9udFNpemU6IDMyLCBmb250V2VpZ2h0OiA4MDAsIG1hcmdpbkJvdHRvbTogMTYgfX0+UHJvamV0b3M8L2gxPlxuICAgICAgPHAgc3R5bGU9e3sgY29sb3I6IFwiIzY0NzQ4YlwiLCBtYXJnaW5Cb3R0b206IDI0IH19PlxuICAgICAgICBHZXJlbmNpZSBzZXVzIHByb2pldG9zIGNvbSBJQS4gU2VyZ2luaG8gZSBvcyBlc3BlY2lhbGlzdGFzIHRyYWJhbGhhbSBqdW50b3MgcGFyYSBlbnRyZWdhclxuICAgICAgICByZXN1bHRhZG9zIGRlIHF1YWxpZGFkZS5cbiAgICAgIDwvcD5cbiAgICAgIDxwIHN0eWxlPXt7IGNvbG9yOiBcIiM2NDc0OGJcIiB9fT5FbSBicmV2ZTogZGFzaGJvYXJkIGRlIHByb2pldG9zLjwvcD5cbiAgICA8L21haW4+XG4gICk7XG59XG4iXSwibWFwcGluZ3MiOiI7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7OztJQWVZO0lBQUFBLGFBQUEsWUFBQUEsQ0FBQTtNQUFBLE9BQUFDLGNBQUE7SUFBQTtFQUFBO0VBQUEsT0FBQUEsY0FBQTtBQUFBO0FBQUFELGFBQUE7QUFmWjtBQUNBLE9BQU9FLEtBQUssTUFBTSxPQUFPO0FBRXpCLGVBQWUsU0FBU0MsUUFBUUEsQ0FBQSxFQUFHO0VBQUE7RUFBQUgsYUFBQSxHQUFBSSxDQUFBO0VBQUFKLGFBQUEsR0FBQUssQ0FBQTtFQUNqQyxvQkFDRSwyQkFBQUgsS0FBQSxDQUFBSSxhQUFBO0VBQUE7RUFBQTtFQUFBO0VBQUE7SUFBTUMsS0FBSyxFQUFFO01BQUVDLFFBQVEsRUFBRSxHQUFHO01BQUVDLE1BQU0sRUFBRSxXQUFXO01BQUVDLE9BQU8sRUFBRTtJQUFHO0VBQUU7RUFDL0Q7RUFBQVIsS0FBQSxDQUFBSSxhQUFBO0VBQUE7RUFBQTtFQUFBO0VBQUE7SUFBSUMsS0FBSyxFQUFFO01BQUVJLFFBQVEsRUFBRSxFQUFFO01BQUVDLFVBQVUsRUFBRSxHQUFHO01BQUVDLFlBQVksRUFBRTtJQUFHO0VBQUUsR0FBQyxVQUFZLENBQUM7RUFDN0U7RUFBQVgsS0FBQSxDQUFBSSxhQUFBO0VBQUE7RUFBQTtFQUFBO0VBQUE7SUFBR0MsS0FBSyxFQUFFO01BQUVPLEtBQUssRUFBRSxTQUFTO01BQUVELFlBQVksRUFBRTtJQUFHO0VBQUUsR0FBQyxvSEFHL0MsQ0FBQztFQUNKO0VBQUFYLEtBQUEsQ0FBQUksYUFBQTtFQUFBO0VBQUE7RUFBQTtFQUFBO0lBQUdDLEtBQUssRUFBRTtNQUFFTyxLQUFLLEVBQUU7SUFBVTtFQUFFLEdBQUMsa0NBQW1DLENBQy9ELENBQUM7QUFFWCIsImlnbm9yZUxpc3QiOltdfQ==

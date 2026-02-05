@@ -1,0 +1,80 @@
+70c9a91ec2419e4f3621e26413732e26
+/* istanbul ignore next */
+function cov_1px77b2tub() {
+  var path = "/home/runner/work/rkmmax-hibrido/rkmmax-hibrido/src/main.jsx";
+  var hash = "ddfaab25d4091fc8fa00d1d393505ccfc7c3e5a8";
+  var global = new Function("return this")();
+  var gcv = "__coverage__";
+  var coverageData = {
+    path: "/home/runner/work/rkmmax-hibrido/rkmmax-hibrido/src/main.jsx",
+    statementMap: {
+      "0": {
+        start: {
+          line: 8,
+          column: 0
+        },
+        end: {
+          line: 8,
+          column: 20
+        }
+      },
+      "1": {
+        start: {
+          line: 10,
+          column: 0
+        },
+        end: {
+          line: 14,
+          column: 2
+        }
+      }
+    },
+    fnMap: {},
+    branchMap: {},
+    s: {
+      "0": 0,
+      "1": 0
+    },
+    f: {},
+    b: {},
+    _coverageSchema: "1a1c01bbd47fc00a2c39e90264f33305004495a9",
+    hash: "ddfaab25d4091fc8fa00d1d393505ccfc7c3e5a8"
+  };
+  var coverage = global[gcv] || (global[gcv] = {});
+  if (!coverage[path] || coverage[path].hash !== hash) {
+    coverage[path] = coverageData;
+  }
+  var actualCoverage = coverage[path];
+  {
+    // @ts-ignore
+    cov_1px77b2tub = function () {
+      return actualCoverage;
+    };
+  }
+  return actualCoverage;
+}
+cov_1px77b2tub();
+import React from "react";
+import ReactDOM from "react-dom/client";
+import App from "./App.jsx";
+import "./index.css";
+
+// 🔐 INICIALIZAR GERENCIADOR DE SEGREDOS
+import { initializeSecrets } from "./api/initializeSecrets";
+/* istanbul ignore next */
+cov_1px77b2tub().s[0]++;
+initializeSecrets();
+/* istanbul ignore next */
+cov_1px77b2tub().s[1]++;
+ReactDOM.createRoot(document.getElementById("root")).render(/*#__PURE__*/
+/* istanbul ignore next */
+React.createElement(
+/* istanbul ignore next */
+React.StrictMode,
+/* istanbul ignore next */
+null, /*#__PURE__*/
+/* istanbul ignore next */
+React.createElement(App,
+/* istanbul ignore next */
+null)));
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJuYW1lcyI6WyJjb3ZfMXB4NzdiMnR1YiIsImFjdHVhbENvdmVyYWdlIiwiUmVhY3QiLCJSZWFjdERPTSIsIkFwcCIsImluaXRpYWxpemVTZWNyZXRzIiwicyIsImNyZWF0ZVJvb3QiLCJkb2N1bWVudCIsImdldEVsZW1lbnRCeUlkIiwicmVuZGVyIiwiY3JlYXRlRWxlbWVudCIsIlN0cmljdE1vZGUiXSwic291cmNlcyI6WyJtYWluLmpzeCJdLCJzb3VyY2VzQ29udGVudCI6WyJpbXBvcnQgUmVhY3QgZnJvbSBcInJlYWN0XCI7XG5pbXBvcnQgUmVhY3RET00gZnJvbSBcInJlYWN0LWRvbS9jbGllbnRcIjtcbmltcG9ydCBBcHAgZnJvbSBcIi4vQXBwLmpzeFwiO1xuaW1wb3J0IFwiLi9pbmRleC5jc3NcIjtcblxuLy8g8J+UkCBJTklDSUFMSVpBUiBHRVJFTkNJQURPUiBERSBTRUdSRURPU1xuaW1wb3J0IHsgaW5pdGlhbGl6ZVNlY3JldHMgfSBmcm9tIFwiLi9hcGkvaW5pdGlhbGl6ZVNlY3JldHNcIjtcbmluaXRpYWxpemVTZWNyZXRzKCk7XG5cblJlYWN0RE9NLmNyZWF0ZVJvb3QoZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoXCJyb290XCIpKS5yZW5kZXIoXG4gIDxSZWFjdC5TdHJpY3RNb2RlPlxuICAgIDxBcHAgLz5cbiAgPC9SZWFjdC5TdHJpY3RNb2RlPlxuKTtcbiJdLCJtYXBwaW5ncyI6Ijs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7SUFlWTtJQUFBQSxjQUFBLFlBQUFBLENBQUE7TUFBQSxPQUFBQyxjQUFBO0lBQUE7RUFBQTtFQUFBLE9BQUFBLGNBQUE7QUFBQTtBQUFBRCxjQUFBO0FBZlosT0FBT0UsS0FBSyxNQUFNLE9BQU87QUFDekIsT0FBT0MsUUFBUSxNQUFNLGtCQUFrQjtBQUN2QyxPQUFPQyxHQUFHLE1BQU0sV0FBVztBQUMzQixPQUFPLGFBQWE7O0FBRXBCO0FBQ0EsU0FBU0MsaUJBQWlCLFFBQVEseUJBQXlCO0FBQUM7QUFBQUwsY0FBQSxHQUFBTSxDQUFBO0FBQzVERCxpQkFBaUIsQ0FBQyxDQUFDO0FBQUM7QUFBQUwsY0FBQSxHQUFBTSxDQUFBO0FBRXBCSCxRQUFRLENBQUNJLFVBQVUsQ0FBQ0MsUUFBUSxDQUFDQyxjQUFjLENBQUMsTUFBTSxDQUFDLENBQUMsQ0FBQ0MsTUFBTTtBQUN6RDtBQUFBUixLQUFBLENBQUFTLGFBQUE7QUFBQTtBQUFDVCxLQUFLLENBQUNVLFVBQVU7QUFBQTtBQUFBO0FBQ2Y7QUFBQVYsS0FBQSxDQUFBUyxhQUFBLENBQUNQLEdBQUc7QUFBQTtBQUFBLElBQUUsQ0FDVSxDQUNwQixDQUFDIiwiaWdub3JlTGlzdCI6W119

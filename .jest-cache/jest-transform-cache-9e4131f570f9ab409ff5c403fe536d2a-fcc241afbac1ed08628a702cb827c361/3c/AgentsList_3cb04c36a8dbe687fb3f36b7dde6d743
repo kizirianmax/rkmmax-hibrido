@@ -1,0 +1,278 @@
+afd5da58f066b3e23d6c4f050634aeae
+/* istanbul ignore next */
+function cov_1q3xwrue4m() {
+  var path = "/home/runner/work/rkmmax-hibrido/rkmmax-hibrido/src/components/AgentsList.jsx";
+  var hash = "e93c1c56316017ca4bf489beb43fcf001b761566";
+  var global = new Function("return this")();
+  var gcv = "__coverage__";
+  var coverageData = {
+    path: "/home/runner/work/rkmmax-hibrido/rkmmax-hibrido/src/components/AgentsList.jsx",
+    statementMap: {
+      "0": {
+        start: {
+          line: 7,
+          column: 2
+        },
+        end: {
+          line: 36,
+          column: 4
+        }
+      },
+      "1": {
+        start: {
+          line: 13,
+          column: 25
+        },
+        end: {
+          line: 13,
+          column: 67
+        }
+      },
+      "2": {
+        start: {
+          line: 14,
+          column: 10
+        },
+        end: {
+          line: 32,
+          column: 12
+        }
+      }
+    },
+    fnMap: {
+      "0": {
+        name: "AgentsList",
+        decl: {
+          start: {
+            line: 6,
+            column: 24
+          },
+          end: {
+            line: 6,
+            column: 34
+          }
+        },
+        loc: {
+          start: {
+            line: 6,
+            column: 37
+          },
+          end: {
+            line: 37,
+            column: 1
+          }
+        },
+        line: 6
+      },
+      "1": {
+        name: "(anonymous_1)",
+        decl: {
+          start: {
+            line: 12,
+            column: 20
+          },
+          end: {
+            line: 12,
+            column: 21
+          }
+        },
+        loc: {
+          start: {
+            line: 12,
+            column: 27
+          },
+          end: {
+            line: 33,
+            column: 9
+          }
+        },
+        line: 12
+      }
+    },
+    branchMap: {
+      "0": {
+        loc: {
+          start: {
+            line: 20,
+            column: 30
+          },
+          end: {
+            line: 20,
+            column: 84
+          }
+        },
+        type: "binary-expr",
+        locations: [{
+          start: {
+            line: 20,
+            column: 30
+          },
+          end: {
+            line: 20,
+            column: 41
+          }
+        }, {
+          start: {
+            line: 20,
+            column: 45
+          },
+          end: {
+            line: 20,
+            column: 84
+          }
+        }],
+        line: 20
+      }
+    },
+    s: {
+      "0": 0,
+      "1": 0,
+      "2": 0
+    },
+    f: {
+      "0": 0,
+      "1": 0
+    },
+    b: {
+      "0": [0, 0]
+    },
+    _coverageSchema: "1a1c01bbd47fc00a2c39e90264f33305004495a9",
+    hash: "e93c1c56316017ca4bf489beb43fcf001b761566"
+  };
+  var coverage = global[gcv] || (global[gcv] = {});
+  if (!coverage[path] || coverage[path].hash !== hash) {
+    coverage[path] = coverageData;
+  }
+  var actualCoverage = coverage[path];
+  {
+    // @ts-ignore
+    cov_1q3xwrue4m = function () {
+      return actualCoverage;
+    };
+  }
+  return actualCoverage;
+}
+cov_1q3xwrue4m();
+// src/components/AgentsList.jsx
+import React from "react";
+import { AGENTS } from "../data/agents.js";
+import "./AgentsList.css"; // vamos criar depois
+
+export default function AgentsList() {
+  /* istanbul ignore next */
+  cov_1q3xwrue4m().f[0]++;
+  cov_1q3xwrue4m().s[0]++;
+  return /*#__PURE__*/ /* istanbul ignore next */React.createElement(
+  /* istanbul ignore next */
+  "main",
+  /* istanbul ignore next */
+  {
+    className: "container"
+  }, /*#__PURE__*/
+  /* istanbul ignore next */
+  React.createElement(
+  /* istanbul ignore next */
+  "h1",
+  /* istanbul ignore next */
+  {
+    className: "pageTitle"
+  }, "Lista de Agentes"), /*#__PURE__*/
+  /* istanbul ignore next */
+  React.createElement(
+  /* istanbul ignore next */
+  "ul",
+  /* istanbul ignore next */
+  {
+    className: "grid"
+  }, AGENTS.map(a => {
+    /* istanbul ignore next */
+    cov_1q3xwrue4m().f[1]++;
+    const avatar =
+    /* istanbul ignore next */
+    (cov_1q3xwrue4m().s[1]++, `${process.env.PUBLIC_URL}${a.avatar_url}`);
+    /* istanbul ignore next */
+    cov_1q3xwrue4m().s[2]++;
+    return /*#__PURE__*/ /* istanbul ignore next */React.createElement(
+    /* istanbul ignore next */
+    "li",
+    /* istanbul ignore next */
+    {
+      key: a.id,
+      className: "card"
+    }, /*#__PURE__*/
+    /* istanbul ignore next */
+    React.createElement(
+    /* istanbul ignore next */
+    "img",
+    /* istanbul ignore next */
+    {
+      className: "avatar",
+      src: avatar,
+      alt: `Avatar de ${a.name}`
+    }), /*#__PURE__*/
+    /* istanbul ignore next */
+    React.createElement(
+    /* istanbul ignore next */
+    "div",
+    /* istanbul ignore next */
+    {
+      className: "info"
+    }, /*#__PURE__*/
+    /* istanbul ignore next */
+    React.createElement(
+    /* istanbul ignore next */
+    "div",
+    /* istanbul ignore next */
+    {
+      className: "nameRow"
+    }, /*#__PURE__*/
+    /* istanbul ignore next */
+    React.createElement(
+    /* istanbul ignore next */
+    "h3",
+    /* istanbul ignore next */
+    {
+      className: "name"
+    }, a.name, " ", 
+    /* istanbul ignore next */
+    (cov_1q3xwrue4m().b[0][0]++, a.principal) &&
+    /* istanbul ignore next */
+    (cov_1q3xwrue4m().b[0][1]++, /*#__PURE__*/
+    /* istanbul ignore next */
+    React.createElement(
+    /* istanbul ignore next */
+    "span",
+    /* istanbul ignore next */
+    {
+      className: "pill"
+    }, "PRINCIPAL"))), /*#__PURE__*/
+    /* istanbul ignore next */
+    React.createElement(
+    /* istanbul ignore next */
+    "span",
+    /* istanbul ignore next */
+    {
+      className: "role"
+    }, a.role)), /*#__PURE__*/
+    /* istanbul ignore next */
+    React.createElement(
+    /* istanbul ignore next */
+    "p",
+    /* istanbul ignore next */
+    {
+      className: "desc"
+    }, a.description), /*#__PURE__*/
+    /* istanbul ignore next */
+    React.createElement(
+    /* istanbul ignore next */
+    "a",
+    /* istanbul ignore next */
+    {
+      className: "chatLink",
+      href: "/app",
+      /* istanbul ignore next */
+      "aria-label": `Chat com ${a.name}`
+    }, "\uD83D\uDCAC Chat no app")));
+  })));
+}
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJuYW1lcyI6WyJjb3ZfMXEzeHdydWU0bSIsImFjdHVhbENvdmVyYWdlIiwiUmVhY3QiLCJBR0VOVFMiLCJBZ2VudHNMaXN0IiwiZiIsInMiLCJjcmVhdGVFbGVtZW50IiwiY2xhc3NOYW1lIiwibWFwIiwiYSIsImF2YXRhciIsInByb2Nlc3MiLCJlbnYiLCJQVUJMSUNfVVJMIiwiYXZhdGFyX3VybCIsImtleSIsImlkIiwic3JjIiwiYWx0IiwibmFtZSIsImIiLCJwcmluY2lwYWwiLCJyb2xlIiwiZGVzY3JpcHRpb24iLCJocmVmIl0sInNvdXJjZXMiOlsiQWdlbnRzTGlzdC5qc3giXSwic291cmNlc0NvbnRlbnQiOlsiLy8gc3JjL2NvbXBvbmVudHMvQWdlbnRzTGlzdC5qc3hcbmltcG9ydCBSZWFjdCBmcm9tIFwicmVhY3RcIjtcbmltcG9ydCB7IEFHRU5UUyB9IGZyb20gXCIuLi9kYXRhL2FnZW50cy5qc1wiO1xuaW1wb3J0IFwiLi9BZ2VudHNMaXN0LmNzc1wiOyAvLyB2YW1vcyBjcmlhciBkZXBvaXNcblxuZXhwb3J0IGRlZmF1bHQgZnVuY3Rpb24gQWdlbnRzTGlzdCgpIHtcbiAgcmV0dXJuIChcbiAgICA8bWFpbiBjbGFzc05hbWU9XCJjb250YWluZXJcIj5cbiAgICAgIDxoMSBjbGFzc05hbWU9XCJwYWdlVGl0bGVcIj5MaXN0YSBkZSBBZ2VudGVzPC9oMT5cblxuICAgICAgPHVsIGNsYXNzTmFtZT1cImdyaWRcIj5cbiAgICAgICAge0FHRU5UUy5tYXAoKGEpID0+IHtcbiAgICAgICAgICBjb25zdCBhdmF0YXIgPSBgJHtwcm9jZXNzLmVudi5QVUJMSUNfVVJMfSR7YS5hdmF0YXJfdXJsfWA7XG4gICAgICAgICAgcmV0dXJuIChcbiAgICAgICAgICAgIDxsaSBrZXk9e2EuaWR9IGNsYXNzTmFtZT1cImNhcmRcIj5cbiAgICAgICAgICAgICAgPGltZyBjbGFzc05hbWU9XCJhdmF0YXJcIiBzcmM9e2F2YXRhcn0gYWx0PXtgQXZhdGFyIGRlICR7YS5uYW1lfWB9IC8+XG4gICAgICAgICAgICAgIDxkaXYgY2xhc3NOYW1lPVwiaW5mb1wiPlxuICAgICAgICAgICAgICAgIDxkaXYgY2xhc3NOYW1lPVwibmFtZVJvd1wiPlxuICAgICAgICAgICAgICAgICAgPGgzIGNsYXNzTmFtZT1cIm5hbWVcIj5cbiAgICAgICAgICAgICAgICAgICAge2EubmFtZX0ge2EucHJpbmNpcGFsICYmIDxzcGFuIGNsYXNzTmFtZT1cInBpbGxcIj5QUklOQ0lQQUw8L3NwYW4+fVxuICAgICAgICAgICAgICAgICAgPC9oMz5cbiAgICAgICAgICAgICAgICAgIDxzcGFuIGNsYXNzTmFtZT1cInJvbGVcIj57YS5yb2xlfTwvc3Bhbj5cbiAgICAgICAgICAgICAgICA8L2Rpdj5cblxuICAgICAgICAgICAgICAgIDxwIGNsYXNzTmFtZT1cImRlc2NcIj57YS5kZXNjcmlwdGlvbn08L3A+XG5cbiAgICAgICAgICAgICAgICA8YSBjbGFzc05hbWU9XCJjaGF0TGlua1wiIGhyZWY9XCIvYXBwXCIgYXJpYS1sYWJlbD17YENoYXQgY29tICR7YS5uYW1lfWB9PlxuICAgICAgICAgICAgICAgICAg8J+SrCBDaGF0IG5vIGFwcFxuICAgICAgICAgICAgICAgIDwvYT5cbiAgICAgICAgICAgICAgPC9kaXY+XG4gICAgICAgICAgICA8L2xpPlxuICAgICAgICAgICk7XG4gICAgICAgIH0pfVxuICAgICAgPC91bD5cbiAgICA8L21haW4+XG4gICk7XG59XG4iXSwibWFwcGluZ3MiOiI7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7O0lBZVk7SUFBQUEsY0FBQSxZQUFBQSxDQUFBO01BQUEsT0FBQUMsY0FBQTtJQUFBO0VBQUE7RUFBQSxPQUFBQSxjQUFBO0FBQUE7QUFBQUQsY0FBQTtBQWZaO0FBQ0Es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
