@@ -42,3 +42,5 @@ lerna-debug.log*
 # Auto-generated files
 src/config/plans.json
 
+.jest-cache/
+test-results/

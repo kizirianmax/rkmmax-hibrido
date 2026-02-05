@@ -3,32 +3,45 @@
  * Testes unitários para motor de automação
  */
 
-const AutomationEngine = require("../AutomationEngine");
+// Mock modules before any imports
+jest.mock("../AuditLogger.js");
+jest.mock("../SpecialistSelector.js");
+jest.mock("../GitHubAutomation.js");
 
-jest.mock("../AuditLogger.js", () => ({
-  __esModule: true,
-  default: jest.fn().mockImplementation(() => ({
-    logAutomationRequest: jest.fn().mockReturnValue("mock-automation-id"),
-    logSecurityValidation: jest.fn(),
-    logAutomationCompletion: jest.fn(),
-    logError: jest.fn(),
-    searchLogs: jest.fn().mockReturnValue([]),
-    logAutomationStarted: jest.fn(),
-    logAutomationCompleted: jest.fn(),
-    logAutomationFailed: jest.fn(),
-    getAutomationHistory: jest.fn().mockReturnValue([]),
-    getAutomationStats: jest.fn().mockReturnValue({
-      totalAutomations: 0,
-      successfulAutomations: 0,
-      failedAutomations: 0,
-    }),
-  })),
-}));
+import AutomationEngine from "../AutomationEngine.js";
+import AuditLogger from "../AuditLogger.js";
+import SpecialistSelector from "../SpecialistSelector.js";
 
 describe("AutomationEngine", () => {
   let engine;
 
   beforeEach(() => {
+    // Clear all mocks before each test
+    jest.clearAllMocks();
+
+    // Setup AuditLogger mock
+    AuditLogger.mockImplementation(() => ({
+      logAutomationRequest: jest.fn().mockReturnValue("LOG_mock-automation-id"),
+      logSecurityValidation: jest.fn(),
+      logAutomationCompletion: jest.fn(),
+      logError: jest.fn(),
+      searchLogs: jest.fn().mockReturnValue([]),
+      logAutomationStarted: jest.fn(),
+      logAutomationCompleted: jest.fn(),
+      logAutomationFailed: jest.fn(),
+      getAutomationHistory: jest.fn().mockReturnValue([]),
+      getAutomationStats: jest.fn().mockReturnValue({
+        totalAutomations: 0,
+        successfulAutomations: 0,
+        failedAutomations: 0,
+      }),
+    }));
+
+    // Setup SpecialistSelector mock
+    SpecialistSelector.mockImplementation(() => ({
+      selectSpecialist: jest.fn().mockResolvedValue("Frontend"),
+    }));
+
     engine = new AutomationEngine({
       aiModel: "gemini-2.0-flash",
       temperature: 0.7,
