@@ -1,8 +1,13 @@
 // src/components/FeedbackButton.test.jsx
+// Setup global fetch mock BEFORE imports
+global.fetch = jest.fn();
+
+/* eslint-disable import/first */
 import React from "react";
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import "@testing-library/jest-dom";
 import FeedbackButton from "./FeedbackButton.jsx";
+/* eslint-enable import/first */
 
 // Mock Sentry and Analytics
 jest.mock("../lib/sentry.js", () => ({
@@ -16,12 +21,12 @@ jest.mock("../lib/analytics.js", () => ({
 
 describe("FeedbackButton Component", () => {
   beforeEach(() => {
-    global.fetch = jest.fn(() =>
-      Promise.resolve({
-        ok: true,
-        json: () => Promise.resolve({ ok: true }),
-      })
-    );
+    global.fetch.mockClear();
+    global.fetch.mockResolvedValue({
+      ok: true,
+      json: async () => ({ ok: true }),
+      text: async () => "success"
+    });
   });
 
   afterEach(() => {
