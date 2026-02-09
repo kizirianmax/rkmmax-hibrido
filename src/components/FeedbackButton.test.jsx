@@ -2,10 +2,12 @@
 // Setup global fetch mock BEFORE imports
 global.fetch = jest.fn();
 
+/* eslint-disable import/first */
 import React from "react";
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import "@testing-library/jest-dom";
 import FeedbackButton from "./FeedbackButton.jsx";
+/* eslint-enable import/first */
 
 // Mock Sentry and Analytics
 jest.mock("../lib/sentry.js", () => ({

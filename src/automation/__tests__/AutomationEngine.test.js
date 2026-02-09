@@ -3,6 +3,7 @@
  * Testes unitários para motor de automação
  */
 
+/* eslint-disable import/first */
 // Mock all dependencies BEFORE importing the module
 jest.mock("../SecurityValidator.js", () => ({
   __esModule: true,
@@ -49,6 +50,7 @@ jest.mock("../SpecialistSelector.js", () => ({
 }));
 
 import AutomationEngine from "../AutomationEngine.js";
+/* eslint-enable import/first */
 
 describe("AutomationEngine", () => {
   let engine;
