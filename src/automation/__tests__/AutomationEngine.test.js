@@ -9,8 +9,11 @@ jest.mock("../SecurityValidator.js", () => ({
   default: jest.fn().mockImplementation(() => ({
     validateFiles: jest.fn().mockResolvedValue({
       isValid: true,
+      validFiles: 1,
+      invalidFiles: 0,
+      warnings: 0,
       errors: [],
-      warnings: [],
+      details: [],
     }),
   })),
 }));
@@ -21,6 +24,13 @@ jest.mock("../AuditLogger.js", () => ({
     logAutomationStarted: jest.fn(),
     logAutomationCompleted: jest.fn(),
     logAutomationFailed: jest.fn(),
+    logAutomationRequest: jest.fn().mockReturnValue("auto-123"),
+    logAutomationCompletion: jest.fn(),
+    logCodeAnalysis: jest.fn(),
+    logSecurityValidation: jest.fn(),
+    logGitCommit: jest.fn(),
+    logError: jest.fn(),
+    searchLogs: jest.fn().mockReturnValue([]),
     getAutomationHistory: jest.fn().mockReturnValue([]),
     getAutomationStats: jest.fn().mockReturnValue({
       totalAutomations: 0,
@@ -165,8 +175,18 @@ describe("AutomationEngine", () => {
       // Override the mock for this specific test
       engine.validator.validateFiles = jest.fn().mockResolvedValue({
         isValid: false,
+        validFiles: 0,
+        invalidFiles: 1,
+        warnings: 0,
         errors: [{ message: "Dangerous code detected" }],
-        warnings: [],
+        details: [
+          {
+            path: "src/dangerous.js",
+            isValid: false,
+            errors: [{ message: "Dangerous code detected" }],
+            warnings: [],
+          },
+        ],
       });
 
       const files = [
@@ -247,8 +267,18 @@ describe("AutomationEngine", () => {
 
       engine.validator.validateFiles = jest.fn().mockResolvedValue({
         isValid: false,
+        validFiles: 0,
+        invalidFiles: 1,
+        warnings: 0,
         errors: [{ message: "Dangerous code" }],
-        warnings: [],
+        details: [
+          {
+            path: "dangerous.js",
+            isValid: false,
+            errors: [{ message: "Dangerous code" }],
+            warnings: [],
+          },
+        ],
       });
 
       const request = {

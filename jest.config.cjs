@@ -86,7 +86,7 @@ module.exports = {
   // LIMPEZA
   // ============================================
   clearMocks: true,
-  resetMocks: true,
+  resetMocks: false,
   restoreMocks: true,
   
   // ============================================
