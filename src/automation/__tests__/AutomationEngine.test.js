@@ -9,43 +9,39 @@ jest.mock("../SecurityValidator.js", () => ({
   default: jest.fn().mockImplementation(() => ({
     validateFiles: jest.fn().mockResolvedValue({
       isValid: true,
-      errors: [],
-      warnings: [],
-    }),
-  })),
+      details: [{ errors: [], warnings: [] }]
+    })
+  }))
 }));
 
 jest.mock("../AuditLogger.js", () => ({
   __esModule: true,
   default: jest.fn().mockImplementation(() => ({
-    logAutomationStarted: jest.fn(),
-    logAutomationCompleted: jest.fn(),
-    logAutomationFailed: jest.fn(),
-    getAutomationHistory: jest.fn().mockReturnValue([]),
-    getAutomationStats: jest.fn().mockReturnValue({
-      totalAutomations: 0,
-      successfulAutomations: 0,
-      failedAutomations: 0,
-    }),
-  })),
+    logAutomationRequest: jest.fn().mockReturnValue('LOG_12345_mock'),
+    logSecurityValidation: jest.fn(),
+    logAutomationCompletion: jest.fn(),
+    logError: jest.fn(),
+    searchLogs: jest.fn().mockReturnValue([])
+  }))
 }));
 
 jest.mock("../GitHubAutomation.js", () => ({
   __esModule: true,
   default: jest.fn().mockImplementation(() => ({
-    createPullRequest: jest.fn().mockResolvedValue({ success: true }),
-  })),
+    createCommit: jest.fn().mockResolvedValue({ commit: { sha: "abc123" } }),
+    createPullRequest: jest.fn().mockResolvedValue({ pr: { url: "https://github.com/test" } })
+  }))
 }));
 
 jest.mock("../SpecialistSelector.js", () => ({
   __esModule: true,
   default: jest.fn().mockImplementation(() => ({
-    selectSpecialist: jest.fn().mockResolvedValue({
+    selectSpecialist: jest.fn().mockReturnValue({
       specialist: "Frontend",
-      confidence: 0.95,
-      reasoning: "Test reasoning",
-    }),
-  })),
+      confidence: 0.9,
+      reasoning: "Mock specialist"
+    })
+  }))
 }));
 
 import AutomationEngine from "../AutomationEngine.js";
@@ -163,10 +159,12 @@ describe("AutomationEngine", () => {
 
     test("deve rejeitar código perigoso", async () => {
       // Override the mock for this specific test
-      engine.validator.validateFiles = jest.fn().mockResolvedValue({
+      engine.validator.validateFiles.mockResolvedValueOnce({
         isValid: false,
-        errors: [{ message: "Dangerous code detected" }],
-        warnings: [],
+        details: [{ 
+          errors: [{ message: "Dangerous code detected" }],
+          warnings: []
+        }]
       });
 
       const files = [
@@ -245,10 +243,12 @@ describe("AutomationEngine", () => {
         totalLines: 1,
       });
 
-      engine.validator.validateFiles = jest.fn().mockResolvedValue({
+      engine.validator.validateFiles.mockResolvedValueOnce({
         isValid: false,
-        errors: [{ message: "Dangerous code" }],
-        warnings: [],
+        details: [{
+          errors: [{ message: "Dangerous code" }],
+          warnings: []
+        }]
       });
 
       const request = {

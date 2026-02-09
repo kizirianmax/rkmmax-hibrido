@@ -234,7 +234,7 @@ class AutomationEngine {
     if (command.includes("estilo") || command.includes("style")) taskType = "STYLE";
     if (command.includes("documentação") || command.includes("documentation"))
       taskType = "DOCUMENTATION";
-    if (command.includes("refatorar") || command.includes("refactor")) taskType = "REFACTOR";
+    if (command.includes("refatorar") || command.includes("refatora") || command.includes("refactor")) taskType = "REFACTOR";
 
     return {
       command,
