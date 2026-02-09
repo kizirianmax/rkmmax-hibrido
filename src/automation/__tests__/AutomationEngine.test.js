@@ -9,8 +9,16 @@ jest.mock("../SecurityValidator.js", () => ({
   default: jest.fn().mockImplementation(() => ({
     validateFiles: jest.fn().mockResolvedValue({
       isValid: true,
-      errors: [],
-      warnings: [],
+      totalFiles: 1,
+      validFiles: 1,
+      invalidFiles: 0,
+      warnings: 0,
+      details: [{
+        path: "test.js",
+        isValid: true,
+        errors: [],
+        warnings: [],
+      }],
     }),
   })),
 }));
@@ -18,15 +26,12 @@ jest.mock("../SecurityValidator.js", () => ({
 jest.mock("../AuditLogger.js", () => ({
   __esModule: true,
   default: jest.fn().mockImplementation(() => ({
-    logAutomationStarted: jest.fn(),
-    logAutomationCompleted: jest.fn(),
-    logAutomationFailed: jest.fn(),
-    getAutomationHistory: jest.fn().mockReturnValue([]),
-    getAutomationStats: jest.fn().mockReturnValue({
-      totalAutomations: 0,
-      successfulAutomations: 0,
-      failedAutomations: 0,
-    }),
+    logAutomationRequest: jest.fn().mockReturnValue("LOG_123"),
+    logSecurityValidation: jest.fn(),
+    logAutomationCompletion: jest.fn(),
+    logCodeAnalysis: jest.fn(),
+    logError: jest.fn(),
+    searchLogs: jest.fn().mockReturnValue([]),
   })),
 }));
 
@@ -103,7 +108,7 @@ describe("AutomationEngine", () => {
     });
 
     test("deve detectar tipo de tarefa REFACTOR", async () => {
-      const analysis = await engine.analyzeCommand("refatora o código de autenticação");
+      const analysis = await engine.analyzeCommand("refatorar o código de autenticação");
 
       expect(analysis.taskType).toBe("REFACTOR");
     });
@@ -165,8 +170,18 @@ describe("AutomationEngine", () => {
       // Override the mock for this specific test
       engine.validator.validateFiles = jest.fn().mockResolvedValue({
         isValid: false,
-        errors: [{ message: "Dangerous code detected" }],
-        warnings: [],
+        totalFiles: 1,
+        validFiles: 0,
+        invalidFiles: 1,
+        warnings: 0,
+        details: [
+          {
+            path: "src/dangerous.js",
+            isValid: false,
+            errors: [{ message: "Dangerous code detected" }],
+            warnings: [],
+          }
+        ],
       });
 
       const files = [
@@ -247,8 +262,18 @@ describe("AutomationEngine", () => {
 
       engine.validator.validateFiles = jest.fn().mockResolvedValue({
         isValid: false,
-        errors: [{ message: "Dangerous code" }],
-        warnings: [],
+        totalFiles: 1,
+        validFiles: 0,
+        invalidFiles: 1,
+        warnings: 0,
+        details: [
+          {
+            path: "dangerous.js",
+            isValid: false,
+            errors: [{ message: "Dangerous code" }],
+            warnings: [],
+          }
+        ],
       });
 
       const request = {
