@@ -30,7 +30,7 @@ describe("FeedbackButton Component", () => {
   });
 
   afterEach(() => {
-    jest.restoreAllMocks();
+    jest.clearAllMocks();
   });
 
   test("renders feedback button", () => {
