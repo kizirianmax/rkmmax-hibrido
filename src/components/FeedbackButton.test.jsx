@@ -25,7 +25,7 @@ describe("FeedbackButton Component", () => {
     global.fetch.mockResolvedValue({
       ok: true,
       json: async () => ({ ok: true }),
-      text: async () => 'success'
+      text: async () => "success"
     });
   });
 
