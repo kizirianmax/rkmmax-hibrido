@@ -11,7 +11,7 @@
 
 import geniusPrompts from "../src/prompts/geniusPrompts.js";
 import { orchestrateEngines } from "./lib/engine-orchestrator.js";
-import { globalMetrics } from "./lib/metrics.js";
+import "./lib/metrics.js";
 
 const { buildGeniusPrompt } = geniusPrompts;
 
