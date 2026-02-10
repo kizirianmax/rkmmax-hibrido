@@ -11,6 +11,7 @@ jest.mock("../SecurityValidator.js", () => ({
       isValid: true,
       errors: [],
       warnings: [],
+      details: [],
     }),
   })),
 }));
@@ -48,18 +49,39 @@ jest.mock("../SpecialistSelector.js", () => ({
   })),
 }));
 
-import AutomationEngine from "../AutomationEngine.js";
+let AutomationEngine;
+
+beforeAll(async () => {
+  const module = await import("../AutomationEngine.js");
+  AutomationEngine = module.default;
+});
 
 describe("AutomationEngine", () => {
   let engine;
+  let mockAuditLogger;
 
   beforeEach(() => {
     jest.clearAllMocks();
+    mockAuditLogger = {
+      logAutomationStarted: jest.fn(),
+      logAutomationCompleted: jest.fn(),
+      logAutomationFailed: jest.fn(),
+      logAutomationRequest: jest.fn().mockReturnValue("test-automation-id"),
+      logSecurityValidation: jest.fn(),
+      logAutomationCompletion: jest.fn(),
+      logError: jest.fn(),
+      searchLogs: jest.fn().mockReturnValue([]),
+      getAutomationHistory: jest.fn().mockReturnValue([]),
+      getAutomationStats: jest.fn().mockReturnValue({
+        totalAutomations: 0,
+        successfulAutomations: 0,
+        failedAutomations: 0,
+      }),
+    };
     engine = new AutomationEngine({
       aiModel: "gemini-2.0-flash",
       temperature: 0.7,
     });
-    // Replace the real auditLogger with our mock
     engine.auditLogger = mockAuditLogger;
   });
 
@@ -170,6 +192,14 @@ describe("AutomationEngine", () => {
         isValid: false,
         errors: [{ message: "Dangerous code detected" }],
         warnings: [],
+        details: [
+          {
+            path: "src/dangerous.js",
+            isValid: false,
+            errors: [{ message: "Dangerous code detected" }],
+            warnings: [],
+          },
+        ],
       });
 
       const files = [
@@ -252,6 +282,14 @@ describe("AutomationEngine", () => {
         isValid: false,
         errors: [{ message: "Dangerous code" }],
         warnings: [],
+        details: [
+          {
+            path: "dangerous.js",
+            isValid: false,
+            errors: [{ message: "Dangerous code" }],
+            warnings: [],
+          },
+        ],
       });
 
       const request = {

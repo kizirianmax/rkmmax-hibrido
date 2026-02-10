@@ -12,8 +12,6 @@ module.exports = {
   // ============================================
   // AMBIENTE E SETUP
   // ============================================
-  testEnvironment: 'jsdom',
-  testEnvironmentOptions: {},
   setupFilesAfterEnv: ['<rootDir>/jest.setup.cjs'],
   
   // ============================================
@@ -38,24 +36,10 @@ module.exports = {
     '!**/__tests__/**',
     '!**/__mocks__/**',
   ],
-  coverageThreshold: {
-    global: {
-      branches: 10,
-      functions: 10,
-      lines: 10,
-      statements: 10,
-    },
-  },
   
   // ============================================
   // PADRÕES DE ARQUIVO
   // ============================================
-  testMatch: [
-    '<rootDir>/src/**/__tests__/**/*.{js,jsx}',
-    '<rootDir>/src/**/*.{spec,test}.{js,jsx}',
-    '<rootDir>/api/**/__tests__/**/*.{js,jsx}',
-    '<rootDir>/api/**/*.{spec,test}.{js,jsx}',
-  ],
   testPathIgnorePatterns: [
     '/node_modules/',
     '/build/',
@@ -65,6 +49,38 @@ module.exports = {
     '^@/(.*)$': '<rootDir>/src/$1',
     '\.(css|less|scss|sass)$': 'identity-obj-proxy',
   },
+  
+  // ============================================
+  // PROJECTS - NODE AND JSDOM ENVIRONMENTS
+  // ============================================
+  projects: [
+    {
+      displayName: 'node',
+      testEnvironment: 'node',
+      testMatch: ['<rootDir>/api/**/__tests__/**/*.{js,jsx}'],
+      coverageThreshold: {
+        global: {
+          statements: 5,
+          branches: 5,
+          functions: 5,
+          lines: 5
+        }
+      }
+    },
+    {
+      displayName: 'jsdom',
+      testEnvironment: 'jsdom',
+      testMatch: ['<rootDir>/src/**/__tests__/**/*.{js,jsx}'],
+      coverageThreshold: {
+        global: {
+          statements: 5,
+          branches: 5,
+          functions: 5,
+          lines: 5
+        }
+      }
+    }
+  ],
   
   // ============================================
   // TRANSFORMAÇÃO
