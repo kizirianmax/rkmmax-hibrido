@@ -41,7 +41,7 @@ export default async function handler(req, res) {
     }
 
     const body = typeof req.body === "string" ? JSON.parse(req.body) : req.body;
-    const { to, subject, html, text, type } = body;
+    const { to, subject, html, text } = body;
 
     if (!to || !subject) {
       return res.status(400).json({

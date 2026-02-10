@@ -174,24 +174,19 @@ async function upsertSubscription({ email, priceId, subscriptionId, status, curr
     .upsert({ ...payload, ...match }, { onConflict });
 
   if (error) {
-    console.error("❌ Error saving to Supabase:", error);
     throw error;
   }
-
-  console.log("✅ Subscription saved/updated:", email, status, priceId);
 }
 
 async function sendWelcomeEmail({ email, session }) {
   if (!email) return;
 
-  console.log("📧 Enviando e-mail de boas-vindas para:", email);
-
   // Extrair nome do cliente se disponível
   const customerName = session?.customer_details?.name || null;
 
   // Determinar plano baseado no priceId ou metadata
-  let planName = "Premium";
   const priceId = session?.metadata?.priceId || null;
+  let planName = "Premium";
   if (priceId?.includes("basic")) planName = "Básico";
   else if (priceId?.includes("inter")) planName = "Intermediário";
 
@@ -258,14 +253,8 @@ async function sendWelcomeEmail({ email, session }) {
       }),
     });
 
-    const result = await response.json();
-
-    if (result.ok) {
-      console.log("✅ E-mail de boas-vindas enviado com sucesso:", result.emailId);
-    } else {
-      console.error("❌ Erro ao enviar e-mail:", result.error);
-    }
+    await response.json();
   } catch (error) {
-    console.error("❌ Erro ao enviar e-mail de boas-vindas:", error);
+    // Error sending welcome email
   }
 }
