@@ -89,18 +89,14 @@ module.exports = async function handler(req, res) {
   }
 
   try {
-    console.log("📝 Recebendo áudio para transcrição...");
-
     const bb = busboy({ headers: req.headers });
     let audioBuffer = null;
 
     bb.on("file", (fieldname, file, info) => {
-      console.log(`📁 Arquivo recebido: ${fieldname} (${info.mimeType})`);
       const chunks = [];
       file.on("data", (data) => chunks.push(data));
       file.on("end", () => {
         audioBuffer = Buffer.concat(chunks);
-        console.log(`✅ Áudio recebido: ${audioBuffer.length} bytes`);
       });
     });
 
@@ -111,16 +107,12 @@ module.exports = async function handler(req, res) {
 
       try {
         const audioBase64 = audioBuffer.toString("base64");
-        console.log("🔄 Iniciando transcrição com Gemini...");
 
         let transcript;
         try {
           transcript = await transcribeWithGemini(audioBase64, process.env.GOOGLE_API_KEY);
-          console.log("✅ Transcrição com Gemini bem-sucedida:", transcript);
         } catch (error) {
-          console.warn("⚠️ Gemini falhou, tentando GROQ...", error.message);
           transcript = await transcribeWithGroq(audioBuffer);
-          console.log("✅ Transcrição com GROQ bem-sucedida:", transcript);
         }
 
         return res.status(200).json({

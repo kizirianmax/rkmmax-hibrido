@@ -28,13 +28,11 @@ class CircuitBreaker {
     // Se circuit está OPEN, verificar se pode tentar novamente
     if (this.state === 'OPEN') {
       if (Date.now() < this.nextAttempt) {
-        console.log(`⚡ Circuit ${this.name} is OPEN - using fallback`);
         if (fallback) return await fallback();
         throw new Error(`Circuit breaker ${this.name} is OPEN`);
       }
       // Tentar reabrir (HALF_OPEN)
       this.state = 'HALF_OPEN';
-      console.log(`🔄 Circuit ${this.name} entering HALF_OPEN state`);
     }
 
     try {
@@ -48,11 +46,8 @@ class CircuitBreaker {
       // Falha
       this.onFailure();
       
-      console.error(`❌ Circuit ${this.name} failed:`, error.message);
-      
       // Se tem fallback, usar
       if (fallback) {
-        console.log(`🔄 Using fallback for ${this.name}`);
         return await fallback();
       }
       
@@ -83,7 +78,6 @@ class CircuitBreaker {
     this.successCount++;
     
     if (this.state === 'HALF_OPEN') {
-      console.log(`✅ Circuit ${this.name} recovered - closing circuit`);
       this.state = 'CLOSED';
     }
   }
@@ -94,7 +88,6 @@ class CircuitBreaker {
     if (this.failures >= this.threshold) {
       this.state = 'OPEN';
       this.nextAttempt = Date.now() + this.resetTimeout;
-      console.log(`🔴 Circuit ${this.name} OPENED - too many failures (${this.failures}/${this.threshold})`);
     }
   }
 

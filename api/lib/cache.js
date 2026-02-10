@@ -51,7 +51,6 @@ class SmartCache {
     this.cache.set(key, cached);
     this.hits++;
 
-    console.log(`💰 CACHE HIT! (${this.getHitRate()}% hit rate)`);
     return cached.value;
   }
 
