@@ -91,7 +91,6 @@ export default async function handler(req, res) {
 
   try {
     const {
-      type = 'genius',
       messages,
       agentType,
       complexity = 'speed',

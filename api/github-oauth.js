@@ -194,7 +194,6 @@ module.exports = async (req, res) => {
     if (pathname === "/api/github-oauth/callback" && req.method === "GET") {
       const url = new URL(req.url, `http://${req.headers.host}`);
       const code = url.searchParams.get("code");
-      const _state = url.searchParams.get("state");
       const error = url.searchParams.get("error");
 
       if (error) {

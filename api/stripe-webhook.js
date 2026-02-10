@@ -132,7 +132,6 @@ export default async function handler(req, res) {
 
       default:
         // Ignore other events
-        console.log(`Ignoring event type: ${stripeEvent.type}`);
         break;
     }
 

@@ -53,13 +53,6 @@ export default async function handler(req, res) {
     // Inicializar Resend
     const resend = new Resend(RESEND_API_KEY);
 
-    console.log("📧 Enviando e-mail via Resend:", {
-      to,
-      subject,
-      type: type || "generic",
-      timestamp: new Date().toISOString(),
-    });
-
     // Enviar e-mail
     const { data, error } = await resend.emails.send({
       from: FROM_EMAIL,
@@ -70,14 +63,11 @@ export default async function handler(req, res) {
     });
 
     if (error) {
-      console.error("❌ Erro Resend:", error);
       return res.status(400).json({
         ok: false,
         error: error.message || "Erro ao enviar e-mail",
       });
     }
-
-    console.log("✅ E-mail enviado com sucesso:", data);
 
     return res.status(200).json({
       ok: true,
