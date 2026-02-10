@@ -65,6 +65,11 @@ describe("AutomationEngine", () => {
       logAutomationStarted: jest.fn(),
       logAutomationCompleted: jest.fn(),
       logAutomationFailed: jest.fn(),
+      logAutomationRequest: jest.fn().mockReturnValue('test-automation-id-123'),
+      logSecurityValidation: jest.fn(),
+      logAutomationCompletion: jest.fn(),
+      logError: jest.fn(),
+      searchLogs: jest.fn().mockReturnValue([]),
       getAutomationHistory: jest.fn().mockReturnValue([]),
       getAutomationStats: jest.fn().mockReturnValue({
         totalAutomations: 0,
