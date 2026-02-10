@@ -278,7 +278,7 @@ export function getCostStats() {
 /**
  * Exportar tudo
  */
-export default {
+const costOptimization = {
   responseCache,
   compressPrompt,
   deduplicateMessages,
@@ -289,3 +289,5 @@ export default {
   cacheResponse,
   getCostStats,
 };
+
+export default costOptimization;

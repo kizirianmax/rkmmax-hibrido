@@ -298,6 +298,8 @@ Você está recebendo este e-mail porque criou uma conta no RKMMAX.
   `;
 }
 
-export default {
+const emailService = {
   sendWelcomeEmail,
 };
+
+export default emailService;

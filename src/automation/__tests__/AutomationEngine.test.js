@@ -48,7 +48,20 @@ jest.mock("../SpecialistSelector.js", () => ({
   })),
 }));
 
+// eslint-disable-next-line import/first
 import AutomationEngine from "../AutomationEngine.js";
+
+const mockAuditLogger = {
+  logAutomationStarted: jest.fn(),
+  logAutomationCompleted: jest.fn(),
+  logAutomationFailed: jest.fn(),
+  getAutomationHistory: jest.fn().mockReturnValue([]),
+  getAutomationStats: jest.fn().mockReturnValue({
+    totalAutomations: 0,
+    successfulAutomations: 0,
+    failedAutomations: 0,
+  }),
+};
 
 describe("AutomationEngine", () => {
   let engine;

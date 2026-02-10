@@ -324,10 +324,12 @@ export function getNextFallback(failedProvider, triedProviders = []) {
   return null;
 }
 
-export default {
+const intelligentRouter = {
   analyzeComplexity,
   routeToProvider,
   intelligentRoute,
   getNextFallback,
   FALLBACK_CHAIN,
 };
+
+export default intelligentRouter;

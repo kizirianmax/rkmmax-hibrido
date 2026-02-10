@@ -300,7 +300,7 @@ export function buildGeniusPrompt(type, options = {}) {
 /**
  * Exportar tudo
  */
-export default {
+const geniusPrompts = {
   SERGINHO_GENIUS_PROMPT,
   SPECIALIST_GENIUS_PROMPT,
   HYBRID_GENIUS_PROMPT,
@@ -308,3 +308,5 @@ export default {
   SELF_REFLECTION_SUFFIX,
   buildGeniusPrompt,
 };
+
+export default geniusPrompts;

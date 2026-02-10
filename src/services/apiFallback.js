@@ -252,7 +252,9 @@ async function makeClaudeRequest(endpoint, apiKey, requestData) {
   return await response.json();
 }
 
-export default {
+const apiFallback = {
   requestWithFallback,
   getUsageStats,
 };
+
+export default apiFallback;

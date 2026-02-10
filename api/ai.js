@@ -267,11 +267,10 @@ async function callKizi(messages, systemPrompt, complexity, geminiKey, groqKey) 
     if (!attempt.requires) continue;
 
     try {
-      console.log(`🤖 Tentando ${attempt.name}...`);
       const response = await attempt.fn();
       return { response, model: attempt.name };
     } catch (error) {
-      console.error(`❌ ${attempt.name} falhou:`, error.message);
+      // Continue to next engine
     }
   }
 
@@ -310,7 +309,6 @@ export default async function handler(req, res) {
 
     // Analisar complexidade automaticamente ou usar modelo forçado
     const complexity = forceModel || analyzeComplexity(messages);
-    console.log(`🤖 KIZI AI - Type: ${type} | Complexity: ${complexity}`);
 
     // ========================================
     // TIPO: GENIUS (Serginho + Híbrido)
@@ -322,7 +320,6 @@ export default async function handler(req, res) {
 
       // Verificar cache
       if (optimized.cached) {
-        console.log("💰 CACHE HIT!");
         return res.status(200).json({
           ...optimized.response,
           cached: true,
@@ -381,7 +378,6 @@ export default async function handler(req, res) {
       const optimized = optimizeRequest(messages, systemPrompt);
 
       if (optimized.cached) {
-        console.log("💰 CACHE HIT!");
         return res.status(200).json({
           ...optimized.response,
           cached: true,
