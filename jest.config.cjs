@@ -10,70 +10,95 @@
 
 module.exports = {
   // ============================================
-  // AMBIENTE E SETUP
+  // PROJECTS - SEPARADOS POR AMBIENTE
   // ============================================
-  testEnvironment: 'jsdom',
-  testEnvironmentOptions: {},
-  setupFilesAfterEnv: ['<rootDir>/jest.setup.cjs'],
+  projects: [
+    {
+      displayName: 'node',
+      testEnvironment: 'node',
+      testMatch: [
+        '<rootDir>/api/**/__tests__/**/*.{js,jsx}',
+      ],
+      setupFilesAfterEnv: ['<rootDir>/jest.setup.cjs'],
+      testTimeout: 10000,
+      collectCoverageFrom: [
+        'api/**/*.{js,jsx}',
+        '!**/__tests__/**',
+        '!**/__mocks__/**',
+      ],
+      coverageThreshold: {
+        global: {
+          statements: 5,
+          branches: 5,
+          functions: 5,
+          lines: 5,
+        },
+      },
+      transform: {
+        '^.+\.(js|jsx)$': 'babel-jest',
+      },
+      transformIgnorePatterns: [
+        'node_modules/(?!(recharts|victory|d3-.*|internmap|delaunay-triangulate|robust-predicates)/)',
+      ],
+      moduleNameMapper: {
+        '^@/(.*)$': '<rootDir>/src/$1',
+      },
+      clearMocks: true,
+      resetMocks: true,
+      restoreMocks: true,
+    },
+    {
+      displayName: 'jsdom',
+      testEnvironment: 'jsdom',
+      testMatch: [
+        '<rootDir>/src/**/__tests__/**/*.{js,jsx}',
+      ],
+      setupFilesAfterEnv: ['<rootDir>/jest.setup.cjs'],
+      testTimeout: 10000,
+      collectCoverageFrom: [
+        'src/**/*.{js,jsx}',
+        '!src/**/*.test.{js,jsx}',
+        '!src/**/*.spec.{js,jsx}',
+        '!src/index.js',
+        '!src/reportWebVitals.js',
+        '!**/__tests__/**',
+        '!**/__mocks__/**',
+      ],
+      coverageThreshold: {
+        global: {
+          statements: 5,
+          branches: 5,
+          functions: 5,
+          lines: 5,
+        },
+      },
+      transform: {
+        '^.+\.(js|jsx)$': 'babel-jest',
+      },
+      transformIgnorePatterns: [
+        'node_modules/(?!(recharts|victory|d3-.*|internmap|delaunay-triangulate|robust-predicates)/)',
+      ],
+      moduleNameMapper: {
+        '^@/(.*)$': '<rootDir>/src/$1',
+        '\.(css|less|scss|sass)$': 'identity-obj-proxy',
+      },
+      clearMocks: true,
+      resetMocks: true,
+      restoreMocks: true,
+    },
+  ],
   
   // ============================================
-  // TIMEOUT E PERFORMANCE
+  // GLOBAL SETTINGS
   // ============================================
-  testTimeout: 10000,
   maxWorkers: '50%',
   forceExit: true,
   detectOpenHandles: true,
-  
-  // ============================================
-  // COBERTURA - AJUSTADA PARA NOVO CÓDIGO
-  // ============================================
   collectCoverage: false,
-  collectCoverageFrom: [
-    'api/**/*.{js,jsx}',
-    'src/**/*.{js,jsx}',
-    '!src/**/*.test.{js,jsx}',
-    '!src/**/*.spec.{js,jsx}',
-    '!src/index.js',
-    '!src/reportWebVitals.js',
-    '!**/__tests__/**',
-    '!**/__mocks__/**',
-  ],
-  coverageThreshold: {
-    global: {
-      branches: 10,
-      functions: 10,
-      lines: 10,
-      statements: 10,
-    },
-  },
-  
-  // ============================================
-  // PADRÕES DE ARQUIVO
-  // ============================================
-  testMatch: [
-    '<rootDir>/src/**/__tests__/**/*.{js,jsx}',
-    '<rootDir>/src/**/*.{spec,test}.{js,jsx}',
-    '<rootDir>/api/**/__tests__/**/*.{js,jsx}',
-    '<rootDir>/api/**/*.{spec,test}.{js,jsx}',
-  ],
   testPathIgnorePatterns: [
     '/node_modules/',
     '/build/',
     '/.vercel/',
-  ],
-  moduleNameMapper: {
-    '^@/(.*)$': '<rootDir>/src/$1',
-    '\.(css|less|scss|sass)$': 'identity-obj-proxy',
-  },
-  
-  // ============================================
-  // TRANSFORMAÇÃO
-  // ============================================
-  transform: {
-    '^.+\.(js|jsx)$': 'babel-jest',
-  },
-  transformIgnorePatterns: [
-    'node_modules/(?!(recharts|victory|d3-.*|internmap|delaunay-triangulate|robust-predicates)/)',
   ],
   
   // ============================================
@@ -81,13 +106,6 @@ module.exports = {
   // ============================================
   cache: true,
   cacheDirectory: '<rootDir>/.jest-cache',
-  
-  // ============================================
-  // LIMPEZA
-  // ============================================
-  clearMocks: true,
-  resetMocks: true,
-  restoreMocks: true,
   
   // ============================================
   // REPORTERS

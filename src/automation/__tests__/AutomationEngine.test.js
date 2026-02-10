@@ -48,13 +48,35 @@ jest.mock("../SpecialistSelector.js", () => ({
   })),
 }));
 
-import AutomationEngine from "../AutomationEngine.js";
+let AutomationEngine;
+let mockAuditLogger;
 
 describe("AutomationEngine", () => {
   let engine;
 
+  beforeAll(async () => {
+    const module = await import("../AutomationEngine.js");
+    AutomationEngine = module.default;
+  });
+
   beforeEach(() => {
     jest.clearAllMocks();
+    mockAuditLogger = {
+      logAutomationStarted: jest.fn(),
+      logAutomationCompleted: jest.fn(),
+      logAutomationFailed: jest.fn(),
+      logAutomationRequest: jest.fn().mockReturnValue("test-automation-id-123"),
+      logSecurityValidation: jest.fn(),
+      logAutomationCompletion: jest.fn(),
+      logError: jest.fn(),
+      searchLogs: jest.fn().mockReturnValue([]),
+      getAutomationHistory: jest.fn().mockReturnValue([]),
+      getAutomationStats: jest.fn().mockReturnValue({
+        totalAutomations: 0,
+        successfulAutomations: 0,
+        failedAutomations: 0,
+      }),
+    };
     engine = new AutomationEngine({
       aiModel: "gemini-2.0-flash",
       temperature: 0.7,
@@ -168,8 +190,12 @@ describe("AutomationEngine", () => {
       // Override the mock for this specific test
       engine.validator.validateFiles = jest.fn().mockResolvedValue({
         isValid: false,
-        errors: [{ message: "Dangerous code detected" }],
-        warnings: [],
+        details: [
+          {
+            errors: [{ message: "Dangerous code detected" }],
+            warnings: [],
+          },
+        ],
       });
 
       const files = [
