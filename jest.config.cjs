@@ -47,6 +47,7 @@ module.exports = {
       statements: 5,
     },
   },
+  coverageReporters: ['json', 'lcov', 'text', 'clover'],
   
   // ============================================
   // PADRÕES DE ARQUIVO
