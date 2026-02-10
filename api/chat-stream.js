@@ -11,7 +11,7 @@
 
 import geniusPrompts from "../src/prompts/geniusPrompts.js";
 import { orchestrateEngines } from "./lib/engine-orchestrator.js";
-import { globalMetrics } from "./lib/metrics.js";
+import "./lib/metrics.js";
 
 const { buildGeniusPrompt } = geniusPrompts;
 
@@ -71,7 +71,6 @@ async function streamResponse(res, messages, systemPrompt, options) {
     res.end();
 
   } catch (error) {
-    console.error('❌ Streaming error:', error);
     
     res.write('event: error\n');
     res.write(`data: ${JSON.stringify({ 
@@ -117,8 +116,6 @@ export default async function handler(req, res) {
     // Construir system prompt
     const promptType = agentType || 'serginho';
     const systemPrompt = buildGeniusPrompt(promptType);
-
-    console.log(`🌊 Starting SSE stream - Type: ${type} | Complexity: ${complexity}`);
 
     // Stream a resposta
     await streamResponse(res, messages, systemPrompt, {

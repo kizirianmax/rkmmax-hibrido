@@ -11,6 +11,7 @@ jest.mock("../SecurityValidator.js", () => ({
       isValid: true,
       errors: [],
       warnings: [],
+      details: [],
     }),
   })),
 }));
@@ -40,27 +41,69 @@ jest.mock("../GitHubAutomation.js", () => ({
 jest.mock("../SpecialistSelector.js", () => ({
   __esModule: true,
   default: jest.fn().mockImplementation(() => ({
-    selectSpecialist: jest.fn().mockResolvedValue({
-      specialist: "Frontend",
-      confidence: 0.95,
-      reasoning: "Test reasoning",
-    }),
+    selectSpecialist: jest.fn().mockResolvedValue("Frontend"),
   })),
 }));
 
 import AutomationEngine from "../AutomationEngine.js";
+
+// Define mockAuditLogger with all required methods
+const mockAuditLogger = {
+  logAutomationStarted: jest.fn(),
+  logAutomationCompleted: jest.fn(),
+  logAutomationFailed: jest.fn(),
+  logAutomationRequest: jest.fn().mockReturnValue("test-automation-id-123"),
+  logSecurityValidation: jest.fn(),
+  logAutomationCompletion: jest.fn(),
+  logError: jest.fn(),
+  searchLogs: jest.fn().mockReturnValue([]),
+  getAutomationHistory: jest.fn().mockReturnValue([]),
+  getAutomationStats: jest.fn().mockReturnValue({
+    totalAutomations: 0,
+    successfulAutomations: 0,
+    failedAutomations: 0,
+  }),
+};
 
 describe("AutomationEngine", () => {
   let engine;
 
   beforeEach(() => {
     jest.clearAllMocks();
+    
+    // Reset mock return values after clearAllMocks
+    mockAuditLogger.logAutomationRequest.mockReturnValue("test-automation-id-123");
+    mockAuditLogger.searchLogs.mockReturnValue([]);
+    mockAuditLogger.getAutomationHistory.mockReturnValue([]);
+    mockAuditLogger.getAutomationStats.mockReturnValue({
+      totalAutomations: 0,
+      successfulAutomations: 0,
+      failedAutomations: 0,
+    });
+    
     engine = new AutomationEngine({
       aiModel: "gemini-2.0-flash",
       temperature: 0.7,
     });
     // Replace the real auditLogger with our mock
     engine.auditLogger = mockAuditLogger;
+    
+    // Ensure validator has all required methods
+    if (!engine.validator.validateFiles) {
+      engine.validator.validateFiles = jest.fn().mockResolvedValue({
+        isValid: true,
+        errors: [],
+        warnings: [],
+        details: [], // Add details array
+      });
+    }
+    
+    // Ensure specialistSelector has all required methods
+    if (!engine.specialistSelector.selectSpecialist) {
+      engine.specialistSelector.selectSpecialist = jest.fn().mockResolvedValue("Frontend");
+    } else {
+      engine.specialistSelector.selectSpecialist.mockResolvedValue("Frontend");
+    }
   });
 
   describe("initialization", () => {
@@ -170,6 +213,7 @@ describe("AutomationEngine", () => {
         isValid: false,
         errors: [{ message: "Dangerous code detected" }],
         warnings: [],
+        details: [{ errors: [{ message: "Dangerous code detected" }], warnings: [] }],
       });
 
       const files = [
@@ -252,6 +296,7 @@ describe("AutomationEngine", () => {
         isValid: false,
         errors: [{ message: "Dangerous code" }],
         warnings: [],
+        details: [{ errors: [{ message: "Dangerous code" }], warnings: [] }],
       });
 
       const request = {
