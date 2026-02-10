@@ -9,8 +9,7 @@ jest.mock("../SecurityValidator.js", () => ({
   default: jest.fn().mockImplementation(() => ({
     validateFiles: jest.fn().mockResolvedValue({
       isValid: true,
-      errors: [],
-      warnings: [],
+      details: [],
     }),
   })),
 }));
@@ -40,11 +39,7 @@ jest.mock("../GitHubAutomation.js", () => ({
 jest.mock("../SpecialistSelector.js", () => ({
   __esModule: true,
   default: jest.fn().mockImplementation(() => ({
-    selectSpecialist: jest.fn().mockResolvedValue({
-      specialist: "Frontend",
-      confidence: 0.95,
-      reasoning: "Test reasoning",
-    }),
+    selectSpecialist: jest.fn().mockResolvedValue("Frontend"),
   })),
 }));
 
@@ -80,6 +75,14 @@ describe("AutomationEngine", () => {
     });
     // Replace the real auditLogger with our mock
     engine.auditLogger = mockAuditLogger;
+    
+    // Ensure validator mock has the validateFiles method
+    if (!engine.validator.validateFiles) {
+      engine.validator.validateFiles = jest.fn().mockResolvedValue({
+        isValid: true,
+        details: [],
+      });
+    }
   });
 
   describe("initialization", () => {
@@ -187,8 +190,12 @@ describe("AutomationEngine", () => {
       // Override the mock for this specific test
       engine.validator.validateFiles = jest.fn().mockResolvedValue({
         isValid: false,
-        errors: [{ message: "Dangerous code detected" }],
-        warnings: [],
+        details: [
+          {
+            errors: [{ message: "Dangerous code detected" }],
+            warnings: [],
+          },
+        ],
       });
 
       const files = [
