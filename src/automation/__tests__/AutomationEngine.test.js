@@ -11,6 +11,7 @@ jest.mock("../SecurityValidator.js", () => ({
       isValid: true,
       errors: [],
       warnings: [],
+      details: [],
     }),
   })),
 }));
@@ -65,6 +66,11 @@ describe("AutomationEngine", () => {
       logAutomationStarted: jest.fn(),
       logAutomationCompleted: jest.fn(),
       logAutomationFailed: jest.fn(),
+      logAutomationRequest: jest.fn().mockReturnValue("test-automation-id"),
+      logSecurityValidation: jest.fn(),
+      logAutomationCompletion: jest.fn(),
+      logError: jest.fn(),
+      searchLogs: jest.fn().mockReturnValue([]),
       getAutomationHistory: jest.fn().mockReturnValue([]),
       getAutomationStats: jest.fn().mockReturnValue({
         totalAutomations: 0,
@@ -186,6 +192,7 @@ describe("AutomationEngine", () => {
         isValid: false,
         errors: [{ message: "Dangerous code detected" }],
         warnings: [],
+        details: [{ errors: [{ message: "Dangerous code detected" }], warnings: [] }],
       });
 
       const files = [

@@ -8,7 +8,7 @@ module.exports = {
         '<rootDir>/src/automation/**/__tests__/**/*.{js,jsx}',
       ],
       transform: {
-        '^.+\\.(js|jsx)$': ['babel-jest', { rootMode: 'upward' }],
+        '^.+\\.(js|jsx)$': 'babel-jest',
       },
       coveragePathIgnorePatterns: [
         '/node_modules/',
@@ -32,7 +32,7 @@ module.exports = {
         '<rootDir>/src/**/*.test.{js,jsx}',
       ],
       transform: {
-        '^.+\\.(js|jsx)$': ['babel-jest', { rootMode: 'upward' }],
+        '^.+\\.(js|jsx)$': 'babel-jest',
       },
       setupFilesAfterEnv: ['<rootDir>/jest.setup.cjs'],
       moduleNameMapper: {
