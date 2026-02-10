@@ -45,6 +45,7 @@ jest.mock("../SpecialistSelector.js", () => ({
   })),
 }));
 
+// eslint-disable-next-line import/first
 import AutomationEngine from "../AutomationEngine.js";
 
 // Define mockAuditLogger with all required methods
