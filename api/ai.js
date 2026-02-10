@@ -427,7 +427,6 @@ export default async function handler(req, res) {
       hint: "Use type: genius, specialist, or transcribe",
     });
   } catch (error) {
-    console.error("❌ KIZI AI error:", error);
     return res.status(500).json({
       error: "Internal server error",
       message: error.message,

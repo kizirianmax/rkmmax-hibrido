@@ -126,8 +126,6 @@ export default async function handler(req, res) {
     });
 
   } catch (error) {
-    console.error('❌ Stream handler error:', error);
-    
     // Se headers já foram enviados, não podemos enviar JSON
     if (res.headersSent) {
       res.write('event: error\n');
