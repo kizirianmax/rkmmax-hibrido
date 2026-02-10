@@ -7,7 +7,7 @@ module.exports = {
         '<rootDir>/api/**/__tests__/**/*.{js,jsx}',
       ],
       transform: {
-        '^.+\\.(js|jsx)$': ['babel-jest', { rootMode: 'upward' }],
+        '^.+\\.(js|jsx)$': 'babel-jest',
       },
       coverageThreshold: {
         global: {
@@ -25,7 +25,7 @@ module.exports = {
         '<rootDir>/src/**/__tests__/**/*.{js,jsx}',
       ],
       transform: {
-        '^.+\\.(js|jsx)$': ['babel-jest', { rootMode: 'upward' }],
+        '^.+\\.(js|jsx)$': 'babel-jest',
       },
       setupFilesAfterEnv: ['<rootDir>/jest.setup.cjs'],
       moduleNameMapper: {
