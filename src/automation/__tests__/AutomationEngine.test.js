@@ -54,7 +54,8 @@ describe("AutomationEngine", () => {
   let mockAuditLogger;
 
   beforeAll(async () => {
-    // Dynamic import to ensure mocks are applied
+    // Dynamic import to ensure mocks are applied BEFORE module loads
+    // This is required because Jest mock hoisting doesn't work reliably with ES modules
     const module = await import("../AutomationEngine.js");
     AutomationEngine = module.default;
   });
