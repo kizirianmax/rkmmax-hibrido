@@ -53,6 +53,11 @@ import AutomationEngine from "../AutomationEngine.js";
 
 // Define mockAuditLogger for use in tests
 const mockAuditLogger = {
+  logAutomationRequest: jest.fn().mockReturnValue('automation-id-123'),
+  logSecurityValidation: jest.fn(),
+  logAutomationCompletion: jest.fn(),
+  logError: jest.fn(),
+  searchLogs: jest.fn().mockReturnValue([]),
   logAutomationStarted: jest.fn(),
   logAutomationCompleted: jest.fn(),
   logAutomationFailed: jest.fn(),
