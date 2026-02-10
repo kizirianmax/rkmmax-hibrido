@@ -83,6 +83,11 @@ describe("AutomationEngine", () => {
         details: [],
       });
     }
+    
+    // Ensure specialistSelector mock has the selectSpecialist method
+    if (!engine.specialistSelector.selectSpecialist) {
+      engine.specialistSelector.selectSpecialist = jest.fn().mockResolvedValue("Frontend");
+    }
   });
 
   describe("initialization", () => {
