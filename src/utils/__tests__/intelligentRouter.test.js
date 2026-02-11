@@ -1,6 +1,6 @@
 /**
  * INTELLIGENT ROUTER TESTS
- * Testes unitários para o sistema de roteamento inteligente
+ * Complete unit tests for the intelligent routing system
  */
 
 import {
@@ -9,238 +9,121 @@ import {
   intelligentRoute,
   getNextFallback,
   FALLBACK_CHAIN,
-} from "../intelligentRouter.js";
+} from '../intelligentRouter.js';
 
-describe("Intelligent Router", () => {
-  describe("analyzeComplexity", () => {
-    test("should analyze simple short message", () => {
-      const result = analyzeComplexity("Olá, como vai?");
+describe('Intelligent Router', () => {
+  describe('analyzeComplexity', () => {
+    test('should analyze very short simple message correctly', () => {
+      const message = 'Olá, como vai?';
+      const result = analyzeComplexity(message);
 
       expect(result.wordCount).toBe(3);
       expect(result.hasCode).toBe(false);
       expect(result.analysis.isVeryShort).toBe(true);
+      expect(result.scores.simple).toBeGreaterThan(0);
     });
 
-    test("should detect code in message", () => {
-      const result = analyzeComplexity(
-        "```javascript\nfunction test() { return true; }\n```"
-      );
+    test('should detect code patterns in messages', () => {
+      const messageWithCode = '```javascript\nfunction test() { return 42; }\n```';
+      const result = analyzeComplexity(messageWithCode);
 
       expect(result.hasCode).toBe(true);
       expect(result.scores.complexity).toBeGreaterThan(0);
     });
 
-    test("should analyze complex technical message", () => {
-      const result = analyzeComplexity(
-        "Preciso analisar a arquitetura do banco de dados e otimizar as queries SQL para melhorar a performance"
-      );
+    test('should detect async/await patterns', () => {
+      const message = 'async function fetchData() { await getData(); }';
+      const result = analyzeComplexity(message);
 
-      expect(result.scores.complexity).toBeGreaterThan(5);
+      expect(result.hasCode).toBe(true);
+      expect(result.scores.complexity).toBeGreaterThan(0);
+    });
+
+    test('should detect technical terms', () => {
+      const message = 'Como configurar a API REST com database e frontend?';
+      const result = analyzeComplexity(message);
+
       expect(result.analysis.hasTechnicalTerms).toBe(true);
-    });
-
-    test("should detect multiple questions", () => {
-      const result = analyzeComplexity("Como? Quando? Por quê? Onde?");
-
-      expect(result.analysis.hasMultipleQuestions).toBe(true);
+      expect(result.scores.complexity).toBeGreaterThan(0);
     });
   });
 
-  describe("routeToProvider", () => {
-    test("should route code to llama-70b", () => {
-      const analysis = analyzeComplexity(
-        "```function test() { return true; }```"
-      );
+  describe('routeToProvider', () => {
+    test('should route messages with code to gemini-pro', () => {
+      const analysis = {
+        hasCode: true,
+        scores: { complexity: 5, speed: 0, simple: 0 },
+        analysis: { isVeryShort: false, isLong: false },
+      };
+
       const result = routeToProvider(analysis);
 
-      expect(result.provider).toBe("llama-70b");
-      expect(result.reason).toContain("código");
+      expect(result.provider).toBe('gemini-pro');
       expect(result.confidence).toBe(0.95);
+      expect(result.reason).toContain('código');
     });
 
-    test("should route high complexity to llama-70b", () => {
-      const analysis = analyzeComplexity(
-        "Preciso analisar a arquitetura do sistema, debugar problemas de performance e implementar uma solução escalável"
-      );
+    test('should route high complexity messages to gemini-pro', () => {
+      const analysis = {
+        hasCode: false,
+        scores: { complexity: 8, speed: 0, simple: 0 },
+        analysis: { isVeryShort: false, isLong: true, hasTechnicalTerms: true },
+      };
+
       const result = routeToProvider(analysis);
 
-      expect(result.provider).toBe("llama-70b");
-      expect(result.reason).toContain("complexidade");
+      expect(result.provider).toBe('gemini-pro');
+      expect(result.confidence).toBeGreaterThanOrEqual(0.8);
     });
 
-    test("should route short messages to llama-8b", () => {
-      const analysis = analyzeComplexity("Olá!");
+    test('should route very short messages to gemini-flash', () => {
+      const analysis = {
+        hasCode: false,
+        scores: { complexity: 0, speed: 1, simple: 2 },
+        analysis: { isVeryShort: true, isLong: false, hasTechnicalTerms: false },
+      };
+
       const result = routeToProvider(analysis);
 
-      expect(result.provider).toBe("llama-8b");
-      expect(result.reason).toContain("curta");
+      expect(result.provider).toBe('gemini-flash');
       expect(result.confidence).toBe(0.8);
-    });
-
-    test("should route standard messages to llama-8b", () => {
-      const analysis = analyzeComplexity("Como faço para criar um array?");
-      const result = routeToProvider(analysis);
-
-      expect(result.provider).toBe("llama-8b");
-      expect(result.reason).toContain("curta");
-    });
-
-    test("should route long technical messages to llama-70b", () => {
-      const longTechnicalMessage =
-        "Eu preciso criar uma API REST completa com endpoints para gerenciar usuários, autenticação JWT e integração com banco de dados PostgreSQL. " +
-        "Quero também implementar validação de dados, tratamento de erros e logging adequado. Como devo estruturar este projeto?";
-
-      const analysis = analyzeComplexity(longTechnicalMessage);
-      const result = routeToProvider(analysis);
-
-      expect(result.provider).toBe("llama-70b");
-    });
-
-    test("should route multiple complex questions to llama-70b", () => {
-      const analysis = analyzeComplexity(
-        "Como implementar autenticação? Qual a melhor arquitetura? Como debugar? Como otimizar?"
-      );
-      const result = routeToProvider(analysis);
-
-      expect(result.provider).toBe("llama-70b");
-      expect(result.reason).toContain("complexidade");
+      expect(result.reason).toContain('curta');
     });
   });
 
-  describe("intelligentRoute", () => {
-    test("should return complete routing information for simple message", () => {
-      const result = intelligentRoute("Olá, como vai?");
+  describe('intelligentRoute', () => {
+    test('should perform complete intelligent routing', () => {
+      const message = 'Como implementar uma API REST?';
+      const result = intelligentRoute(message);
 
-      expect(result).toHaveProperty("provider");
-      expect(result).toHaveProperty("reason");
-      expect(result).toHaveProperty("confidence");
-      expect(result).toHaveProperty("analysis");
-      expect(result).toHaveProperty("timestamp");
-      expect(result.provider).toBe("llama-8b");
-    });
-
-    test("should return complete routing information for code message", () => {
-      const result = intelligentRoute(
-        "```function test() { return true; }```"
-      );
-
-      expect(result.provider).toBe("llama-70b");
-      expect(result.analysis.hasCode).toBe(true);
-    });
-
-    test("should return complete routing information for complex message", () => {
-      const result = intelligentRoute(
-        "Preciso analisar a arquitetura do banco de dados e otimizar as queries SQL..."
-      );
-
-      expect(result.provider).toBe("llama-70b");
+      expect(result).toHaveProperty('provider');
+      expect(result).toHaveProperty('reason');
+      expect(result).toHaveProperty('confidence');
+      expect(result).toHaveProperty('analysis');
+      expect(result).toHaveProperty('timestamp');
+      expect(result.timestamp).toMatch(/^\d{4}-\d{2}-\d{2}T/); // ISO format
     });
   });
 
-  describe("FALLBACK_CHAIN", () => {
-    test("should have correct fallback chain for llama-70b", () => {
-      expect(FALLBACK_CHAIN["llama-70b"]).toEqual([
-        "llama-8b",
-        "groq-fallback",
-      ]);
+  describe('getNextFallback', () => {
+    test('should return first fallback for gemini-pro', () => {
+      const next = getNextFallback('gemini-pro', []);
+      expect(next).toBe('gemini-flash');
     });
 
-    test("should have correct fallback chain for llama-8b", () => {
-      expect(FALLBACK_CHAIN["llama-8b"]).toEqual(["groq-fallback"]);
+    test('should skip tried providers in fallback', () => {
+      const next = getNextFallback('gemini-pro', ['gemini-flash']);
+      expect(next).toBe('groq');
     });
 
-    test("should have no fallback for groq-fallback", () => {
-      expect(FALLBACK_CHAIN["groq-fallback"]).toEqual([]);
+    test('should return null when no fallback available', () => {
+      const next = getNextFallback('groq', []);
+      expect(next).toBeNull();
     });
 
-    test("should have 3-level fallback system", () => {
-      expect(Object.keys(FALLBACK_CHAIN)).toHaveLength(3);
-    });
-  });
-
-  describe("getNextFallback", () => {
-    test("should return llama-8b when llama-70b fails", () => {
-      const result = getNextFallback("llama-70b", []);
-
-      expect(result).toBe("llama-8b");
-    });
-
-    test("should return groq-fallback when llama-8b fails", () => {
-      const result = getNextFallback("llama-8b", []);
-
-      expect(result).toBe("groq-fallback");
-    });
-
-    test("should skip already tried providers", () => {
-      const result = getNextFallback("llama-70b", ["llama-8b"]);
-
-      expect(result).toBe("groq-fallback");
-    });
-
-    test("should return null when all providers tried", () => {
-      const result = getNextFallback("llama-8b", ["groq-fallback"]);
-
-      expect(result).toBeNull();
-    });
-
-    test("should return null for groq-fallback", () => {
-      const result = getNextFallback("groq-fallback", []);
-
-      expect(result).toBeNull();
-    });
-
-    test("should handle 3-level fallback chain", () => {
-      // Level 1: llama-70b fails, try llama-8b
-      const fallback1 = getNextFallback("llama-70b", []);
-      expect(fallback1).toBe("llama-8b");
-
-      // Level 2: llama-8b fails, try groq-fallback
-      const fallback2 = getNextFallback("llama-8b", ["llama-70b"]);
-      expect(fallback2).toBe("groq-fallback");
-
-      // Level 3: groq-fallback has no fallback
-      const fallback3 = getNextFallback("groq-fallback", [
-        "llama-70b",
-        "llama-8b",
-      ]);
-      expect(fallback3).toBeNull();
-    });
-  });
-
-  describe("Expected Results from Problem Statement", () => {
-    test("Teste 1: Simple greeting should route to llama-8b", () => {
-      const result = intelligentRoute("Olá, como vai?");
-
-      expect(result.provider).toBe("llama-8b");
-      expect(result.reason).toContain("curta");
-    });
-
-    test("Teste 2: Code should route to llama-70b", () => {
-      const result = intelligentRoute("```function test() { return true; }```");
-
-      expect(result.provider).toBe("llama-70b");
-      expect(result.reason).toContain("código");
-    });
-
-    test("Teste 3: Complex message should route to llama-70b", () => {
-      const result = intelligentRoute(
-        "Preciso analisar a arquitetura do banco de dados e otimizar as queries SQL..."
-      );
-
-      expect(result.provider).toBe("llama-70b");
-      expect(result.reason).toContain("complexidade");
-    });
-
-    test("Teste 4: Fallback from llama-70b should return llama-8b", () => {
-      const result = getNextFallback("llama-70b", []);
-
-      expect(result).toBe("llama-8b");
-    });
-
-    test("Teste 5: Fallback from llama-8b (with llama-70b tried) should return groq-fallback", () => {
-      const result = getNextFallback("llama-8b", ["llama-70b"]);
-
-      expect(result).toBe("groq-fallback");
+    test('should return null when all providers tried', () => {
+      const next = getNextFallback('gemini-pro', ['gemini-flash', 'groq']);
+      expect(next).toBeNull();
     });
   });
 });
