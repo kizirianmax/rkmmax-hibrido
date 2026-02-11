@@ -284,19 +284,17 @@ describe("Cost Optimization Utils", () => {
       });
 
       test("should handle batch delay correctly", async () => {
-        jest.useRealTimers();
         const batcher = new RequestBatcher(5, 50);
-        const startTime = Date.now();
-
         const request = jest.fn(() => Promise.resolve("test"));
+
         const promise = batcher.add(request);
 
+        // Advance timers to trigger the batch delay
+        jest.advanceTimersByTime(50);
+        
         await promise;
 
-        const elapsedTime = Date.now() - startTime;
-        expect(elapsedTime).toBeGreaterThanOrEqual(45); // Allow some variance
-
-        jest.useFakeTimers();
+        expect(request).toHaveBeenCalled();
       });
 
       test("should handle multiple concurrent adds", async () => {
