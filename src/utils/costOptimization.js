@@ -92,6 +92,7 @@ class ResponseCache {
 
 // Instância global do cache
 export const responseCache = new ResponseCache();
+export { ResponseCache };
 
 /**
  * COMPRESSÃO DE PROMPTS

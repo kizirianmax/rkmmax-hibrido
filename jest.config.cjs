@@ -13,7 +13,22 @@ module.exports = {
   // AMBIENTE E SETUP
   // ============================================
   testEnvironment: 'node',
-  setupFilesAfterEnv: ['<rootDir>/jest.setup.js'],
+  setupFilesAfterEnv: ['<rootDir>/jest.setup.cjs'],
+  
+  // ============================================
+  // ESM SUPPORT
+  // ============================================
+  transform: {
+    '^.+\\.jsx?$': ['babel-jest', { 
+      presets: [
+        ['@babel/preset-env', { 
+          targets: { node: 'current' },
+          modules: 'auto'
+        }],
+        '@babel/preset-react'
+      ]
+    }]
+  },
   
   // ============================================
   // TIMEOUT E PERFORMANCE
@@ -61,16 +76,6 @@ module.exports = {
   },
   
   // ============================================
-  // TRANSFORMAÇÃO
-  // ============================================
-  transform: {
-    '^.+\\.(js|jsx)$': 'babel-jest',
-  },
-  transformIgnorePatterns: [
-    'node_modules/(?!(recharts|victory|d3-.*|internmap|delaunay-triangulate|robust-predicates)/)',
-  ],
-  
-  // ============================================
   // CACHE
   // ============================================
   cache: true,
@@ -88,17 +93,6 @@ module.exports = {
   // ============================================
   reporters: [
     'default',
-    [
-      'jest-junit',
-      {
-        outputDirectory: './test-results',
-        outputName: 'junit.xml',
-        classNameTemplate: '{classname}',
-        titleTemplate: '{title}',
-        ancestorSeparator: ' › ',
-        usePathAsClassName: true,
-      },
-    ],
   ],
   
   // ============================================
