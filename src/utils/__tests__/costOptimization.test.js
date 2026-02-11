@@ -235,7 +235,7 @@ describe("Cost Optimization Utils", () => {
 
     describe("flush() Method", () => {
       test("should process batch correctly", async () => {
-        const batcher = new RequestBatcher();
+        const batcher = new RequestBatcher(2, 100);
 
         const request1 = jest.fn(() => Promise.resolve("result1"));
         const request2 = jest.fn(() => Promise.resolve("result2"));
@@ -243,15 +243,11 @@ describe("Cost Optimization Utils", () => {
         const promise1 = batcher.add(request1);
         const promise2 = batcher.add(request2);
 
-        batcher.queue = [
-          { request: request1, resolve: jest.fn(), reject: jest.fn() },
-          { request: request2, resolve: jest.fn(), reject: jest.fn() },
-        ];
-
-        await batcher.flush();
+        const results = await Promise.all([promise1, promise2]);
 
         expect(request1).toHaveBeenCalled();
         expect(request2).toHaveBeenCalled();
+        expect(results).toEqual(["result1", "result2"]);
       });
 
       test("should handle empty queue gracefully", async () => {
@@ -477,8 +473,7 @@ describe("Cost Optimization Utils", () => {
   });
 
   describe("Edge Cases", () => {
-    test("should handle null input in deduplicateMessages", () => {
-      // deduplicateMessages expects an array, so we pass undefined or empty
+    test("should handle empty array in deduplicateMessages", () => {
       const result = deduplicateMessages([]);
       expect(result).toEqual([]);
     });

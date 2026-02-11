@@ -50,7 +50,7 @@ module.exports = {
     '!src/reportWebVitals.js',
   ],
   coverageThreshold: {
-    // Módulos críticos com alta cobertura
+    // Critical modules with high coverage requirements
     'src/utils/costOptimization.js': {
       branches: 95,
       functions: 100,
