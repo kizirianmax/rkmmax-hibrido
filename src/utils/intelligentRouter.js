@@ -4,16 +4,16 @@
  * Analisa complexidade e roteia para a IA ideal
  *
  * Providers:
- * - Gemini Flash Lite: Conversas simples, rápidas e baratas
- * - GROQ: Processamento turbo, respostas instantâneas
- * - Gemini Pro 2.5: Tarefas complexas, raciocínio profundo
+ * - Llama 3.1 8B: Conversas simples, rápidas e eficientes
+ * - Llama 3.3 70B: Tarefas complexas, raciocínio profundo
+ * - GROQ Fallback: Último recurso para alta disponibilidade
  */
 
 /**
  * Palavras-chave por categoria
  */
 const KEYWORDS = {
-  // Tarefas que exigem Gemini Pro (complexo)
+  // Tarefas que exigem Llama 70B (complexo)
   complex: [
     "analisar",
     "análise",
@@ -50,7 +50,7 @@ const KEYWORDS = {
     "design pattern",
   ],
 
-  // Tarefas que exigem GROQ (turbo)
+  // Tarefas que exigem processamento rápido (turbo)
   fast: [
     "rápido",
     "urgente",
@@ -83,7 +83,7 @@ const KEYWORDS = {
     "pedaço",
   ],
 
-  // Tarefas simples (Gemini Flash)
+  // Tarefas simples (Llama 8B)
   simple: [
     "olá",
     "oi",
@@ -224,58 +224,55 @@ export function analyzeComplexity(message) {
 export function routeToProvider(analysis) {
   const { scores, hasCode, analysis: details } = analysis;
 
-  // REGRA 1: Código sempre vai para Gemini Pro
+  // REGRA 1: Código sempre vai para Llama 70B (mais poderoso)
   if (hasCode) {
     return {
-      provider: "gemini-pro",
+      provider: "llama-70b",
       reason: "Mensagem contém código - requer análise profunda",
       confidence: 0.95,
     };
   }
 
-  // REGRA 2: Complexidade alta = Gemini Pro
+  // REGRA 2: Complexidade alta = Llama 70B
   if (scores.complexity >= 5) {
     return {
-      provider: "gemini-pro",
+      provider: "llama-70b",
       reason: "Alta complexidade detectada",
       confidence: 0.9,
     };
   }
 
-  // REGRA 3: GROQ é apenas fallback, nunca primeira escolha
-  // (removido roteamento direto para GROQ)
-
-  // REGRA 4: Mensagens longas com termos técnicos = Gemini Pro
+  // REGRA 3: Mensagens longas com termos técnicos = Llama 70B
   if (details.isLong && details.hasTechnicalTerms) {
     return {
-      provider: "gemini-pro",
+      provider: "llama-70b",
       reason: "Mensagem longa com contexto técnico",
       confidence: 0.8,
     };
   }
 
-  // REGRA 5: Múltiplas perguntas complexas = Gemini Pro
+  // REGRA 4: Múltiplas perguntas complexas = Llama 70B
   if (details.hasMultipleQuestions && scores.complexity > 2) {
     return {
-      provider: "gemini-pro",
+      provider: "llama-70b",
       reason: "Múltiplas perguntas complexas",
       confidence: 0.85,
     };
   }
 
-  // REGRA 6: Mensagens muito curtas = Gemini Flash (rápido e barato)
+  // REGRA 5: Mensagens muito curtas = Llama 8B (rápido e eficiente)
   if (details.isVeryShort) {
     return {
-      provider: "gemini-flash",
-      reason: "Mensagem curta - usando Flash",
+      provider: "llama-8b",
+      reason: "Mensagem curta - usando modelo rápido",
       confidence: 0.8,
     };
   }
 
-  // REGRA 7: Padrão = Gemini Flash (custo-benefício)
+  // REGRA 6: Padrão = Llama 8B (custo-benefício)
   return {
-    provider: "gemini-flash",
-    reason: "Conversa padrão - otimizando custo",
+    provider: "llama-8b",
+    reason: "Conversa padrão - otimizando velocidade",
     confidence: 0.7,
   };
 }
@@ -297,13 +294,13 @@ export function intelligentRoute(message) {
 }
 
 /**
- * Fallback chain: GROQ é sempre fallback
- * Gemini Flash e Pro se ajudam mutuamente, GROQ é último recurso
+ * Fallback chain: Llama 70B → Llama 8B → Groq Fallback
+ * Sistema de três níveis para máxima disponibilidade
  */
 export const FALLBACK_CHAIN = {
-  "gemini-pro": ["gemini-flash", "groq"],
-  "gemini-flash": ["groq"],
-  groq: [], // GROQ nunca tem fallback (é o último recurso)
+  "llama-70b": ["llama-8b", "groq-fallback"],
+  "llama-8b": ["groq-fallback"],
+  "groq-fallback": [], // Último recurso
 };
 
 /**
