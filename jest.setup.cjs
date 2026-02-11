@@ -116,7 +116,7 @@ global.sessionStorage = sessionStorageMock;
 // ============================================
 process.env.NODE_ENV = 'test';
 process.env.REACT_APP_API_URL = 'http://localhost:3000';
-process.env.REACT_APP_GITHUB_TOKEN = 'test-token';
+process.env.REACT_APP_GITHUB_TOKEN = 'TEST_INVALID_TOKEN_DO_NOT_USE';
 process.env.REACT_APP_DEBUG_MODE = 'false';
 
 // ============================================

@@ -8,6 +8,9 @@ import {
   compressPrompt,
   deduplicateMessages,
   estimateTokens,
+  limitContext,
+  cacheResponse,
+  getCostStats,
 } from '../costOptimization.js';
 
 describe('Cost Optimization System', () => {
@@ -306,8 +309,6 @@ describe('Cost Optimization System', () => {
         { role: 'assistant', content: 'Hello' },
       ];
 
-      // Importar limitContext diretamente
-      const { limitContext } = require('../costOptimization.js');
       const result = limitContext(messages, 1000);
 
       expect(result).toHaveLength(2);
@@ -315,7 +316,6 @@ describe('Cost Optimization System', () => {
     });
 
     test('deve limitar mensagens quando exceder maxTokens', () => {
-      const { limitContext } = require('../costOptimization.js');
       const messages = [
         { role: 'user', content: 'a'.repeat(2000) }, // ~500 tokens
         { role: 'assistant', content: 'b'.repeat(2000) }, // ~500 tokens
@@ -329,7 +329,6 @@ describe('Cost Optimization System', () => {
     });
 
     test('deve manter mensagens recentes primeiro', () => {
-      const { limitContext } = require('../costOptimization.js');
       const messages = [
         { role: 'user', content: 'Old message' },
         { role: 'assistant', content: 'Recent reply' },
@@ -345,7 +344,6 @@ describe('Cost Optimization System', () => {
 
   describe('cacheResponse', () => {
     test('deve salvar resposta no cache global', () => {
-      const { cacheResponse } = require('../costOptimization.js');
       const messages = [{ role: 'user', content: 'Cache test' }];
       const response = 'Cached via cacheResponse';
 
@@ -359,7 +357,6 @@ describe('Cost Optimization System', () => {
 
   describe('getCostStats', () => {
     test('deve retornar estatísticas de custo', () => {
-      const { getCostStats } = require('../costOptimization.js');
       const stats = getCostStats();
 
       expect(stats).toHaveProperty('cache');
