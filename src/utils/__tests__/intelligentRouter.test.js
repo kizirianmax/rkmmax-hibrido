@@ -208,21 +208,21 @@ describe("Intelligent Router", () => {
   });
 
   describe("Expected Results from Problem Statement", () => {
-    test("Test 1: Simple greeting should route to llama-8b", () => {
+    test("Teste 1: Simple greeting should route to llama-8b", () => {
       const result = intelligentRoute("Olá, como vai?");
 
       expect(result.provider).toBe("llama-8b");
       expect(result.reason).toContain("curta");
     });
 
-    test("Test 2: Code should route to llama-70b", () => {
+    test("Teste 2: Code should route to llama-70b", () => {
       const result = intelligentRoute("```function test() { return true; }```");
 
       expect(result.provider).toBe("llama-70b");
       expect(result.reason).toContain("código");
     });
 
-    test("Test 3: Complex message should route to llama-70b", () => {
+    test("Teste 3: Complex message should route to llama-70b", () => {
       const result = intelligentRoute(
         "Preciso analisar a arquitetura do banco de dados e otimizar as queries SQL..."
       );
@@ -231,13 +231,13 @@ describe("Intelligent Router", () => {
       expect(result.reason).toContain("complexidade");
     });
 
-    test("Test 4: Fallback from llama-70b should return llama-8b", () => {
+    test("Teste 4: Fallback from llama-70b should return llama-8b", () => {
       const result = getNextFallback("llama-70b", []);
 
       expect(result).toBe("llama-8b");
     });
 
-    test("Test 5: Fallback from llama-8b (with llama-70b tried) should return groq-fallback", () => {
+    test("Teste 5: Fallback from llama-8b (with llama-70b tried) should return groq-fallback", () => {
       const result = getNextFallback("llama-8b", ["llama-70b"]);
 
       expect(result).toBe("groq-fallback");

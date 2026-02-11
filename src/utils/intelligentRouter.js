@@ -148,7 +148,7 @@ export function analyzeComplexity(message) {
 
   // 2. Análise de código
   let hasCode = false;
-  Object.entries(CODE_PATTERNS).forEach(([key, pattern]) => {
+  Object.entries(CODE_PATTERNS).forEach(([, pattern]) => {
     if (pattern.test(message)) {
       complexityScore += 3;
       hasCode = true;
