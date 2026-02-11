@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites name="jest tests" tests="29" failures="0" errors="0" time="0.698">
+  <testsuite name="Cost Optimization System" errors="0" failures="0" skipped="0" timestamp="2026-02-11T04:27:16" time="0.592" tests="29">
+    <testcase classname="Cost Optimization System › ResponseCache › generateHash" name="deve gerar hash MD5 consistente para mesmas mensagens" time="0.004">
+    </testcase>
+    <testcase classname="Cost Optimization System › ResponseCache › generateHash" name="deve gerar hashes diferentes para mensagens diferentes" time="0.002">
+    </testcase>
+    <testcase classname="Cost Optimization System › ResponseCache › generateHash" name="deve funcionar com arrays de objetos" time="0.009">
+    </testcase>
+    <testcase classname="Cost Optimization System › ResponseCache › get" name="deve retornar null para cache miss" time="0.001">
+    </testcase>
+    <testcase classname="Cost Optimization System › ResponseCache › get" name="deve retornar resposta cacheada para cache hit" time="0.016">
+    </testcase>
+    <testcase classname="Cost Optimization System › ResponseCache › get" name="deve retornar null para cache expirado (TTL)" time="0.014">
+    </testcase>
+    <testcase classname="Cost Optimization System › ResponseCache › set" name="deve salvar resposta no cache" time="0.004">
+    </testcase>
+    <testcase classname="Cost Optimization System › ResponseCache › set" name="deve limpar cache mais antigo quando atingir maxSize" time="0.005">
+    </testcase>
+    <testcase classname="Cost Optimization System › ResponseCache › clear" name="deve limpar todos os itens do cache" time="0.012">
+    </testcase>
+    <testcase classname="Cost Optimization System › ResponseCache › stats" name="deve retornar estatísticas do cache" time="0.002">
+    </testcase>
+    <testcase classname="Cost Optimization System › compressPrompt" name="deve remover múltiplos espaços" time="0.001">
+    </testcase>
+    <testcase classname="Cost Optimization System › compressPrompt" name="deve remover quebras de linha desnecessárias" time="0">
+    </testcase>
+    <testcase classname="Cost Optimization System › compressPrompt" name="deve fazer trim do texto" time="0">
+    </testcase>
+    <testcase classname="Cost Optimization System › compressPrompt" name="deve aplicar todas as otimizações juntas" time="0.001">
+    </testcase>
+    <testcase classname="Cost Optimization System › compressPrompt" name="deve manter texto já otimizado inalterado" time="0">
+    </testcase>
+    <testcase classname="Cost Optimization System › deduplicateMessages" name="deve remover mensagens duplicadas consecutivas" time="0">
+    </testcase>
+    <testcase classname="Cost Optimization System › deduplicateMessages" name="deve manter mensagens não-consecutivas duplicadas" time="0.002">
+    </testcase>
+    <testcase classname="Cost Optimization System › deduplicateMessages" name="deve retornar array vazio para input vazio" time="0.001">
+    </testcase>
+    <testcase classname="Cost Optimization System › deduplicateMessages" name="deve manter mensagens únicas inalteradas" time="0">
+    </testcase>
+    <testcase classname="Cost Optimization System › deduplicateMessages" name="deve lidar com múltiplas duplicatas consecutivas" time="0">
+    </testcase>
+    <testcase classname="Cost Optimization System › estimateTokens" name="deve estimar tokens baseado em caracteres" time="0.001">
+    </testcase>
+    <testcase classname="Cost Optimization System › estimateTokens" name="deve retornar 0 para string vazia" time="0.001">
+    </testcase>
+    <testcase classname="Cost Optimization System › estimateTokens" name="deve calcular tokens para textos longos" time="0">
+    </testcase>
+    <testcase classname="Cost Optimization System › estimateTokens" name="deve arredondar para cima" time="0.001">
+    </testcase>
+    <testcase classname="Cost Optimization System › limitContext" name="deve manter todas as mensagens se dentro do limite" time="0.001">
+    </testcase>
+    <testcase classname="Cost Optimization System › limitContext" name="deve limitar mensagens quando exceder maxTokens" time="0">
+    </testcase>
+    <testcase classname="Cost Optimization System › limitContext" name="deve manter mensagens recentes primeiro" time="0">
+    </testcase>
+    <testcase classname="Cost Optimization System › cacheResponse" name="deve salvar resposta no cache global" time="0.001">
+    </testcase>
+    <testcase classname="Cost Optimization System › getCostStats" name="deve retornar estatísticas de custo" time="0.001">
+    </testcase>
+  </testsuite>
+</testsuites>

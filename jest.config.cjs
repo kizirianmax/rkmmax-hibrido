@@ -13,7 +13,7 @@ module.exports = {
   // AMBIENTE E SETUP
   // ============================================
   testEnvironment: 'node',
-  setupFilesAfterEnv: ['<rootDir>/jest.setup.js'],
+  setupFilesAfterEnv: ['<rootDir>/jest.setup.cjs'],
   
   // ============================================
   // TIMEOUT E PERFORMANCE
