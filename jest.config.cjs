@@ -50,11 +50,18 @@ module.exports = {
     '!src/reportWebVitals.js',
   ],
   coverageThreshold: {
-    global: {
-      branches: 50,
-      functions: 50,
-      lines: 50,
-      statements: 50,
+    // Módulos críticos com alta cobertura
+    'src/utils/costOptimization.js': {
+      branches: 95,
+      functions: 100,
+      lines: 95,
+      statements: 95,
+    },
+    'src/utils/intelligentRouter.js': {
+      branches: 60,
+      functions: 100,
+      lines: 80,
+      statements: 80,
     },
   },
   
