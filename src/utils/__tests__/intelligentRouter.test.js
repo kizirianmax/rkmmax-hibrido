@@ -1,6 +1,6 @@
 /**
  * INTELLIGENT ROUTER TESTS
- * Testes unitários completos para o sistema de roteamento inteligente
+ * Complete unit tests for the intelligent routing system
  */
 
 import {
