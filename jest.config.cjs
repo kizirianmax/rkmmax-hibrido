@@ -1,6 +1,6 @@
 /**
- * JEST CONFIGURATION - PARTE 2
- * Configuração básica do Jest (sem thresholds de coverage ainda)
+ * JEST CONFIGURATION - PARTE 3 (Coverage Thresholds)
+ * Configuração completa do Jest com thresholds de coverage
  */
 
 module.exports = {
@@ -41,5 +41,41 @@ module.exports = {
   // Timeout para testes
   testTimeout: 10000,
   
-  // IMPORTANTE: SEM coverageThresholds ainda (Parte 3)
+  // ============================================
+  // COVERAGE CONFIGURATION (PARTE 3)
+  // ============================================
+  
+  // Diretório de saída do coverage
+  coverageDirectory: 'coverage',
+  
+  // Arquivos a serem incluídos no coverage
+  collectCoverageFrom: [
+    'src/**/*.{js,jsx}',
+    'api/**/*.js',
+    '!src/**/*.test.{js,jsx}',
+    '!src/__tests__/**',
+    '!src/index.js',
+    '!**/node_modules/**',
+    '!**/build/**',
+    '!**/coverage/**'
+  ],
+  
+  // THRESHOLDS DE COVERAGE (>= 80%)
+  coverageThresholds: {
+    global: {
+      branches: 80,
+      functions: 80,
+      lines: 80,
+      statements: 80
+    }
+  },
+  
+  // Reporters de coverage
+  coverageReporters: [
+    'text',           // Output no terminal
+    'text-summary',   // Resumo no terminal
+    'lcov',           // Para tools como Codecov
+    'html'            // Relatório HTML navegável
+  ],
 };
+

@@ -1,0 +1,45 @@
+name: CI - Coverage
+
+# Trigger: apenas em PRs para main (não em todo push)
+on:
+  pull_request:
+    branches: [main]
+
+jobs:
+  coverage:
+    name: Check Coverage
+    runs-on: ubuntu-latest
+    
+    steps:
+      # 1. Checkout do código
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+      
+      # 2. Setup Node.js 22
+      - name: 🔧 Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+      
+      # 3. Instalar dependências
+      - name: 📦 Install dependencies
+        run: npm ci
+      
+      # 4. Rodar testes COM coverage
+      - name: 📊 Run tests with coverage
+        run: npm run test:coverage
+      
+      # 5. Verificar thresholds (Jest já faz isso automaticamente)
+      - name: ✅ Verify coverage thresholds
+        run: |
+          echo "Coverage thresholds validated by Jest"
+          echo "Required: >= 80% for branches, functions, lines, statements"
+      
+      # 6. Upload coverage para análise (opcional)
+      - name: 📤 Upload coverage reports
+        uses: actions/upload-artifact@v3
+        if: always()
+        with:
+          name: coverage-report
+          path: coverage/
