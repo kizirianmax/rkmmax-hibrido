@@ -1,0 +1,36 @@
+name: CI - Tests
+
+# Trigger: push e pull_request para main
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  test:
+    name: Run Tests
+    runs-on: ubuntu-latest
+    
+    steps:
+      # 1. Checkout do código
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+      
+      # 2. Setup Node.js 22
+      - name: 🔧 Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+      
+      # 3. Instalar dependências (npm ci para build limpo)
+      - name: 📦 Install dependencies
+        run: npm ci
+      
+      # 4. Rodar testes (sem coverage ainda)
+      - name: 🧪 Run tests
+        run: npm test
+      
+      # 5. Falhar se qualquer teste falhar
+      # (Jest já falha automaticamente, mas garantimos aqui)
