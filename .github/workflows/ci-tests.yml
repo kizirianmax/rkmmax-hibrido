@@ -12,6 +12,9 @@ jobs:
     name: Run Tests
     runs-on: ubuntu-latest
     
+    permissions:
+      contents: read
+    
     steps:
       # 1. Checkout do código
       - name: 📥 Checkout code

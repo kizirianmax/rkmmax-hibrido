@@ -10,6 +10,9 @@ jobs:
     name: Check Coverage
     runs-on: ubuntu-latest
     
+    permissions:
+      contents: read
+    
     steps:
       # 1. Checkout do código
       - name: 📥 Checkout code
