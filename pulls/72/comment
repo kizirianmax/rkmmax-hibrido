@@ -9,7 +9,7 @@ A partir desta data (**2026-02-12**), estabeleço a seguinte política para este
 **Todo merge na branch `main` será feito APENAS quando:**
 - ✅ Todos os testes estiverem passando (CI verde)
 - ✅ Nenhuma falha crítica no pipeline de CI/CD
-- ✅ Sem alertas de seguran��a críticos
+- ✅ Sem alertas de segurança críticos
 
 **Nenhum código será mesclado se:**
 - ❌ Houver falhas nos testes
