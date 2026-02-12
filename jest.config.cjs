@@ -24,6 +24,7 @@ module.exports = {
   
   // ============================================
   // COBERTURA - AJUSTADA PARA NOVO CÓDIGO
+  // Thresholds temporariamente reduzidos para 5% durante desenvolvimento
   // ============================================
   collectCoverage: false,
   collectCoverageFrom: [

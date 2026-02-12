@@ -279,20 +279,22 @@ class AutomationEngine {
 
     if (!validation.isValid) {
       console.log(`❌ Validação falhou!`);
+      const details = Array.isArray(validation.details) ? validation.details : [];
       return {
         isValid: false,
         severity: "critical",
-        errors: validation.details.flatMap((d) => d.errors),
-        warnings: validation.details.flatMap((d) => d.warnings),
+        errors: details.flatMap((d) => d.errors || []),
+        warnings: details.flatMap((d) => d.warnings || []),
       };
     }
 
     console.log(`✅ Código validado com sucesso!`);
+    const details = Array.isArray(validation.details) ? validation.details : [];
     return {
       isValid: true,
       severity: "none",
       errors: [],
-      warnings: validation.details.flatMap((d) => d.warnings),
+      warnings: details.flatMap((d) => d.warnings || []),
     };
   }
 

@@ -41,11 +41,7 @@ jest.mock("../GitHubAutomation.js", () => ({
 jest.mock("../SpecialistSelector.js", () => ({
   __esModule: true,
   default: jest.fn().mockImplementation(() => ({
-    selectSpecialist: jest.fn().mockResolvedValue({
-      specialist: "Frontend",
-      confidence: 0.95,
-      reasoning: "Test reasoning",
-    }),
+    selectSpecialist: jest.fn().mockResolvedValue("Frontend"),
   })),
 }));
 
@@ -55,6 +51,24 @@ beforeAll(async () => {
   const module = await import("../AutomationEngine.js");
   AutomationEngine = module.default;
 });
+
+// Define mockAuditLogger for use in tests
+const mockAuditLogger = {
+  logAutomationRequest: jest.fn().mockReturnValue('automation-id-123'),
+  logSecurityValidation: jest.fn(),
+  logAutomationCompletion: jest.fn(),
+  logError: jest.fn(),
+  searchLogs: jest.fn().mockReturnValue([]),
+  logAutomationStarted: jest.fn(),
+  logAutomationCompleted: jest.fn(),
+  logAutomationFailed: jest.fn(),
+  getAutomationHistory: jest.fn().mockReturnValue([]),
+  getAutomationStats: jest.fn().mockReturnValue({
+    totalAutomations: 0,
+    successfulAutomations: 0,
+    failedAutomations: 0,
+  }),
+};
 
 describe("AutomationEngine", () => {
   let engine;
@@ -83,6 +97,19 @@ describe("AutomationEngine", () => {
       temperature: 0.7,
     });
     engine.auditLogger = mockAuditLogger;
+    
+    // Ensure validator mock has the validateFiles method
+    if (!engine.validator.validateFiles) {
+      engine.validator.validateFiles = jest.fn().mockResolvedValue({
+        isValid: true,
+        details: [],
+      });
+    }
+    
+    // Ensure specialistSelector mock has the selectSpecialist method
+    if (!engine.specialistSelector.selectSpecialist) {
+      engine.specialistSelector.selectSpecialist = jest.fn().mockResolvedValue("Frontend");
+    }
   });
 
   describe("initialization", () => {

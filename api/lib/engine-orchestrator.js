@@ -165,14 +165,11 @@ export async function orchestrateEngines(messages, systemPrompt, options = {}) {
 
   // Modo paralelo: Promise.race
   if (useParallel && engineOrder.length > 1) {
-    console.log(`🏁 Racing ${engineOrder.length} engines...`);
-    
     const promises = engineOrder.map(async (engine) => {
       try {
         const response = await engine.breaker.execute(engine.fn);
         return { response, model: engine.name, success: true };
       } catch (error) {
-        console.error(`❌ ${engine.name} failed:`, error.message);
         return { error: error.message, model: engine.name, success: false };
       }
     });
@@ -183,7 +180,6 @@ export async function orchestrateEngines(messages, systemPrompt, options = {}) {
     
     if (successful) {
       const responseTime = Date.now() - startTime;
-      console.log(`✅ ${successful.model} won the race in ${responseTime}ms`);
       
       // Salvar no cache
       globalCache.set(messages, { response: successful.response, model: successful.model });
@@ -201,14 +197,10 @@ export async function orchestrateEngines(messages, systemPrompt, options = {}) {
   }
 
   // Fallback sequencial se paralelo falhou ou não está habilitado
-  console.log(`🔄 Trying engines sequentially...`);
   for (const engine of engineOrder) {
     try {
-      console.log(`🤖 Trying ${engine.name}...`);
       const response = await engine.breaker.execute(engine.fn);
       const responseTime = Date.now() - startTime;
-      
-      console.log(`✅ ${engine.name} succeeded in ${responseTime}ms`);
       
       // Salvar no cache
       globalCache.set(messages, { response, model: engine.name });

@@ -71,8 +71,6 @@ async function streamResponse(res, messages, systemPrompt, options) {
     res.end();
 
   } catch (error) {
-    console.error('❌ Streaming error:', error);
-    
     res.write('event: error\n');
     res.write(`data: ${JSON.stringify({ 
       error: error.message,
@@ -93,7 +91,6 @@ export default async function handler(req, res) {
 
   try {
     const {
-      type = 'genius',
       messages,
       agentType,
       complexity = 'speed',
@@ -118,8 +115,6 @@ export default async function handler(req, res) {
     const promptType = agentType || 'serginho';
     const systemPrompt = buildGeniusPrompt(promptType);
 
-    console.log(`🌊 Starting SSE stream - Type: ${type} | Complexity: ${complexity}`);
-
     // Stream a resposta
     await streamResponse(res, messages, systemPrompt, {
       geminiKey,
@@ -129,8 +124,6 @@ export default async function handler(req, res) {
     });
 
   } catch (error) {
-    console.error('❌ Stream handler error:', error);
-    
     // Se headers já foram enviados, não podemos enviar JSON
     if (res.headersSent) {
       res.write('event: error\n');

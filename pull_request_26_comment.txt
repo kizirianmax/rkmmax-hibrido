@@ -1,0 +1,1 @@
+Fechando PR duplicado - problema já resolvido nos PRs #66 e #68
