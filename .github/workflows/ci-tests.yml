@@ -1,0 +1,41 @@
+name: CI - Tests
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  test:
+    name: Run Tests
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+      
+      - name: 🔧 Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+      
+      - name: 📦 Install dependencies
+        run: npm ci
+      
+      - name: 🔍 Verify lock file
+        run: |
+          echo "Verifying package-lock.json is in sync..."
+          npm install --package-lock-only
+          git diff --exit-code package-lock.json
+      
+      - name: 🧪 Run tests
+        run: npm run test:ci
+        env:
+          NODE_ENV: test
+          CI: true
+      
+      - name: ✅ Tests passed
+        if: success()
+        run: echo "All tests passed successfully!"
