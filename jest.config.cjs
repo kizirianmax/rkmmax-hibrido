@@ -61,7 +61,7 @@ module.exports = {
   ],
   
   // THRESHOLDS DE COVERAGE (>= 80%)
-  coverageThresholds: {
+  coverageThreshold: {
     global: {
       branches: 80,
       functions: 80,

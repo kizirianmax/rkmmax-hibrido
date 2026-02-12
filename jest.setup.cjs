@@ -44,7 +44,7 @@ console.error = (...args) => {
     originalConsoleError(...args);
     
     // FALHAR se for um erro crítico
-    if (message.includes('Unhandled') || message.includes('uncaught')) {
+    if (message.includes('Unhandled') || message.includes('Uncaught')) {
       throw new Error(`Critical error detected: ${message}`);
     }
   } else {
