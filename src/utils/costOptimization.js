@@ -216,6 +216,7 @@ class RequestBatcher {
   }
 }
 
+export { RequestBatcher };
 export const requestBatcher = new RequestBatcher();
 
 /**
