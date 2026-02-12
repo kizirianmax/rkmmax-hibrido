@@ -1,0 +1,33 @@
+## 📋 POLÍTICA DE DESENVOLVIMENTO OFICIAL - ESTABELECIDA
+
+⚠️ **Nota do Desenvolvedor Principal (@kizirianmax):**
+
+A partir desta data (**2026-02-12**), estabeleço a seguinte política para este repositório:
+
+### 🔒 Regra Absoluta de Merge
+
+**Todo merge na branch `main` será feito APENAS quando:**
+- ✅ Todos os testes estiverem passando (CI verde)
+- ✅ Nenhuma falha crítica no pipeline de CI/CD
+- ✅ Sem alertas de seguran��a críticos
+
+**Nenhum código será mesclado se:**
+- ❌ Houver falhas nos testes
+- ❌ O CI estiver vermelho (failed)
+- ❌ Existirem problemas críticos não resolvidos
+
+### 👨‍💻 Contexto
+
+Atualmente, sou o único responsável pelo desenvolvimento deste repositório. Esta política garante a estabilidade e qualidade contínua do código em produção.
+
+### 📄 Documentação
+
+Esta informação foi registrada oficialmente em:
+- ✅ `DEVELOPMENT_GUIDELINES.md` (guia completo)
+- ✅ `README.md` (aviso visível)
+- ✅ Este comentário no PR #72 (registro histórico)
+
+---
+
+**Data de estabelecimento:** 2026-02-12  
+**Desenvolvedor:** @kizirianmax
