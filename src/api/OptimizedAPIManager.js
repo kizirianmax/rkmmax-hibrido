@@ -112,8 +112,18 @@ class OptimizedAPIManager {
       };
     }
 
-    // Forçar modelo específico se solicitado
+    // Forçar modelo específico se solicitado (com validação)
     if (options.model) {
+      // Validar se o modelo existe
+      if (!this.providers.groq.models[options.model]) {
+        console.warn(`⚠️ Modelo ${options.model} não encontrado. Usando modelo padrão.`);
+        return {
+          provider: "groq",
+          model: this.providers.groq.defaultModel,
+          tier: "primary",
+        };
+      }
+      
       return {
         provider: "groq",
         model: options.model,
@@ -209,7 +219,7 @@ class OptimizedAPIManager {
   async call(provider, prompt, options = {}) {
     // ✅ Verificar se é Groq (único provider suportado)
     if (provider !== "groq") {
-      throw new Error(`Provider não suportado: ${provider}. Use 'groq'.`);
+      throw new Error(`Provider not supported: ${provider}. Use 'groq'.`);
     }
 
     // Verificar cache
