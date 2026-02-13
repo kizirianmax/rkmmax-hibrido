@@ -161,30 +161,23 @@ Status: ✅ Configuráveis em JSON
 
 ## 🧠 APIs EXTERNAS INTEGRADAS
 
-### Gemini 2.5 Pro (Principal)
+### Groq openai/gpt-oss-120b (Principal)
 ```
-Modelo: gemini-2.5-pro
-Tokens: 1.000.000
-Custo: $0.00075 por 1K tokens (input)
-Uso: Tarefas complexas e críticas
-Status: ✅ Configurado
-```
-
-### Gemini 2.5 Flash Lite (Otimizado)
-```
-Modelo: gemini-2.5-flash-lite
-Tokens: 1.000.000
-Custo: $0.0000375 por 1K tokens (75% mais barato!)
-Uso: Tarefas simples e médias
-Status: ✅ Configurado
-```
-
-### Groq (Fallback)
-```
-Modelos: LLaMA 3.1 70B, Mixtral 8x7B
-Tokens: 8K-32K
+Modelo: openai/gpt-oss-120b
+Parâmetros: 120B
+Tokens: 8K
 Custo: $0.00027 por 1K tokens
-Uso: Fallback automático em caso de falha
+Uso: Raciocínio complexo, análises profundas
+Status: ✅ Configurado
+```
+
+### Groq llama-3.3-70b-versatile (Fallback)
+```
+Modelo: llama-3.3-70b-versatile
+Parâmetros: 70B
+Tokens: 8K
+Custo: $0.00015 por 1K tokens
+Uso: Fallback automático, respostas rápidas
 Status: ✅ Configurado
 ```
 
