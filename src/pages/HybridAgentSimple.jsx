@@ -2,24 +2,25 @@ import { useState, useRef, useEffect } from "react";
 import "../styles/HybridAgent.css";
 
 /**
- * RKMMAX HYBRID - VERSÃO KIZI INTELIGENTE
- * Sistema com 3 motores de IA:
- * - KIZI 2.5 Pro (Gemini 2.5 Pro) - Raciocínio complexo
- * - KIZI Speed (Groq Llama 70B) - Velocidade máxima
- * - KIZI Flash (Gemini Flash) - Respostas rápidas
- * Modos: Manual (1 crédito) | Otimizado (0.5 crédito)
+ * BETINHO HÍBRIDO - SISTEMA DE IA
+ * 
+ * Sistema com Groq apenas:
+ * - openai/gpt-oss-120b (Principal) - Raciocínio complexo com 120B parâmetros
+ * - llama-3.3-70b-versatile (Fallback) - Velocidade máxima com 70B parâmetros
+ * 
+ * Fallback automático se o modelo principal falhar.
  */
 export default function HybridAgentSimple() {
   const [mode, setMode] = useState("manual");
   const [input, setInput] = useState("");
   // Versão do app para cache busting
-  const APP_VERSION = "v3.1.0-kizi";
+  const APP_VERSION = "v3.2.0-groq";
 
   const [messages, setMessages] = useState([
     {
       id: 1,
       type: "system",
-      content: `🤖 Bem-vindo ao KIZI 2.5 Pro - Sistema Inteligente (${APP_VERSION})`,
+      content: `🤖 Bem-vindo ao Betinho Híbrido - Sistema Groq (${APP_VERSION})`,
       timestamp: new Date(),
     },
     {
@@ -27,8 +28,8 @@ export default function HybridAgentSimple() {
       type: "agent",
       agent: "Serginho",
       content:
-        "Olá! Sou o KIZI 2.5 Pro operando como Serginho. Posso ajudar com qualquer tarefa - desde programação até pesquisas complexas. Descreva o que precisa!",
-      provider: "kizi-2.5-pro",
+        "Olá! Sou o KIZI operando com Groq (120B reasoning). Posso ajudar com qualquer tarefa - desde programação até pesquisas complexas. Descreva o que precisa!",
+      provider: "groq-120b",
       timestamp: new Date(),
     },
   ]);
