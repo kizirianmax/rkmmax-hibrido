@@ -50,8 +50,8 @@ class SecurityValidator {
 
     // Padrões de credenciais (verificados separadamente)
     this.credentialPatterns = [
-      /sk[-_][a-zA-Z0-9]{4,}/,        // Stripe/OpenAI API keys (sk- or sk_)
-      /ghp_[a-zA-Z0-9]{16,}/,         // GitHub personal access tokens
+      /sk[-_](?:live_|test_)?[a-zA-Z0-9]{10,}/,  // Stripe/OpenAI API keys (sk- or sk_)
+      /ghp_[a-zA-Z0-9]{16,}/,                    // GitHub personal access tokens
       /aws_secret_access_key\s*=\s*['"][^'"]+['"]/i,
       /private_key\s*=\s*['"][^'"]+['"]/i,
       /bearer\s+[a-z0-9]{40,}/i,

@@ -280,7 +280,7 @@ class MultimodalProcessor {
     const patterns = {
       java: /public class|public static|import java/,
       javascript: /const|let|var|function|=>|async|await/,
-      python: /def |import |if __name__|print\(/,
+      python: /\bdef\b|\bimport\b|if __name__|\bprint\(/,
       cpp: /#include|std::|int main/,
       csharp: /using|namespace|public class|async Task/,
       go: /package main|func|import/,
