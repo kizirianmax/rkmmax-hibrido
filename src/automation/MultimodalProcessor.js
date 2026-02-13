@@ -278,9 +278,9 @@ class MultimodalProcessor {
    */
   detectProgrammingLanguage(code) {
     const patterns = {
-      javascript: /const|let|var|function|=>|async|await/,
-      python: /def|import|class|if __name__|print\(/,
       java: /public class|public static|import java/,
+      javascript: /const|let|var|function|=>|async|await/,
+      python: /def |import |if __name__|print\(/,
       cpp: /#include|std::|int main/,
       csharp: /using|namespace|public class|async Task/,
       go: /package main|func|import/,

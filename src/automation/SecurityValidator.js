@@ -17,18 +17,6 @@ class SecurityValidator {
         /TRUNCATE\s+TABLE/i,
       ],
 
-      // Credenciais expostas
-      credentials: [
-        /process\.env\.[A-Z_]+/,
-        /GITHUB_TOKEN/,
-        /API_KEY/,
-        /SECRET_KEY/,
-        /PASSWORD/,
-        /aws_secret_access_key/i,
-        /private_key/i,
-        /bearer\s+[a-z0-9]{40,}/i,
-      ],
-
       // Código malicioso
       malicious: [
         /eval\s*\(/,
@@ -59,6 +47,15 @@ class SecurityValidator {
         /truncate\s+.*database/i,
       ],
     };
+
+    // Padrões de credenciais (verificados separadamente)
+    this.credentialPatterns = [
+      /sk[-_][a-zA-Z0-9]{4,}/,        // Stripe/OpenAI API keys (sk- or sk_)
+      /ghp_[a-zA-Z0-9]{16,}/,         // GitHub personal access tokens
+      /aws_secret_access_key\s*=\s*['"][^'"]+['"]/i,
+      /private_key\s*=\s*['"][^'"]+['"]/i,
+      /bearer\s+[a-z0-9]{40,}/i,
+    ];
 
     this.criticalFiles = [
       ".git",
@@ -110,25 +107,25 @@ class SecurityValidator {
       },
     };
 
-    // 1. Verificar extensão do arquivo
-    if (!this.isAllowedExtension(filePath)) {
-      results.isValid = false;
-      results.severity = "critical";
-      results.errors.push({
-        type: "INVALID_FILE_EXTENSION",
-        message: `Extensão de arquivo não permitida: ${filePath}`,
-        severity: "critical",
-      });
-      return results;
-    }
-
-    // 2. Verificar se é arquivo crítico
+    // 1. Verificar se é arquivo crítico (PRIORITY)
     if (this.isCriticalFile(filePath)) {
       results.isValid = false;
       results.severity = "critical";
       results.errors.push({
         type: "CRITICAL_FILE_MODIFICATION",
         message: `Não é permitido modificar arquivo crítico: ${filePath}`,
+        severity: "critical",
+      });
+      return results;
+    }
+
+    // 2. Verificar extensão do arquivo
+    if (!this.isAllowedExtension(filePath)) {
+      results.isValid = false;
+      results.severity = "critical";
+      results.errors.push({
+        type: "INVALID_FILE_EXTENSION",
+        message: `Extensão de arquivo não permitida: ${filePath}`,
         severity: "critical",
       });
       return results;
@@ -272,7 +269,7 @@ class SecurityValidator {
     const found = [];
     const details = [];
 
-    for (const pattern of this.blockedPatterns.credentials) {
+    for (const pattern of this.credentialPatterns) {
       const matches = code.match(new RegExp(pattern, "g"));
       if (matches) {
         found.push(...matches);
