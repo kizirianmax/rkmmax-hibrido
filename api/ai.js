@@ -106,7 +106,7 @@ async function callKiziLong(messages, systemPrompt, apiKey) {
       model: "mixtral-8x7b-32768",
       messages: systemPrompt ? [{ role: "system", content: systemPrompt }, ...messages] : messages,
       temperature: 0.7,
-      max_tokens: 28000, // Reduced to account for input tokens and avoid API errors
+      max_tokens: 28000, // Set to 28000 to account for input tokens and avoid API errors
     }),
   });
 
