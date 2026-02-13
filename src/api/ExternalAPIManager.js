@@ -4,8 +4,9 @@
  * Gerencia integrações com múltiplas APIs:
  * - OpenAI (GPT-4, GPT-3.5)
  * - Anthropic (Claude)
- * - Google (Gemini, PaLM)
- * - Groq (LLaMA, Mixtral)
+ * - Groq (LLaMA, Mixtral, openai/gpt-oss-120b)
+ * 
+ * ⚠️ Gemini/Google removidos - sistema agora usa 100% Groq
  */
 
 class ExternalAPIManager {
@@ -13,7 +14,6 @@ class ExternalAPIManager {
     this.config = {
       openaiKey: process.env.OPENAI_API_KEY,
       anthropicKey: process.env.ANTHROPIC_API_KEY,
-      googleKey: process.env.GOOGLE_API_KEY,
       groqKey: process.env.GROQ_API_KEY,
       ...config,
     };
@@ -21,7 +21,6 @@ class ExternalAPIManager {
     this.providers = {
       openai: this.initOpenAI(),
       anthropic: this.initAnthropic(),
-      google: this.initGoogle(),
       groq: this.initGroq(),
     };
 
@@ -29,7 +28,6 @@ class ExternalAPIManager {
     this.rateLimits = {
       openai: { calls: 0, resetTime: Date.now() + 60000 },
       anthropic: { calls: 0, resetTime: Date.now() + 60000 },
-      google: { calls: 0, resetTime: Date.now() + 60000 },
       groq: { calls: 0, resetTime: Date.now() + 60000 },
     };
   }
@@ -71,24 +69,8 @@ class ExternalAPIManager {
   }
 
   /**
-   * INICIALIZAR GOOGLE
-   */
-  initGoogle() {
-    if (!this.config.googleKey) return null;
-
-    return {
-      apiKey: this.config.googleKey,
-      baseURL: "https://generativelanguage.googleapis.com/v1",
-      models: {
-        "gemini-pro": { maxTokens: 32768, costPer1kTokens: 0.0005 },
-        "gemini-pro-vision": { maxTokens: 4096, costPer1kTokens: 0.001 },
-      },
-      defaultModel: "gemini-pro",
-    };
-  }
-
-  /**
    * INICIALIZAR GROQ
+   * Atualizado com modelos de 2024-2025
    */
   initGroq() {
     if (!this.config.groqKey) return null;
@@ -97,19 +79,20 @@ class ExternalAPIManager {
       apiKey: this.config.groqKey,
       baseURL: "https://api.groq.com/openai/v1",
       models: {
-        "llama-2-70b": { maxTokens: 4096, costPer1kTokens: 0.0001 },
-        "mixtral-8x7b": { maxTokens: 4096, costPer1kTokens: 0.00015 },
-        "llama-2-13b": { maxTokens: 4096, costPer1kTokens: 0.00005 },
+        "openai/gpt-oss-120b": { maxTokens: 8000, costPer1kTokens: 0.00027 },
+        "llama-3.3-70b-versatile": { maxTokens: 8000, costPer1kTokens: 0.0001 },
+        "mixtral-8x7b-32768": { maxTokens: 32768, costPer1kTokens: 0.00024 },
       },
-      defaultModel: "llama-2-70b",
+      defaultModel: "openai/gpt-oss-120b",
     };
   }
 
   /**
    * CHAMAR API COM FALLBACK
+   * Ordem: openai -> anthropic -> groq
    */
   async callWithFallback(prompt, options = {}) {
-    const providers = ["openai", "anthropic", "google", "groq"];
+    const providers = ["openai", "anthropic", "groq"];
     const errors = [];
 
     for (const provider of providers) {
@@ -158,9 +141,6 @@ class ExternalAPIManager {
         break;
       case "anthropic":
         result = await this.callAnthropic(prompt, options);
-        break;
-      case "google":
-        result = await this.callGoogle(prompt, options);
         break;
       case "groq":
         result = await this.callGroq(prompt, options);
@@ -250,43 +230,6 @@ class ExternalAPIManager {
   }
 
   /**
-   * CHAMAR GOOGLE
-   */
-  async callGoogle(prompt, options = {}) {
-    const model = options.model || this.providers.google.defaultModel;
-
-    const response = await fetch(
-      `${this.providers.google.baseURL}/models/${model}:generateContent?key=${this.providers.google.apiKey}`,
-      {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          contents: [{ parts: [{ text: prompt }] }],
-          generationConfig: {
-            maxOutputTokens: options.maxTokens || 1000,
-            temperature: options.temperature || 0.7,
-          },
-        }),
-      }
-    );
-
-    if (!response.ok) {
-      throw new Error(`Google API error: ${response.statusText}`);
-    }
-
-    const data = await response.json();
-    const text = data.candidates[0].content.parts[0].text;
-    const tokens = data.usageMetadata.totalTokenCount;
-
-    return {
-      text,
-      model,
-      tokens,
-      cost: (tokens / 1000) * this.providers.google.models[model].costPer1kTokens,
-    };
-  }
-
-  /**
    * CHAMAR GROQ
    */
   async callGroq(prompt, options = {}) {
@@ -343,7 +286,6 @@ class ExternalAPIManager {
     return {
       openai: this.providers.openai ? "available" : "not-configured",
       anthropic: this.providers.anthropic ? "available" : "not-configured",
-      google: this.providers.google ? "available" : "not-configured",
       groq: this.providers.groq ? "available" : "not-configured",
     };
   }
@@ -359,9 +301,6 @@ class ExternalAPIManager {
     }
     if (this.providers.anthropic) {
       models.anthropic = Object.keys(this.providers.anthropic.models);
-    }
-    if (this.providers.google) {
-      models.google = Object.keys(this.providers.google.models);
     }
     if (this.providers.groq) {
       models.groq = Object.keys(this.providers.groq.models);
@@ -387,13 +326,6 @@ class ExternalAPIManager {
       costs.anthropic = {};
       for (const [model, config] of Object.entries(this.providers.anthropic.models)) {
         costs.anthropic[model] = (tokens / 1000) * config.costPer1kTokens;
-      }
-    }
-
-    if (this.providers.google) {
-      costs.google = {};
-      for (const [model, config] of Object.entries(this.providers.google.models)) {
-        costs.google[model] = (tokens / 1000) * config.costPer1kTokens;
       }
     }
 
