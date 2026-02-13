@@ -43,37 +43,40 @@ jest.mock("../SpecialistSelector.js", () => ({
   })),
 }));
 
-// eslint-disable-next-line import/first
-import AutomationEngine from "../AutomationEngine.js";
+let AutomationEngine;
 
-// Define mockAuditLogger for use in tests
-const mockAuditLogger = {
-  logAutomationRequest: jest.fn().mockReturnValue('automation-id-123'),
-  logSecurityValidation: jest.fn(),
-  logAutomationCompletion: jest.fn(),
-  logError: jest.fn(),
-  searchLogs: jest.fn().mockReturnValue([]),
-  logAutomationStarted: jest.fn(),
-  logAutomationCompleted: jest.fn(),
-  logAutomationFailed: jest.fn(),
-  getAutomationHistory: jest.fn().mockReturnValue([]),
-  getAutomationStats: jest.fn().mockReturnValue({
-    totalAutomations: 0,
-    successfulAutomations: 0,
-    failedAutomations: 0,
-  }),
-};
+beforeAll(async () => {
+  const module = await import("../AutomationEngine.js");
+  AutomationEngine = module.default;
+});
+
+let mockAuditLogger;
 
 describe("AutomationEngine", () => {
   let engine;
 
   beforeEach(() => {
     jest.clearAllMocks();
+    mockAuditLogger = {
+      logAutomationStarted: jest.fn(),
+      logAutomationCompleted: jest.fn(),
+      logAutomationFailed: jest.fn(),
+      logAutomationRequest: jest.fn().mockReturnValue('automation-id-123'),
+      logSecurityValidation: jest.fn(),
+      logAutomationCompletion: jest.fn(),
+      logError: jest.fn(),
+      searchLogs: jest.fn().mockReturnValue([]),
+      getAutomationHistory: jest.fn().mockReturnValue([]),
+      getAutomationStats: jest.fn().mockReturnValue({
+        totalAutomations: 0,
+        successfulAutomations: 0,
+        failedAutomations: 0,
+      }),
+    };
     engine = new AutomationEngine({
       aiModel: "gemini-2.0-flash",
       temperature: 0.7,
     });
-    // Replace the real auditLogger with our mock
     engine.auditLogger = mockAuditLogger;
     
     // Ensure validator mock has the validateFiles method
