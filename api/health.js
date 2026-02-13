@@ -1,6 +1,6 @@
 /**
  * Health Check Endpoint
- * Verifica se Groq API está funcionando
+ * Verifica configuração do Groq API (não faz chamadas reais à API por segurança)
  */
 
 export default async function handler(req, res) {
@@ -25,22 +25,6 @@ export default async function handler(req, res) {
         },
       },
     };
-
-    // Testar conexão com Groq (opcional)
-    if (groqKey && req.query.test === 'true') {
-      try {
-        const testResponse = await fetch('https://api.groq.com/openai/v1/models', {
-          headers: {
-            'Authorization': `Bearer ${groqKey}`,
-          },
-        });
-
-        status.providers.groq.apiStatus = testResponse.ok ? 'reachable' : 'error';
-      } catch (error) {
-        status.providers.groq.apiStatus = 'unreachable';
-        status.providers.groq.error = error.message;
-      }
-    }
 
     return res.status(200).json(status);
   } catch (error) {

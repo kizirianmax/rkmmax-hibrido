@@ -90,6 +90,10 @@ class OptimizedAPIManager {
   /**
    * SELECIONAR MODELO IDEAL
    * Sistema usa apenas Groq com fallback automático
+   * 
+   * Complexidades suportadas:
+   * - simple, medium: llama-3.3-70b-versatile (70B - rápido)
+   * - complex, critical: openai/gpt-oss-120b (120B - raciocínio profundo)
    */
   selectModel(complexity = "simple", options = {}) {
     // Sempre usar Groq
@@ -97,7 +101,7 @@ class OptimizedAPIManager {
     
     // Selecionar modelo baseado na complexidade
     let model;
-    if (complexity === 'complex' || complexity === 'high' || complexity === 'critical') {
+    if (complexity === 'complex' || complexity === 'critical') {
       model = 'openai/gpt-oss-120b';  // Modelo principal
     } else {
       model = 'llama-3.3-70b-versatile';  // Modelo rápido

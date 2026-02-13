@@ -28,7 +28,7 @@ async function callGroq(messages, systemPrompt, options = {}) {
   const groqKey = process.env.GROQ_API_KEY;
   
   if (!groqKey) {
-    throw new Error('GROQ_API_KEY not configured');
+    throw new Error('GROQ_API_KEY not configured in environment variables. Please add GROQ_API_KEY to your Vercel environment settings.');
   }
 
   // Tentar modelo principal primeiro
@@ -148,6 +148,17 @@ export default async function handler(req, res) {
         error: 'Invalid request',
         message: 'messages array is required',
       });
+    }
+
+    // Validar estrutura das mensagens
+    for (let i = 0; i < messages.length; i++) {
+      const msg = messages[i];
+      if (!msg.role || !msg.content) {
+        return res.status(400).json({
+          error: 'Invalid message structure',
+          message: `Message at index ${i} must have 'role' and 'content' fields`,
+        });
+      }
     }
 
     // Verificar credenciais

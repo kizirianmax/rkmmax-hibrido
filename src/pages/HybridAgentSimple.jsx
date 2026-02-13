@@ -28,7 +28,7 @@ export default function HybridAgentSimple() {
       type: "agent",
       agent: "Serginho",
       content:
-        "Olá! Sou o KIZI operando com Groq (120B reasoning). Posso ajudar com qualquer tarefa - desde programação até pesquisas complexas. Descreva o que precisa!",
+        "Olá! Sou o Betinho Híbrido operando com Groq (120B reasoning). Posso ajudar com qualquer tarefa - desde programação até pesquisas complexas. Descreva o que precisa!",
       provider: "groq-120b",
       timestamp: new Date(),
     },

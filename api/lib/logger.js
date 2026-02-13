@@ -9,8 +9,10 @@ const LOG_LEVELS = {
   DEBUG: 3,
 };
 
-const currentLevel = process.env.LOG_LEVEL 
-  ? LOG_LEVELS[process.env.LOG_LEVEL.toUpperCase()]
+// Validar e obter nível de log com fallback para INFO
+const envLevel = process.env.LOG_LEVEL?.toUpperCase();
+const currentLevel = envLevel && LOG_LEVELS[envLevel] !== undefined
+  ? LOG_LEVELS[envLevel]
   : LOG_LEVELS.INFO;
 
 export function logError(context, message, error) {
