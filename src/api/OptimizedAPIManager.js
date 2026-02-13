@@ -1,15 +1,15 @@
 /**
  * OPTIMIZED API MANAGER
  *
- * Arquitetura otimizada para 3 providers:
- * 1. Gemini 2.5 Pro (Principal - qualidade)
- * 2. Gemini 2.5 Flash Lite (Principal - custo)
- * 3. Groq (Fallback - velocidade extrema)
+ * Sistema 100% Groq com 3 modelos em cascata:
+ * 1. openai/gpt-oss-120b (Primary - raciocínio principal)
+ * 2. llama-3.3-70b-versatile (Fallback - velocidade)
+ * 3. mixtral-8x7b-32768 (Fallback - contextos longos)
  *
  * Estratégia:
- * - Gemini Pro para tarefas complexas/críticas
- * - Gemini Flash Lite para tarefas simples/rápidas
- * - Groq como fallback em caso de falha
+ * - Primary para tarefas normais
+ * - Fallback automático em caso de falha
+ * - Mixtral para contextos longos (32K tokens)
  *
  * ⚠️ SEGURANÇA: Usa SecretManager para injetar credenciais
  */
@@ -25,19 +25,19 @@ class OptimizedAPIManager {
 
     this.config = {
       // 🔐 USAR SECRET MANAGER EM VEZ DE PROCESS.ENV DIRETO
-      googleKey: secretManager.getSecret("gemini"),
       groqKey: secretManager.getSecret("groq"),
       ...config,
     };
 
+    // ✅ Apenas Groq - sem Gemini
     this.providers = {
-      gemini: this.initGemini(),
       groq: this.initGroq(),
     };
 
     this.cache = new Map();
+    
+    // ✅ Rate limit apenas para Groq
     this.rateLimits = {
-      gemini: { calls: 0, resetTime: Date.now() + 60000 },
       groq: { calls: 0, resetTime: Date.now() + 60000 },
     };
 
@@ -51,42 +51,13 @@ class OptimizedAPIManager {
   }
 
   /**
-   * INICIALIZAR GEMINI
-   * 🔐 SEGURO: Usa SecretManager para obter API key
-   */
-  initGemini() {
-    // 🔐 OBTER CHAVE DO SECRET MANAGER
-    const apiKey = this.config.googleKey || secretManager.getSecret("gemini") || "";
-
-    return {
-      apiKey,
-      baseURL: "https://generativelanguage.googleapis.com/v1beta/models",
-      isConfigured: !!apiKey,
-      models: {
-        "gemini-2.5-pro": {
-          maxTokens: 1000000,
-          costPer1kTokens: 0.00075,
-          costOutputPer1kTokens: 0.003,
-          description: "Modelo de qualidade máxima para tarefas complexas (ESPECIALISTA 54)",
-          priority: 1,
-          tier: "premium",
-        },
-        "gemini-2.5-flash-lite": {
-          maxTokens: 1000000,
-          costPer1kTokens: 0.0000375,
-          costOutputPer1kTokens: 0.00015,
-          description: "Modelo rápido e barato para tarefas simples",
-          priority: 1,
-          tier: "standard",
-        },
-      },
-      defaultModel: "gemini-2.5-flash-lite",
-    };
-  }
-
-  /**
    * INICIALIZAR GROQ
    * 🔐 SEGURO: Usa SecretManager para obter API key
+   * 
+   * Sistema com 3 modelos em cascata:
+   * 1. openai/gpt-oss-120b - Primary (raciocínio principal)
+   * 2. llama-3.3-70b-versatile - Fallback 1 (velocidade)
+   * 3. mixtral-8x7b-32768 - Fallback 2 (contextos longos)
    */
   initGroq() {
     // 🔐 OBTER CHAVE DO SECRET MANAGER
@@ -100,15 +71,22 @@ class OptimizedAPIManager {
         'openai/gpt-oss-120b': {
           maxTokens: 8000,
           costPer1kTokens: 0.00027,
-          description: "Fallback rápido para tarefas simples",
+          description: "Modelo principal de raciocínio",
+          priority: 1,
+          tier: "primary",
+        },
+        'llama-3.3-70b-versatile': {
+          maxTokens: 8000,
+          costPer1kTokens: 0.0001,
+          description: "Fallback automático rápido",
           priority: 2,
           tier: "fallback",
         },
-        "mixtral-8x7b-32768": {
+        'mixtral-8x7b-32768': {
           maxTokens: 32768,
           costPer1kTokens: 0.00024,
-          description: "Fallback para tarefas médias",
-          priority: 2,
+          description: "Fallback para contextos longos",
+          priority: 3,
           tier: "fallback",
         },
       },
@@ -118,156 +96,122 @@ class OptimizedAPIManager {
 
   /**
    * SELECIONAR MODELO IDEAL
-   * CORRIGIDO: Garantir que Especialista 54 (Gemini Pro) seja roteado corretamente
-   *
-   * Estratégia:
-   * - Tarefas simples: Gemini Flash Lite (mais barato)
-   * - Tarefas complexas: Gemini Pro (melhor qualidade) ← ESPECIALISTA 54
-   * - Fallback: Groq (velocidade extrema)
+   * 
+   * Sistema 100% Groq com 3 modelos:
+   * - Tarefas simples/normais: openai/gpt-oss-120b (primary)
+   * - Fallback rápido: llama-3.3-70b-versatile
+   * - Contextos longos: mixtral-8x7b-32768
    */
   selectModel(complexity = "simple", options = {}) {
-    // Verificar se providers estão inicializados
-    if (!this.providers.gemini || !this.providers.groq) {
-      console.warn("⚠️ Providers não inicializados corretamente!");
+    // Verificar se Groq está inicializado
+    if (!this.providers.groq) {
+      console.warn("⚠️ Groq provider não inicializado!");
       return {
         provider: 'groq',
         model: 'openai/gpt-oss-120b',
       };
     }
 
-    if (options.forceProvider === "groq") {
+    // Forçar modelo específico se solicitado
+    if (options.model) {
       return {
         provider: "groq",
-        model: options.model || this.providers.groq.defaultModel,
-        specialist: "fallback",
-      };
-    }
-
-    if (options.forceProvider === "gemini") {
-      return {
-        provider: "gemini",
-        model: options.model || this.providers.gemini.defaultModel,
-        specialist: options.model === "gemini-2.5-pro" ? "specialist-54" : "standard",
+        model: options.model,
+        tier: this.providers.groq.models[options.model]?.tier || "custom",
       };
     }
 
     // Seleção automática baseada em complexidade
     switch (complexity) {
       case "simple":
-        return {
-          provider: "gemini",
-          model: "gemini-2.5-flash-lite", // Mais barato
-          specialist: "standard",
-        };
-
       case "medium":
+      case "normal":
         return {
-          provider: "gemini",
-          model: "gemini-2.5-flash-lite",
-          specialist: "standard",
+          provider: "groq",
+          model: "openai/gpt-oss-120b", // Primary
+          tier: "primary",
         };
 
       case "complex":
-        // ✅ ESPECIALISTA 54: Gemini Pro para tarefas complexas
+      case "critical":
         return {
-          provider: "gemini",
-          model: "gemini-2.5-pro", // Melhor qualidade
-          specialist: "specialist-54",
-          tier: "premium",
+          provider: "groq",
+          model: "openai/gpt-oss-120b", // Primary para tudo
+          tier: "primary",
         };
 
-      case "critical":
-        // ✅ ESPECIALISTA 54: Máxima qualidade para tarefas críticas
+      case "long":
         return {
-          provider: "gemini",
-          model: "gemini-2.5-pro", // Máxima qualidade
-          specialist: "specialist-54",
-          tier: "premium",
+          provider: "groq",
+          model: "mixtral-8x7b-32768", // Para contextos longos
+          tier: "long-context",
         };
 
       default:
         return {
-          provider: "gemini",
-          model: this.providers.gemini.defaultModel,
-          specialist: "standard",
+          provider: "groq",
+          model: this.providers.groq.defaultModel,
+          tier: "primary",
         };
     }
   }
 
   /**
    * CHAMAR API COM FALLBACK AUTOMÁTICO
-   * CORRIGIDO: Melhor logging para debug de Especialista 54
+   * Sistema 100% Groq com 3 modelos em cascata
    */
   async callWithFallback(prompt, options = {}) {
-    const complexity = options.complexity || "simple";
-    const maxRetries = options.maxRetries || 2;
+    const maxRetries = options.maxRetries || 3;
+    const models = [
+      'openai/gpt-oss-120b',      // Primary - Tenta primeiro
+      'llama-3.3-70b-versatile',  // Fallback 1 - Rápido
+      'mixtral-8x7b-32768'        // Fallback 2 - Contextos longos
+    ];
 
-    // Tentar Gemini primeiro
     for (let attempt = 0; attempt < maxRetries; attempt++) {
       try {
-        const selection = this.selectModel(complexity, options);
+        const model = models[attempt] || models[0];
+        console.log(`🤖 Tentativa ${attempt + 1}: Usando modelo ${model}`);
 
-        // 🔍 LOG: Mostrar qual especialista está sendo usado
-        if (selection.specialist === "specialist-54") {
-          console.log("✅ ESPECIALISTA 54 ATIVADO:", {
-            model: selection.model,
-            complexity,
-            tier: selection.tier,
-          });
-        }
-
-        const result = await this.call(selection.provider, prompt, {
+        const result = await this.callGroq(prompt, {
           ...options,
-          model: selection.model,
+          model
         });
 
+        console.log(`✅ Sucesso com ${model}`);
         return {
           success: true,
-          provider: selection.provider,
-          model: selection.model,
-          specialist: selection.specialist,
+          provider: "groq",
+          model,
           result,
           attempt: attempt + 1,
           timestamp: new Date().toISOString(),
         };
       } catch (error) {
-        console.warn(`❌ Tentativa ${attempt + 1} falhou:`, error.message);
+        console.warn(`❌ Tentativa ${attempt + 1} falhou com ${models[attempt]}:`, error.message);
 
         if (attempt === maxRetries - 1) {
-          // Última tentativa falhou, usar Groq como fallback
-          try {
-            this.stats.fallbacks++;
-            console.log("⚠️ FALLBACK para GROQ");
-            const result = await this.call("groq", prompt, options);
-
-            return {
-              success: true,
-              provider: "groq",
-              model: this.providers.groq.defaultModel,
-              result,
-              fallback: true,
-              timestamp: new Date().toISOString(),
-            };
-          } catch (fallbackError) {
-            console.error("🔴 TODOS OS PROVIDERS FALHARAM");
-            return {
-              success: false,
-              errors: [
-                { provider: "gemini", error: error.message },
-                { provider: "groq", error: fallbackError.message },
-              ],
-              timestamp: new Date().toISOString(),
-            };
-          }
+          console.error("🔴 TODOS OS MODELOS FALHARAM");
+          return {
+            success: false,
+            error: `Todos os modelos falharam após ${maxRetries} tentativas: ${error.message}`,
+            attempts: maxRetries,
+            timestamp: new Date().toISOString(),
+          };
         }
       }
     }
   }
 
   /**
-   * CHAMAR API ESPECÍFICA
+   * CHAMAR API ESPECÍFICA (apenas Groq)
    */
   async call(provider, prompt, options = {}) {
+    // ✅ Verificar se é Groq (único provider suportado)
+    if (provider !== "groq") {
+      throw new Error(`Provider não suportado: ${provider}. Use 'groq'.`);
+    }
+
     // Verificar cache
     const cacheKey = `${provider}:${options.model || "default"}:${prompt}`;
     if (this.cache.has(cacheKey)) {
@@ -282,18 +226,7 @@ class OptimizedAPIManager {
       throw new Error(`Rate limit exceeded for ${provider}`);
     }
 
-    let result;
-
-    switch (provider) {
-      case "gemini":
-        result = await this.callGemini(prompt, options);
-        break;
-      case "groq":
-        result = await this.callGroq(prompt, options);
-        break;
-      default:
-        throw new Error(`Unknown provider: ${provider}`);
-    }
+    const result = await this.callGroq(prompt, options);
 
     // Cachear resultado
     this.cache.set(cacheKey, result);
@@ -306,73 +239,6 @@ class OptimizedAPIManager {
     this.stats.totalCost += result.cost;
 
     return result;
-  }
-
-  /**
-   * CHAMAR GEMINI
-   * CORRIGIDO: Verificar se API key está configurada
-   */
-  async callGemini(prompt, options = {}) {
-    // ✅ VERIFICAÇÃO CRÍTICA: Gemini Pro requer API key
-    if (!this.providers.gemini.isConfigured) {
-      throw new Error("❌ GEMINI_API_KEY não configurada! Especialista 54 não pode ser ativado.");
-    }
-
-    const model = options.model || this.providers.gemini.defaultModel;
-    const maxTokens = options.maxTokens || 2000;
-
-    // Log para debug
-    if (model === "gemini-2.5-pro") {
-      console.log("🚀 Chamando ESPECIALISTA 54 (Gemini Pro)...");
-    }
-
-    const response = await fetch(
-      `${this.providers.gemini.baseURL}/${model}:generateContent?key=${this.providers.gemini.apiKey}`,
-      {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          contents: [{ parts: [{ text: prompt }] }],
-          generationConfig: {
-            maxOutputTokens: maxTokens,
-            temperature: options.temperature || 0.7,
-            topP: options.topP || 0.95,
-          },
-        }),
-      }
-    );
-
-    if (!response.ok) {
-      const error = await response.json();
-      throw new Error(`Gemini API error: ${error.error?.message || response.statusText}`);
-    }
-
-    const data = await response.json();
-
-    if (!data.candidates || !data.candidates[0]) {
-      throw new Error("Gemini API returned empty response");
-    }
-
-    const text = data.candidates[0].content.parts[0].text;
-    const inputTokens = data.usageMetadata.promptTokenCount;
-    const outputTokens = data.usageMetadata.candidatesTokenCount;
-    const totalTokens = inputTokens + outputTokens;
-
-    const modelConfig = this.providers.gemini.models[model];
-    const cost =
-      (inputTokens / 1000) * modelConfig.costPer1kTokens +
-      (outputTokens / 1000) * modelConfig.costOutputPer1kTokens;
-
-    return {
-      text,
-      model,
-      provider: "gemini",
-      tokens: totalTokens,
-      inputTokens,
-      outputTokens,
-      cost,
-      timestamp: new Date().toISOString(),
-    };
   }
 
   /**
@@ -445,20 +311,12 @@ class OptimizedAPIManager {
   }
 
   /**
-   * COMPARAR CUSTOS
+   * COMPARAR CUSTOS (apenas Groq)
    */
   compareCosts(tokens = 1000) {
     const costs = {
-      gemini: {},
       groq: {},
     };
-
-    // Gemini
-    for (const [model, config] of Object.entries(this.providers.gemini.models)) {
-      const inputCost = (tokens / 1000) * config.costPer1kTokens;
-      const outputCost = (tokens / 1000) * config.costOutputPer1kTokens;
-      costs.gemini[model] = inputCost + outputCost;
-    }
 
     // Groq
     for (const [model, config] of Object.entries(this.providers.groq.models)) {
@@ -473,7 +331,6 @@ class OptimizedAPIManager {
    */
   getStatus() {
     return {
-      gemini: this.providers.gemini ? "available" : "not-configured",
       groq: this.providers.groq ? "available" : "not-configured",
     };
   }
@@ -483,7 +340,6 @@ class OptimizedAPIManager {
    */
   getAvailableModels() {
     return {
-      gemini: Object.keys(this.providers.gemini?.models || {}),
       groq: Object.keys(this.providers.groq?.models || {}),
     };
   }
