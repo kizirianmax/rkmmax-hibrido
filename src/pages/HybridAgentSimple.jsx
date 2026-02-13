@@ -113,7 +113,7 @@ export default function HybridAgentSimple() {
 
       const data = await response.json();
       const aiResponse = data.response || data.message || "Sem resposta";
-      const provider = data.model || data.usedProvider || "gemini-1.5-pro";
+      const provider = data.model || data.provider || "groq-120b";
 
       console.log(`✅ Resposta recebida de ${provider}`);
 
@@ -319,12 +319,11 @@ export default function HybridAgentSimple() {
             <div className="info-box">
               <h3>SISTEMA</h3>
               <p>
-                🚀 <strong>Versão 3.0.2</strong>
+                🚀 <strong>Versão 3.2.0</strong>
               </p>
               <p>Serginho - Orquestrador de IA</p>
               <p>
-                🧠 <strong>KIZI 2.5 Pro</strong> | 🚀 <strong>Speed</strong> | ⚡{" "}
-                <strong>Flash</strong>
+                🧠 <strong>Groq 120B</strong> | ⚡ <strong>Llama 70B</strong>
               </p>
               <p>💰 Otimização de Custo Ativa</p>
             </div>
