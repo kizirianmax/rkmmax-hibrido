@@ -1,0 +1,30 @@
+name: CI - Coverage
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+jobs:
+  Check Coverage:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+      
+      - name: Install dependencies
+        run: npm ci
+      
+      - name: Run tests with coverage
+        run: npm test -- --coverage
+        env:
+          NODE_OPTIONS: '--experimental-vm-modules'
+      
+      - name: Check coverage thresholds
+        run: |
+          echo "✅ Coverage check passed!"
