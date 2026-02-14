@@ -73,12 +73,23 @@ export default class CircuitBreaker {
    * @returns {Promise<*>} Result of the function or timeout error
    */
   async executeWithTimeout(fn) {
-    return Promise.race([
-      fn(),
-      new Promise((_, reject) => 
-        setTimeout(() => reject(new Error(`Timeout after ${this.timeout}ms`)), this.timeout)
-      )
-    ]);
+    let timeoutId;
+    
+    const timeoutPromise = new Promise((_, reject) => {
+      timeoutId = setTimeout(
+        () => reject(new Error(`Timeout after ${this.timeout}ms`)),
+        this.timeout
+      );
+    });
+
+    try {
+      const result = await Promise.race([fn(), timeoutPromise]);
+      clearTimeout(timeoutId);
+      return result;
+    } catch (error) {
+      clearTimeout(timeoutId);
+      throw error;
+    }
   }
 
   /**
@@ -97,12 +108,15 @@ export default class CircuitBreaker {
   /**
    * Handles failed execution
    * Increments failure count and opens circuit if threshold is reached
+   * In HALF_OPEN state, any failure immediately opens the circuit
    * 
    * @private
    */
   onFailure() {
     this.failures++;
-    if (this.failures >= this.failureThreshold) {
+    
+    // In HALF_OPEN state, any failure immediately opens the circuit
+    if (this.state === 'HALF_OPEN' || this.failures >= this.failureThreshold) {
       this.state = 'OPEN';
       this.nextAttempt = Date.now() + this.resetTimeout;
     }
