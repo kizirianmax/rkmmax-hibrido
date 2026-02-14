@@ -3,16 +3,13 @@
  * Testes unitários para motor de automação
  */
 
-import AutomationEngine from "../AutomationEngine.js";
+import { jest } from '@jest/globals';
 
-// Mock AuditLogger
-const mockAuditLogger = {
-  logAutomationRequest: jest.fn().mockReturnValue('LOG_12345_mock'),
-  logSecurityValidation: jest.fn(),
-  logAutomationCompletion: jest.fn(),
-  logError: jest.fn(),
-  searchLogs: jest.fn().mockReturnValue([])
-};
+// Mock antes do import
+jest.mock('../AuditLogger.js');
+
+// Usar dynamic import
+const { default: AutomationEngine } = await import('../AutomationEngine.js');
 
 describe("AutomationEngine", () => {
   let engine;
@@ -23,8 +20,6 @@ describe("AutomationEngine", () => {
       aiModel: "gemini-2.0-flash",
       temperature: 0.7,
     });
-    // Replace the real auditLogger with our mock
-    engine.auditLogger = mockAuditLogger;
   });
 
   describe("initialization", () => {

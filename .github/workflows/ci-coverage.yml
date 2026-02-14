@@ -14,15 +14,24 @@ jobs:
     steps:
       - name: 📥 Checkout code
         uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
       
       - name: 🔧 Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '22'
           cache: 'npm'
+          cache-dependency-path: '**/package-lock.json'
+      
+      - name: Enable Corepack
+        run: corepack enable
+      
+      - name: Prepare Corepack
+        run: corepack prepare --activate
       
       - name: 📦 Install dependencies
-        run: npm ci
+        run: npm ci --ignore-scripts
       
       - name: 📊 Run tests with coverage
         run: npm run test:coverage

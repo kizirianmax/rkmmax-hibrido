@@ -1,0 +1,37 @@
+name: CI - Tests
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+jobs:
+  Run Tests:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+          cache-dependency-path: '**/package-lock.json'
+      
+      - name: Enable Corepack
+        run: corepack enable
+      
+      - name: Prepare Corepack
+        run: corepack prepare --activate
+      
+      - name: Install dependencies
+        run: npm ci --ignore-scripts
+      
+      - name: Run tests
+        run: npm test
+        env:
+          NODE_OPTIONS: '--experimental-vm-modules'
