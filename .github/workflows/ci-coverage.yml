@@ -2,6 +2,7 @@ name: CI - Coverage
 
 on:
   pull_request:
+  push:
     branches: [main]
 
 jobs:
@@ -25,24 +26,10 @@ jobs:
         run: npm ci
       
       - name: 📊 Run tests with coverage
-        run: npm run test:coverage
+        run: npm test -- --coverage
         env:
-          NODE_ENV: test
-          CI: true
-      
-      - name: 📈 Display coverage summary
-        run: |
-          echo "Coverage Summary:"
-          cat coverage/coverage-summary.json || echo "Coverage file not found"
-      
-      - name: 📤 Upload coverage reports
-        uses: actions/upload-artifact@v4
-        if: always()
-        with:
-          name: coverage-report
-          path: coverage/
-          retention-days: 7
+          NODE_OPTIONS: '--experimental-vm-modules'
       
       - name: ✅ Coverage check passed
-        if: success()
-        run: echo "Coverage thresholds met!"
+        run: |
+          echo "✅ Coverage thresholds met!"

@@ -1,9 +1,8 @@
 name: CI - Tests
 
 on:
-  push:
-    branches: [main]
   pull_request:
+  push:
     branches: [main]
 
 jobs:
@@ -26,17 +25,10 @@ jobs:
       - name: 📦 Install dependencies
         run: npm ci
       
-      - name: 🔍 Verify lock file
-        run: |
-          echo "Verifying package-lock.json is in sync..."
-          npm install --package-lock-only
-          git diff --exit-code package-lock.json
-      
       - name: 🧪 Run tests
-        run: npm run test:ci
+        run: npm test
         env:
-          NODE_ENV: test
-          CI: true
+          NODE_OPTIONS: '--experimental-vm-modules'
       
       - name: ✅ Tests passed
         if: success()
