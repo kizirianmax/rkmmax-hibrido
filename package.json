@@ -66,7 +66,8 @@
     "jest-environment-jsdom": "^29.7.0",
     "jest-junit": "^16.0.0",
     "prettier": "^3.6.2",
-    "source-map-explorer": "^2.5.3"
+    "source-map-explorer": "^2.5.3",
+    "yaml": "^2.8.2"
   },
   "overrides": {
     "typescript": "5.9.3"
