@@ -3,6 +3,7 @@
  * Testes unitários completos para o módulo de otimização de custos
  */
 
+import { jest } from '@jest/globals';
 import {
   responseCache,
   ResponseCache,

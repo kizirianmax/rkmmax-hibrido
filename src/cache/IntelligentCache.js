@@ -4,7 +4,7 @@
  * Economia radical de API: 70% hit rate = 65% redução de custo
  */
 
-const crypto = require("crypto");
+import crypto from "crypto";
 
 class IntelligentCache {
   constructor(options = {}) {
@@ -306,4 +306,4 @@ Timestamp: ${new Date().toISOString()}
   }
 }
 
-module.exports = IntelligentCache;
+export default IntelligentCache;

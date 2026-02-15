@@ -429,9 +429,4 @@ class AuditLogger {
   }
 }
 
-// Exportar
-if (typeof module !== "undefined" && module.exports) {
-  module.exports = AuditLogger;
-}
-
 export default AuditLogger;

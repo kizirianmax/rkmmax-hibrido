@@ -49,7 +49,7 @@ describe('Intelligent Router', () => {
   });
 
   describe('routeToProvider', () => {
-    test('should route messages with code to gemini-pro', () => {
+    test('should route messages with code to llama-70b', () => {
       const analysis = {
         hasCode: true,
         scores: { complexity: 5, speed: 0, simple: 0 },
@@ -58,12 +58,12 @@ describe('Intelligent Router', () => {
 
       const result = routeToProvider(analysis);
 
-      expect(result.provider).toBe('gemini-pro');
+      expect(result.provider).toBe('llama-70b');
       expect(result.confidence).toBe(0.95);
       expect(result.reason).toContain('código');
     });
 
-    test('should route high complexity messages to gemini-pro', () => {
+    test('should route high complexity messages to llama-70b', () => {
       const analysis = {
         hasCode: false,
         scores: { complexity: 8, speed: 0, simple: 0 },
@@ -72,11 +72,11 @@ describe('Intelligent Router', () => {
 
       const result = routeToProvider(analysis);
 
-      expect(result.provider).toBe('gemini-pro');
+      expect(result.provider).toBe('llama-70b');
       expect(result.confidence).toBeGreaterThanOrEqual(0.8);
     });
 
-    test('should route very short messages to gemini-flash', () => {
+    test('should route very short messages to llama-8b', () => {
       const analysis = {
         hasCode: false,
         scores: { complexity: 0, speed: 1, simple: 2 },
@@ -85,7 +85,7 @@ describe('Intelligent Router', () => {
 
       const result = routeToProvider(analysis);
 
-      expect(result.provider).toBe('gemini-flash');
+      expect(result.provider).toBe('llama-8b');
       expect(result.confidence).toBe(0.8);
       expect(result.reason).toContain('curta');
     });
@@ -106,23 +106,23 @@ describe('Intelligent Router', () => {
   });
 
   describe('getNextFallback', () => {
-    test('should return first fallback for gemini-pro', () => {
-      const next = getNextFallback('gemini-pro', []);
-      expect(next).toBe('gemini-flash');
+    test('should return first fallback for llama-70b', () => {
+      const next = getNextFallback('llama-70b', []);
+      expect(next).toBe('llama-8b');
     });
 
     test('should skip tried providers in fallback', () => {
-      const next = getNextFallback('gemini-pro', ['gemini-flash']);
-      expect(next).toBe('groq');
+      const next = getNextFallback('llama-70b', ['llama-8b']);
+      expect(next).toBe('groq-fallback');
     });
 
     test('should return null when no fallback available', () => {
-      const next = getNextFallback('groq', []);
+      const next = getNextFallback('groq-fallback', []);
       expect(next).toBeNull();
     });
 
     test('should return null when all providers tried', () => {
-      const next = getNextFallback('gemini-pro', ['gemini-flash', 'groq']);
+      const next = getNextFallback('llama-70b', ['llama-8b', 'groq-fallback']);
       expect(next).toBeNull();
     });
   });

@@ -4,6 +4,7 @@
  * Testing BEHAVIOR, not implementation details
  */
 
+import { jest } from '@jest/globals';
 import IntelligentCache from '../IntelligentCache.js';
 
 describe('IntelligentCache', () => {
