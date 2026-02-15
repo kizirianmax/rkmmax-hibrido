@@ -5,9 +5,9 @@
  * Gerenciamento de cache global
  */
 
-const AgentBase = require("../core/AgentBase");
-const SpecialistRegistry = require("../core/SpecialistRegistry");
-const IntelligentCache = require("../../cache/IntelligentCache");
+import AgentBase from "../core/AgentBase.js";
+import SpecialistRegistry from "../core/SpecialistRegistry.js";
+import IntelligentCache from "../../cache/IntelligentCache.js";
 
 class Serginho extends AgentBase {
   constructor(config = {}) {
@@ -328,4 +328,4 @@ class TaskRouter {
   }
 }
 
-module.exports = Serginho;
+export default Serginho;

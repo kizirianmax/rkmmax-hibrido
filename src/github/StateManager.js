@@ -330,4 +330,4 @@ Top Agents by Hit Rate:
   }
 }
 
-module.exports = StateManager;
+export default StateManager;

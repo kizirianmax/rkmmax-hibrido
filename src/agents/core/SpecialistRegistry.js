@@ -304,4 +304,4 @@ Timestamp: ${new Date().toISOString()}
   }
 }
 
-module.exports = SpecialistRegistry;
+export default SpecialistRegistry;

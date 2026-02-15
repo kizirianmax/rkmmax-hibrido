@@ -4,7 +4,7 @@
  * Suporta: criar arquivos, gerar código, documentação, etc
  */
 
-const GitHubService = require("./githubService");
+import GitHubService from "./githubService.js";
 
 class TaskExecutor {
   constructor(githubToken = null) {
@@ -458,4 +458,4 @@ Este projeto segue [Semantic Versioning](https://semver.org/).
   }
 }
 
-module.exports = TaskExecutor;
+export default TaskExecutor;

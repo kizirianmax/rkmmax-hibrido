@@ -359,4 +359,4 @@ class ExternalAPIManager {
   }
 }
 
-module.exports = ExternalAPIManager;
+export default ExternalAPIManager;
