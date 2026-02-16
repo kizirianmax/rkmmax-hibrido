@@ -308,7 +308,7 @@ class CreditCalculator {
       // Estimar custo mensal (assumindo 20 automações por dia)
       const automationsPerMonth = 20 * 30; // 20 por dia, 30 dias
       const avgTokensPerAutomation = 2000;
-      const avgModel = "gemini-2.0-flash";
+      const avgModel = "llama-8b";
 
       const costPerAutomation = this.calculateAutomationCost(
         "OPTIMIZED",

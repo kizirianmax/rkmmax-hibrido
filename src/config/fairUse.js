@@ -146,11 +146,11 @@ export const getAIModel = (userPlan, messageType = "standard") => {
 
   // Premium pode escolher modelo avançado
   if (plan.limits.features.advancedModels && messageType === "advanced") {
-    return "gpt-4.1-mini"; // Ou GPT-4.1 se usuário escolher
+    return "llama-70b"; // Modelo mais complexo para Premium
   }
 
-  // Todos os outros usam Gemini Flash (mais barato)
-  return "gemini-2.0-flash";
+  // Todos os outros usam Llama 8B (mais barato e rápido)
+  return "llama-8b";
 };
 
 // Calcular custo estimado por mensagem
@@ -158,11 +158,11 @@ export const estimateMessageCost = (userPlan, tokens) => {
   const model = getAIModel(userPlan);
 
   const pricing = {
-    "gemini-2.0-flash": 0.000000075, // $0.075 / 1M tokens
-    "gpt-4.1-mini": 0.0000008, // $0.80 / 1M tokens
+    "llama-8b": 0.00000005, // $0.05 / 1M tokens (very cheap)
+    "llama-70b": 0.0000003, // $0.30 / 1M tokens
   };
 
-  const costPerToken = pricing[model] || pricing["gemini-2.0-flash"];
+  const costPerToken = pricing[model] || pricing["llama-8b"];
   const costUSD = tokens * costPerToken;
   const costBRL = costUSD * 5; // Conversão aproximada
 
