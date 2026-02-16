@@ -3,11 +3,14 @@
  * Coordena 55+ especialistas
  * Roteamento inteligente de tarefas
  * Gerenciamento de cache global
+ * 
+ * Uses aiAdapter for provider-agnostic AI operations
  */
 
 import AgentBase from "../core/AgentBase.js";
 import SpecialistRegistry from "../core/SpecialistRegistry.js";
 import IntelligentCache from "../../cache/IntelligentCache.js";
+import { askAI, analyzeCode, complexTask, simpleQuery } from "../../utils/aiAdapter.js";
 
 class Serginho extends AgentBase {
   constructor(config = {}) {
@@ -222,10 +225,138 @@ class Serginho extends AgentBase {
 
   /**
    * Chamar API do Especialista (Implementação)
+   * Uses aiAdapter for provider-agnostic AI operations
    */
   async _callSpecialistAPI(specialist, prompt, context) {
-    // Simulação: em produção, isso chamaria a API específica do especialista
-    return `Response from ${specialist.name}: ${prompt.substring(0, 50)}...`;
+    // Determine task type from prompt and context
+    const taskType = this._determineTaskType(prompt, context);
+    
+    let result;
+    
+    try {
+      // Execute using appropriate aiAdapter method
+      switch (taskType) {
+        case 'code':
+          result = await analyzeCode(prompt, context.language || 'javascript');
+          break;
+        case 'complex':
+          result = await complexTask(prompt, context.requirements || {});
+          break;
+        case 'simple':
+          result = await simpleQuery(prompt);
+          break;
+        default:
+          result = await askAI(prompt, context);
+      }
+      
+      // Return the AI response
+      return result.answer || result.response || `Response from ${specialist.name}: ${prompt.substring(0, 50)}...`;
+    } catch (error) {
+      return this._handleAIError(error, specialist);
+    }
+  }
+
+  /**
+   * Determine task type from prompt analysis
+   * @private
+   */
+  _determineTaskType(prompt, context) {
+    if (context.type) {
+      return context.type;
+    }
+    
+    // Detect code
+    if (this._isCodeQuery(prompt)) {
+      return 'code';
+    }
+    
+    // Detect complex task
+    if (this._isComplexTask(prompt)) {
+      return 'complex';
+    }
+    
+    // Detect simple query
+    if (this._isSimpleQuery(prompt)) {
+      return 'simple';
+    }
+    
+    return 'general';
+  }
+
+  /**
+   * Check if prompt is a code query
+   * @private
+   */
+  _isCodeQuery(prompt) {
+    const codePatterns = [
+      /```[\s\S]*```/,
+      /function\s+\w+/,
+      /class\s+\w+/,
+      /import\s+.*from/,
+      /const\s+\w+\s*=/,
+      /def\s+\w+/,
+      /public\s+class/,
+    ];
+    
+    return codePatterns.some(pattern => pattern.test(prompt));
+  }
+
+  /**
+   * Check if prompt is a complex task
+   * @private
+   */
+  _isComplexTask(prompt) {
+    const complexKeywords = [
+      'arquitetura',
+      'architecture',
+      'design pattern',
+      'implementar',
+      'implement',
+      'sistema',
+      'system',
+      'refatorar',
+      'refactor',
+      'otimizar',
+      'optimize',
+      'análise',
+      'analysis',
+      'resolver',
+      'solve',
+      'microservices',
+      'cqrs',
+      'event sourcing',
+    ];
+    
+    const lowerPrompt = prompt.toLowerCase();
+    return complexKeywords.some(keyword => lowerPrompt.includes(keyword)) 
+           || prompt.length > 200;
+  }
+
+  /**
+   * Check if prompt is a simple query
+   * @private
+   */
+  _isSimpleQuery(prompt) {
+    return prompt.length < 30;
+  }
+
+  /**
+   * Handle AI errors uniformly
+   * @private
+   */
+  _handleAIError(error, specialist) {
+    console.error('Serginho AI error:', error);
+    
+    if (error.message.includes('Circuit breaker')) {
+      throw new Error('Service temporarily unavailable. AI service is recovering. Please try again.');
+    }
+    
+    if (error.message.includes('Timeout')) {
+      throw new Error('Request timeout. Request took too long. Try a simpler query.');
+    }
+    
+    // Fallback to basic response
+    return `Response from ${specialist.name}: I encountered an error processing your request.`;
   }
 
   /**
