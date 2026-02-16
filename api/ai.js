@@ -1,74 +1,47 @@
 /**
  * 🤖 ENDPOINT UNIFICADO DE IA - KIZI AI
  * 
- * Enterprise-grade AI API with complete decoupling via aiAdapter
+ * Enterprise-grade AI API using Serginho Orchestrator
  * 
  * Features:
- * - aiAdapter integration for automatic provider selection
+ * - Serginho Orchestrator for centralized provider management
  * - Circuit breaker protection
  * - 8s timeout protection
  * - Automatic fallback
  * - Standardized error handling
- * - No provider exposure in responses
+ * - Intelligent complexity-based routing
  */
 
 import geniusPrompts from "../src/prompts/geniusPrompts.js";
 import costOptimization from "../src/utils/costOptimization.js";
 import { specialists } from "../src/config/specialists.js";
-import { askAI, analyzeCode, complexTask } from "../src/utils/aiAdapter.js";
+import serginho from "./lib/serginho-orchestrator.js";
 
 const { buildGeniusPrompt } = geniusPrompts;
 const { optimizeRequest, cacheResponse } = costOptimization;
 
 /**
- * Determine complexity based on message analysis
- */
-function determineComplexity(messages) {
-  const lastMessage = messages[messages.length - 1]?.content || "";
-  const messageLength = lastMessage.length;
-  const conversationLength = messages.length;
-
-  // Complex task indicators
-  if (messageLength > 2000 || conversationLength > 15) {
-    return 'complex';
-  }
-  
-  // Code analysis indicators
-  if (lastMessage.includes('function') || lastMessage.includes('class') || 
-      lastMessage.includes('const') || lastMessage.includes('import')) {
-    return 'code';
-  }
-
-  // Default to standard
-  return 'standard';
-}
-
-/**
- * Execute AI task via aiAdapter (no direct provider calls)
+ * Execute AI task via Serginho Orchestrator
  */
 async function executeAITask(messages, systemPrompt, context = {}) {
-  const complexity = determineComplexity(messages);
+  // Extract the user's message from the last message
+  const userMessage = messages[messages.length - 1]?.content || "";
   
-  // Build full prompt with system prompt and messages
-  const fullPrompt = systemPrompt 
-    ? `${systemPrompt}\n\n${messages.map(m => `${m.role}: ${m.content}`).join('\n')}`
-    : messages.map(m => `${m.role}: ${m.content}`).join('\n');
+  // Prepare conversation history (exclude the last message as it's passed separately)
+  const conversationHistory = messages.slice(0, -1);
   
-  let result;
-  
-  // Route to appropriate aiAdapter function based on complexity
-  switch (complexity) {
-    case 'code':
-      result = await analyzeCode(fullPrompt, context.language || 'javascript');
-      break;
-    case 'complex':
-      result = await complexTask(fullPrompt, context);
-      break;
-    case 'standard':
-    default:
-      result = await askAI(fullPrompt, context);
-      break;
+  // Add system prompt to context if provided
+  if (systemPrompt) {
+    context.systemPrompt = systemPrompt;
   }
+  
+  // Call Serginho Orchestrator
+  const result = await serginho.handleRequest({
+    message: userMessage,
+    messages: conversationHistory,
+    context,
+    options: {},
+  });
   
   return result;
 }
@@ -125,7 +98,7 @@ export default async function handler(req, res) {
         });
       }
 
-      // Execute via aiAdapter (automatic provider selection)
+      // Execute via Serginho Orchestrator
       const result = await executeAITask(
         optimized.messages,
         optimized.systemPrompt,
@@ -133,14 +106,19 @@ export default async function handler(req, res) {
       );
 
       const response = {
-        response: result.answer,
-        confidence: result.confidence,
+        response: result.text,
+        model: result.model,
+        provider: result.provider,
+        tier: result.tier,
+        complexity: result.complexity,
         type: promptType,
         metadata: {
-          type: result.metadata.type,
-          complexity: result.metadata.complexity,
+          provider: result.provider,
+          tier: result.tier,
+          complexity: result.complexity,
         },
         success: true,
+        usage: result.usage,
       };
 
       cacheResponse(messages, response);
@@ -184,7 +162,7 @@ export default async function handler(req, res) {
         });
       }
 
-      // Execute via aiAdapter (automatic provider selection)
+      // Execute via Serginho Orchestrator
       const result = await executeAITask(
         optimized.messages,
         optimized.systemPrompt,
@@ -192,14 +170,19 @@ export default async function handler(req, res) {
       );
 
       const response = {
-        response: result.answer,
-        confidence: result.confidence,
+        response: result.text,
+        model: result.model,
+        provider: result.provider,
+        tier: result.tier,
+        complexity: result.complexity,
         specialist: specialist.name,
         metadata: {
-          type: result.metadata.type,
-          complexity: result.metadata.complexity,
+          provider: result.provider,
+          tier: result.tier,
+          complexity: result.complexity,
         },
         success: true,
+        usage: result.usage,
       };
 
       cacheResponse(messages, response);
