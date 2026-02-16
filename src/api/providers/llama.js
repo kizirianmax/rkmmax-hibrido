@@ -7,12 +7,16 @@
  * orchestrator to maintain separate tier configurations while using the
  * same underlying model, enabling future upgrades when 120B becomes available.
  */
+
+// TODO: Update to actual Llama 3.3 120B model when available on Groq
+const TEMPORARY_120B_MODEL = 'llama-3.3-70b-versatile';
+
 export class LlamaProvider {
   constructor(apiKey, size = '70b') {
     this.apiKey = apiKey;
     this.size = size;
     this.modelMap = {
-      '120b': 'llama-3.3-70b-versatile',
+      '120b': TEMPORARY_120B_MODEL,
       '70b': 'llama-3.3-70b-versatile',
       '8b': 'llama-3.1-8b-instant'
     };

@@ -13,14 +13,19 @@ import { GroqProvider } from './providers/groq.js';
 
 export class SerginhoContextual {
   constructor() {
-    // Initialize providers with GROQ_API_KEY
-    const apiKey = process.env.GROQ_API_KEY || process.env.REACT_APP_GROQ_API_KEY;
+    // Initialize providers with GROQ_API_KEY (server-side only)
+    const apiKey = process.env.GROQ_API_KEY;
+    
+    // Only require API key in production/non-test environments
+    if (!apiKey && process.env.NODE_ENV !== 'test') {
+      throw new Error('GROQ_API_KEY environment variable is required');
+    }
     
     this.providers = {
-      'llama-120b': new LlamaProvider(apiKey, '120b'),
-      'llama-70b': new LlamaProvider(apiKey, '70b'),
-      'llama-8b': new LlamaProvider(apiKey, '8b'),
-      'groq-fallback': new GroqProvider(apiKey)
+      'llama-120b': new LlamaProvider(apiKey || 'test-key', '120b'),
+      'llama-70b': new LlamaProvider(apiKey || 'test-key', '70b'),
+      'llama-8b': new LlamaProvider(apiKey || 'test-key', '8b'),
+      'groq-fallback': new GroqProvider(apiKey || 'test-key')
     };
     
     // Conversation history (per session)
@@ -149,10 +154,14 @@ export class SerginhoContextual {
       }
     });
     
-    // Return first successful response using Promise.any
-    const result = await Promise.any(promises);
-    
-    return result;
+    try {
+      // Return first successful response using Promise.any
+      const result = await Promise.any(promises);
+      return result;
+    } catch (error) {
+      // All promises rejected
+      throw new Error('All models failed in Betinho Hybrid mode');
+    }
   }
 
   /**
@@ -171,7 +180,9 @@ export class SerginhoContextual {
     // Track metrics (increment requests after execution)
     this.metrics.totalRequests++;
     
-    // Update average response time correctly
+    // Update average response time using incremental average formula
+    // avgNew = (avgOld * (n-1) + newValue) / n
+    // This correctly handles the first request (when totalRequests=1)
     const totalTime = this.metrics.avgResponseTime * (this.metrics.totalRequests - 1);
     this.metrics.avgResponseTime = (totalTime + duration) / this.metrics.totalRequests;
     
