@@ -279,4 +279,4 @@ Timestamp: ${new Date().toISOString()}
   }
 }
 
-module.exports = PRGenerator;
+export default PRGenerator;

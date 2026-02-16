@@ -4,8 +4,8 @@
  * Suporta número ilimitado de especialistas
  */
 
-const SpecialistFactory = require("./SpecialistFactory");
-const SpecialistRegistry = require("./SpecialistRegistry");
+import SpecialistFactory from "./SpecialistFactory.js";
+import SpecialistRegistry from "./SpecialistRegistry.js";
 
 class SpecialistLoader {
   constructor() {
@@ -209,4 +209,4 @@ Specialists by Category:
   }
 }
 
-module.exports = SpecialistLoader;
+export default SpecialistLoader;

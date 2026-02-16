@@ -452,4 +452,4 @@ Motivo: ${reason}
   }
 }
 
-module.exports = SecurityFilter;
+export default SecurityFilter;

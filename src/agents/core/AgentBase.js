@@ -3,8 +3,8 @@
  * Implementa modo híbrido (Manual/Autônomo) com segurança e cache
  */
 
-const ModelArmor = require("../../security/ModelArmor");
-const IntelligentCache = require("../../cache/IntelligentCache");
+import ModelArmor from "../../security/ModelArmor.js";
+import IntelligentCache from "../../cache/IntelligentCache.js";
 
 class AgentBase {
   constructor(config) {
@@ -274,4 +274,4 @@ Timestamp: ${new Date().toISOString()}
   }
 }
 
-module.exports = AgentBase;
+export default AgentBase;

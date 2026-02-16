@@ -233,10 +233,4 @@ class GitHubService {
   }
 }
 
-// Exportar para uso em servidor Node.js
-if (typeof module !== "undefined" && module.exports) {
-  module.exports = GitHubService;
-}
-
-// Exportar para uso em cliente React
 export default GitHubService;

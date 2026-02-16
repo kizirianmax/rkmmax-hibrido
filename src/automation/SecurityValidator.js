@@ -392,9 +392,4 @@ class SecurityValidator {
   }
 }
 
-// Exportar
-if (typeof module !== "undefined" && module.exports) {
-  module.exports = SecurityValidator;
-}
-
 export default SecurityValidator;

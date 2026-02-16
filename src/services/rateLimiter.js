@@ -301,4 +301,4 @@ function getLimiter() {
   return limiterInstance;
 }
 
-module.exports = { RateLimiter, getLimiter };
+export { RateLimiter, getLimiter };
