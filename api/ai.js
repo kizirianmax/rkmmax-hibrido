@@ -1,183 +1,76 @@
 /**
  * 🤖 ENDPOINT UNIFICADO DE IA - KIZI AI
- *
- * Sistema 100% Groq com 3 modelos em cascata:
- * - KIZI Primary (openai/gpt-oss-120b) = Raciocínio principal
- * - KIZI Speed (llama-3.3-70b-versatile) = Fallback rápido
- * - KIZI Long (mixtral-8x7b-32768) = Fallback para contextos longos
- *
- * O sistema tenta PRIMARY primeiro, se falhar usa fallbacks automaticamente.
+ * 
+ * Enterprise-grade AI API with complete decoupling via aiAdapter
+ * 
+ * Features:
+ * - aiAdapter integration for automatic provider selection
+ * - Circuit breaker protection
+ * - 8s timeout protection
+ * - Automatic fallback
+ * - Standardized error handling
+ * - No provider exposure in responses
  */
 
 import geniusPrompts from "../src/prompts/geniusPrompts.js";
 import costOptimization from "../src/utils/costOptimization.js";
 import { specialists } from "../src/config/specialists.js";
+import { askAI, analyzeCode, complexTask } from "../src/utils/aiAdapter.js";
 
 const { buildGeniusPrompt } = geniusPrompts;
 const { optimizeRequest, cacheResponse } = costOptimization;
 
 /**
- * Analisar complexidade da mensagem para escolher o modelo Groq ideal
+ * Determine complexity based on message analysis
  */
-function analyzeComplexity(messages) {
+function determineComplexity(messages) {
   const lastMessage = messages[messages.length - 1]?.content || "";
   const messageLength = lastMessage.length;
   const conversationLength = messages.length;
 
-  // Indicadores de contexto longo que precisam do Mixtral
-  const longContextIndicators = [
-    messageLength > 2000,
-    conversationLength > 15,
-  ];
-
-  if (longContextIndicators.some(indicator => indicator)) {
-    return "long"; // Mixtral para contextos longos
+  // Complex task indicators
+  if (messageLength > 2000 || conversationLength > 15) {
+    return 'complex';
+  }
+  
+  // Code analysis indicators
+  if (lastMessage.includes('function') || lastMessage.includes('class') || 
+      lastMessage.includes('const') || lastMessage.includes('import')) {
+    return 'code';
   }
 
-  // Por padrão, usa o modelo primary (openai/gpt-oss-120b)
-  return "primary";
+  // Default to standard
+  return 'standard';
 }
 
 /**
- * Chamar KIZI Primary (Groq openai/gpt-oss-120b - modelo principal)
+ * Execute AI task via aiAdapter (no direct provider calls)
  */
-async function callKiziPrimary(messages, systemPrompt, apiKey) {
-  const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${apiKey}`,
-    },
-    body: JSON.stringify({
-      model: "openai/gpt-oss-120b",
-      messages: systemPrompt ? [{ role: "system", content: systemPrompt }, ...messages] : messages,
-      temperature: 0.7,
-      max_tokens: 8000,
-    }),
-  });
-
-  if (!response.ok) {
-    const error = await response.text();
-    throw new Error(`KIZI Primary error: ${error}`);
-  }
-
-  const data = await response.json();
-  return data.choices[0].message.content;
-}
-
-/**
- * Chamar KIZI Speed (Groq llama-3.3-70b-versatile - fallback rápido)
- */
-async function callKiziSpeed(messages, systemPrompt, apiKey) {
-  const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${apiKey}`,
-    },
-    body: JSON.stringify({
-      model: "llama-3.3-70b-versatile",
-      messages: systemPrompt ? [{ role: "system", content: systemPrompt }, ...messages] : messages,
-      temperature: 0.7,
-      max_tokens: 8000,
-    }),
-  });
-
-  if (!response.ok) {
-    const error = await response.text();
-    throw new Error(`KIZI Speed error: ${error}`);
-  }
-
-  const data = await response.json();
-  return data.choices[0].message.content;
-}
-
-/**
- * Chamar KIZI Long (Groq mixtral-8x7b-32768 - para contextos longos)
- */
-async function callKiziLong(messages, systemPrompt, apiKey) {
-  const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${apiKey}`,
-    },
-    body: JSON.stringify({
-      model: "mixtral-8x7b-32768",
-      messages: systemPrompt ? [{ role: "system", content: systemPrompt }, ...messages] : messages,
-      temperature: 0.7,
-      max_tokens: 28000, // Set to 28000 to account for input tokens and avoid API errors
-    }),
-  });
-
-  if (!response.ok) {
-    const error = await response.text();
-    throw new Error(`KIZI Long error: ${error}`);
-  }
-
-  const data = await response.json();
-  return data.choices[0].message.content;
-}
-
-/**
- * Chamar o modelo KIZI apropriado com fallback automático
- * Todos os modelos são Groq - sem dependência de Gemini
- */
-async function callKizi(messages, systemPrompt, complexity, groqKey) {
-  // Ordem de tentativa baseada na complexidade
-  let attempts = [];
-
+async function executeAITask(messages, systemPrompt, context = {}) {
+  const complexity = determineComplexity(messages);
+  
+  // Build full prompt with system prompt and messages
+  const fullPrompt = systemPrompt 
+    ? `${systemPrompt}\n\n${messages.map(m => `${m.role}: ${m.content}`).join('\n')}`
+    : messages.map(m => `${m.role}: ${m.content}`).join('\n');
+  
+  let result;
+  
+  // Route to appropriate aiAdapter function based on complexity
   switch (complexity) {
-    case "long":
-      // Para contextos longos, tenta Mixtral primeiro
-      attempts = [
-        {
-          name: "kizi-long",
-          fn: () => callKiziLong(messages, systemPrompt, groqKey),
-        },
-        {
-          name: "kizi-primary",
-          fn: () => callKiziPrimary(messages, systemPrompt, groqKey),
-        },
-        {
-          name: "kizi-speed",
-          fn: () => callKiziSpeed(messages, systemPrompt, groqKey),
-        },
-      ];
+    case 'code':
+      result = await analyzeCode(fullPrompt, context.language || 'javascript');
       break;
-    case "primary":
+    case 'complex':
+      result = await complexTask(fullPrompt, context);
+      break;
+    case 'standard':
     default:
-      // Padrão: tenta Primary primeiro, depois Speed, depois Long
-      attempts = [
-        {
-          name: "kizi-primary",
-          fn: () => callKiziPrimary(messages, systemPrompt, groqKey),
-        },
-        {
-          name: "kizi-speed",
-          fn: () => callKiziSpeed(messages, systemPrompt, groqKey),
-        },
-        {
-          name: "kizi-long",
-          fn: () => callKiziLong(messages, systemPrompt, groqKey),
-        },
-      ];
+      result = await askAI(fullPrompt, context);
       break;
   }
-
-  // Tentar cada modelo em ordem
-  for (const attempt of attempts) {
-    try {
-      console.log(`🤖 Tentando ${attempt.name}...`);
-      const response = await attempt.fn();
-      console.log(`✅ ${attempt.name} respondeu com sucesso`);
-      return { response, model: attempt.name };
-    } catch (error) {
-      console.error(`❌ ${attempt.name} falhou:`, error.message);
-    }
-  }
-
-  throw new Error("Todos os modelos KIZI falharam");
+  
+  return result;
 }
 
 /**
@@ -203,22 +96,16 @@ export default async function handler(req, res) {
       messages,
       agentType,
       specialistId,
-      forceModel, // Opcional: forçar um modelo específico ('primary', 'speed', 'long')
     } = req.body;
 
-    // ✅ VERIFICAR APENAS GROQ
-    const groqKey = process.env.GROQ_API_KEY;
-    if (!groqKey) {
-      console.error("❌ GROQ_API_KEY not configured");
-      return res.status(500).json({
-        error: "GROQ_API_KEY not configured",
-        hint: "Add GROQ_API_KEY to your Vercel environment variables",
+    if (!messages || !Array.isArray(messages) || messages.length === 0) {
+      return res.status(400).json({ 
+        error: "Bad request",
+        message: "Messages array is required" 
       });
     }
 
-    // Analisar complexidade automaticamente ou usar modelo forçado
-    const complexity = forceModel || analyzeComplexity(messages);
-    console.log(`🤖 KIZI AI - Type: ${type} | Complexity: ${complexity}`);
+    console.log(`🤖 KIZI AI - Type: ${type}`);
 
     // ========================================
     // TIPO: GENIUS (Serginho + Híbrido)
@@ -238,27 +125,28 @@ export default async function handler(req, res) {
         });
       }
 
-      // Chamar KIZI com seleção automática (100% Groq)
-      const { response, model } = await callKizi(
+      // Execute via aiAdapter (automatic provider selection)
+      const result = await executeAITask(
         optimized.messages,
         optimized.systemPrompt,
-        complexity,
-        groqKey
+        { source: 'ai-api', type: promptType }
       );
 
-      const result = {
-        response,
-        model,
-        provider: "groq",
-        tier: complexity,
+      const response = {
+        response: result.answer,
+        confidence: result.confidence,
         type: promptType,
+        metadata: {
+          type: result.metadata.type,
+          complexity: result.metadata.complexity,
+        },
         success: true,
       };
 
-      cacheResponse(messages, result);
+      cacheResponse(messages, response);
 
       return res.status(200).json({
-        ...result,
+        ...response,
         cached: false,
         optimized: true,
         stats: optimized.stats,
@@ -296,27 +184,28 @@ export default async function handler(req, res) {
         });
       }
 
-      // Chamar KIZI com seleção automática (100% Groq)
-      const { response, model } = await callKizi(
+      // Execute via aiAdapter (automatic provider selection)
+      const result = await executeAITask(
         optimized.messages,
         optimized.systemPrompt,
-        complexity,
-        groqKey
+        { source: 'specialist-api', specialistId }
       );
 
-      const result = {
-        response,
-        model,
-        provider: "groq",
+      const response = {
+        response: result.answer,
+        confidence: result.confidence,
         specialist: specialist.name,
-        tier: complexity,
+        metadata: {
+          type: result.metadata.type,
+          complexity: result.metadata.complexity,
+        },
         success: true,
       };
 
-      cacheResponse(messages, result);
+      cacheResponse(messages, response);
 
       return res.status(200).json({
-        ...result,
+        ...response,
         cached: false,
         optimized: true,
         stats: optimized.stats,
@@ -328,7 +217,8 @@ export default async function handler(req, res) {
     // ========================================
     if (type === "transcribe") {
       return res.status(501).json({
-        error: "Transcription not implemented yet",
+        error: "Transcription not implemented in this endpoint",
+        hint: "Use /api/transcribe endpoint instead",
       });
     }
 
@@ -338,9 +228,39 @@ export default async function handler(req, res) {
     });
   } catch (error) {
     console.error("❌ KIZI AI error:", error);
+
+    // Circuit breaker error
+    if (error.message && error.message.includes('Circuit breaker')) {
+      return res.status(503).json({
+        error: 'Service unavailable',
+        message: 'AI service is temporarily unavailable. Please try again in a moment.',
+        retryAfter: 60,
+      });
+    }
+
+    // Timeout error
+    if (error.message && error.message.includes('Timeout')) {
+      return res.status(504).json({
+        error: 'Gateway timeout',
+        message: 'Request took too long. Please try a simpler query or try again.',
+        maxTimeout: 8000,
+      });
+    }
+
+    // All providers failed
+    if (error.message && error.message.includes('All providers failed')) {
+      return res.status(503).json({
+        error: 'Service unavailable',
+        message: 'All AI providers are currently unavailable. Please try again later.',
+      });
+    }
+
+    // Generic error
     return res.status(500).json({
       error: "Internal server error",
-      message: error.message,
+      message: process.env.NODE_ENV === 'production' 
+        ? 'An unexpected error occurred' 
+        : error.message,
       stack: process.env.NODE_ENV === "development" ? error.stack : undefined,
     });
   }
