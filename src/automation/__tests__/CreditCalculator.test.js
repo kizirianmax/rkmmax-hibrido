@@ -53,23 +53,23 @@ describe("CreditCalculator", () => {
   });
 
   describe("estimateAICost", () => {
-    test("deve estimar custo com Gemini 2.0 Flash", () => {
-      const cost = calculator.estimateAICost("gemini-2.0-flash", 1000);
+    test("deve estimar custo com Llama 8B", () => {
+      const cost = calculator.estimateAICost("llama-8b", 1000);
 
       expect(cost).toBeGreaterThan(0);
     });
 
-    test("deve estimar custo com Gemini 2.5 Pro", () => {
-      const cost = calculator.estimateAICost("gemini-2.5-pro", 1000);
+    test("deve estimar custo com Llama 70B", () => {
+      const cost = calculator.estimateAICost("llama-70b", 1000);
 
       expect(cost).toBeGreaterThan(0);
     });
 
-    test("custo Gemini Pro deve ser maior que Flash", () => {
-      const flashCost = calculator.estimateAICost("gemini-2.0-flash", 1000);
-      const proCost = calculator.estimateAICost("gemini-2.5-pro", 1000);
+    test("custo Llama 70B deve ser maior que Llama 8B", () => {
+      const llama8bCost = calculator.estimateAICost("llama-8b", 1000);
+      const llama70bCost = calculator.estimateAICost("llama-70b", 1000);
 
-      expect(proCost).toBeGreaterThan(flashCost);
+      expect(llama70bCost).toBeGreaterThan(llama8bCost);
     });
   });
 

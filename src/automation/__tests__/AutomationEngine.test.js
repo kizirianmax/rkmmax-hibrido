@@ -12,14 +12,14 @@ describe("AutomationEngine", () => {
   beforeEach(() => {
     jest.clearAllMocks();
     engine = new AutomationEngine({
-      aiModel: "gemini-2.0-flash",
+      aiModel: "llama-8b",
       temperature: 0.7,
     });
   });
 
   describe("initialization", () => {
     test("deve inicializar com configurações padrão", () => {
-      expect(engine.config.aiModel).toBe("gemini-2.0-flash");
+      expect(engine.config.aiModel).toBe("llama-8b");
       expect(engine.config.temperature).toBe(0.7);
       expect(engine.config.maxRetries).toBe(3);
     });
