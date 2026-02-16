@@ -51,9 +51,6 @@ export class SerginhoContextual {
     history.push({ prompt, intent, timestamp: startTime });
     this.sessionHistory.set(sessionId, history);
     
-    // Track metrics
-    this.metrics.totalRequests++;
-    
     // SPECIAL MODE: Betinho Hybrid (parallel execution)
     if (options.mode === 'betinho-hybrid') {
       return await this.betinhoParallel(prompt, options);
@@ -141,23 +138,21 @@ export class SerginhoContextual {
     
     const providers = ['llama-120b', 'llama-70b', 'llama-8b'];
     
-    // Promise.race for anti-timeout
+    // Execute all providers in parallel
     const promises = providers.map(async (provider) => {
       try {
         const result = await this.executeWithProvider(provider, prompt, options);
         return { ...result, source: 'parallel' };
       } catch (error) {
         console.error(`❌ Parallel execution failed for ${provider}`);
-        return null;
+        throw error; // Throw to signal failure
       }
     });
     
-    // Return first successful response
-    const results = await Promise.race(promises.map(p => 
-      p.then(result => result || Promise.reject())
-    ));
+    // Return first successful response using Promise.any
+    const result = await Promise.any(promises);
     
-    return results;
+    return result;
   }
 
   /**
@@ -173,8 +168,11 @@ export class SerginhoContextual {
     const result = await provider.generate(prompt, options);
     const duration = Date.now() - startTime;
     
-    // Update metrics
-    const totalTime = this.metrics.avgResponseTime * this.metrics.totalRequests;
+    // Track metrics (increment requests after execution)
+    this.metrics.totalRequests++;
+    
+    // Update average response time correctly
+    const totalTime = this.metrics.avgResponseTime * (this.metrics.totalRequests - 1);
     this.metrics.avgResponseTime = (totalTime + duration) / this.metrics.totalRequests;
     
     return {

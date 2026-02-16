@@ -1,13 +1,18 @@
 /**
  * Llama Provider - Groq API wrapper
  * Supports multiple Llama model sizes with intelligent fallback
+ * 
+ * Note: Currently, both '120b' and '70b' map to 'llama-3.3-70b-versatile'
+ * because Groq doesn't yet have a 120B model available. This allows the
+ * orchestrator to maintain separate tier configurations while using the
+ * same underlying model, enabling future upgrades when 120B becomes available.
  */
 export class LlamaProvider {
   constructor(apiKey, size = '70b') {
     this.apiKey = apiKey;
     this.size = size;
     this.modelMap = {
-      '120b': 'llama-3.3-70b-versatile', // Using 70B as 120B proxy (Groq doesn't have 120B yet)
+      '120b': 'llama-3.3-70b-versatile',
       '70b': 'llama-3.3-70b-versatile',
       '8b': 'llama-3.1-8b-instant'
     };
