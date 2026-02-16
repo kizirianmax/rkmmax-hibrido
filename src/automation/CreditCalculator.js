@@ -9,15 +9,19 @@ class CreditCalculator {
   constructor() {
     // Custos de IA por operação (em centavos de real)
     this.aiCosts = {
-      "gemini-2.0-flash": {
-        input: 0.075, // R$ 0,00075 por 1K tokens
-        output: 0.3, // R$ 0,003 por 1K tokens
+      "llama-8b": {
+        input: 0.05, // R$ 0,0005 por 1K tokens (fast, efficient)
+        output: 0.1, // R$ 0,001 por 1K tokens
       },
-      "gemini-2.5-pro": {
-        input: 1.5, // R$ 0,015 por 1K tokens
-        output: 6.0, // R$ 0,06 por 1K tokens
+      "llama-70b": {
+        input: 0.3, // R$ 0,003 por 1K tokens (complex tasks)
+        output: 0.8, // R$ 0,008 por 1K tokens
       },
-      "groq-llama": {
+      "llama-120b": {
+        input: 0.6, // R$ 0,006 por 1K tokens (very complex tasks)
+        output: 1.2, // R$ 0,012 por 1K tokens
+      },
+      "groq-fallback": {
         input: 0.05, // R$ 0,0005 por 1K tokens
         output: 0.1, // R$ 0,001 por 1K tokens
       },
@@ -162,7 +166,7 @@ class CreditCalculator {
   /**
    * Calcular custo total de uma automação
    */
-  calculateAutomationCost(mode, tokensUsed = 1000, model = "gemini-2.0-flash") {
+  calculateAutomationCost(mode, tokensUsed = 1000, model = "llama-8b") {
     const operationCost = this.operationCosts[mode] || this.operationCosts["MANUAL"];
 
     // Custo de IA (estimado por tokens)
@@ -198,7 +202,7 @@ class CreditCalculator {
    * Estimar custo de IA por tokens
    */
   estimateAICost(model, totalTokens) {
-    const modelCost = this.aiCosts[model] || this.aiCosts["gemini-2.0-flash"];
+    const modelCost = this.aiCosts[model] || this.aiCosts["llama-8b"];
 
     // Estimativa: 70% input, 30% output
     const inputTokens = totalTokens * 0.7;

@@ -14,7 +14,7 @@ class AutomationEngine {
     this.config = {
       maxRetries: config.maxRetries || 3,
       timeout: config.timeout || 30000,
-      aiModel: config.aiModel || "gemini-2.0-flash",
+      aiModel: config.aiModel || "llama-8b",
       temperature: config.temperature || 0.7,
       ...config,
     };

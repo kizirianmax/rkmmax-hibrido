@@ -13,31 +13,31 @@ class SpecialistSelector {
         name: "Dev",
         category: "DEVELOPMENT",
         skills: ["código", "programação", "função", "refatorar", "bug", "feature"],
-        models: ["gemini-2.5-pro", "gemini-2.0-flash"],
+        models: ["llama-70b", "llama-8b"],
       },
       Frontend: {
         name: "Frontend",
         category: "DEVELOPMENT",
         skills: ["react", "vue", "angular", "componente", "ui", "interface", "estilo"],
-        models: ["gemini-2.0-flash"],
+        models: ["llama-8b"],
       },
       Backend: {
         name: "Backend",
         category: "DEVELOPMENT",
         skills: ["api", "banco de dados", "servidor", "node", "python", "java"],
-        models: ["gemini-2.5-pro"],
+        models: ["llama-70b"],
       },
       Mobile: {
         name: "Mobile",
         category: "DEVELOPMENT",
         skills: ["react native", "flutter", "ios", "android", "app"],
-        models: ["gemini-2.0-flash"],
+        models: ["llama-8b"],
       },
       DevOps: {
         name: "DevOps",
         category: "INFRASTRUCTURE",
         skills: ["deploy", "ci/cd", "docker", "kubernetes", "vercel", "github"],
-        models: ["gemini-2.5-pro"],
+        models: ["llama-70b"],
       },
 
       // Design
@@ -45,13 +45,13 @@ class SpecialistSelector {
         name: "Designer",
         category: "DESIGN",
         skills: ["design", "ui", "ux", "visual", "layout", "cores", "tipografia"],
-        models: ["gemini-2.0-flash"],
+        models: ["llama-8b"],
       },
       UX: {
         name: "UX",
         category: "DESIGN",
         skills: ["experiência", "usuário", "usabilidade", "acessibilidade", "fluxo"],
-        models: ["gemini-2.0-flash"],
+        models: ["llama-8b"],
       },
 
       // Dados
@@ -59,13 +59,13 @@ class SpecialistSelector {
         name: "Pesquisador",
         category: "RESEARCH",
         skills: ["pesquisa", "análise", "dados", "estatística", "investigação"],
-        models: ["gemini-2.5-pro"],
+        models: ["llama-70b"],
       },
       DataAnalyst: {
         name: "DataAnalyst",
         category: "DATA",
         skills: ["dados", "análise", "gráfico", "visualização", "sql", "python"],
-        models: ["gemini-2.5-pro"],
+        models: ["llama-70b"],
       },
 
       // Conteúdo
@@ -73,13 +73,13 @@ class SpecialistSelector {
         name: "Escritor",
         category: "CONTENT",
         skills: ["conteúdo", "documentação", "escrita", "artigo", "blog", "readme"],
-        models: ["gemini-2.0-flash"],
+        models: ["llama-8b"],
       },
       Copywriter: {
         name: "Copywriter",
         category: "CONTENT",
         skills: ["copy", "marketing", "venda", "persuasão", "anúncio"],
-        models: ["gemini-2.0-flash"],
+        models: ["llama-8b"],
       },
 
       // Qualidade
@@ -87,13 +87,13 @@ class SpecialistSelector {
         name: "QA",
         category: "QUALITY",
         skills: ["teste", "qualidade", "bug", "validação", "verificação"],
-        models: ["gemini-2.0-flash"],
+        models: ["llama-8b"],
       },
       SecurityExpert: {
         name: "SecurityExpert",
         category: "SECURITY",
         skills: ["segurança", "vulnerabilidade", "criptografia", "autenticação"],
-        models: ["gemini-2.5-pro"],
+        models: ["llama-70b"],
       },
 
       // Serginho (orquestrador)
@@ -101,7 +101,7 @@ class SpecialistSelector {
         name: "Serginho",
         category: "ORCHESTRATION",
         skills: ["orquestração", "coordenação", "delegação", "geral"],
-        models: ["gemini-2.0-flash"],
+        models: ["llama-8b"],
       },
     };
 
@@ -189,10 +189,10 @@ class SpecialistSelector {
    */
   getRecommendedModel(specialistName) {
     const specialist = this.specialists[specialistName];
-    if (!specialist) return "gemini-2.0-flash";
+    if (!specialist) return "llama-8b";
 
     // Retornar o primeiro modelo recomendado
-    return specialist.models[0] || "gemini-2.0-flash";
+    return specialist.models[0] || "llama-8b";
   }
 
   /**
@@ -239,7 +239,7 @@ class SpecialistSelector {
       name,
       category: config.category || "CUSTOM",
       skills: config.skills || [],
-      models: config.models || ["gemini-2.0-flash"],
+      models: config.models || ["llama-8b"],
     };
 
     return true;
