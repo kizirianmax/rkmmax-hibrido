@@ -1,41 +1,22 @@
-name: CI - Coverage
-
-on:
-  pull_request:
-  push:
-    branches: [main]
+name: Coverage
+on: [push, pull_request]
 
 jobs:
-  Check Coverage:
+  test:
     runs-on: ubuntu-latest
-    permissions:
-      contents: read
     steps:
-      - uses: actions/checkout@v4
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
+    - uses: actions/checkout@v4
+    - uses: actions/setup-node@v4
+      with:
+        node-version: 20
+        cache: 'npm'
+    
+    # NÃO usa npm ci! Usa install direto
+    - name: Install dependencies
+      run: npm install
       
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '22'
-          cache: 'npm'
-          cache-dependency-path: '**/package-lock.json'
+    - name: Run tests
+      run: npm test
       
-      - name: Enable Corepack
-        run: corepack enable
-      
-      - name: Prepare Corepack
-        run: corepack prepare --activate
-      
-      - name: Install dependencies
-        run: npm ci --ignore-scripts
-      
-      - name: Run tests with coverage
-        run: npm test -- --coverage
-        env:
-          NODE_OPTIONS: '--experimental-vm-modules'
-      
-      - name: Check coverage thresholds
-        run: |
-          echo "✅ Coverage check passed!"
+    - name: Coverage
+      run: npm run test:coverage
