@@ -1,6 +1,9 @@
 /**
  * INTELLIGENT ROUTER TESTS
  * Complete unit tests for the intelligent routing system
+ * 
+ * ⚠️ These tests are for INTERNAL router implementation
+ * External code should use aiAdapter.js interfaces
  */
 
 import {
@@ -11,7 +14,7 @@ import {
   FALLBACK_CHAIN,
 } from '../intelligentRouter.js';
 
-describe('Intelligent Router', () => {
+describe('IntelligentRouter - Internal Implementation Tests', () => {
   describe('analyzeComplexity', () => {
     test('should analyze very short simple message correctly', () => {
       const message = 'Olá, como vai?';

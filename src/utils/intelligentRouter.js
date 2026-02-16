@@ -1,7 +1,13 @@
 /**
  * INTELLIGENT ROUTER - RKMMAX
  * Sistema de roteamento inteligente para Serginho
- * Analisa complexidade e roteia para a IA ideal
+ * 
+ * ⚠️ INTERNAL USE ONLY
+ * This file contains provider implementation details.
+ * External code should use aiAdapter.js interfaces instead.
+ * 
+ * Provider names (llama-70b, llama-8b, etc.) are implementation details
+ * and should NOT be used directly in business logic or tests.
  *
  * Providers with Strict Intelligence-Tier Isolation:
  * - Llama 3.3 120B: Tarefas muito complexas, análise profunda (Tier 1)
