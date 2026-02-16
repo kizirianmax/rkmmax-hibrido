@@ -4,12 +4,7 @@
  */
 
 import { jest } from '@jest/globals';
-
-// Mock antes do import
-jest.mock('../AuditLogger.js');
-
-// Usar dynamic import
-const { default: AutomationEngine } = await import('../AutomationEngine.js');
+import AutomationEngine from '../AutomationEngine.js';
 
 describe("AutomationEngine", () => {
   let engine;

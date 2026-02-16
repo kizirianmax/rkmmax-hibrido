@@ -4,11 +4,11 @@
  * Otimizado para Vercel FREE
  */
 
-const Serginho = require("./serginho/Serginho");
-const SpecialistLoader = require("./core/SpecialistLoader");
-const SpecialistFactory = require("./core/SpecialistFactory");
-const SpecialistRegistry = require("./core/SpecialistRegistry");
-const AgentBase = require("./core/AgentBase");
+import Serginho from "./serginho/Serginho.js";
+import SpecialistLoader from "./core/SpecialistLoader.js";
+import SpecialistFactory from "./core/SpecialistFactory.js";
+import SpecialistRegistry from "./core/SpecialistRegistry.js";
+import AgentBase from "./core/AgentBase.js";
 
 /**
  * Sistema de Agentes Híbrido
@@ -198,20 +198,20 @@ Timestamp: ${new Date().toISOString()}
 /**
  * Exportar Sistema
  */
-module.exports = {
+export {
   HybridAgentSystem,
   Serginho,
   SpecialistFactory,
   SpecialistRegistry,
   SpecialistLoader,
   AgentBase,
-
-  /**
-   * Factory para criar sistema pré-inicializado
-   */
-  async createSystem(configPath = null) {
-    const system = new HybridAgentSystem();
-    await system.initialize(configPath);
-    return system;
-  },
 };
+
+/**
+ * Factory para criar sistema pré-inicializado
+ */
+export async function createSystem(configPath = null) {
+  const system = new HybridAgentSystem();
+  await system.initialize(configPath);
+  return system;
+}

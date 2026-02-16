@@ -236,4 +236,4 @@ Violations: ${violations.length}
   }
 }
 
-module.exports = ModelArmor;
+export default ModelArmor;

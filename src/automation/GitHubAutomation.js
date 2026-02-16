@@ -487,9 +487,4 @@ class GitHubAutomation {
   }
 }
 
-// Exportar
-if (typeof module !== "undefined" && module.exports) {
-  module.exports = GitHubAutomation;
-}
-
 export default GitHubAutomation;

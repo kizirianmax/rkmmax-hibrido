@@ -419,4 +419,4 @@ class AlertSystem {
   }
 }
 
-module.exports = AlertSystem;
+export default AlertSystem;

@@ -5,7 +5,7 @@
  * Otimizado para Vercel FREE
  */
 
-const AgentBase = require("./AgentBase");
+import AgentBase from "./AgentBase.js";
 
 class SpecialistFactory {
   /**
@@ -241,4 +241,4 @@ Always provide accurate, helpful, and safe responses.`;
   }
 }
 
-module.exports = SpecialistFactory;
+export default SpecialistFactory;
