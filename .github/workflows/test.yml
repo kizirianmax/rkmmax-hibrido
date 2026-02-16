@@ -28,7 +28,10 @@ jobs:
       - name: Prepare Corepack
         run: corepack prepare --activate
       
-      - name: Install dependencies
+      - name: Fix lockfile
+        run: npm install
+      
+      - name: Clean install
         run: npm ci --ignore-scripts
       
       - name: Run tests
