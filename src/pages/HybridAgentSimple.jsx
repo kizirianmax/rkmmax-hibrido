@@ -364,7 +364,7 @@ export default function HybridAgentSimple() {
                     <span 
                       className="provider-badge"
                       style={{
-                        background: getTierColor(msg.tier),
+                        background: getTierColor(msg.tier || 'unknown'),
                         padding: '2px 8px',
                         borderRadius: '4px',
                         fontSize: '10px',
@@ -373,7 +373,7 @@ export default function HybridAgentSimple() {
                         marginLeft: '8px',
                       }}
                     >
-                      {msg.provider} {msg.tier && `(${msg.tier})`}
+                      {msg.provider}{msg.tier ? ` (${msg.tier})` : ''}
                     </span>
                   )}
                   <span className="timestamp">{msg.timestamp.toLocaleTimeString()}</span>

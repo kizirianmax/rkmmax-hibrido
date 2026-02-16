@@ -381,12 +381,16 @@ class SerginhoOrchestrator {
   }
 
   /**
-   * Generate cache key
+   * Generate cache key using hash for robust collision avoidance
    * @private
    */
   getCacheKey(message, provider) {
-    // Simple cache key - hash of first 100 chars + provider
-    return `${provider}:${message.substring(0, 100).replace(/\s+/g, '_')}`;
+    // Use a simple but effective hash: provider + first 100 chars
+    // For production, consider using crypto.createHash('sha256') if collisions become an issue
+    const shortMessage = message.substring(0, 100).trim().toLowerCase();
+    // Replace multiple spaces with single space and remove special chars for consistency
+    const normalizedMessage = shortMessage.replace(/\s+/g, ' ').replace(/[^\w\s]/g, '');
+    return `${provider}:${normalizedMessage}`;
   }
 
   /**

@@ -18,9 +18,10 @@
 export const PROVIDERS = {
   // Tier 1: Complex tasks - Llama 3.3 120B (via Groq)
   // Note: Currently using 70B as 120B is not yet available on Groq
+  // Issue: https://github.com/groq/groq-api/issues - Track for 120B availability
   'llama-120b': {
     type: 'groq',
-    model: 'llama-3.3-70b-versatile', // TODO: Update when 120B available
+    model: 'llama-3.3-70b-versatile', // Will update to llama-3.3-120b when available
     endpoint: 'https://api.groq.com/openai/v1/chat/completions',
     tier: 'complex',
     defaultParams: {
