@@ -22,21 +22,20 @@ describe('API Integration Tests (Enterprise)', () => {
   });
 
   describe('AI API - CORS and Methods', () => {
-    test('ai.js uses aiAdapter imports', async () => {
+    test('ai.js uses Serginho Orchestrator', async () => {
       const fs = await import('fs/promises');
       const content = await fs.readFile('./api/ai.js', 'utf8');
       
-      // Verify aiAdapter imports
-      expect(content).toContain('from "../src/utils/aiAdapter.js"');
-      expect(content).toContain('askAI');
-      expect(content).toContain('analyzeCode');
-      expect(content).toContain('complexTask');
+      // Verify Serginho Orchestrator imports
+      expect(content).toContain('from "./lib/serginho-orchestrator.js"');
+      expect(content).toContain('serginho');
       
       // Verify NO direct provider references
       expect(content).not.toContain('llama-3.3-70b');
       expect(content).not.toContain('mixtral-8x7b');
       expect(content).not.toContain('gpt-oss-120b');
       expect(content).not.toContain('api.groq.com/openai/v1/chat');
+      expect(content).not.toContain('generativelanguage.googleapis.com');
     });
 
     test('ai.js has standardized error handling', async () => {
@@ -66,20 +65,18 @@ describe('API Integration Tests (Enterprise)', () => {
     });
   });
 
-  describe('Transcribe API - aiAdapter Integration', () => {
-    test('transcribe.js uses aiAdapter imports', async () => {
+  describe('Transcribe API - Serginho Orchestrator Integration', () => {
+    test('transcribe.js uses Serginho Orchestrator', async () => {
       const fs = await import('fs/promises');
       const content = await fs.readFile('./api/transcribe.js', 'utf8');
       
-      // Verify aiAdapter imports
-      expect(content).toContain('from "../src/utils/aiAdapter.js"');
-      expect(content).toContain('simpleQuery');
-      expect(content).toContain('askAI');
+      // Verify Serginho Orchestrator imports
+      expect(content).toContain('from "./lib/serginho-orchestrator.js"');
+      expect(content).toContain('serginho');
       
       // Verify NO direct Gemini/Groq API calls
       expect(content).not.toContain('generativelanguage.googleapis.com');
       expect(content).not.toContain('api.groq.com/openai/v1/audio');
-      expect(content).not.toContain('gemini-2.0-flash');
       expect(content).not.toContain('whisper-large-v3');
     });
 
@@ -103,7 +100,7 @@ describe('API Integration Tests (Enterprise)', () => {
       // Check ai.js
       const aiContent = await fs.readFile('./api/ai.js', 'utf8');
       expect(aiContent).toContain('response:');
-      expect(aiContent).toContain('confidence:');
+      expect(aiContent).toContain('provider:'); // Changed from confidence to provider (new field)
       expect(aiContent).toContain('metadata:');
       
       // Check transcribe.js
@@ -129,24 +126,23 @@ describe('API Integration Tests (Enterprise)', () => {
     });
   });
 
-  describe('aiAdapter Coverage', () => {
-    test('ai.js uses all aiAdapter functions appropriately', async () => {
+  describe('Serginho Orchestrator Coverage', () => {
+    test('ai.js uses Serginho Orchestrator appropriately', async () => {
       const fs = await import('fs/promises');
       const content = await fs.readFile('./api/ai.js', 'utf8');
       
-      // Verify usage of aiAdapter functions
-      expect(content).toContain('await askAI(');
-      expect(content).toContain('await analyzeCode(');
-      expect(content).toContain('await complexTask(');
+      // Verify usage of Serginho Orchestrator functions
+      expect(content).toContain('serginho.handleRequest');
+      expect(content).toContain('executeAITask');
     });
 
-    test('transcribe.js uses aiAdapter for transcription', async () => {
+    test('transcribe.js uses Serginho Orchestrator for transcription', async () => {
       const fs = await import('fs/promises');
       const content = await fs.readFile('./api/transcribe.js', 'utf8');
       
-      // Verify transcription uses aiAdapter
-      expect(content).toContain('await simpleQuery(');
-      expect(content).toContain('await askAI(');
+      // Verify transcription uses Serginho Orchestrator
+      expect(content).toContain('serginho.handleRequest');
+      expect(content).toContain('forceProvider');
     });
   });
 
@@ -180,12 +176,12 @@ describe('API Integration Tests (Enterprise)', () => {
       
       const aiContent = await fs.readFile('./api/ai.js', 'utf8');
       expect(aiContent).toContain('Enterprise-grade');
-      expect(aiContent).toContain('aiAdapter');
+      expect(aiContent).toContain('Serginho Orchestrator');
       expect(aiContent).toContain('Circuit breaker protection');
       
       const transcribeContent = await fs.readFile('./api/transcribe.js', 'utf8');
       expect(transcribeContent).toContain('Enterprise-grade');
-      expect(transcribeContent).toContain('aiAdapter');
+      expect(transcribeContent).toContain('Serginho Orchestrator');
     });
   });
 });
