@@ -3,10 +3,16 @@
  * Sistema de roteamento inteligente para Serginho
  * Analisa complexidade e roteia para a IA ideal
  *
- * Providers:
- * - Llama 3.1 8B: Conversas simples, rápidas e eficientes
- * - Llama 3.3 70B: Tarefas complexas, raciocínio profundo
+ * Providers with Strict Intelligence-Tier Isolation:
+ * - Llama 3.3 120B: Tarefas muito complexas, análise profunda (Tier 1)
+ * - Llama 3.3 70B: Tarefas complexas e médias (Tier 2)
+ * - Llama 3.1 8B: Conversas simples, rápidas (Tier 3)
  * - GROQ Fallback: Último recurso para alta disponibilidade
+ *
+ * Critical Rules:
+ * - NEVER downgrade complex tasks to llama-8b
+ * - NEVER mix intelligence tiers in fallback chains
+ * - Maintain strict quality boundaries
  */
 
 /**
@@ -218,62 +224,102 @@ export function analyzeComplexity(message) {
 
 /**
  * Decide qual provider usar baseado na análise
+ * Implementa isolamento estrito de níveis de inteligência
  * @param {object} analysis - Resultado de analyzeComplexity()
  * @returns {string} Provider escolhido
  */
 export function routeToProvider(analysis) {
   const { scores, hasCode, analysis: details } = analysis;
 
-  // REGRA 1: Código sempre vai para Llama 70B (mais poderoso)
+  // TIER 1: Tarefas MUITO COMPLEXAS → llama-120b
+  // REGRA 1: Código sempre vai para Llama 120B (máxima capacidade)
   if (hasCode) {
     return {
-      provider: "llama-70b",
-      reason: "Mensagem contém código - requer análise profunda",
+      provider: "llama-120b",
+      reason: "Mensagem contém código - requer análise máxima",
       confidence: 0.95,
+      tier: "complex",
     };
   }
 
-  // REGRA 2: Complexidade alta = Llama 70B
+  // REGRA 2: Complexidade muito alta = Llama 120B
+  if (scores.complexity >= 8) {
+    return {
+      provider: "llama-120b",
+      reason: "Complexidade muito alta detectada",
+      confidence: 0.95,
+      tier: "complex",
+    };
+  }
+
+  // REGRA 3: Mensagens longas com múltiplos termos técnicos = Llama 120B
+  if (details.isLong && details.hasTechnicalTerms && scores.complexity >= 5) {
+    return {
+      provider: "llama-120b",
+      reason: "Mensagem longa e complexa com contexto técnico profundo",
+      confidence: 0.9,
+      tier: "complex",
+    };
+  }
+
+  // TIER 2: Tarefas MÉDIAS/COMPLEXAS → llama-70b
+  // REGRA 4: Complexidade alta = Llama 70B
   if (scores.complexity >= 5) {
     return {
       provider: "llama-70b",
-      reason: "Alta complexidade detectada",
+      reason: "Complexidade alta detectada",
       confidence: 0.9,
+      tier: "medium",
     };
   }
 
-  // REGRA 3: Mensagens longas com termos técnicos = Llama 70B
+  // REGRA 5: Mensagens longas com termos técnicos = Llama 70B
   if (details.isLong && details.hasTechnicalTerms) {
     return {
       provider: "llama-70b",
       reason: "Mensagem longa com contexto técnico",
       confidence: 0.8,
+      tier: "medium",
     };
   }
 
-  // REGRA 4: Múltiplas perguntas complexas = Llama 70B
+  // REGRA 6: Múltiplas perguntas complexas = Llama 70B
   if (details.hasMultipleQuestions && scores.complexity > 2) {
     return {
       provider: "llama-70b",
       reason: "Múltiplas perguntas complexas",
       confidence: 0.85,
+      tier: "medium",
     };
   }
 
-  // REGRA 5: Mensagens muito curtas = Llama 8B (rápido e eficiente)
+  // REGRA 7: Tarefas médias = Llama 70B
+  if (details.isMedium && scores.complexity > 1) {
+    return {
+      provider: "llama-70b",
+      reason: "Tarefa de complexidade média",
+      confidence: 0.75,
+      tier: "medium",
+    };
+  }
+
+  // TIER 3: Tarefas SIMPLES → llama-8b
+  // REGRA 8: Mensagens muito curtas = Llama 8B (rápido e eficiente)
   if (details.isVeryShort) {
     return {
       provider: "llama-8b",
       reason: "Mensagem curta - usando modelo rápido",
       confidence: 0.8,
+      tier: "simple",
     };
   }
 
-  // REGRA 6: Padrão = Llama 8B (custo-benefício)
+  // REGRA 9: Padrão = Llama 8B (custo-benefício)
   return {
     provider: "llama-8b",
     reason: "Conversa padrão - otimizando velocidade",
     confidence: 0.7,
+    tier: "simple",
   };
 }
 
@@ -294,12 +340,18 @@ export function intelligentRoute(message) {
 }
 
 /**
- * Fallback chain: Llama 70B → Llama 8B → Groq Fallback
- * Sistema de três níveis para máxima disponibilidade
+ * Fallback chain with Strict Intelligence-Tier Isolation
+ * NEVER downgrade complex tasks to llama-8b
+ * NEVER mix intelligence tiers
+ * 
+ * Complex tier: llama-120b → llama-70b → groq-fallback (NEVER llama-8b)
+ * Medium tier: llama-70b → groq-fallback
+ * Simple tier: llama-8b → groq-fallback
  */
 export const FALLBACK_CHAIN = {
-  "llama-70b": ["llama-8b", "groq-fallback"],
-  "llama-8b": ["groq-fallback"],
+  "llama-120b": ["llama-70b", "groq-fallback"], // Complex tier: NEVER downgrade to 8b
+  "llama-70b": ["groq-fallback"], // Medium tier: Skip 8b, go directly to fallback
+  "llama-8b": ["groq-fallback"], // Simple tier: Only fallback to groq
   "groq-fallback": [], // Último recurso
 };
 
