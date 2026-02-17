@@ -1,7 +1,11 @@
 /**
  * Groq Fallback Provider
  * Uses Mixtral as a reliable fallback when Llama models are unavailable
+ * 
+ * Now supports GENIUS PROMPTS for world-class responses
  */
+import { buildGeniusPrompt } from '../../prompts/geniusPrompts.js';
+
 export class GroqProvider {
   constructor(apiKey) {
     this.apiKey = apiKey;
@@ -17,7 +21,7 @@ export class GroqProvider {
       body: JSON.stringify({
         model: 'mixtral-8x7b-32768',
         messages: [
-          { role: 'system', content: options.systemPrompt || 'You are a helpful assistant.' },
+          { role: 'system', content: options.systemPrompt || buildGeniusPrompt('hybrid') },
           { role: 'user', content: prompt }
         ],
         temperature: 0.5,

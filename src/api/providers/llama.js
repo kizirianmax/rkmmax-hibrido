@@ -2,11 +2,14 @@
  * Llama Provider - Groq API wrapper
  * Supports multiple Llama model sizes with intelligent fallback
  * 
+ * Now supports GENIUS PROMPTS for world-class responses
+ * 
  * Note: Currently, both '120b' and '70b' map to 'llama-3.3-70b-versatile'
  * because Groq doesn't yet have a 120B model available. This allows the
  * orchestrator to maintain separate tier configurations while using the
  * same underlying model, enabling future upgrades when 120B becomes available.
  */
+import { buildGeniusPrompt } from '../../prompts/geniusPrompts.js';
 
 // TODO: Update to actual Llama 3.3 120B model when available on Groq
 const TEMPORARY_120B_MODEL = 'llama-3.3-70b-versatile';
@@ -32,7 +35,7 @@ export class LlamaProvider {
       body: JSON.stringify({
         model: this.modelMap[this.size],
         messages: [
-          { role: 'system', content: options.systemPrompt || 'You are a helpful assistant.' },
+          { role: 'system', content: options.systemPrompt || buildGeniusPrompt('serginho') },
           { role: 'user', content: prompt }
         ],
         temperature: options.temperature || 0.7,

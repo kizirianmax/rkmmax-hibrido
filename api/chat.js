@@ -1,4 +1,5 @@
 import { serginho } from '../src/api/serginhoOrchestrator.js';
+import { buildGeniusPrompt } from '../src/prompts/geniusPrompts.js';
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
@@ -12,10 +13,12 @@ export default async function handler(req, res) {
       return res.status(400).json({ error: 'Message is required' });
     }
 
-    // ✅ ALL requests go through Serginho
+    // ✅ ALL requests go through Serginho with GENIUS PROMPT
+    const systemPrompt = buildGeniusPrompt('serginho');
+    
     const result = await serginho.handleRequest(message, {
       sessionId: sessionId || 'default',
-      systemPrompt: 'You are Serginho, an intelligent AI assistant.'
+      systemPrompt
     });
 
     return res.status(200).json(result);
