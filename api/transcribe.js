@@ -1,37 +1,43 @@
 /**
  * API de Transcrição de Áudio
- * Enterprise-grade transcription using aiAdapter
+ * Enterprise-grade transcription using Serginho Orchestrator
  * 
  * Features:
- * - aiAdapter integration for automatic provider selection
+ * - Serginho Orchestrator for centralized provider management
  * - Circuit breaker protection
  * - Timeout protection
  * - Automatic fallback
- * - No provider exposure
+ * - Optimized for fast transcription (uses gemini-2.0-flash)
  */
 import busboy from "busboy";
-import { simpleQuery, askAI } from "../src/utils/aiAdapter.js";
+import serginho from "./lib/serginho-orchestrator.js";
 
 /**
- * Transcribe audio using aiAdapter
+ * Transcribe audio using Serginho Orchestrator
  */
 async function transcribeAudio(audioBuffer) {
   // Convert audio to base64
   const audioBase64 = audioBuffer.toString("base64");
   
   // Create transcription prompt
-  const prompt = `Transcreva este áudio em português. Retorne APENAS o texto transcrito, sem explicações. [Audio data: ${audioBase64.length} bytes in base64 format]`;
+  const prompt = `Transcreva este áudio em português. Retorne APENAS o texto transcrito, sem explicações ou comentários adicionais.`;
   
-  // Use aiAdapter for transcription (automatic provider selection)
-  try {
-    const result = await simpleQuery(prompt);
-    return result.answer;
-  } catch (error) {
-    // Fallback to askAI if simpleQuery fails
-    console.warn('⚠️ Simple query failed, trying askAI...', error.message);
-    const result = await askAI(prompt, { type: 'transcription' });
-    return result.answer;
-  }
+  // Use Serginho Orchestrator with forced provider for fast transcription
+  // Force gemini-2.0-flash for optimal speed/accuracy balance
+  const result = await serginho.handleRequest({
+    message: prompt,
+    messages: [],
+    context: {
+      type: 'audio-transcription',
+      audioData: audioBase64,
+      mimeType: 'audio/mpeg',
+    },
+    options: {
+      forceProvider: 'gemini-2.0-flash', // Force Flash for speed
+    },
+  });
+  
+  return result.text;
 }
 
 export default async function handler(req, res) {

@@ -40,6 +40,23 @@ export default function HybridAgentSimple() {
   const audioRef = useRef(null);
   const mediaRecorderRef = useRef(null);
 
+  // Helper function to get tier color
+  const getTierColor = (tier) => {
+    const colors = {
+      complex: '#ff6b6b',
+      genius: '#ff6b6b',
+      medium: '#ffd93d',
+      expert: '#ffd93d',
+      simple: '#6bcf7f',
+      fast: '#6bcf7f',
+      optimized: '#4ecdc4',
+      fallback: '#95a5a6',
+      standard: '#3498db',
+      unknown: '#95a5a6',
+    };
+    return colors[tier] || colors.unknown;
+  };
+
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   };
@@ -112,9 +129,11 @@ export default function HybridAgentSimple() {
 
       const data = await response.json();
       const aiResponse = data.response || data.message || "Sem resposta";
-      const provider = data.model || data.usedProvider || "gemini-1.5-pro";
+      const provider = data.provider || "unknown";
+      const tier = data.tier || "standard";
+      const complexity = data.complexity || 0;
 
-      console.log(`✅ Resposta recebida de ${provider}`);
+      console.log(`✅ Resposta recebida de ${provider} (tier: ${tier}, complexity: ${complexity})`);
 
       // Adicionar resposta do agente
       const agentMessage = {
@@ -123,6 +142,8 @@ export default function HybridAgentSimple() {
         agent: "Serginho",
         content: aiResponse,
         provider: provider,
+        tier: tier,
+        complexity: complexity,
         timestamp: new Date(),
       };
 
@@ -339,7 +360,22 @@ export default function HybridAgentSimple() {
               {msg.type === "agent" && (
                 <div className="message-header">
                   <span className="agent-name">🤖 {msg.agent}</span>
-                  {msg.provider && <span className="provider-badge">{msg.provider}</span>}
+                  {msg.provider && (
+                    <span 
+                      className="provider-badge"
+                      style={{
+                        background: getTierColor(msg.tier || 'unknown'),
+                        padding: '2px 8px',
+                        borderRadius: '4px',
+                        fontSize: '10px',
+                        color: '#fff',
+                        fontWeight: 'bold',
+                        marginLeft: '8px',
+                      }}
+                    >
+                      {msg.provider}{msg.tier ? ` (${msg.tier})` : ''}
+                    </span>
+                  )}
                   <span className="timestamp">{msg.timestamp.toLocaleTimeString()}</span>
                 </div>
               )}
