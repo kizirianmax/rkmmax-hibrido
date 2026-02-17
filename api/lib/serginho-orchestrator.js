@@ -139,7 +139,26 @@ class SerginhoOrchestrator {
   }
 
   /**
-   * Handle ANY AI request - Main entry point
+   * Handle ANY AI request - Main entry point (UNIFIED INTERFACE)
+   * Supports both string and object signatures for compatibility:
+   * - handleRequest('message', options) → string signature
+   * - handleRequest({ message, messages, context, options }) → object signature
+   * 
+   * @param {string|object} firstArg - User message (string) OR full params object
+   * @param {object} secondArg - Options (when firstArg is string)
+   * @returns {Promise<object>} { text, provider, tier, complexity, stats, ... }
+   */
+  async handleRequest(firstArg, secondArg = {}) {
+    // Unified interface: support both string and object signatures
+    if (typeof firstArg === 'string') {
+      return this._handleStructured({ message: firstArg, options: secondArg });
+    }
+    return this._handleStructured(firstArg);
+  }
+
+  /**
+   * Internal structured handler (original handleRequest logic)
+   * @private
    * @param {object} params
    * @param {string} params.message - User message
    * @param {array} params.messages - Full conversation history (optional)
@@ -147,7 +166,7 @@ class SerginhoOrchestrator {
    * @param {object} params.options - Override options (optional)
    * @returns {Promise<object>} { text, provider, tier, complexity, stats, ... }
    */
-  async handleRequest({ message, messages = [], context = {}, options = {} }) {
+  async _handleStructured({ message, messages = [], context = {}, options = {} }) {
     const startTime = Date.now();
     
     // 1. Analyze complexity
