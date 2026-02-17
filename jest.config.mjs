@@ -23,5 +23,14 @@ export default {
       lines: 5
     }
   },
-  setupFilesAfterEnv: ['./jest.setup.mjs']
+  setupFilesAfterEnv: ['./jest.setup.mjs'],
+  
+  // ✅ Fix worker leak and hanging tests
+  testEnvironmentOptions: { 
+    html: false 
+  },
+  maxWorkers: 2,
+  forceExit: true,
+  detectOpenHandles: true,
+  testTimeout: 10000
 };
