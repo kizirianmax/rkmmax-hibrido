@@ -123,7 +123,27 @@ class SerginhoOrchestrator {
     this.circuitBreakers = new Map();
     this.cache = new SimpleCache();
     this.metrics = new MetricsTracker();
+    this.modelRegistry = modelRegistry;
     this.initializeCircuitBreakers();
+    this._registerModels();
+  }
+
+  /**
+   * Register all models in ModelRegistry with tier and cost info
+   * @private
+   */
+  _registerModels() {
+    // Groq models (complex tier)
+    this.modelRegistry.registerModel('llama-3.3-70b-versatile', 'complex', 0.00);
+    this.modelRegistry.registerModel('llama-3.1-70b-versatile', 'complex', 0.00);
+    this.modelRegistry.registerModel('llama-3.1-8b-instant', 'simple', 0.00);
+    this.modelRegistry.registerModel('mixtral-8x7b-32768', 'simple', 0.00);
+    
+    // Gemini models
+    this.modelRegistry.registerModel('gemini-2.0-flash-exp', 'complex', 0.0001);
+    
+    // OpenAI models
+    this.modelRegistry.registerModel('gpt-4o-mini', 'simple', 0.0002);
   }
 
   /**
@@ -225,12 +245,16 @@ class SerginhoOrchestrator {
         const modelExecutionTime = Date.now() - modelExecutionStartTime;
 
         // Record successful attempt
+        const modelId = result.model || getProviderConfig(currentProvider).model;
         attemptedModels.push({
-          modelId: result.model || getProviderConfig(currentProvider).model,
+          modelId,
           status: 'success',
           executionTime: modelExecutionTime,
           fallbackLevel
         });
+        
+        // ✨ NOVO: Registrar execução no ModelRegistry
+        this.modelRegistry.recordExecution(modelId, true, modelExecutionTime, false);
 
         // Cache successful response
         this.cache.set(cacheKey, result);
@@ -260,13 +284,19 @@ class SerginhoOrchestrator {
         const modelExecutionTime = Date.now() - orchestrationStartTime;
         
         // Record failed attempt
+        const modelId = getProviderConfig(currentProvider)?.model || currentProvider;
+        const isTimeout = error.message?.includes('timeout') || error.message?.includes('timed out');
+        
         attemptedModels.push({
-          modelId: getProviderConfig(currentProvider).model,
+          modelId,
           status: 'failed',
           executionTime: modelExecutionTime,
           fallbackLevel,
           error: error.message
         });
+        
+        // ✨ NOVO: Registrar falha no ModelRegistry
+        this.modelRegistry.recordExecution(modelId, false, 0, isTimeout);
         
         this.metrics.recordRequest(currentProvider, modelExecutionTime, false, false);
         
@@ -651,6 +681,38 @@ class SerginhoOrchestrator {
    */
   resetMetrics() {
     this.metrics.reset();
+  }
+
+  /**
+   * ✨ NOVO: Get Model Registry snapshot (for debugging)
+   * Returns complete performance stats for all models
+   * 
+   * @returns {object} Registry snapshot with all model stats
+   */
+  getModelRegistrySnapshot() {
+    return this.modelRegistry.getSnapshot();
+  }
+
+  /**
+   * ✨ NOVO: Get health scores for all models in a tier
+   * Useful for debugging adaptive routing decisions
+   * 
+   * @param {string} tier - Tier name ('simple' | 'complex')
+   * @returns {array} Models with health scores
+   */
+  getModelHealthScores(tier) {
+    const models = this.modelRegistry.getModelsByTier(tier);
+    return models.map(model => ({
+      modelId: model.modelId,
+      healthScore: model.healthScore,
+      consistency: model.consistency,
+      stability: model.stability,
+      confidence: model.confidence,
+      totalCalls: model.totalCalls,
+      successRate: model.totalCalls > 0 ? (model.successCount / model.totalCalls) : 0,
+      averageExecutionTime: model.averageExecutionTime,
+      circuitBreakerState: this.modelRegistry.getCircuitBreakerState(model.modelId)
+    })).sort((a, b) => b.healthScore - a.healthScore);
   }
 }
 
