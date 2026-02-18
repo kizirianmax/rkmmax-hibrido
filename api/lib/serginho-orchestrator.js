@@ -10,6 +10,7 @@
  * - Automatic fallback chains
  * - Response caching
  * - Metrics tracking
+ * - ✨ NOVO: Metadata estruturada de transparência
  * 
  * Usage:
  *   const result = await serginho.handleRequest({
@@ -20,9 +21,14 @@
  *   });
  */
 
+import { randomUUID } from 'crypto';
 import { analyzeComplexity, routeToProvider, getNextFallback, FALLBACK_CHAIN } from '../../src/utils/intelligentRouter.js';
 import CircuitBreaker from './circuit-breaker.js';
-import { getProviderConfig, PROVIDERS } from './providers-config.js';
+import { getProviderConfig, getModelMetadata, PROVIDERS } from './providers-config.js';
+
+// Versão do orquestrador (para versionamento de schema)
+const ORCHESTRATOR_VERSION = '2.1.0';
+const METADATA_SCHEMA_VERSION = '1.0.0';
 
 /**
  * Simple in-memory cache
@@ -56,25 +62,21 @@ class SimpleCache {
   clear() {
     this.cache.clear();
   }
+
+  size() {
+    return this.cache.size;
+  }
 }
 
 /**
- * Simple metrics tracker
+ * Metrics Tracker
  */
 class MetricsTracker {
   constructor() {
-    this.metrics = {
-      totalRequests: 0,
-      successfulRequests: 0,
-      failedRequests: 0,
-      cacheHits: 0,
-      providerUsage: {},
-      avgResponseTime: 0,
-      totalResponseTime: 0,
-    };
+    this.reset();
   }
 
-  recordRequest(provider, responseTime, success = true, fromCache = false) {
+  recordRequest(provider, responseTime, success, fromCache) {
     this.metrics.totalRequests++;
     
     if (success) {
@@ -146,7 +148,7 @@ class SerginhoOrchestrator {
    * 
    * @param {string|object} firstArg - User message (string) OR full params object
    * @param {object} secondArg - Options (when firstArg is string)
-   * @returns {Promise<object>} { text, provider, tier, complexity, stats, ... }
+   * @returns {Promise<object>} { text, model, execution, routing, usage, _meta }
    */
   async handleRequest(firstArg, secondArg = {}) {
     // Unified interface: support both string and object signatures
@@ -158,81 +160,304 @@ class SerginhoOrchestrator {
 
   /**
    * Internal structured handler (original handleRequest logic)
+   * ✨ NOVO: Retorna metadata estruturada completa
+   * 
    * @private
    * @param {object} params
    * @param {string} params.message - User message
    * @param {array} params.messages - Full conversation history (optional)
    * @param {object} params.context - Additional context (optional)
    * @param {object} params.options - Override options (optional)
-   * @returns {Promise<object>} { text, provider, tier, complexity, stats, ... }
+   * @returns {Promise<object>} { text, model, execution, routing, usage, _meta }
    */
   async _handleStructured({ message, messages = [], context = {}, options = {} }) {
-    const startTime = Date.now();
+    const orchestrationStartTime = Date.now();
+    const traceId = randomUUID();
     
     // 1. Analyze complexity
+    const analysisStartTime = Date.now();
     const analysis = analyzeComplexity(message);
     const routing = routeToProvider(analysis);
+    const analysisTime = Date.now() - analysisStartTime;
 
     console.log('[Serginho] Complexity:', analysis.scores.complexity, '→ Provider:', routing.provider);
+    console.log('[Serginho] Trace ID:', traceId);
 
     // 2. Try primary provider (or forced provider)
-    let triedProviders = [];
+    let attemptedModels = [];
+    let warnings = [];
     let currentProvider = options.forceProvider || routing.provider;
+    let fallbackLevel = 0;
 
     while (currentProvider) {
-      triedProviders.push(currentProvider);
-
       try {
         // Check cache first
+        const cacheCheckStartTime = Date.now();
         const cacheKey = this.getCacheKey(message, currentProvider);
         const cached = this.cache.get(cacheKey);
+        const cacheCheckTime = Date.now() - cacheCheckStartTime;
+        
         if (cached && !options.bypassCache) {
           console.log('[Serginho] Cache hit:', currentProvider);
-          const responseTime = Date.now() - startTime;
-          this.metrics.recordRequest(currentProvider, responseTime, true, true);
-          return { ...cached, fromCache: true, responseTime };
+          const totalOrchestrationTime = Date.now() - orchestrationStartTime;
+          this.metrics.recordRequest(currentProvider, totalOrchestrationTime, true, true);
+          
+          // ✨ NOVO: Retornar metadata estruturada do cache
+          return this._buildCachedResponse(
+            cached,
+            currentProvider,
+            traceId,
+            totalOrchestrationTime,
+            analysis,
+            routing,
+            options
+          );
         }
 
         // Execute with circuit breaker
+        const modelExecutionStartTime = Date.now();
         const result = await this.executeWithProvider(currentProvider, {
           message,
           messages,
           context,
           analysis,
         });
+        const modelExecutionTime = Date.now() - modelExecutionStartTime;
+
+        // Record successful attempt
+        attemptedModels.push({
+          modelId: result.model || getProviderConfig(currentProvider).model,
+          status: 'success',
+          executionTime: modelExecutionTime,
+          fallbackLevel
+        });
 
         // Cache successful response
         this.cache.set(cacheKey, result);
 
-        const responseTime = Date.now() - startTime;
-        this.metrics.recordRequest(currentProvider, responseTime, true, false);
+        const totalOrchestrationTime = Date.now() - orchestrationStartTime;
+        this.metrics.recordRequest(currentProvider, totalOrchestrationTime, true, false);
 
-        return {
-          ...result,
-          provider: currentProvider,
-          tier: routing.tier,
-          complexity: analysis.scores.complexity,
-          triedProviders,
-          fromCache: false,
-          responseTime,
-        };
+        // ✨ NOVO: Retornar metadata estruturada completa
+        return this._buildSuccessResponse(
+          result,
+          currentProvider,
+          traceId,
+          orchestrationStartTime,
+          modelExecutionTime,
+          totalOrchestrationTime,
+          analysis,
+          routing,
+          attemptedModels,
+          warnings,
+          fallbackLevel,
+          options
+        );
 
       } catch (error) {
         console.error(`[Serginho] Provider ${currentProvider} failed:`, error.message);
         
-        const responseTime = Date.now() - startTime;
-        this.metrics.recordRequest(currentProvider, responseTime, false, false);
+        const modelExecutionTime = Date.now() - orchestrationStartTime;
+        
+        // Record failed attempt
+        attemptedModels.push({
+          modelId: getProviderConfig(currentProvider).model,
+          status: 'failed',
+          executionTime: modelExecutionTime,
+          fallbackLevel,
+          error: error.message
+        });
+        
+        this.metrics.recordRequest(currentProvider, modelExecutionTime, false, false);
         
         // Get next fallback
-        currentProvider = getNextFallback(currentProvider, triedProviders);
+        const nextProvider = getNextFallback(currentProvider, attemptedModels.map(a => a.modelId));
         
-        if (!currentProvider) {
-          throw new Error(`All providers failed. Tried: ${triedProviders.join(', ')}`);
+        if (!nextProvider) {
+          throw new Error(`All providers failed. Tried: ${attemptedModels.map(a => a.modelId).join(', ')}`);
         }
 
-        console.log('[Serginho] Falling back to:', currentProvider);
+        // Add warning about fallback
+        warnings.push({
+          code: 'PROVIDER_FALLBACK',
+          message: `${currentProvider} failed, falling back to ${nextProvider}`,
+          severity: 'warning',
+          timestamp: new Date().toISOString()
+        });
+
+        console.log('[Serginho] Falling back to:', nextProvider);
+        currentProvider = nextProvider;
+        fallbackLevel++;
       }
     }
+  }
+
+  /**
+   * ✨ NOVO: Build structured success response with full metadata
+   * @private
+   */
+  _buildSuccessResponse(
+    result,
+    providerName,
+    traceId,
+    orchestrationStartTime,
+    modelExecutionTime,
+    totalOrchestrationTime,
+    analysis,
+    routing,
+    attemptedModels,
+    warnings,
+    fallbackLevel,
+    options
+  ) {
+    const config = getProviderConfig(providerName);
+    const metadata = getModelMetadata(providerName);
+    const circuitBreakerStates = this._getCircuitBreakerStates();
+
+    return {
+      // ✨ NOVO: Schema metadata
+      _meta: {
+        schemaVersion: METADATA_SCHEMA_VERSION,
+        timestamp: new Date().toISOString(),
+        traceId,
+        orchestratorVersion: ORCHESTRATOR_VERSION
+      },
+
+      // ✅ OBRIGATÓRIO: Resposta do modelo
+      text: result.text,
+
+      // ✅ OBRIGATÓRIO: Identificação do modelo (separação conceitual clara)
+      model: {
+        infrastructure: metadata.infrastructure,
+        modelId: config.model,
+        logicalTier: metadata.logicalTier,
+        displayName: metadata.displayName,
+        description: metadata.description,
+        icon: metadata.icon
+      },
+
+      // ✅ OBRIGATÓRIO: Métricas de execução
+      execution: {
+        status: fallbackLevel > 0 ? 'fallback' : 'success',
+        fallbackLevel,
+        modelExecutionTime,
+        totalOrchestrationTime,
+        attemptedModels,
+        circuitBreakerStates,
+        warnings
+      },
+
+      // ✅ OBRIGATÓRIO: Contexto de roteamento
+      routing: {
+        analyzedComplexity: analysis.scores.complexity,
+        selectedTier: routing.tier,
+        routingReason: options.forceProvider ? 'forced' : 'auto',
+        decisionContext: {
+          complexityScore: analysis.scores.complexity,
+          technicalKeywords: analysis.keywords?.technical || [],
+          messageLength: analysis.messageLength || 0,
+          forcedProvider: options.forceProvider || null
+        },
+        cacheHit: false
+      },
+
+      // ✅ OBRIGATÓRIO: Informações de uso
+      usage: result.usage || {
+        promptTokens: 0,
+        completionTokens: 0,
+        totalTokens: 0
+      }
+    };
+  }
+
+  /**
+   * ✨ NOVO: Build cached response with preserved metadata
+   * @private
+   */
+  _buildCachedResponse(
+    cached,
+    providerName,
+    traceId,
+    totalOrchestrationTime,
+    analysis,
+    routing,
+    options
+  ) {
+    const config = getProviderConfig(providerName);
+    const metadata = getModelMetadata(providerName);
+    const circuitBreakerStates = this._getCircuitBreakerStates();
+
+    return {
+      // ✨ NOVO: Schema metadata
+      _meta: {
+        schemaVersion: METADATA_SCHEMA_VERSION,
+        timestamp: new Date().toISOString(),
+        traceId,
+        orchestratorVersion: ORCHESTRATOR_VERSION
+      },
+
+      // ✅ OBRIGATÓRIO: Resposta do modelo (do cache)
+      text: cached.text,
+
+      // ✅ OBRIGATÓRIO: Identificação do modelo (preservada do cache)
+      model: {
+        infrastructure: metadata.infrastructure,
+        modelId: config.model,
+        logicalTier: metadata.logicalTier,
+        displayName: metadata.displayName,
+        description: metadata.description,
+        icon: metadata.icon
+      },
+
+      // ✅ OBRIGATÓRIO: Métricas de execução (cache)
+      execution: {
+        status: 'cached',
+        fallbackLevel: 0,
+        modelExecutionTime: 0, // Cache não executa modelo
+        totalOrchestrationTime,
+        attemptedModels: [{
+          modelId: config.model,
+          status: 'cached',
+          executionTime: 0,
+          fallbackLevel: 0
+        }],
+        circuitBreakerStates,
+        warnings: []
+      },
+
+      // ✅ OBRIGATÓRIO: Contexto de roteamento
+      routing: {
+        analyzedComplexity: analysis.scores.complexity,
+        selectedTier: routing.tier,
+        routingReason: options.forceProvider ? 'forced' : 'auto',
+        decisionContext: {
+          complexityScore: analysis.scores.complexity,
+          technicalKeywords: analysis.keywords?.technical || [],
+          messageLength: analysis.messageLength || 0,
+          forcedProvider: options.forceProvider || null
+        },
+        cacheHit: true
+      },
+
+      // ✅ OBRIGATÓRIO: Informações de uso (preservadas do cache)
+      usage: cached.usage || {
+        promptTokens: 0,
+        completionTokens: 0,
+        totalTokens: 0
+      }
+    };
+  }
+
+  /**
+   * ✨ NOVO: Get circuit breaker states for all providers
+   * @private
+   */
+  _getCircuitBreakerStates() {
+    const states = {};
+    this.circuitBreakers.forEach((breaker, providerName) => {
+      states[providerName] = breaker.getState(); // 'closed' | 'open' | 'half-open'
+    });
+    return states;
   }
 
   /**
@@ -262,6 +487,15 @@ class SerginhoOrchestrator {
   }
 
   /**
+   * Generate cache key
+   * @private
+   */
+  getCacheKey(message, provider) {
+    // Simple hash - in production, use better hashing
+    return `${provider}:${message.substring(0, 100)}`;
+  }
+
+  /**
    * Call Gemini API
    * @private
    */
@@ -270,7 +504,9 @@ class SerginhoOrchestrator {
     
     const response = await fetch(config.endpoint, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: {
+        'Content-Type': 'application/json',
+      },
       body: JSON.stringify({
         contents: formattedMessages,
         generationConfig: config.generationConfig,
@@ -301,7 +537,7 @@ class SerginhoOrchestrator {
    */
   async callGroq(config, message, messages, context) {
     const apiKey = process.env.GROQ_API_KEY;
-    if (!apiKey && process.env.NODE_ENV !== 'test') {
+    if (!apiKey) {
       throw new Error('GROQ_API_KEY environment variable is required');
     }
 
@@ -310,7 +546,7 @@ class SerginhoOrchestrator {
     const response = await fetch(config.endpoint, {
       method: 'POST',
       headers: {
-        'Authorization': `Bearer ${apiKey || 'test-key'}`,
+        'Authorization': `Bearer ${apiKey}`,
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
@@ -379,37 +615,21 @@ class SerginhoOrchestrator {
    * Format messages for different API formats
    * @private
    */
-  formatMessages(history, newMessage, format) {
-    // Gemini format: { role, parts: [{text}] }
-    // OpenAI format: { role, content }
-    
+  formatMessages(messages, currentMessage, format) {
     const allMessages = [
-      ...history,
-      { role: 'user', content: newMessage },
+      ...messages,
+      { role: 'user', content: currentMessage }
     ];
-    
-    if (format === 'gemini') {
-      return allMessages.map(m => ({
-        role: m.role === 'assistant' ? 'model' : m.role,
-        parts: [{ text: m.content }],
-      }));
-    } else {
-      // OpenAI, Groq, etc.
-      return allMessages;
-    }
-  }
 
-  /**
-   * Generate cache key using hash for robust collision avoidance
-   * @private
-   */
-  getCacheKey(message, provider) {
-    // Use a simple but effective hash: provider + first 100 chars
-    // For production, consider using crypto.createHash('sha256') if collisions become an issue
-    const shortMessage = message.substring(0, 100).trim().toLowerCase();
-    // Replace multiple spaces with single space and remove special chars for consistency
-    const normalizedMessage = shortMessage.replace(/\s+/g, ' ').replace(/[^\w\s]/g, '');
-    return `${provider}:${normalizedMessage}`;
+    if (format === 'gemini') {
+      return allMessages.map(msg => ({
+        role: msg.role === 'assistant' ? 'model' : 'user',
+        parts: [{ text: msg.content }]
+      }));
+    }
+
+    // OpenAI/Groq format
+    return allMessages;
   }
 
   /**
@@ -420,34 +640,19 @@ class SerginhoOrchestrator {
   }
 
   /**
-   * Get circuit breaker states
-   */
-  getCircuitBreakerStates() {
-    const states = {};
-    for (const [provider, breaker] of this.circuitBreakers.entries()) {
-      states[provider] = breaker.getState();
-    }
-    return states;
-  }
-
-  /**
-   * Reset all circuit breakers (for testing)
-   */
-  resetCircuitBreakers() {
-    for (const breaker of this.circuitBreakers.values()) {
-      breaker.reset();
-    }
-  }
-
-  /**
-   * Clear cache (for testing)
+   * Clear cache
    */
   clearCache() {
     this.cache.clear();
   }
+
+  /**
+   * Reset metrics
+   */
+  resetMetrics() {
+    this.metrics.reset();
+  }
 }
 
-// Singleton instance
-export const serginho = new SerginhoOrchestrator();
-export { SerginhoOrchestrator };
-export default serginho;
+// Export singleton instance
+export default new SerginhoOrchestrator();

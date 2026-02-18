@@ -138,9 +138,82 @@ export function getAllProviderNames() {
   return Object.keys(PROVIDERS);
 }
 
+/**
+ * Model metadata for UI and transparency
+ * Provides human-readable information about each model
+ * 
+ * Structure:
+ * - infrastructure: Provider infrastructure (groq, gemini, openai)
+ * - displayName: Human-readable model name
+ * - description: Brief description of model capabilities
+ * - icon: Visual icon for UI
+ * - logicalTier: Logical tier (complex, medium, simple, fallback, genius, optimized)
+ */
+export const MODEL_METADATA = {
+  'llama-120b': {
+    infrastructure: 'groq',
+    displayName: 'Llama 3.3 70B',
+    description: 'Raciocínio profundo e análise complexa',
+    icon: '🧠',
+    logicalTier: 'complex'
+  },
+  'llama-70b': {
+    infrastructure: 'groq',
+    displayName: 'Llama 3.3 70B',
+    description: 'Tarefas técnicas e desenvolvimento',
+    icon: '⚙️',
+    logicalTier: 'medium'
+  },
+  'llama-8b': {
+    infrastructure: 'groq',
+    displayName: 'Llama 3.1 8B',
+    description: 'Respostas rápidas e conversação casual',
+    icon: '⚡',
+    logicalTier: 'simple'
+  },
+  'groq-fallback': {
+    infrastructure: 'groq',
+    displayName: 'Mixtral 8x7B',
+    description: 'Fallback de alta disponibilidade',
+    icon: '🔄',
+    logicalTier: 'fallback'
+  },
+  'gemini-exp-1206': {
+    infrastructure: 'gemini',
+    displayName: 'Gemini 2.5 Pro',
+    description: 'Inteligência de nível gênio',
+    icon: '✨',
+    logicalTier: 'genius'
+  },
+  'gemini-2.0-flash': {
+    infrastructure: 'gemini',
+    displayName: 'Gemini 2.0 Flash',
+    description: 'Velocidade otimizada',
+    icon: '🚀',
+    logicalTier: 'optimized'
+  }
+};
+
+/**
+ * Get model metadata by provider name
+ * @param {string} providerName - Provider identifier
+ * @returns {object} Model metadata
+ */
+export function getModelMetadata(providerName) {
+  return MODEL_METADATA[providerName] || {
+    infrastructure: 'unknown',
+    displayName: providerName,
+    description: 'Modelo de IA',
+    icon: '🤖',
+    logicalTier: 'unknown'
+  };
+}
+
 export default {
   PROVIDERS,
+  MODEL_METADATA,
   getProviderConfig,
   getProvidersByTier,
   getAllProviderNames,
+  getModelMetadata,
 };
