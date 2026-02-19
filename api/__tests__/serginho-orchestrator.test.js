@@ -1,5 +1,5 @@
 import { jest } from '@jest/globals';
-import { SerginhoOrchestrator } from '../lib/serginho-orchestrator.js';
+import serginho from '../lib/serginho-orchestrator.js';
 import { getProviderConfig } from '../lib/providers-config.js';
 
 // Mock environment variables
@@ -7,22 +7,24 @@ process.env.GROQ_API_KEY = 'test-groq-key';
 process.env.GOOGLE_API_KEY = 'test-google-key';
 
 describe('SerginhoOrchestrator', () => {
-  let orchestrator;
   let originalFetch;
 
   beforeEach(() => {
-    // Create fresh orchestrator instance
-    orchestrator = new SerginhoOrchestrator();
+    // Use singleton instance (serginho is already instantiated)
+    // Reset circuit breakers and cache before each test
+    serginho.resetMetrics();
+    serginho.clearCache();
     
     // Save original fetch
     originalFetch = global.fetch;
     
-    // Mock fetch with successful responses
-    global.fetch = jest.fn((url, options) => {
+    // Mock fetch with successful responses (resolve imediatamente)
+    global.fetch = jest.fn().mockImplementation((url, options) => {
+      // Retorna Promise já resolvida para execução imediata em testes
       return Promise.resolve({
         ok: true,
         status: 200,
-        json: () => Promise.resolve({
+        json: jest.fn().mockResolvedValue({
           // Gemini response format
           candidates: [{
             content: {
@@ -46,7 +48,7 @@ describe('SerginhoOrchestrator', () => {
             total_tokens: 30
           }
         }),
-        text: () => Promise.resolve('OK'),
+        text: jest.fn().mockResolvedValue('OK'),
       });
     });
   });
@@ -58,7 +60,7 @@ describe('SerginhoOrchestrator', () => {
 
   describe('handleRequest', () => {
     test('routes simple messages to llama-8b', async () => {
-      const result = await orchestrator.handleRequest({
+      const result = await serginho.handleRequest({
         message: 'Olá, tudo bem?',
         messages: [],
         context: {},
@@ -72,7 +74,7 @@ describe('SerginhoOrchestrator', () => {
     });
 
     test('routes complex messages to llama-120b or llama-70b', async () => {
-      const result = await orchestrator.handleRequest({
+      const result = await serginho.handleRequest({
         message: 'Analise em profundidade a arquitetura hexagonal e explique como implementar microserviços',
         messages: [],
         context: {},
@@ -86,7 +88,7 @@ describe('SerginhoOrchestrator', () => {
     });
 
     test('routes messages with code to llama-120b', async () => {
-      const result = await orchestrator.handleRequest({
+      const result = await serginho.handleRequest({
         message: 'function test() { return "hello"; }',
         messages: [],
         context: {},
@@ -98,7 +100,7 @@ describe('SerginhoOrchestrator', () => {
     });
 
     test('respects forceProvider option', async () => {
-      const result = await orchestrator.handleRequest({
+      const result = await serginho.handleRequest({
         message: 'Simple message',
         messages: [],
         context: {},
@@ -113,7 +115,7 @@ describe('SerginhoOrchestrator', () => {
       const message = 'Test cache message';
       
       // First request
-      const result1 = await orchestrator.handleRequest({
+      const result1 = await serginho.handleRequest({
         message,
         messages: [],
         context: {},
@@ -122,7 +124,7 @@ describe('SerginhoOrchestrator', () => {
       expect(result1.fromCache).toBe(false);
 
       // Second request with same message
-      const result2 = await orchestrator.handleRequest({
+      const result2 = await serginho.handleRequest({
         message,
         messages: [],
         context: {},
@@ -136,7 +138,7 @@ describe('SerginhoOrchestrator', () => {
       const message = 'Test bypass cache';
       
       // First request
-      await orchestrator.handleRequest({
+      await serginho.handleRequest({
         message,
         messages: [],
         context: {},
@@ -144,7 +146,7 @@ describe('SerginhoOrchestrator', () => {
       });
 
       // Second request with bypass cache
-      const result = await orchestrator.handleRequest({
+      const result = await serginho.handleRequest({
         message,
         messages: [],
         context: {},
@@ -154,7 +156,7 @@ describe('SerginhoOrchestrator', () => {
     });
 
     test('includes conversation history', async () => {
-      const result = await orchestrator.handleRequest({
+      const result = await serginho.handleRequest({
         message: 'What did I just ask?',
         messages: [
           { role: 'user', content: 'Hello' },
@@ -169,17 +171,17 @@ describe('SerginhoOrchestrator', () => {
     });
 
     test('tracks metrics correctly', async () => {
-      const initialMetrics = orchestrator.getMetrics();
+      const initialMetrics = serginho.getMetrics();
       const initialRequests = initialMetrics.totalRequests;
 
-      await orchestrator.handleRequest({
+      await serginho.handleRequest({
         message: 'Test metrics',
         messages: [],
         context: {},
         options: {}
       });
 
-      const newMetrics = orchestrator.getMetrics();
+      const newMetrics = serginho.getMetrics();
       expect(newMetrics.totalRequests).toBe(initialRequests + 1);
       expect(newMetrics.successfulRequests).toBeGreaterThan(0);
     });
@@ -203,7 +205,7 @@ describe('SerginhoOrchestrator', () => {
         });
       });
 
-      const result = await orchestrator.handleRequest({
+      const result = await serginho.handleRequest({
         message: 'Oi',
         messages: [],
         context: {},
@@ -220,7 +222,7 @@ describe('SerginhoOrchestrator', () => {
       // Mock all providers to fail
       global.fetch = jest.fn(() => Promise.reject(new Error('All providers down')));
 
-      await expect(orchestrator.handleRequest({
+      await expect(serginho.handleRequest({
         message: 'Test failure',
         messages: [],
         context: {},
@@ -245,7 +247,7 @@ describe('SerginhoOrchestrator', () => {
       // Try multiple times to trip circuit breaker
       for (let i = 0; i < 5; i++) {
         try {
-          await orchestrator.handleRequest({
+          await serginho.handleRequest({
             message: 'Test',
             messages: [],
             context: {},
@@ -264,7 +266,7 @@ describe('SerginhoOrchestrator', () => {
 
   describe('provider-specific calls', () => {
     test('calls Groq API correctly', async () => {
-      await orchestrator.handleRequest({
+      await serginho.handleRequest({
         message: 'Test Groq',
         messages: [],
         context: {},
@@ -284,7 +286,7 @@ describe('SerginhoOrchestrator', () => {
     });
 
     test('calls Gemini API correctly', async () => {
-      await orchestrator.handleRequest({
+      await serginho.handleRequest({
         message: 'Test Gemini',
         messages: [],
         context: {},
@@ -333,9 +335,9 @@ describe('SerginhoOrchestrator', () => {
 
   describe('cache management', () => {
     test('generates consistent cache keys', () => {
-      const key1 = orchestrator.getCacheKey('Test message', 'llama-8b');
-      const key2 = orchestrator.getCacheKey('Test message', 'llama-8b');
-      const key3 = orchestrator.getCacheKey('Test message', 'llama-70b');
+      const key1 = serginho.getCacheKey('Test message', 'llama-8b');
+      const key2 = serginho.getCacheKey('Test message', 'llama-8b');
+      const key3 = serginho.getCacheKey('Test message', 'llama-70b');
       
       expect(key1).toBe(key2);
       expect(key1).not.toBe(key3);
@@ -343,7 +345,7 @@ describe('SerginhoOrchestrator', () => {
 
     test('clearCache removes all cached responses', async () => {
       // Make a request to cache it
-      await orchestrator.handleRequest({
+      await serginho.handleRequest({
         message: 'Cache test',
         messages: [],
         context: {},
@@ -351,10 +353,10 @@ describe('SerginhoOrchestrator', () => {
       });
 
       // Clear cache
-      orchestrator.clearCache();
+      serginho.clearCache();
 
       // Same request should not be cached
-      const result = await orchestrator.handleRequest({
+      const result = await serginho.handleRequest({
         message: 'Cache test',
         messages: [],
         context: {},
@@ -367,21 +369,21 @@ describe('SerginhoOrchestrator', () => {
 
   describe('metrics tracking', () => {
     test('tracks provider usage', async () => {
-      await orchestrator.handleRequest({
+      await serginho.handleRequest({
         message: 'Test 1',
         messages: [],
         context: {},
         options: { forceProvider: 'llama-8b' }
       });
 
-      await orchestrator.handleRequest({
+      await serginho.handleRequest({
         message: 'Test 2',
         messages: [],
         context: {},
         options: { forceProvider: 'llama-70b' }
       });
 
-      const metrics = orchestrator.getMetrics();
+      const metrics = serginho.getMetrics();
       expect(metrics.providerUsage['llama-8b']).toBeGreaterThan(0);
       expect(metrics.providerUsage['llama-70b']).toBeGreaterThan(0);
     });
@@ -390,37 +392,37 @@ describe('SerginhoOrchestrator', () => {
       const message = 'Cache hit test';
       
       // First request (miss)
-      await orchestrator.handleRequest({
+      await serginho.handleRequest({
         message,
         messages: [],
         context: {},
         options: {}
       });
 
-      const metricsAfterMiss = orchestrator.getMetrics();
+      const metricsAfterMiss = serginho.getMetrics();
       const initialCacheHits = metricsAfterMiss.cacheHits;
 
       // Second request (hit)
-      await orchestrator.handleRequest({
+      await serginho.handleRequest({
         message,
         messages: [],
         context: {},
         options: {}
       });
 
-      const metricsAfterHit = orchestrator.getMetrics();
+      const metricsAfterHit = serginho.getMetrics();
       expect(metricsAfterHit.cacheHits).toBe(initialCacheHits + 1);
     });
 
     test('tracks response times', async () => {
-      await orchestrator.handleRequest({
+      await serginho.handleRequest({
         message: 'Response time test',
         messages: [],
         context: {},
         options: {}
       });
 
-      const metrics = orchestrator.getMetrics();
+      const metrics = serginho.getMetrics();
       // Response time should be >= 0 (could be 0 in very fast mocked tests)
       expect(metrics.avgResponseTime).toBeGreaterThanOrEqual(0);
       expect(typeof metrics.avgResponseTime).toBe('number');

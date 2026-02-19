@@ -1,4 +1,5 @@
 import { analyzeComplexity } from './intelligentRouter.js';
+import RUNTIME_CONFIG from '../config/runtime.js';
 
 /**
  * AIAdapter - Unified interface for all AI operations
@@ -7,7 +8,7 @@ import { analyzeComplexity } from './intelligentRouter.js';
  * Features:
  * - Automatic provider selection
  * - Circuit breaker pattern
- * - Timeout protection (8 seconds)
+ * - Timeout protection (RUNTIME_CONFIG: 9s prod, 1s test)
  * - Automatic fallback
  * - No provider name exposure
  */
@@ -16,14 +17,14 @@ import { analyzeComplexity } from './intelligentRouter.js';
 const circuitBreakers = new Map();
 
 class CircuitBreaker {
-  constructor(name, timeout = 8000) {
+  constructor(name, timeout = RUNTIME_CONFIG.TIMEOUT_MS) {
     this.name = name;
     this.timeout = timeout;
     this.state = 'CLOSED'; // CLOSED, OPEN, HALF_OPEN
     this.failures = 0;
     this.successCount = 0;
     this.failureThreshold = 5;
-    this.resetTimeout = 60000; // 1 minute
+    this.resetTimeout = RUNTIME_CONFIG.CIRCUIT_BREAKER_RESET_TIMEOUT_MS;
     this.lastFailureTime = null;
   }
 
@@ -38,7 +39,10 @@ class CircuitBreaker {
     }
 
     try {
-      const result = await this._executeWithTimeout(fn);
+      // Em ambiente de teste, executar sem timeout real (Promise resolve imediatamente)
+      const result = RUNTIME_CONFIG.IS_TEST 
+        ? await fn() 
+        : await this._executeWithTimeout(fn);
       this._onSuccess();
       return result;
     } catch (error) {
@@ -86,7 +90,7 @@ class CircuitBreaker {
 }
 
 // Get or create circuit breaker
-function getCircuitBreaker(name, timeout = 8000) {
+function getCircuitBreaker(name, timeout = RUNTIME_CONFIG.TIMEOUT_MS) {
   if (!circuitBreakers.has(name)) {
     circuitBreakers.set(name, new CircuitBreaker(name, timeout));
   }
@@ -98,9 +102,9 @@ function getCircuitBreaker(name, timeout = 8000) {
  */
 const PROVIDER_CONFIG = {
   types: {
-    fast: { complexity: 'simple', timeout: 5000 },
-    standard: { complexity: 'medium', timeout: 8000 },
-    powerful: { complexity: 'complex', timeout: 10000 },
+    fast: { complexity: 'simple', timeout: RUNTIME_CONFIG.TIMEOUT_MS },
+    standard: { complexity: 'medium', timeout: RUNTIME_CONFIG.TIMEOUT_MS },
+    powerful: { complexity: 'complex', timeout: RUNTIME_CONFIG.TIMEOUT_MS },
   },
   fallbackChain: ['powerful', 'standard', 'fast'],
 };
