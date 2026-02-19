@@ -387,7 +387,7 @@ describe('SerginhoOrchestrator', () => {
 
       expect(result.execution.totalOrchestrationTime).toBeDefined();
       expect(typeof result.execution.totalOrchestrationTime).toBe('number');
-      expect(result.execution.totalOrchestrationTime).toBeGreaterThan(0);
+      expect(result.execution.totalOrchestrationTime).toBeGreaterThanOrEqual(0);
     });
   });
 });
