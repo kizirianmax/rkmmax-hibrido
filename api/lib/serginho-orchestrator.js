@@ -685,6 +685,15 @@ class SerginhoOrchestrator {
   }
 
   /**
+   * Reset all circuit breakers (for testing)
+   */
+  resetCircuitBreakers() {
+    this.circuitBreakers.forEach((breaker) => {
+      breaker.reset();
+    });
+  }
+
+  /**
    * ✨ NOVO: Get Model Registry snapshot (for debugging)
    * Returns complete performance stats for all models
    * 
