@@ -17,6 +17,8 @@
  *   return await callExternalAPI();
  * });
  */
+import RUNTIME_CONFIG from '../../src/config/runtime.js';
+
 export default class CircuitBreaker {
   /**
    * Creates a new Circuit Breaker instance
@@ -28,9 +30,10 @@ export default class CircuitBreaker {
    * @param {string} [options.name='CircuitBreaker'] - Name for identification in errors
    */
   constructor(options = {}) {
-    this.timeout = options.timeout || 8000; // 8s (4s margin for 12s serverless limit)
-    this.failureThreshold = options.failureThreshold || 3;
-    this.resetTimeout = options.resetTimeout || 60000; // 1 minute
+    // Use RUNTIME_CONFIG para separar comportamento de PRODUÇÃO (9s) e TESTE (1s)
+    this.timeout = options.timeout || RUNTIME_CONFIG.TIMEOUT_MS;
+    this.failureThreshold = options.failureThreshold || RUNTIME_CONFIG.CIRCUIT_BREAKER_FAILURE_THRESHOLD;
+    this.resetTimeout = options.resetTimeout || RUNTIME_CONFIG.CIRCUIT_BREAKER_RESET_TIMEOUT_MS;
     this.state = 'CLOSED'; // CLOSED, OPEN, HALF_OPEN
     this.failures = 0;
     this.nextAttempt = Date.now();

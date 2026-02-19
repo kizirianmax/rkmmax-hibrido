@@ -25,6 +25,7 @@ import { randomUUID } from 'crypto';
 import { analyzeComplexity, routeToProvider, getNextFallback, FALLBACK_CHAIN } from '../../src/utils/intelligentRouter.js';
 import CircuitBreaker from './circuit-breaker.js';
 import { getProviderConfig, getModelMetadata, PROVIDERS } from './providers-config.js';
+import modelRegistry from './model-registry.js';
 
 // Versão do orquestrador (para versionamento de schema)
 const ORCHESTRATOR_VERSION = '2.1.0';
@@ -681,6 +682,15 @@ class SerginhoOrchestrator {
    */
   resetMetrics() {
     this.metrics.reset();
+  }
+
+  /**
+   * Reset all circuit breakers (for testing)
+   */
+  resetCircuitBreakers() {
+    this.circuitBreakers.forEach((breaker) => {
+      breaker.reset();
+    });
   }
 
   /**
