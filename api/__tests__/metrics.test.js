@@ -163,7 +163,7 @@ describe('PerformanceMetrics', () => {
 
   test('should export to Sentry format', () => {
     const mockSentry = {
-      setContext: jest.fn(),
+      setContext: () => {},
     };
 
     metrics.recordRequest({
