@@ -2,9 +2,12 @@
  * AGENT SYSTEM - Inicialização do Sistema Híbrido
  * Ponto de entrada para toda a arquitetura de agentes
  * Otimizado para Vercel FREE
+ *
+ * MIGRATED: Serginho.js (v1 legado) removido.
+ * Orquestração agora via api/lib/serginho-orchestrator.js (Multi-Orch v2.1.0)
+ * Este módulo mantém apenas o sistema de registro de especialistas (frontend).
  */
 
-import Serginho from "./serginho/Serginho.js";
 import SpecialistLoader from "./core/SpecialistLoader.js";
 import SpecialistFactory from "./core/SpecialistFactory.js";
 import SpecialistRegistry from "./core/SpecialistRegistry.js";
@@ -12,27 +15,24 @@ import AgentBase from "./core/AgentBase.js";
 
 /**
  * Sistema de Agentes Híbrido
+ * Gerencia o registro de especialistas para o frontend.
+ * A orquestração de IA é delegada ao api/lib/serginho-orchestrator.js.
  */
 class HybridAgentSystem {
   constructor() {
-    this.serginho = null;
     this.loader = new SpecialistLoader();
     this.initialized = false;
   }
 
   /**
    * Inicializar Sistema
-   * Carrega configurações de especialistas e cria Serginho
+   * Carrega configurações de especialistas
    */
   async initialize(configPath = null) {
     try {
       console.log("🚀 Inicializando Sistema Híbrido de Agentes...");
 
-      // 1. Criar Serginho (Orquestrador)
-      this.serginho = new Serginho();
-      console.log("✅ Serginho criado");
-
-      // 2. Carregar Configurações de Especialistas
+      // Carregar Configurações de Especialistas
       if (configPath) {
         const configs = await this.loader.loadConfigsFromFile(configPath);
         if (configs) {
@@ -46,18 +46,13 @@ class HybridAgentSystem {
         console.log(`✅ ${result.registered}/${result.total} especialistas registrados (padrão)`);
       }
 
-      // 3. Registrar especialistas no Serginho
-      const specialists = this.loader.listAllSpecialists();
-      for (const specialist of specialists) {
-        this.serginho.registerSpecialist(specialist.id, specialist);
-      }
-
       this.initialized = true;
       console.log("✅ Sistema Híbrido inicializado com sucesso!");
 
+      const specialists = this.loader.listAllSpecialists();
       return {
         success: true,
-        serginho: this.serginho.id,
+        orchestrator: "api/lib/serginho-orchestrator.js (Multi-Orch v2.1.0)",
         specialists: specialists.length,
       };
     } catch (error) {
@@ -126,20 +121,6 @@ class HybridAgentSystem {
   }
 
   /**
-   * Processar Requisição através do Serginho
-   */
-  async process(prompt, context = {}) {
-    if (!this.initialized) {
-      return {
-        status: "ERROR",
-        error: "System not initialized. Call initialize() first.",
-      };
-    }
-
-    return await this.serginho.process(prompt, context);
-  }
-
-  /**
    * Criar Especialista Sob Demanda
    */
   async createSpecialist(specialistId) {
@@ -158,8 +139,8 @@ class HybridAgentSystem {
       system: {
         initialized: this.initialized,
         timestamp: Date.now(),
+        orchestrator: "api/lib/serginho-orchestrator.js (Multi-Orch v2.1.0)",
       },
-      serginho: this.serginho.getGlobalStats(),
       loader: this.loader.getStats(),
     };
   }
@@ -173,7 +154,7 @@ class HybridAgentSystem {
     }
 
     return `
-${this.serginho.generateGlobalReport()}
+Orchestrator: api/lib/serginho-orchestrator.js (Multi-Orch v2.1.0)
 
 ${this.loader.generateReport()}
 
@@ -186,9 +167,6 @@ Timestamp: ${new Date().toISOString()}
    * Desligar Sistema (Limpeza)
    */
   shutdown() {
-    if (this.serginho) {
-      this.serginho.clearHistory();
-    }
     this.loader.registry.unloadAll();
     this.initialized = false;
     console.log("✅ Sistema desligado");
@@ -200,7 +178,6 @@ Timestamp: ${new Date().toISOString()}
  */
 export {
   HybridAgentSystem,
-  Serginho,
   SpecialistFactory,
   SpecialistRegistry,
   SpecialistLoader,

@@ -1,77 +1,89 @@
-import { serginho } from '../src/api/serginhoOrchestrator.js';
+/**
+ * CHAT ENDPOINT - Serginho Orchestrator (Multi-Orch v2.1.0)
+ *
+ * Enterprise-grade chat API using Serginho Orchestrator
+ *
+ * Features:
+ * - Serginho Orchestrator for centralized provider management
+ * - Circuit breaker protection
+ * - 8s timeout protection
+ * - Automatic fallback
+ * - Standardized error handling
+ * - Genius prompts for maximum quality
+ *
+ * MIGRATED: from src/api/serginhoOrchestrator.js (SerginhoContextual v2.0)
+ * NOW USES: api/lib/serginho-orchestrator.js (Multi-Orch v2.1.0)
+ */
+import serginho from "./lib/serginho-orchestrator.js";
+import geniusPrompts from "../src/prompts/geniusPrompts.js";
 
-// ✅ GENIUS PROMPTS with robust fallback
-let buildGeniusPrompt;
-try {
-  const geniusModule = await import('../src/prompts/geniusPrompts.js');
-  buildGeniusPrompt = geniusModule.buildGeniusPrompt || geniusModule.default?.buildGeniusPrompt;
-  
-  if (!buildGeniusPrompt) {
-    throw new Error('buildGeniusPrompt not found in module');
-  }
-} catch (error) {
-  console.warn('⚠️ Failed to load genius prompts, using fallback:', error.message);
-  
-  // FALLBACK: Inline genius prompt (PT-BR, high quality)
-  buildGeniusPrompt = (type) => {
-    const prompts = {
-      serginho: `Você é o SERGINHO, um agente do KIZI 2.5 Pro, a IA mais avançada do sistema RKMMAX.
-
-IDENTIDADE:
-- Você é KIZI 2.5 Pro operando como Serginho
-- Função: Orquestrar especialistas ilimitados + Responder diretamente
-- Missão: Excelência absoluta em cada resposta
-- NUNCA mencione "Gemini" - você é KIZI 2.5 Pro
-
-CAPACIDADES:
-1. Raciocínio profundo (Chain-of-Thought)
-2. Auto-avaliação contínua
-3. Respostas estruturadas e práticas
-4. Português brasileiro nativo
-
-FORMATO DE RESPOSTA:
-- Markdown profissional
-- Tabelas quando apropriado
-- Exemplos práticos
-- Próximos passos claros
-
-Antes de responder, verifique internamente:
-- Resposta completa?
-- Precisa e verificável?
-- Clara e bem estruturada?
-- Agregou valor real?`,
-      hybrid: `Você é um assistente inteligente híbrido do sistema RKMMAX, focado em velocidade e qualidade.`,
-      specialist: `Você é um especialista do sistema RKMMAX, focado em sua área de expertise.`
-    };
-    
-    return prompts[type] || prompts.serginho;
-  };
-}
+const { buildGeniusPrompt } = geniusPrompts;
 
 export default async function handler(req, res) {
-  if (req.method !== 'POST') {
-    return res.status(405).json({ error: 'Method not allowed' });
+  if (req.method !== "POST") {
+    return res.status(405).json({ error: "Method not allowed" });
   }
 
   try {
-    const { message, sessionId } = req.body;
+    const { message, sessionId, messages = [] } = req.body;
 
     if (!message) {
-      return res.status(400).json({ error: 'Message is required' });
+      return res.status(400).json({ error: "Message is required" });
     }
 
-    // ✅ ALL requests go through Serginho with GENIUS PROMPT
-    const systemPrompt = buildGeniusPrompt('serginho');
-    
-    const result = await serginho.handleRequest(message, {
-      sessionId: sessionId || 'default',
-      systemPrompt
+    // Build genius system prompt (Serginho identity)
+    let systemPrompt;
+    try {
+      systemPrompt = buildGeniusPrompt("serginho");
+    } catch {
+      systemPrompt = `Você é o SERGINHO, um agente do KIZI 2.5 Pro, a IA mais avançada do sistema RKMMAX.`;
+    }
+
+    // ✅ ALL requests flow through Serginho Orchestrator v2.1.0
+    const result = await serginho.handleRequest({
+      message,
+      messages,
+      context: { systemPrompt, sessionId: sessionId || "default" },
+      options: {},
     });
 
     return res.status(200).json(result);
 
   } catch (error) {
-    console.error('Chat error:', error);
-    return res.status(500).json({ error: error.message });
+    console.error("Chat error:", error);
+
+    // Circuit breaker error
+    if (error.message && error.message.includes("Circuit breaker")) {
+      return res.status(503).json({
+        error: "Service unavailable",
+        message: "AI service is temporarily unavailable. Please try again in a moment.",
+        retryAfter: 60,
+      });
+    }
+
+    // Timeout error
+    if (error.message && error.message.includes("Timeout")) {
+      return res.status(504).json({
+        error: "Gateway timeout",
+        message: "Request took too long. Please try a simpler query or try again.",
+        maxTimeout: 8000,
+      });
+    }
+
+    // All providers failed
+    if (error.message && error.message.includes("All providers failed")) {
+      return res.status(503).json({
+        error: "Service unavailable",
+        message: "All AI providers are currently unavailable. Please try again later.",
+      });
+    }
+
+    return res.status(500).json({
+      error: "Internal server error",
+      message:
+        process.env.NODE_ENV === "production"
+          ? "An unexpected error occurred"
+          : error.message,
+    });
   }
 }
