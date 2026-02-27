@@ -1,6 +1,5 @@
 // src/components/Onboarding.jsx
 import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
 import "./Onboarding.css";
 
 export default function Onboarding({ onComplete }) {

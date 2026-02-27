@@ -27,7 +27,6 @@ import ConsentBanner from "./components/ConsentBanner.jsx";
 import Privacy from "./pages/Privacy.jsx";
 import Terms from "./pages/Terms.jsx";
 import Refund from "./pages/Refund.jsx";
-import HybridAgent from "./pages/HybridAgent.jsx";
 import HybridAgentSimple from "./pages/HybridAgentSimple.jsx";
 import GitHubCallback from "./pages/GitHubCallback.jsx";
 

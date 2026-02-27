@@ -35,9 +35,7 @@ export default function HybridAgentSimple() {
   const [loading, setLoading] = useState(false);
   const [isRecording, setIsRecording] = useState(false);
   const [githubToken, setGithubToken] = useState(localStorage.getItem("github_token") || null);
-  const [githubUser, setGithubUser] = useState(null);
   const messagesEndRef = useRef(null);
-  const audioRef = useRef(null);
   const mediaRecorderRef = useRef(null);
 
   // Helper function to get tier color
@@ -71,10 +69,8 @@ export default function HybridAgentSimple() {
     const userName = urlParams.get("user_name");
 
     if (token) {
-      console.log("Token recebido:", token);
       localStorage.setItem("github_token", token);
       setGithubToken(token);
-      setGithubUser(userName);
       window.history.replaceState({}, document.title, window.location.pathname);
     }
   }, []);
@@ -96,7 +92,6 @@ export default function HybridAgentSimple() {
     setLoading(true);
 
     try {
-      console.log(`📤 Enviando para /api/chat (Serginho) - Modo: ${mode}`);
 
       // Chamar /api/ai com prompts de gênio + otimização
       const response = await fetch("/api/ai", {
@@ -133,7 +128,6 @@ export default function HybridAgentSimple() {
       const tier = data.tier || "standard";
       const complexity = data.complexity || 0;
 
-      console.log(`✅ Resposta recebida de ${provider} (tier: ${tier}, complexity: ${complexity})`);
 
       // Adicionar resposta do agente
       const agentMessage = {
@@ -201,7 +195,6 @@ export default function HybridAgentSimple() {
 
   const handleAudioUpload = async (audioBlob) => {
     try {
-      console.log("🎤 Enviando áudio para transcrição...", audioBlob);
 
       const formData = new FormData();
       formData.append("audio", audioBlob, "audio.mp3");
@@ -211,7 +204,6 @@ export default function HybridAgentSimple() {
         body: formData,
       });
 
-      console.log("📥 Resposta recebida:", response.status);
 
       if (!response.ok) {
         const error = await response.json();
@@ -219,12 +211,10 @@ export default function HybridAgentSimple() {
       }
 
       const data = await response.json();
-      console.log("✅ Transcrição concluída:", data);
 
       const transcript = data.transcript || data.text || "";
       if (transcript) {
         setInput(transcript);
-        console.log("📝 Texto inserido:", transcript);
       } else {
         console.warn("⚠️ Nenhum texto foi transcrito");
       }
@@ -246,7 +236,6 @@ export default function HybridAgentSimple() {
     if (!imageFile) return;
 
     try {
-      console.log("📸 Enviando imagem para análise...", imageFile);
 
       const formData = new FormData();
       formData.append("image", imageFile);
@@ -262,7 +251,6 @@ export default function HybridAgentSimple() {
       }
 
       const data = await response.json();
-      console.log("✅ Análise concluída:", data);
 
       const description = data.description || data.text || "Imagem processada";
       setInput(`[Imagem analisada] ${description}`);
@@ -274,7 +262,6 @@ export default function HybridAgentSimple() {
 
   const handleGitHubOAuth = async () => {
     try {
-      console.log("Iniciando autenticacao GitHub...");
 
       const response = await fetch("/api/github-oauth/authorize", {
         method: "POST",
@@ -288,7 +275,6 @@ export default function HybridAgentSimple() {
       }
 
       const data = await response.json();
-      console.log("URL de autorizacao gerada:", data.authUrl);
 
       window.open(data.authUrl, "github-auth", "width=600,height=700");
     } catch (error) {
