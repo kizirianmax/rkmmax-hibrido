@@ -66,7 +66,6 @@ export default function HybridAgentSimple() {
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
     const token = urlParams.get("github_token");
-    const userName = urlParams.get("user_name");
 
     if (token) {
       localStorage.setItem("github_token", token);
