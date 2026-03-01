@@ -16,7 +16,6 @@ export default function GitHubCallback() {
         // Obter parâmetros da URL
         const urlParams = new URLSearchParams(window.location.search);
         const code = urlParams.get("code");
-        const state = urlParams.get("state");
         const errorParam = urlParams.get("error");
 
         if (errorParam) {
@@ -33,7 +32,6 @@ export default function GitHubCallback() {
           return;
         }
 
-        console.log("📥 Código recebido:", code);
         setMessage("Trocando código por token...");
 
         // Chamar endpoint de callback
@@ -57,7 +55,6 @@ export default function GitHubCallback() {
           return;
         }
 
-        console.log("✅ Token recebido:", data.token);
         setStatus("success");
         setMessage(`✅ ${data.message}`);
 
@@ -71,7 +68,6 @@ export default function GitHubCallback() {
           window.location.href = redirectUrl;
         }, 2000);
       } catch (error) {
-        console.error("❌ Erro no callback:", error);
         setStatus("error");
         setError(error.message);
         setMessage(`Erro: ${error.message}`);

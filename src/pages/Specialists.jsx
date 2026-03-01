@@ -4,14 +4,13 @@ import { useSpecialistVisibility } from "../hooks/useSpecialistVisibility.js";
 import {
   specialists,
   categories,
-  getSpecialistsByCategory,
   getTotalSpecialists,
 } from "../config/specialists";
 import { canUseSpecialist } from "../config/fairUse";
 
 function Specialists() {
   const navigate = useNavigate();
-  const { isVisible, getVisibleCount, getHiddenCount } = useSpecialistVisibility();
+  const { isVisible } = useSpecialistVisibility();
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [searchTerm, setSearchTerm] = useState("");
 

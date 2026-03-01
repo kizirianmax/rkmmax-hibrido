@@ -13,7 +13,6 @@ export default function Serginho() {
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [isRecording, setIsRecording] = useState(false);
-  const [showActions, setShowActions] = useState(false);
   const messagesEndRef = useRef(null);
   const mediaRecorderRef = useRef(null);
   const fileInputRef = useRef(null);
@@ -72,7 +71,6 @@ export default function Serginho() {
         },
       ]);
     } catch (error) {
-      console.error("Erro ao enviar mensagem:", error);
       const errorMsg = error?.message || "erro desconhecido";
       setMessages((prev) => [
         ...prev,
@@ -149,7 +147,6 @@ export default function Serginho() {
             },
           ]);
         } catch (error) {
-          console.error("Erro na transcrição:", error);
           setMessages((prev) => [
             ...prev,
             {
@@ -163,7 +160,6 @@ export default function Serginho() {
       mediaRecorder.start();
       setIsRecording(true);
     } catch (error) {
-      console.error("Erro ao acessar microfone:", error);
       alert("Não foi possível acessar o microfone. Verifique as permissões do navegador.");
     }
   };
@@ -235,7 +231,6 @@ export default function Serginho() {
             },
           ]);
         } catch (error) {
-          console.error("Erro na análise de imagem:", error);
           setMessages((prev) => [
             ...prev,
             {
@@ -294,7 +289,6 @@ export default function Serginho() {
             },
           ]);
         } catch (error) {
-          console.error("Erro na análise de foto:", error);
           setMessages((prev) => [
             ...prev,
             {

@@ -35,9 +35,7 @@ export default function HybridAgentSimple() {
   const [loading, setLoading] = useState(false);
   const [isRecording, setIsRecording] = useState(false);
   const [githubToken, setGithubToken] = useState(localStorage.getItem("github_token") || null);
-  const [githubUser, setGithubUser] = useState(null);
   const messagesEndRef = useRef(null);
-  const audioRef = useRef(null);
   const mediaRecorderRef = useRef(null);
 
   // Helper function to get tier color
@@ -68,13 +66,9 @@ export default function HybridAgentSimple() {
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
     const token = urlParams.get("github_token");
-    const userName = urlParams.get("user_name");
-
     if (token) {
-      console.log("Token recebido:", token);
       localStorage.setItem("github_token", token);
       setGithubToken(token);
-      setGithubUser(userName);
       window.history.replaceState({}, document.title, window.location.pathname);
     }
   }, []);
@@ -96,8 +90,6 @@ export default function HybridAgentSimple() {
     setLoading(true);
 
     try {
-      console.log(`📤 Enviando para /api/chat (Serginho) - Modo: ${mode}`);
-
       // Chamar /api/ai com prompts de gênio + otimização
       const response = await fetch("/api/ai", {
         method: "POST",
@@ -133,8 +125,6 @@ export default function HybridAgentSimple() {
       const tier = data.tier || "standard";
       const complexity = data.complexity || 0;
 
-      console.log(`✅ Resposta recebida de ${provider} (tier: ${tier}, complexity: ${complexity})`);
-
       // Adicionar resposta do agente
       const agentMessage = {
         id: messages.length + 2,
@@ -149,8 +139,6 @@ export default function HybridAgentSimple() {
 
       setMessages((prev) => [...prev, agentMessage]);
     } catch (error) {
-      console.error("❌ Erro ao enviar mensagem:", error);
-
       // Adicionar mensagem de erro
       const errorMessage = {
         id: messages.length + 2,
@@ -190,7 +178,6 @@ export default function HybridAgentSimple() {
         mediaRecorder.start();
         setIsRecording(true);
       } catch (error) {
-        console.error("Erro ao acessar microfone:", error);
         alert("Permissão de microfone negada");
       }
     } else {
@@ -201,8 +188,6 @@ export default function HybridAgentSimple() {
 
   const handleAudioUpload = async (audioBlob) => {
     try {
-      console.log("🎤 Enviando áudio para transcrição...", audioBlob);
-
       const formData = new FormData();
       formData.append("audio", audioBlob, "audio.mp3");
 
@@ -211,25 +196,17 @@ export default function HybridAgentSimple() {
         body: formData,
       });
 
-      console.log("📥 Resposta recebida:", response.status);
-
       if (!response.ok) {
         const error = await response.json();
         throw new Error(error.message || "Erro na transcrição");
       }
 
       const data = await response.json();
-      console.log("✅ Transcrição concluída:", data);
-
       const transcript = data.transcript || data.text || "";
       if (transcript) {
         setInput(transcript);
-        console.log("📝 Texto inserido:", transcript);
-      } else {
-        console.warn("⚠️ Nenhum texto foi transcrito");
       }
     } catch (error) {
-      console.error("❌ Erro ao transcrever áudio:", error);
       alert(`Erro ao transcrever: ${error.message}`);
     }
   };
@@ -246,8 +223,6 @@ export default function HybridAgentSimple() {
     if (!imageFile) return;
 
     try {
-      console.log("📸 Enviando imagem para análise...", imageFile);
-
       const formData = new FormData();
       formData.append("image", imageFile);
 
@@ -262,20 +237,15 @@ export default function HybridAgentSimple() {
       }
 
       const data = await response.json();
-      console.log("✅ Análise concluída:", data);
-
       const description = data.description || data.text || "Imagem processada";
       setInput(`[Imagem analisada] ${description}`);
     } catch (error) {
-      console.error("❌ Erro ao processar imagem:", error);
       alert(`Erro ao processar imagem: ${error.message}`);
     }
   };
 
   const handleGitHubOAuth = async () => {
     try {
-      console.log("Iniciando autenticacao GitHub...");
-
       const response = await fetch("/api/github-oauth/authorize", {
         method: "POST",
         headers: {
@@ -288,11 +258,8 @@ export default function HybridAgentSimple() {
       }
 
       const data = await response.json();
-      console.log("URL de autorizacao gerada:", data.authUrl);
-
       window.open(data.authUrl, "github-auth", "width=600,height=700");
     } catch (error) {
-      console.error("Erro ao iniciar OAuth:", error);
       alert("Erro: " + error.message);
     }
   };
