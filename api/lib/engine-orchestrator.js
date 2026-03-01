@@ -14,11 +14,12 @@ import { globalMetrics } from './metrics.js';
 /**
  * Chamar KIZI 2.5 Pro (Gemini 2.5 Pro)
  */
-async function callGeminiPro(messages, systemPrompt, apiKey) {
+async function callGeminiPro(messages, systemPrompt, apiKey, signal) {
   const response = await fetch(
     `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-pro:generateContent?key=${apiKey}`,
     {
       method: "POST",
+      signal,
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         systemInstruction: systemPrompt ? { parts: [{ text: systemPrompt }] } : undefined,
@@ -48,11 +49,12 @@ async function callGeminiPro(messages, systemPrompt, apiKey) {
 /**
  * Chamar KIZI Flash (Gemini Flash)
  */
-async function callGeminiFlash(messages, systemPrompt, apiKey) {
+async function callGeminiFlash(messages, systemPrompt, apiKey, signal) {
   const response = await fetch(
     `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`,
     {
       method: "POST",
+      signal,
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         systemInstruction: systemPrompt ? { parts: [{ text: systemPrompt }] } : undefined,
@@ -81,9 +83,10 @@ async function callGeminiFlash(messages, systemPrompt, apiKey) {
 /**
  * Chamar KIZI Speed (Groq)
  */
-async function callGroqSpeed(messages, systemPrompt, apiKey) {
+async function callGroqSpeed(messages, systemPrompt, apiKey, signal) {
   const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
     method: "POST",
+    signal,
     headers: {
       "Content-Type": "application/json",
       Authorization: `Bearer ${apiKey}`,
@@ -149,22 +152,22 @@ export async function orchestrateEngines(messages, systemPrompt, options = {}) {
 
   if (complexity === 'pro' && geminiKey) {
     engineOrder = [
-      { name: 'gemini-pro', fn: () => callGeminiPro(messages, systemPrompt, geminiKey), breaker: breakers['gemini-pro'] },
-      { name: 'groq-speed', fn: () => callGroqSpeed(messages, systemPrompt, groqKey), breaker: breakers['groq-speed'], requires: groqKey },
-      { name: 'gemini-flash', fn: () => callGeminiFlash(messages, systemPrompt, geminiKey), breaker: breakers['gemini-flash'] },
+      { name: 'gemini-pro', fn: (sig) => callGeminiPro(messages, systemPrompt, geminiKey, sig), breaker: breakers['gemini-pro'], signal: true },
+      { name: 'groq-speed', fn: (sig) => callGroqSpeed(messages, systemPrompt, groqKey, sig), breaker: breakers['groq-speed'], requires: groqKey, signal: true },
+      { name: 'gemini-flash', fn: (sig) => callGeminiFlash(messages, systemPrompt, geminiKey, sig), breaker: breakers['gemini-flash'], signal: true },
     ];
   } else if (complexity === 'flash' && geminiKey) {
     engineOrder = [
-      { name: 'gemini-flash', fn: () => callGeminiFlash(messages, systemPrompt, geminiKey), breaker: breakers['gemini-flash'] },
-      { name: 'groq-speed', fn: () => callGroqSpeed(messages, systemPrompt, groqKey), breaker: breakers['groq-speed'], requires: groqKey },
-      { name: 'gemini-pro', fn: () => callGeminiPro(messages, systemPrompt, geminiKey), breaker: breakers['gemini-pro'] },
+      { name: 'gemini-flash', fn: (sig) => callGeminiFlash(messages, systemPrompt, geminiKey, sig), breaker: breakers['gemini-flash'], signal: true },
+      { name: 'groq-speed', fn: (sig) => callGroqSpeed(messages, systemPrompt, groqKey, sig), breaker: breakers['groq-speed'], requires: groqKey, signal: true },
+      { name: 'gemini-pro', fn: (sig) => callGeminiPro(messages, systemPrompt, geminiKey, sig), breaker: breakers['gemini-pro'], signal: true },
     ];
   } else {
     // Default: speed first
     engineOrder = [
-      { name: 'groq-speed', fn: () => callGroqSpeed(messages, systemPrompt, groqKey), breaker: breakers['groq-speed'], requires: groqKey },
-      { name: 'gemini-flash', fn: () => callGeminiFlash(messages, systemPrompt, geminiKey), breaker: breakers['gemini-flash'], requires: geminiKey },
-      { name: 'gemini-pro', fn: () => callGeminiPro(messages, systemPrompt, geminiKey), breaker: breakers['gemini-pro'], requires: geminiKey },
+      { name: 'groq-speed', fn: (sig) => callGroqSpeed(messages, systemPrompt, groqKey, sig), breaker: breakers['groq-speed'], requires: groqKey, signal: true },
+      { name: 'gemini-flash', fn: (sig) => callGeminiFlash(messages, systemPrompt, geminiKey, sig), breaker: breakers['gemini-flash'], requires: geminiKey, signal: true },
+      { name: 'gemini-pro', fn: (sig) => callGeminiPro(messages, systemPrompt, geminiKey, sig), breaker: breakers['gemini-pro'], requires: geminiKey, signal: true },
     ];
   }
 
@@ -179,22 +182,26 @@ export async function orchestrateEngines(messages, systemPrompt, options = {}) {
     throw new Error('No AI engines available');
   }
 
-  // Modo paralelo: Promise.any (first-success, cancela os demais)
+  // Modo paralelo: Promise.any (first-success) com AbortController para cancelar engines perdedores
   if (useParallel && engineOrder.length > 1) {
     console.warn(`🏁 Racing ${engineOrder.length} engines (Promise.any)...`);
-
-    const promises = engineOrder.map((engine) =>
-      engine.breaker
-        .execute(engine.fn)
-        .then((response) => ({ response, model: engine.name }))
-        // Rejeitar para que Promise.any ignore este engine e tente o próximo
-    );
-
+    // AbortController cancels in-flight requests once a winner is found
+    const ac = new AbortController();
+    const { signal } = ac;
+    const promises = engineOrder.map((engine) => {
+      // Pass signal to engine fn so it can abort its fetch when cancelled
+      const fn = engine.signal ? () => engine.fn(signal) : engine.fn;
+      return engine.breaker
+        .execute(fn)
+        .then((response) => ({ response, model: engine.name }));
+      // Rejection propagates naturally so Promise.any skips this engine
+    });
     try {
       const winner = await Promise.any(promises);
+      // Cancel all remaining in-flight requests
+      ac.abort();
       const responseTime = Date.now() - startTime;
       console.warn(`✅ ${winner.model} won the race in ${responseTime}ms`);
-
       globalCache.set(cacheKey, { response: winner.response, model: winner.model });
       globalMetrics.recordRequest({
         success: true,
@@ -202,10 +209,10 @@ export async function orchestrateEngines(messages, systemPrompt, options = {}) {
         responseTime,
         engine: winner.model,
       });
-
       return { ...winner, success: true, cached: false, responseTime };
     } catch {
-      // AggregateError: todos os engines falharam — cai no fallback sequencial
+      // AggregateError: all engines failed — fall through to sequential
+      ac.abort();
       console.warn('⚠️ All parallel engines failed, trying sequential fallback...');
     }
   }

@@ -65,5 +65,6 @@
       ]
     }
   ],
-  "installCommand": "npm install"
+  "installCommand": "npm install",
+  "nodeVersion": "22.x"
 }

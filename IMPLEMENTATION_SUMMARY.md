@@ -179,7 +179,7 @@
 ### Before
 ```text
 Client → API → Single AI Engine → Response (potential timeout)
-```text
+```
 
 ### After
 ```text
@@ -196,7 +196,7 @@ Client → SSE Stream
          Parallel Race (3 engines)
          ↓
          First Success → Cache → Stream Response
-```text
+```
 
 ---
 
