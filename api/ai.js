@@ -155,11 +155,14 @@ export default async function handler(req, res) {
 
       if (optimized.cached) {
         console.log("💰 CACHE HIT!");
-        return res.status(200).json({
-          ...optimized.response,
+        const cachedResp = {
+          response: optimized.response.response,
+          model: optimized.response.model,
+          success: optimized.response.success ?? true,
           cached: true,
           specialist: specialist.name,
-        });
+        };
+        return res.status(200).json(cachedResp);
       }
 
       // Execute via Serginho Orchestrator
