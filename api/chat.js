@@ -66,7 +66,7 @@ async function streamResponse(res, messages, systemPrompt, options) {
       if (!res.writableEnded && !res.finished) {
         res.end();
       }
-    }, 11000);
+    }, 3000);
 
     // Passa signal para o orquestrador poder cancelar fetches in-flight
     const result = await orchestrateEngines(messages, systemPrompt, {
@@ -88,8 +88,6 @@ async function streamResponse(res, messages, systemPrompt, options) {
       const chunk = response.slice(i, i + chunkSize);
       safeWrite(res, "event: chunk\n");
       safeWrite(res, `data: ${JSON.stringify({ text: chunk })}\n\n`);
-
-      await new Promise((resolve) => setTimeout(resolve, 10));
     }
 
     safeWrite(res, "event: complete\n");
