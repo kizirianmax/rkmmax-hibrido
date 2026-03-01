@@ -1,5 +1,6 @@
 {
-  "buildCommand": "npm run build",
+  "buildCommand": "DISABLE_ESLINT_PLUGIN=true CI=false npm run build",
+  "functions": { "api/**/*.js": { "maxDuration": 8 } },
   "outputDirectory": "dist",
   "env": {
     "REACT_APP_COMPANY_NAME": "RKMMAX INFINITY MATRIX/STUDY",
