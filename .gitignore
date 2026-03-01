@@ -12,6 +12,7 @@ test-results/
 
 # Production
 /build
+/dist
 
 # Environment variables
 .env

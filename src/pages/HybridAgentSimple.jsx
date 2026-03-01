@@ -66,6 +66,7 @@ export default function HybridAgentSimple() {
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
     const token = urlParams.get("github_token");
+
     if (token) {
       localStorage.setItem("github_token", token);
       setGithubToken(token);
@@ -90,6 +91,7 @@ export default function HybridAgentSimple() {
     setLoading(true);
 
     try {
+
       // Chamar /api/ai com prompts de gênio + otimização
       const response = await fetch("/api/ai", {
         method: "POST",
@@ -125,6 +127,7 @@ export default function HybridAgentSimple() {
       const tier = data.tier || "standard";
       const complexity = data.complexity || 0;
 
+
       // Adicionar resposta do agente
       const agentMessage = {
         id: messages.length + 2,
@@ -139,6 +142,8 @@ export default function HybridAgentSimple() {
 
       setMessages((prev) => [...prev, agentMessage]);
     } catch (error) {
+      console.error("❌ Erro ao enviar mensagem:", error);
+
       // Adicionar mensagem de erro
       const errorMessage = {
         id: messages.length + 2,
@@ -178,6 +183,7 @@ export default function HybridAgentSimple() {
         mediaRecorder.start();
         setIsRecording(true);
       } catch (error) {
+        console.error("Erro ao acessar microfone:", error);
         alert("Permissão de microfone negada");
       }
     } else {
@@ -188,6 +194,7 @@ export default function HybridAgentSimple() {
 
   const handleAudioUpload = async (audioBlob) => {
     try {
+
       const formData = new FormData();
       formData.append("audio", audioBlob, "audio.mp3");
 
@@ -196,17 +203,22 @@ export default function HybridAgentSimple() {
         body: formData,
       });
 
+
       if (!response.ok) {
         const error = await response.json();
         throw new Error(error.message || "Erro na transcrição");
       }
 
       const data = await response.json();
+
       const transcript = data.transcript || data.text || "";
       if (transcript) {
         setInput(transcript);
+      } else {
+        console.warn("⚠️ Nenhum texto foi transcrito");
       }
     } catch (error) {
+      console.error("❌ Erro ao transcrever áudio:", error);
       alert(`Erro ao transcrever: ${error.message}`);
     }
   };
@@ -223,6 +235,7 @@ export default function HybridAgentSimple() {
     if (!imageFile) return;
 
     try {
+
       const formData = new FormData();
       formData.append("image", imageFile);
 
@@ -237,15 +250,18 @@ export default function HybridAgentSimple() {
       }
 
       const data = await response.json();
+
       const description = data.description || data.text || "Imagem processada";
       setInput(`[Imagem analisada] ${description}`);
     } catch (error) {
+      console.error("❌ Erro ao processar imagem:", error);
       alert(`Erro ao processar imagem: ${error.message}`);
     }
   };
 
   const handleGitHubOAuth = async () => {
     try {
+
       const response = await fetch("/api/github-oauth/authorize", {
         method: "POST",
         headers: {
@@ -258,8 +274,10 @@ export default function HybridAgentSimple() {
       }
 
       const data = await response.json();
+
       window.open(data.authUrl, "github-auth", "width=600,height=700");
     } catch (error) {
+      console.error("Erro ao iniciar OAuth:", error);
       alert("Erro: " + error.message);
     }
   };

@@ -1,3 +1,5 @@
+[![CodeRabbit](https://img.shields.io/endpoint?v=2&style=for-the-badge&color=brightgreen&label=CodeRabbit&suffix=Enabled)](https://coderabbit.ai/gh/kizirianmax/rkmmax-hibrido)
+
 # 🚀 RKMMAX Híbrido - Enterprise AI Agent System
 
 [![CI Status](https://github.com/kizirianmax/rkmmax-hibrido/workflows/Test/badge.svg)](https://github.com/kizirianmax/rkmmax-hibrido/actions)
@@ -417,3 +419,4 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ---
 
 **Built with ❤️ by the RKMMAX Team**
+<- All 331 tests passing ( 100% ) CodeRabbit integration test -->

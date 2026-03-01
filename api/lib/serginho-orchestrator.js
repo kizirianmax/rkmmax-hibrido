@@ -663,6 +663,181 @@ class SerginhoOrchestrator {
     return allMessages;
   }
 
+  // =========================================================
+  // MÓDULO: routeByIntent (migrado de SerginhoContextual v2.0)
+  // Roteamento por intenção conversacional (casual/technical/deep)
+  // Compatível com Multi-Orch v2.1.0 – sem estado global
+  // =========================================================
+
+  /**
+   * Detecta intenção conversacional do prompt.
+   * @param {string} prompt
+   * @returns {'casual'|'technical'|'deep'}
+   */
+  detectIntentShift(prompt) {
+    const casualPatterns = [
+      /^(oi|olá|hey|hi|hello|e aí)/i,
+      /^(tudo bem|como vai|how are you)/i,
+      /^(obrigad|thanks|thank you)/i,
+      /^(tchau|bye|até)/i,
+    ];
+    if (casualPatterns.some((p) => p.test(prompt))) return 'casual';
+
+    const technicalKeywords = [
+      'react', 'node', 'javascript', 'python', 'api', 'código',
+      'function', 'class', 'component', 'debug', 'error',
+      'implementar', 'criar', 'desenvolver',
+    ];
+    const lower = prompt.toLowerCase();
+    if (technicalKeywords.some((k) => lower.includes(k))) return 'technical';
+
+    return 'deep';
+  }
+
+  /**
+   * Roteia a requisição com base na intenção conversacional.
+   * Mapeia intenção → tier do ModelRegistry:
+   *   casual    → 'simple'
+   *   technical → 'complex'
+   *   deep      → 'complex'
+   *
+   * @param {string} message
+   * @param {object} [options={}]
+   * @returns {Promise<object>} Resposta estruturada do handleRequest
+   */
+  async routeByIntent(message, options = {}) {
+    const intent = this.detectIntentShift(message);
+    const intentToTier = { casual: 'simple', technical: 'complex', deep: 'complex' };
+    const tier = intentToTier[intent] || 'complex';
+
+    console.log(`[Serginho] routeByIntent: ${intent} → tier:${tier}`);
+
+    return this.handleRequest({
+      message,
+      messages: options.messages || [],
+      context: { ...options.context, intentTier: tier, intent },
+      options: { ...options, _intentRouting: intent },
+    });
+  }
+
+  // =========================================================
+  // MÓDULO: betinhoParallel (migrado de SerginhoContextual v2.0)
+  // Execução paralela dos providers disponíveis (Promise.any)
+  // Compatível com Multi-Orch v2.1.0 – sem estado global
+  // =========================================================
+
+  /**
+   * Modo Betinho Hybrid: executa múltiplos providers em paralelo
+   * e retorna o primeiro que responder com sucesso.
+   *
+   * @param {string} message
+   * @param {object} [options={}]
+   * @returns {Promise<object>} Resposta estruturada do provider mais rápido
+   */
+  async betinhoParallel(message, options = {}) {
+    console.log('[Serginho] betinhoParallel: disparando providers em paralelo...');
+
+    const providers = Object.keys(PROVIDERS);
+    if (providers.length === 0) {
+      throw new Error('betinhoParallel: nenhum provider configurado');
+    }
+
+    const promises = providers.map((provider) =>
+      this.handleRequest({
+        message,
+        messages: options.messages || [],
+        context: options.context || {},
+        options: { ...options, forceProvider: provider },
+      })
+    );
+
+    try {
+      const result = await Promise.any(promises);
+      return { ...result, _betinhoParallel: true, source: 'parallel' };
+    } catch {
+      throw new Error('betinhoParallel: todos os providers falharam');
+    }
+  }
+
+  // =========================================================
+  // MÓDULO: delegateSpecialists (migrado de Serginho.js v1)
+  // Roteamento por capacidade para especialistas registrados
+  // Compatível com Multi-Orch v2.1.0 – sem estado global
+  // =========================================================
+
+  /**
+   * Mapa de palavras-chave → capacidade de especialista.
+   * @private
+   */
+  _getSpecialistIntentMap() {
+    return {
+      'código|programação|javascript|python|java|typescript|react|node': 'code',
+      'design|ui|ux|interface|visual|layout|css': 'design',
+      'marketing|vendas|negócio|estratégia|campanha': 'marketing',
+      'dados|análise|estatística|gráfico|dashboard|data': 'data-analysis',
+      'segurança|vulnerabilidade|criptografia|pentest': 'security',
+      'performance|otimização|velocidade|cache|latência': 'performance',
+      'acessibilidade|wcag|a11y|aria': 'accessibility',
+      'documentação|escrita|conteúdo|artigo|relatório': 'technical-writing',
+    };
+  }
+
+  /**
+   * Analisa o prompt e retorna a capacidade primária do especialista.
+   * @param {string} prompt
+   * @returns {{ primaryCapability: string, confidence: number }}
+   */
+  analyzeSpecialistIntent(prompt) {
+    const intentMap = this._getSpecialistIntentMap();
+    for (const [keywords, capability] of Object.entries(intentMap)) {
+      if (new RegExp(keywords, 'i').test(prompt)) {
+        return { primaryCapability: capability, confidence: 0.8 };
+      }
+    }
+    return { primaryCapability: 'teaching', confidence: 0.5 };
+  }
+
+  /**
+   * Delega a requisição para o especialista mais adequado.
+   * Recebe um mapa de especialistas no formato:
+   *   { [id]: { id, name, category, systemPrompt, capabilities: string[] } }
+   *
+   * @param {string} message
+   * @param {object} specialistsMap - Mapa de especialistas disponíveis
+   * @param {object} [options={}]
+   * @returns {Promise<object>} Resposta estruturada com metadado do especialista
+   */
+  async delegateSpecialists(message, specialistsMap = {}, options = {}) {
+    const { primaryCapability } = this.analyzeSpecialistIntent(message);
+
+    // Encontrar especialistas com a capacidade necessária
+    const candidates = Object.values(specialistsMap).filter(
+      (s) => Array.isArray(s.capabilities) && s.capabilities.includes(primaryCapability)
+    );
+
+    // Fallback para o primeiro especialista disponível
+    const selected = candidates[0] || Object.values(specialistsMap)[0];
+
+    if (!selected) {
+      // Sem especialistas → delegar ao orquestrador diretamente
+      console.log('[Serginho] delegateSpecialists: sem especialistas, usando orquestrador direto');
+      return this.handleRequest({ message, messages: options.messages || [], context: options.context || {}, options });
+    }
+
+    console.log(`[Serginho] delegateSpecialists: capability=${primaryCapability} → specialist=${selected.id}`);
+
+    return this.handleRequest({
+      message,
+      messages: options.messages || [],
+      context: { ...options.context, specialistId: selected.id },
+      options: {
+        ...options,
+        systemPrompt: selected.systemPrompt || options.systemPrompt,
+        sessionId: `specialist-${selected.id}-${options.sessionId || 'default'}`,
+      },
+    });
+  }
+
   /**
    * Get current metrics
    */
