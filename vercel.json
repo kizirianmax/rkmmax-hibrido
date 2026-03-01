@@ -7,9 +7,18 @@
     "REACT_APP_DOMAIN": "kizirianmax.site"
   },
   "rewrites": [
-    { "source": "/api/prices", "destination": "/api/admin?action=prices" },
-    { "source": "/api/me-plan", "destination": "/api/admin?action=me-plan" },
-    { "source": "/api/send-email", "destination": "/api/admin?action=send-email" },
+    {
+      "source": "/api/prices",
+      "destination": "/api/admin?action=prices"
+    },
+    {
+      "source": "/api/me-plan",
+      "destination": "/api/admin?action=me-plan"
+    },
+    {
+      "source": "/api/send-email",
+      "destination": "/api/admin?action=send-email"
+    },
     {
       "source": "/(.*)",
       "destination": "/index.html"
@@ -55,6 +64,6 @@
         }
       ]
     }
-  ]
+  ],
+  "installCommand": "npm install"
 }
-

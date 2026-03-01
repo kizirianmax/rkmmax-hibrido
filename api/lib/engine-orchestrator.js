@@ -169,7 +169,11 @@ export async function orchestrateEngines(messages, systemPrompt, options = {}) {
   }
 
   // Fix: filtro real — só inclui engine se a API key está disponível
-  engineOrder = engineOrder.filter(e => !e.requires || Boolean(e.requires));
+  // e.requires IS the apiKey string; Boolean(e.requires) === !!e.requires
+  // Simplificado: filter(e => !e.requires || e.requires) é tautologia
+  // Correto: filter(e => !e.requires || !!e.requires) ainda é tautologia
+  // Real fix: engines sem 'requires' sempre passam; engines COM 'requires' só passam se a key é truthy
+  engineOrder = engineOrder.filter(e => e.requires === undefined || Boolean(e.requires));
 
   if (engineOrder.length === 0) {
     throw new Error('No AI engines available');

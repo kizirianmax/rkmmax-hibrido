@@ -8,7 +8,7 @@ Betinho is built on a **4-layer architecture** designed for serverless deploymen
 
 ## 4-Layer Architecture
 
-```
+```text
 ┌─────────────────────────────────────────────────────────────┐
 │                    Layer 1: Presentation                     │
 │                                                              │
@@ -55,7 +55,7 @@ Betinho is built on a **4-layer architecture** designed for serverless deploymen
 │  │ Complex      │  │ Fast         │  │ Simple       │      │
 │  └──────────────┘  └──────────────┘  └──────────────┘      │
 └─────────────────────────────────────────────────────────────┘
-```
+```text
 
 ## Layer 1: Presentation Layer
 
@@ -124,7 +124,7 @@ All API endpoints are deployed as serverless functions with:
 
 ### Request Flow
 
-```
+```text
 Client Request
     ↓
 API Endpoint
@@ -140,7 +140,7 @@ Response ─────────┘
 Cache Store
     ↓
 Send to Client
-```
+```text
 
 ---
 
@@ -167,7 +167,7 @@ const result = await orchestrateEngines(messages, systemPrompt, {
   complexity: 'speed',
   useParallel: true
 });
-```
+```text
 
 ### Circuit Breakers
 
@@ -243,7 +243,7 @@ function analyzeComplexity(messages) {
   // Default
   return 'speed'; // Use Groq Speed
 }
-```
+```text
 
 ### Gemini 2.5 Pro (KIZI Pro)
 
@@ -293,13 +293,13 @@ function analyzeComplexity(messages) {
 
 ### Timeout Strategy
 
-```
+```text
 Total Time Budget: 12s
 ├─ Engine Call: 8s max
 ├─ Cache Lookup: < 10ms
 ├─ Processing: < 100ms
 └─ Safety Margin: 4s
-```
+```text
 
 ### Parallel Processing
 
@@ -313,17 +313,17 @@ Promise.all([
 
 // Return first successful response
 // Cancel other pending requests
-```
+```text
 
 ### Caching Strategy
 
-```
+```text
 Request Flow:
 1. Generate cache key (MD5 of messages)
 2. Check cache (< 10ms)
 3. If HIT: Return cached (total < 20ms)
 4. If MISS: Call engines, cache result
-```
+```text
 
 ---
 
@@ -402,7 +402,7 @@ Request Flow:
 
 ### Vercel Deployment
 
-```
+```text
 Git Push (main branch)
     ↓
 GitHub Actions
@@ -416,7 +416,7 @@ Deploy to Vercel
 Health Check
     ↓
 Production Live
-```
+```text
 
 ### Environment Variables
 
