@@ -35,7 +35,7 @@ Standard chat endpoint that returns complete responses.
   "agentType": "serginho",
   "forceModel": "speed"
 }
-```
+```text
 
 #### Parameters
 
@@ -64,7 +64,7 @@ Standard chat endpoint that returns complete responses.
     "optimizedTokens": 120
   }
 }
-```
+```text
 
 #### Response Fields
 
@@ -95,38 +95,38 @@ Server-Sent Events stream with the following event types:
 
 ##### Event: `start`
 
-```
+```text
 event: start
 data: {"status":"processing","timestamp":1234567890}
-```
+```text
 
 ##### Event: `chunk`
 
-```
+```text
 event: chunk
 data: {"text":"The capital of France"}
-```
+```text
 
 ##### Event: `complete`
 
-```
+```text
 event: complete
 data: {"model":"groq-speed","cached":false,"duration":1234,"success":true}
-```
+```text
 
 ##### Event: `error`
 
-```
+```text
 event: error
 data: {"error":"Engine timeout","duration":8000}
-```
+```text
 
 ##### Event: `timeout`
 
-```
+```text
 event: timeout
 data: {"error":"Request timeout","duration":11000}
-```
+```text
 
 #### Client Example
 
@@ -159,7 +159,7 @@ while (true) {
     }
   }
 }
-```
+```text
 
 ---
 
@@ -232,7 +232,7 @@ Returns system health status and metrics.
     }
   }
 }
-```
+```text
 
 #### Status Codes
 
@@ -262,7 +262,7 @@ Returns list of available specialist agents.
     }
   ]
 }
-```
+```text
 
 ---
 
@@ -287,7 +287,7 @@ Returns list of available specialist agents.
   "message": "Detailed error description",
   "hint": "Suggestion to fix the issue"
 }
-```
+```text
 
 ---
 
@@ -298,11 +298,11 @@ Returns list of available specialist agents.
 
 Rate limit headers:
 
-```
+```http
 X-RateLimit-Limit: 100
 X-RateLimit-Remaining: 87
 X-RateLimit-Reset: 1234567890
-```
+```text
 
 ---
 
@@ -314,10 +314,10 @@ Responses are cached for:
 
 Cache headers:
 
-```
+```http
 X-Cache-Status: HIT | MISS
 X-Cache-Key: [hash]
-```
+```text
 
 ---
 
@@ -339,7 +339,7 @@ POST /api/chat-stream
 
 // Avoid for complex queries
 POST /api/chat
-```
+```text
 
 ### 2. Handle Timeouts Gracefully
 
@@ -353,7 +353,7 @@ try {
     // Retry with streaming or simpler query
   }
 }
-```
+```text
 
 ### 3. Cache Similar Queries
 

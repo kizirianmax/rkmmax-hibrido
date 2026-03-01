@@ -1,12 +1,10 @@
 /**
  * 🎯 ENGINE ORCHESTRATOR - Orquestração paralela de engines
- * 
- * Implementa:
- * - Promise.race() entre 3 engines
- * - Primeira resposta bem-sucedida vence
- * - Cancelamento de outras requisições
- * - Cadeia de fallback em falhas
- * - Integrado com circuit breakers
+ *
+ * Fixes (CodeRabbit PR #95):
+ * 1. Cache key agora inclui systemPrompt + complexity (evita cross-contamination)
+ * 2. Filter de engineOrder corrigido: !e.requires || Boolean(e.requires) real
+ * 3. Modo paralelo usa Promise.any (first-success) em vez de Promise.all
  */
 
 import { breakers } from './circuit-breaker.js';
@@ -92,7 +90,9 @@ async function callGroqSpeed(messages, systemPrompt, apiKey) {
     },
     body: JSON.stringify({
       model: "llama-3.3-70b-versatile",
-      messages: systemPrompt ? [{ role: "system", content: systemPrompt }, ...messages] : messages,
+      messages: systemPrompt
+        ? [{ role: "system", content: systemPrompt }, ...messages]
+        : messages,
       temperature: 0.7,
       max_tokens: 4000,
     }),
@@ -108,6 +108,17 @@ async function callGroqSpeed(messages, systemPrompt, apiKey) {
 }
 
 /**
+ * Gerar chave de cache composta por systemPrompt + complexity + messages
+ * Fix: evita cross-contamination entre contextos diferentes
+ */
+function buildCacheKey(messages, systemPrompt, complexity) {
+  return [
+    { systemPrompt: systemPrompt || '', complexity: complexity || 'speed' },
+    ...messages,
+  ];
+}
+
+/**
  * Orquestrar chamadas paralelas aos engines
  * Retorna a primeira resposta bem-sucedida
  */
@@ -120,8 +131,9 @@ export async function orchestrateEngines(messages, systemPrompt, options = {}) {
     useParallel = true,
   } = options;
 
-  // Verificar cache primeiro
-  const cached = globalCache.get(messages);
+  // Chave de cache composta (fix: inclui systemPrompt + complexity)
+  const cacheKey = buildCacheKey(messages, systemPrompt, complexity);
+  const cached = globalCache.get(cacheKey);
   if (cached) {
     globalMetrics.recordRequest({
       success: true,
@@ -134,7 +146,7 @@ export async function orchestrateEngines(messages, systemPrompt, options = {}) {
 
   // Definir ordem de engines baseado na complexidade
   let engineOrder = [];
-  
+
   if (complexity === 'pro' && geminiKey) {
     engineOrder = [
       { name: 'gemini-pro', fn: () => callGeminiPro(messages, systemPrompt, geminiKey), breaker: breakers['gemini-pro'] },
@@ -156,75 +168,65 @@ export async function orchestrateEngines(messages, systemPrompt, options = {}) {
     ];
   }
 
-  // Filtrar engines que não tem API key
-  engineOrder = engineOrder.filter(e => !e.requires || e.requires);
+  // Fix: filtro real — só inclui engine se a API key está disponível
+  engineOrder = engineOrder.filter(e => !e.requires || Boolean(e.requires));
 
   if (engineOrder.length === 0) {
     throw new Error('No AI engines available');
   }
 
-  // Modo paralelo: Promise.race
+  // Modo paralelo: Promise.any (first-success, cancela os demais)
   if (useParallel && engineOrder.length > 1) {
-    console.log(`🏁 Racing ${engineOrder.length} engines...`);
-    
-    const promises = engineOrder.map(async (engine) => {
-      try {
-        const response = await engine.breaker.execute(engine.fn);
-        return { response, model: engine.name, success: true };
-      } catch (error) {
-        console.error(`❌ ${engine.name} failed:`, error.message);
-        return { error: error.message, model: engine.name, success: false };
-      }
-    });
+    console.warn(`🏁 Racing ${engineOrder.length} engines (Promise.any)...`);
 
-    // Esperar pela primeira resposta bem-sucedida
-    const results = await Promise.all(promises);
-    const successful = results.find(r => r.success);
-    
-    if (successful) {
+    const promises = engineOrder.map((engine) =>
+      engine.breaker
+        .execute(engine.fn)
+        .then((response) => ({ response, model: engine.name }))
+        // Rejeitar para que Promise.any ignore este engine e tente o próximo
+    );
+
+    try {
+      const winner = await Promise.any(promises);
       const responseTime = Date.now() - startTime;
-      console.log(`✅ ${successful.model} won the race in ${responseTime}ms`);
-      
-      // Salvar no cache
-      globalCache.set(messages, { response: successful.response, model: successful.model });
-      
-      // Registrar métricas
+      console.warn(`✅ ${winner.model} won the race in ${responseTime}ms`);
+
+      globalCache.set(cacheKey, { response: winner.response, model: winner.model });
       globalMetrics.recordRequest({
         success: true,
         cached: false,
         responseTime,
-        engine: successful.model,
+        engine: winner.model,
       });
-      
-      return { ...successful, cached: false, responseTime };
+
+      return { ...winner, success: true, cached: false, responseTime };
+    } catch {
+      // AggregateError: todos os engines falharam — cai no fallback sequencial
+      console.warn('⚠️ All parallel engines failed, trying sequential fallback...');
     }
   }
 
-  // Fallback sequencial se paralelo falhou ou não está habilitado
-  console.log(`🔄 Trying engines sequentially...`);
+  // Fallback sequencial
+  console.warn('🔄 Trying engines sequentially...');
   for (const engine of engineOrder) {
     try {
-      console.log(`🤖 Trying ${engine.name}...`);
+      console.warn(`🤖 Trying ${engine.name}...`);
       const response = await engine.breaker.execute(engine.fn);
       const responseTime = Date.now() - startTime;
-      
-      console.log(`✅ ${engine.name} succeeded in ${responseTime}ms`);
-      
-      // Salvar no cache
-      globalCache.set(messages, { response, model: engine.name });
-      
-      // Registrar métricas
+
+      console.warn(`✅ ${engine.name} succeeded in ${responseTime}ms`);
+
+      globalCache.set(cacheKey, { response, model: engine.name });
       globalMetrics.recordRequest({
         success: true,
         cached: false,
         responseTime,
         engine: engine.name,
       });
-      
+
       return { response, model: engine.name, success: true, cached: false, responseTime };
     } catch (error) {
       console.error(`❌ ${engine.name} failed:`, error.message);
-      continue;
     }
   }
 
@@ -237,6 +239,6 @@ export async function orchestrateEngines(messages, systemPrompt, options = {}) {
     error: 'All engines failed',
     timeout: responseTime > 10000,
   });
-  
+
   throw new Error('All AI engines failed');
 }

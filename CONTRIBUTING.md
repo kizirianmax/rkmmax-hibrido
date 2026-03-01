@@ -51,7 +51,7 @@ cp .env.example .env.local
 
 # Add your API keys to .env.local
 # You need at least one AI provider (Gemini or Groq)
-```
+```text
 
 ### Running Locally
 
@@ -70,7 +70,7 @@ npm run lint
 
 # Format code
 npm run format
-```
+```text
 
 ## Making Changes
 
@@ -126,7 +126,7 @@ npm run lint
 
 # Fix linting issues
 npm run lint:fix
-```
+```text
 
 ### Code Style Guidelines
 
@@ -140,7 +140,7 @@ npm run lint:fix
 
 ### File Organization
 
-```
+```text
 src/
 ├── components/       # Reusable UI components
 ├── pages/           # Page components
@@ -154,7 +154,7 @@ api/
 ├── lib/             # Shared utilities
 ├── __tests__/       # API tests
 └── *.js             # API endpoints
-```
+```text
 
 ### Comments
 
@@ -206,7 +206,7 @@ describe('CircuitBreaker', () => {
     expect(breaker.state).toBe('CLOSED');
   });
 });
-```
+```text
 
 ### Test Types
 
@@ -228,7 +228,7 @@ npm run test:ci
 
 # Watch mode for development
 npm run test:watch
-```
+```text
 
 ## Commit Messages
 
@@ -236,13 +236,13 @@ We follow the [Conventional Commits](https://www.conventionalcommits.org/) speci
 
 ### Format
 
-```
+```text
 <type>(<scope>): <subject>
 
 <body>
 
 <footer>
-```
+```text
 
 ### Types
 
@@ -274,7 +274,7 @@ Clear expired entries on cleanup to prevent unbounded growth.
 docs(readme): update installation instructions
 
 Add Node.js version requirement and clarify API key setup.
-```
+```text
 
 ### Commit Guidelines
 
@@ -324,7 +324,7 @@ Brief description of changes
 - [ ] Tests added/updated
 - [ ] All tests pass
 - [ ] No new warnings
-```
+```text
 
 ### Review Process
 
@@ -371,7 +371,7 @@ If applicable
 
 **Additional context**
 Any other relevant information
-```
+```text
 
 ## Suggesting Features
 
@@ -393,7 +393,7 @@ Any other relevant information
 **Would you like to implement this?**
 - [ ] Yes, I can implement this
 - [ ] No, just suggesting
-```
+```text
 
 ### Feature Discussion
 

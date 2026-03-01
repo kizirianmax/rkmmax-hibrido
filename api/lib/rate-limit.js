@@ -47,22 +47,21 @@ class RateLimiter {
    * @returns {Object} - { allowed: boolean, limit: number, remaining: number, reset: number }
    */
   checkIpLimit(ip) {
-    if (!ip) {
-      return { allowed: true, limit: 100, remaining: 100, reset: Date.now() + 60000 };
-    }
+    // Fix: normalizar IP falsy para 'unknown' em vez de bypass ilimitado
+    const normalizedIp = ip || 'unknown';
 
     const now = Date.now();
     const oneMinute = 60 * 1000;
     const limit = 100;
 
     // Obter requests do último minuto
-    const timestamps = this.requests.get(ip) || [];
+    const timestamps = this.requests.get(normalizedIp) || [];
     const recentRequests = timestamps.filter(t => now - t < oneMinute);
 
     // Verificar limite
     const allowed = recentRequests.length < limit;
     const remaining = Math.max(0, limit - recentRequests.length);
-    
+
     // Calcular quando o limite será resetado
     const oldestTimestamp = recentRequests[0] || now;
     const reset = oldestTimestamp + oneMinute;
@@ -119,12 +118,11 @@ class RateLimiter {
   recordRequest(ip, userId = null) {
     const now = Date.now();
 
-    // Registrar por IP
-    if (ip) {
-      const timestamps = this.requests.get(ip) || [];
-      timestamps.push(now);
-      this.requests.set(ip, timestamps);
-    }
+    // Registrar por IP (normalizar falsy para 'unknown')
+    const normalizedIp = ip || 'unknown';
+    const timestamps = this.requests.get(normalizedIp) || [];
+    timestamps.push(now);
+    this.requests.set(normalizedIp, timestamps);
 
     // Registrar por usuário
     if (userId) {
@@ -181,7 +179,11 @@ setInterval(() => {
  * Middleware para Express/Vercel
  */
 export function rateLimitMiddleware(req, res, next) {
-  const ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
+  // Fix: x-forwarded-for pode ser lista CSV — pegar apenas o primeiro IP
+  const forwardedFor = req.headers['x-forwarded-for'];
+  const ip = forwardedFor
+    ? forwardedFor.split(',').map(s => s.trim()).filter(Boolean)[0] || req.connection?.remoteAddress
+    : req.connection?.remoteAddress;
   const userId = req.headers['x-user-id'] || req.body?.userId;
 
   const result = globalRateLimiter.checkAndRecord(ip, userId);

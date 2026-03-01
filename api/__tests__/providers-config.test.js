@@ -29,11 +29,11 @@ describe('providers-config', () => {
         expect(config).toHaveProperty('tier');
         
         // Either endpoint or it should be Gemini (dynamically set)
-        if (config.type === 'gemini') {
-          expect(config.endpoint).toBeNull();
-        } else {
-          expect(config.endpoint).toBeTruthy();
-        }
+        // Fix: avoid conditional expect (jest/no-conditional-expect)
+        // Gemini endpoints are null (set dynamically); all others must be truthy
+        const endpointIsValid =
+          config.type === 'gemini' ? config.endpoint === null : Boolean(config.endpoint);
+        expect(endpointIsValid).toBe(true);
       });
     });
 

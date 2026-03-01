@@ -84,7 +84,7 @@ class PerformanceMetrics {
     const sum = sorted.reduce((acc, val) => acc + val, 0);
     
     return {
-      avg: (sum / sorted.length).toFixed(0),
+      avg: Math.round(sum / sorted.length),
       min: sorted[0],
       max: sorted[sorted.length - 1],
       p95: sorted[Math.floor(sorted.length * 0.95)] || 0,
