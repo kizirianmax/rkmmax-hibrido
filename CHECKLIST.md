@@ -188,3 +188,119 @@ Legendas: ✅ feito | ⚠️ pendente | ⏭️ próximo
 - **Status:** ✅ Funcionando
 - **Bugs críticos:** 0
 
+
+
+---
+
+## Protocolo Oficial de Operações no Repositório
+
+> **Tipo:** Governança Estrutural
+> **Impacto:** Sistêmico
+> **Obrigatoriedade:** Permanente
+> **Vigência:** A partir de 2026-03-01
+
+### Motivação
+
+O projeto atingiu um nível de complexidade que exige rastreabilidade completa de todas as operações realizadas. Toda ação — seja de código, configuração, documentação ou infraestrutura — deve ser precedida de leitura do estado atual e seguida de registro formal do que foi feito. Isso evita perda de contexto, retrabalho e decisões conflitantes entre sessões.
+
+---
+
+### Regras Obrigatórias
+
+#### Antes de qualquer ação
+
+- [ ] **Leitura obrigatória do estado atual do repositório** — estrutura de pastas, arquivos críticos, últimos commits
+- [ ] **Verificação do `CHECKLIST.md` vigente** — entender o que está feito, pendente e em progresso
+- [ ] **Verificação das docs de governança** (`docs/`) — arquitetura, auditoria, deployment, especialistas
+
+#### Após qualquer ação
+
+- [ ] **Atualização obrigatória do `CHECKLIST.md`** — marcar o item como concluído ou atualizar seu status
+- [ ] **Registro do que foi feito** — descrição objetiva da operação realizada
+- [ ] **Justificativa da ação** — por que foi necessário fazer
+- [ ] **Estado resultante** — qual é o estado do sistema após a operação
+- [ ] **Impacto arquitetural** — se a operação afetou arquitetura, dependências ou fluxos, documentar em `docs/`
+
+---
+
+### Formato de Registro no Checklist
+
+Toda entrada de operação realizada deve seguir o padrão abaixo:
+
+```
+### [DATA] — [TIPO DE OPERAÇÃO]
+- **O que foi feito:** descrição objetiva
+- **Justificativa:** por que foi necessário
+- **Estado resultante:** o que mudou no sistema
+- **Impacto arquitetural:** sim/não — se sim, ver docs/[ARQUIVO].md
+- **Commit:** hash e mensagem
+- **PR:** número e link (se aplicável)
+```
+
+---
+
+### Histórico de Operações Registradas
+
+#### 2026-03-01 — Unificação do Orquestrador Serginho
+
+- **O que foi feito:** Migração de `SerginhoContextual v2.0` e `Serginho.js v1` para `api/lib/serginho-orchestrator.js` como único ponto de orquestração
+- **Justificativa:** Existiam 3 implementações paralelas e conflitantes do orquestrador, gerando risco de bypass e inconsistência de comportamento
+- **Estado resultante:** 1 único orquestrador ativo (`api/lib/serginho-orchestrator.js` v2.1.0), arquivos legados removidos, 331/331 testes passando
+- **Impacto arquitetural:** Sim — ver `docs/ARQUITETURA_AGENTES.md`
+- **Commit:** `5192887` — `refactor: serginho multi-orch unificado v2.1.0`
+- **PR:** Merge direto em main (pré-regra)
+
+#### 2026-03-01 — Correção de Vulnerabilidades de Dependências
+
+- **O que foi feito:** Execução de `npm audit fix` — 5 pacotes atualizados no `package-lock.json`
+- **Justificativa:** 7 vulnerabilidades detectadas pelo Dependabot em dependências do `react-scripts`
+- **Estado resultante:** Vulnerabilidades corrigíveis resolvidas; 7 restantes requerem migração para Vite
+- **Impacto arquitetural:** Não (apenas `package-lock.json`)
+- **Commit:** `3024f88` — `fix: corrigidas vulnerabilidades automáticas detectadas`
+- **PR:** Merge direto em main
+
+#### 2026-03-01 — Remoção de Código Morto (Warnings de CI)
+
+- **O que foi feito:** Remoção de imports não utilizados, variáveis não utilizadas e 13 `console.log` em 6 arquivos
+- **Justificativa:** Warnings quebrando o build no CI
+- **Estado resultante:** Build limpo, 331/331 testes passando, zero alterações de lógica
+- **Impacto arquitetural:** Não
+- **Commit:** `2935a27` — `fix: remove imports, variáveis não usadas e console.logs (CI warnings)`
+- **PR:** Merge direto em main
+
+#### 2026-03-01 — Padronização para Deploy na Vercel
+
+- **O que foi feito:** Criação/atualização de `vercel.json` e `.env.example` em todos os repositórios; correção de segurança no `vite.config.js` do `kizi-agent`
+- **Justificativa:** Repositórios sem configuração Vercel padronizada
+- **Estado resultante:** Todos os projetos prontos para import direto GitHub → Vercel
+- **Impacto arquitetural:** Não (apenas configuração de deploy)
+- **Commit:** Por repositório (ver histórico de cada repo)
+- **PR:** Merge direto em main
+
+#### 2026-03-01 — Auditoria de Variáveis de Ambiente Vercel
+
+- **O que foi feito:** Auditoria completa das variáveis de 5 projetos na Vercel via API REST; varredura por Gemini/Google AI
+- **Justificativa:** Limpeza de variáveis obsoletas de provedores de IA descontinuados
+- **Estado resultante:** Nenhuma variável Gemini/Google AI encontrada; `ANTHROPIC_API_KEY` mantida (uso ativo confirmado)
+- **Impacto arquitetural:** Não
+- **Commit:** `bb5d30c` — `docs(governance): adiciona auditoria oficial Vercel env vars (sem Gemini)`
+- **PR:** [#107](https://github.com/kizirianmax/rkmmax-hibrido/pull/107)
+
+#### 2026-03-01 — Formalização do Protocolo de Operações
+
+- **O que foi feito:** Adição da seção "Protocolo Oficial de Operações no Repositório" ao `CHECKLIST.md`
+- **Justificativa:** Projeto atingiu nível de complexidade que exige rastreabilidade formal de todas as operações
+- **Estado resultante:** Protocolo de governança ativo e versionado
+- **Impacto arquitetural:** Não (apenas documentação)
+- **Commit:** `governance: formaliza protocolo obrigatório de operações`
+- **PR:** A ser criado
+
+---
+
+### Próximas Ações Pendentes (Governança)
+
+- [ ] Migração de `react-scripts` para Vite (elimina 7 vulnerabilidades restantes)
+- [ ] Configuração de variáveis reais no projeto `rkmmax-hibrido` na Vercel (atualmente apenas placeholders)
+- [ ] Remoção de `src/api/ExternalAPIManager.js` (código morto — referencia `ANTHROPIC_API_KEY` mas não é importado)
+- [ ] Implementar RLS/Policies no Supabase (`user_profiles`, `trusted_chunks`, `user_actions`)
+- [ ] Configurar Redis/Upstash para persistência de cache e circuit breaker entre cold starts
