@@ -144,7 +144,7 @@ export async function orchestrateEngines(messages, systemPrompt, options = {}) {
       responseTime: Date.now() - startTime,
       engine: 'cache',
     });
-    return { ...cached, cached: true };
+    return { response: cached.response, model: cached.model, success: true, cached: true, responseTime: Date.now() - startTime };
   }
 
   // Definir ordem de engines baseado na complexidade
