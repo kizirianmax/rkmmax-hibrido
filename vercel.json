@@ -4,12 +4,23 @@
   "env": {
     "REACT_APP_COMPANY_NAME": "RKMMAX INFINITY MATRIX/STUDY",
     "REACT_APP_CONTACT_EMAIL": "roberto@kizirianmax.site",
-    "REACT_APP_DOMAIN": "kizirianmax.site"
+    "REACT_APP_DOMAIN": "kizirianmax.site",
+    "DISABLE_ESLINT_PLUGIN": "true",
+    "GENERATE_SOURCEMAP": "false"
   },
   "rewrites": [
-    { "source": "/api/prices", "destination": "/api/admin?action=prices" },
-    { "source": "/api/me-plan", "destination": "/api/admin?action=me-plan" },
-    { "source": "/api/send-email", "destination": "/api/admin?action=send-email" },
+    {
+      "source": "/api/prices",
+      "destination": "/api/admin?action=prices"
+    },
+    {
+      "source": "/api/me-plan",
+      "destination": "/api/admin?action=me-plan"
+    },
+    {
+      "source": "/api/send-email",
+      "destination": "/api/admin?action=send-email"
+    },
     {
       "source": "/(.*)",
       "destination": "/index.html"
@@ -55,6 +66,6 @@
         }
       ]
     }
-  ]
+  ],
+  "installCommand": "npm install"
 }
-

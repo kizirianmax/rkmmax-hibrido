@@ -68,7 +68,6 @@ export default function GitHubCallback() {
           window.location.href = redirectUrl;
         }, 2000);
       } catch (error) {
-        console.error("❌ Erro no callback:", error);
         setStatus("error");
         setError(error.message);
         setMessage(`Erro: ${error.message}`);

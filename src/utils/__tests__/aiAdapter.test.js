@@ -112,13 +112,16 @@ describe('AIAdapter - Behavioral Tests', () => {
   });
 
   describe('Error Handling', () => {
-    test('should handle errors gracefully', async () => {
-      // Test that errors don't crash the system
-      try {
-        await askAI('');
-      } catch (error) {
-        expect(error).toBeTruthy();
-      }
+    test('should handle errors gracefully without crashing', async () => {
+      // askAI resolves with a response object (mock/fallback) or rejects with Error
+      // Either path is valid — what matters is no unhandled crash
+      // We capture both outcomes and assert the result is defined
+      const result = await askAI('').catch(err => ({ _error: err.message }));
+      expect(result).toBeDefined();
+      // Result is either a valid response with 'answer', or our error wrapper
+      expect(
+        'answer' in result || '_error' in result
+      ).toBe(true);
     });
   });
 });
