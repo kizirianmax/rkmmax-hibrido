@@ -1,6 +1,6 @@
 {
   "buildCommand": "npm run build",
-  "outputDirectory": "build",
+  "outputDirectory": "dist",
   "env": {
     "REACT_APP_COMPANY_NAME": "RKMMAX INFINITY MATRIX/STUDY",
     "REACT_APP_CONTACT_EMAIL": "roberto@kizirianmax.site",

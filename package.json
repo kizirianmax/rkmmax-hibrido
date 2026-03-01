@@ -5,12 +5,12 @@
   "type": "module",
   "packageManager": "npm@10.8.0",
   "engines": {
-    "node": "18.x",
+    "node": "22.x",
     "npm": ">=10"
   },
   "scripts": {
-    "start": "react-scripts start",
-    "build": "NODE_OPTIONS=--openssl-legacy-provider react-scripts build",
+    "start": "vite",
+    "build": "vite build",
     "test": "NODE_OPTIONS='--experimental-vm-modules' jest",
     "test:watch": "NODE_OPTIONS='--experimental-vm-modules' jest --watch",
     "test:coverage": "NODE_OPTIONS='--experimental-vm-modules' jest --coverage",
@@ -20,7 +20,8 @@
     "lint:fix": "eslint src/ api/ --ext .js,.jsx --fix",
     "format": "prettier --write \"src/**/*.{js,jsx,json,css,md}\" \"api/**/*.{js,json}\"",
     "format:check": "prettier --check \"src/**/*.{js,jsx,json,css,md}\" \"api/**/*.{js,json}\"",
-    "analyze": "source-map-explorer 'build/static/js/*.js'"
+    "analyze": "source-map-explorer 'build/static/js/*.js'",
+    "preview": "vite preview"
   },
   "dependencies": {
     "@google/generative-ai": "^0.24.1",
@@ -57,6 +58,7 @@
     "@testing-library/jest-dom": "^6.9.1",
     "@testing-library/react": "^16.3.0",
     "@testing-library/user-event": "^14.6.1",
+    "@vitejs/plugin-react": "^5.1.4",
     "babel-jest": "^30.2.0",
     "eslint": "^8.57.1",
     "eslint-config-prettier": "^10.1.8",
@@ -66,7 +68,9 @@
     "jest-environment-jsdom": "^29.7.0",
     "jest-junit": "^16.0.0",
     "prettier": "^3.6.2",
-    "source-map-explorer": "^2.5.3"
+    "source-map-explorer": "^2.5.3",
+    "vite": "^7.3.1",
+    "vite-plugin-node-polyfills": "^0.25.0"
   },
   "overrides": {
     "typescript": "5.9.3"
