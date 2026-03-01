@@ -1,3 +1,5 @@
+[![CodeRabbit](https://img.shields.io/endpoint?v=2&style=for-the-badge&color=brightgreen&label=CodeRabbit&suffix=Enabled)](https://coderabbit.ai/gh/kizirianmax/rkmmax-hibrido)
+
 # 🚀 RKMMAX Híbrido - Enterprise AI Agent System
 
 [![CI Status](https://github.com/kizirianmax/rkmmax-hibrido/workflows/Test/badge.svg)](https://github.com/kizirianmax/rkmmax-hibrido/actions)
