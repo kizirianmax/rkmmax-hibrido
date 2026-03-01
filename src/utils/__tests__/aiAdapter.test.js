@@ -113,12 +113,8 @@ describe('AIAdapter - Behavioral Tests', () => {
 
   describe('Error Handling', () => {
     test('should handle errors gracefully', async () => {
-      // Test that errors don't crash the system
-      try {
-        await askAI('');
-      } catch (error) {
-        expect(error).toBeTruthy();
-      }
+      // Test that errors don't crash the system - either resolves or rejects, no crash
+      await expect(askAI('').catch(err => err)).resolves.toBeDefined();
     });
   });
 });
