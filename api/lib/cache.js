@@ -57,12 +57,18 @@ class SmartCache {
 
   /**
    * Salvar no cache
+   *
+   * Fix (CodeRabbit PR #95 - LRU bug): evictar apenas quando a chave é nova.
+   * Se a chave já existe, deletar e reinserir para atualizar ordem LRU sem evictar.
    */
   set(messages, value) {
     const key = this.generateKey(messages);
-    
-    // Se cache está cheio, remover o mais antigo (LRU)
-    if (this.cache.size >= this.maxSize) {
+
+    if (this.cache.has(key)) {
+      // Chave já existe: refresh da ordem LRU sem evictar entrada válida
+      this.cache.delete(key);
+    } else if (this.cache.size >= this.maxSize) {
+      // Chave nova e cache cheio: evictar o mais antigo (LRU)
       const firstKey = this.cache.keys().next().value;
       this.cache.delete(firstKey);
     }

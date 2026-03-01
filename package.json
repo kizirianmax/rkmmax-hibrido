@@ -15,12 +15,11 @@
     "test:watch": "NODE_OPTIONS='--experimental-vm-modules' jest --watch",
     "test:coverage": "NODE_OPTIONS='--experimental-vm-modules' jest --coverage",
     "test:ci": "NODE_OPTIONS='--experimental-vm-modules' jest --ci --maxWorkers=2",
-    "eject": "react-scripts eject",
     "lint": "eslint src/ api/ --ext .js,.jsx",
     "lint:fix": "eslint src/ api/ --ext .js,.jsx --fix",
     "format": "prettier --write \"src/**/*.{js,jsx,json,css,md}\" \"api/**/*.{js,json}\"",
     "format:check": "prettier --check \"src/**/*.{js,jsx,json,css,md}\" \"api/**/*.{js,json}\"",
-    "analyze": "source-map-explorer 'build/static/js/*.js'",
+    "analyze": "source-map-explorer 'dist/assets/*.js'",
     "preview": "vite preview"
   },
   "dependencies": {
