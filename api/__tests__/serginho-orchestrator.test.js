@@ -390,4 +390,92 @@ describe('SerginhoOrchestrator', () => {
       expect(result.execution.totalOrchestrationTime).toBeGreaterThanOrEqual(0);
     });
   });
+
+  describe('AbortSignal propagation', () => {
+    beforeEach(() => {
+      serginho.resetMetrics();
+      serginho.clearCache();
+      serginho.resetCircuitBreakers();
+    });
+
+    test('pre-aborted signal rejects with AbortError immediately', async () => {
+      const controller = new AbortController();
+      controller.abort();
+
+      global.fetch = jest.fn();
+
+      await expect(
+        serginho.handleRequest({ message: 'test', options: { signal: controller.signal } })
+      ).rejects.toMatchObject({ name: 'AbortError' });
+
+      expect(global.fetch).not.toHaveBeenCalled();
+    });
+
+    test('abort during provider execution rejects with AbortError and does NOT try fallback', async () => {
+      const controller = new AbortController();
+
+      global.fetch = jest.fn().mockImplementation((url, opts) => {
+        return new Promise((resolve, reject) => {
+          const abortHandler = () => {
+            const err = new Error('The operation was aborted');
+            err.name = 'AbortError';
+            reject(err);
+          };
+          if (opts?.signal?.aborted) {
+            abortHandler();
+            return;
+          }
+          opts?.signal?.addEventListener('abort', abortHandler);
+          // Promise intentionally left pending until abort fires
+        });
+      });
+
+      setTimeout(() => controller.abort(), 50);
+
+      await expect(
+        serginho.handleRequest({ message: 'test abort during', options: { signal: controller.signal } })
+      ).rejects.toMatchObject({ name: 'AbortError' });
+
+      // Only one fetch call — no fallback attempted
+      expect(global.fetch.mock.calls.length).toBeLessThanOrEqual(1);
+    });
+
+    test('abort does NOT open circuit breaker', async () => {
+      const controller = new AbortController();
+      controller.abort();
+
+      global.fetch = jest.fn();
+
+      const statesBefore = serginho._getCircuitBreakerStates();
+
+      await expect(
+        serginho.handleRequest({ message: 'test cb', options: { signal: controller.signal } })
+      ).rejects.toMatchObject({ name: 'AbortError' });
+
+      const statesAfter = serginho._getCircuitBreakerStates();
+
+      // All circuit breakers should remain in their original CLOSED state
+      for (const provider of Object.keys(statesAfter)) {
+        expect(statesAfter[provider].state).toBe(statesBefore[provider].state);
+        expect(statesAfter[provider].failures).toBe(statesBefore[provider].failures);
+      }
+    });
+
+    test('abort does NOT write to cache', async () => {
+      const controller = new AbortController();
+      controller.abort();
+
+      global.fetch = jest.fn();
+
+      const cacheSpy = jest.spyOn(serginho.cache, 'set');
+
+      await expect(
+        serginho.handleRequest({ message: 'test cache', options: { signal: controller.signal } })
+      ).rejects.toMatchObject({ name: 'AbortError' });
+
+      expect(cacheSpy).not.toHaveBeenCalled();
+
+      cacheSpy.mockRestore();
+    });
+  });
 });
