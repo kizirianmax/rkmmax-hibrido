@@ -234,6 +234,21 @@ Legendas: ✅ feito | ⚠️ pendente | ⏭️ próximo
 - **Rollback**: Revert `getWeightedProviders()` in providers-config.js; revert betinhoParallel() to use `getEnabledProviders()` directly; remove tests; remove A5.4 section from CHECKLIST.md
 
 
+## Phase A5.5 — Hybrid Smoke Test (Groq-only, default 120B)
+- ✅ `api/__tests__/hybrid-determinism.test.js` — New smoke test file (4 test suites):
+  - Test A: `betinhoParallel` mocked → asserts `forceProvider: 'llama-120b'` + `source: 'single'` + called once
+  - Test B: `getWeightedProviders()` returns `['llama-120b']` only (no Gemini) in Groq-only mode
+  - Test C: No mandatory Gemini dependency — all enabled providers are Groq; no top-level Gemini key guards
+  - Test D: Static check — `betinhoParallel()` body uses `getWeightedProviders()` (not `getEnabledProviders()` directly)
+- ✅ No production code changes (test-only + docs)
+- ✅ No new dependencies
+- **What**: Validate A5.4 determinism end-to-end — smoke test confirming betinhoParallel selects llama-120b in Groq-only mode
+- **Why**: A5.4 added the logic; A5.5 adds CI-enforceable proof that the invariant holds
+- **Files**: `api/__tests__/hybrid-determinism.test.js`, `CHECKLIST.md`
+- **Validation**: `npm test` (all green, including new hybrid-determinism suite)
+- **Rollback**: Delete `api/__tests__/hybrid-determinism.test.js`; remove A5.5 section from CHECKLIST.md
+
+
 - **Produção:** https://rkmmax-app.vercel.app
 - **GitHub:** https://github.com/kizirianmax/Rkmmax-app
 - **Último deploy:** 23/10/2025
