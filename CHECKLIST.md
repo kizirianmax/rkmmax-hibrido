@@ -193,6 +193,12 @@ Legendas: ✅ feito | ⚠️ pendente | ⏭️ próximo
 - ✅ Anti-bypass tests added (`api/__tests__/a4-gateway-sovereignty.test.js`)
 - ✅ All `api/` route handlers use `serginho.handleRequest()` exclusively
 
+## Phase A5.1 — Fail-Fast Enforcement (engine-orchestrator hard-ban)
+- ✅ `orchestrateEngines()` now throws immediately: "Deprecated: Use serginho-orchestrator.js as the single AI gateway (Phase A5)."
+- ✅ No provider calls can execute through engine-orchestrator.js
+- ✅ File retained for import compatibility (no deletion)
+- ✅ Test added: `api/__tests__/a4-gateway-sovereignty.test.js` → Test 5
+
 
 - **Produção:** https://rkmmax-app.vercel.app
 - **GitHub:** https://github.com/kizirianmax/Rkmmax-app
