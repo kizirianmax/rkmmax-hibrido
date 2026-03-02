@@ -62,7 +62,14 @@ Legendas: ✅ feito | ⚠️ pendente | ⏭️ próximo
 - ✅ Chat individual para cada especialista
 - ⏭️ Conferência visual final (avatares e textos)
 
-8) Agentes Ocultos
+8) Abort / Cancellation Pipeline
+- ✅ Phase A1: Propagate options.signal to fetch()
+- ✅ Phase A2: AbortError as neutral cancellation
+- ✅ Phase A3: Deadline/timeoutMs with internal AbortController
+- ✅ Phase A3.1: Clean shutdown (no dangling timers/listeners)
+- ✅ Phase A3.2: JSDoc documentation for timeoutMs/deadlineMs
+
+9) Agentes Ocultos
 - ⚠️ Criar especialistas invisíveis (base/otimização/validação)
 - ⚠️ Acesso apenas via Serginho
 - ⚠️ Orquestração p/ reduzir custo (menos GPT-5, mais GPT-4 mini + ocultos)

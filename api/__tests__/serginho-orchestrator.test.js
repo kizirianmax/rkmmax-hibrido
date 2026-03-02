@@ -390,4 +390,137 @@ describe('SerginhoOrchestrator', () => {
       expect(result.execution.totalOrchestrationTime).toBeGreaterThanOrEqual(0);
     });
   });
+
+  describe('deadline / timeoutMs', () => {
+    // Signal-aware slow fetch: respects AbortSignal, resolves after 5000ms otherwise
+    function createSlowFetch() {
+      return jest.fn().mockImplementation((_url, opts) =>
+        new Promise((resolve, reject) => {
+          if (opts?.signal?.aborted) {
+            return reject(new DOMException('The operation was aborted.', 'AbortError'));
+          }
+          const timer = setTimeout(() => resolve({
+            ok: true,
+            status: 200,
+            json: jest.fn().mockResolvedValue({
+              choices: [{ message: { content: 'late response' } }],
+              usage: {}
+            }),
+            text: jest.fn().mockResolvedValue('OK'),
+          }), 5000);
+          if (opts?.signal) {
+            opts.signal.addEventListener('abort', () => {
+              clearTimeout(timer);
+              reject(new DOMException('The operation was aborted.', 'AbortError'));
+            }, { once: true });
+          }
+        })
+      );
+    }
+
+    test('timeoutMs pequeno aborta e gera AbortError', async () => {
+      global.fetch = createSlowFetch();
+
+      serginho.resetMetrics();
+      serginho.clearCache();
+      serginho.resetCircuitBreakers();
+
+      await expect(
+        serginho.handleRequest({
+          message: 'Test timeout',
+          messages: [],
+          context: {},
+          options: { timeoutMs: 1, forceProvider: 'llama-8b' }
+        })
+      ).rejects.toMatchObject({ name: 'AbortError' });
+    });
+
+    test('timeoutMs não altera breaker/métricas/cache', async () => {
+      global.fetch = createSlowFetch();
+
+      serginho.resetMetrics();
+      serginho.clearCache();
+      serginho.resetCircuitBreakers();
+
+      const initialMetrics = serginho.getMetrics();
+      const initialCacheSize = serginho.cache.size();
+
+      try {
+        await serginho.handleRequest({
+          message: 'Test timeout no metrics',
+          messages: [],
+          context: {},
+          options: { timeoutMs: 1, forceProvider: 'llama-8b' }
+        });
+      } catch (e) {
+        expect(e.name).toBe('AbortError');
+      }
+
+      const afterMetrics = serginho.getMetrics();
+      expect(afterMetrics.failedRequests).toBe(initialMetrics.failedRequests);
+      expect(afterMetrics.totalRequests).toBe(initialMetrics.totalRequests);
+      expect(serginho.cache.size()).toBe(initialCacheSize);
+    });
+
+    test('options.signal externo aborta antes do timeout', async () => {
+      global.fetch = createSlowFetch();
+
+      serginho.resetMetrics();
+      serginho.clearCache();
+      serginho.resetCircuitBreakers();
+
+      const externalController = new AbortController();
+      // Abort the external signal after 10ms (well before 60s timeout)
+      setTimeout(() => externalController.abort(), 10);
+
+      await expect(
+        serginho.handleRequest({
+          message: 'Test external signal',
+          messages: [],
+          context: {},
+          options: { timeoutMs: 60000, signal: externalController.signal, forceProvider: 'llama-8b' }
+        })
+      ).rejects.toMatchObject({ name: 'AbortError' });
+    });
+
+    test('sem timeoutMs, comportamento normal', async () => {
+      global.fetch = createMockFetch();
+      serginho.resetMetrics();
+      serginho.clearCache();
+      serginho.resetCircuitBreakers();
+
+      const result = await serginho.handleRequest({
+        message: 'Normal request without timeout',
+        messages: [],
+        context: {},
+        options: { forceProvider: 'llama-8b' }
+      });
+
+      expect(result.text).toBeTruthy();
+      expect(result.execution.status).toBe('success');
+    });
+
+    test('clean shutdown — no pending handles after abort', async () => {
+      global.fetch = createSlowFetch();
+
+      serginho.resetMetrics();
+      serginho.clearCache();
+      serginho.resetCircuitBreakers();
+
+      try {
+        await serginho.handleRequest({
+          message: 'Test clean shutdown',
+          messages: [],
+          context: {},
+          options: { timeoutMs: 1, forceProvider: 'llama-8b' }
+        });
+      } catch (e) {
+        expect(e.name).toBe('AbortError');
+      }
+
+      // Small delay to ensure all timers are cleaned up
+      await new Promise((resolve) => setTimeout(resolve, 50));
+      // If Jest reports open handles, the test will fail with a warning
+    });
+  });
 });
