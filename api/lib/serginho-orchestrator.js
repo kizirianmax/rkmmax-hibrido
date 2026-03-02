@@ -169,6 +169,9 @@ class SerginhoOrchestrator {
    * 
    * @param {string|object} firstArg - User message (string) OR full params object
    * @param {object} secondArg - Options (when firstArg is string)
+   * @param {AbortSignal} [secondArg.signal] - External AbortSignal for cancellation
+   * @param {number} [secondArg.timeoutMs] - Internal deadline in ms. Creates an internal AbortController. Timeout generates a neutral AbortError (no fallback, no cache write, no metrics, no circuit breaker).
+   * @param {number} [secondArg.deadlineMs] - Alias for options.timeoutMs
    * @returns {Promise<object>} { text, model, execution, routing, usage, _meta }
    */
   async handleRequest(firstArg, secondArg = {}) {
@@ -189,12 +192,35 @@ class SerginhoOrchestrator {
    * @param {array} params.messages - Full conversation history (optional)
    * @param {object} params.context - Additional context (optional)
    * @param {object} params.options - Override options (optional)
+   * @param {AbortSignal} [params.options.signal] - External AbortSignal for cancellation
+   * @param {number} [params.options.timeoutMs] - Internal deadline in ms. Creates an internal AbortController. Timeout generates a neutral AbortError (no fallback, no cache write, no metrics, no circuit breaker).
+   * @param {number} [params.options.deadlineMs] - Alias for options.timeoutMs
    * @returns {Promise<object>} { text, model, execution, routing, usage, _meta }
    */
   async _handleStructured({ message, messages = [], context = {}, options = {} }) {
     const orchestrationStartTime = Date.now();
     const traceId = randomUUID();
-    
+
+    // A3: Deadline/timeout setup
+    const timeoutMs = options.timeoutMs || options.deadlineMs;
+    let controller = null;
+    let timer = null;
+    let abortListener = null;
+
+    if (timeoutMs) {
+      controller = new AbortController();
+      timer = setTimeout(() => controller.abort(), timeoutMs);
+
+      // Chain external signal: if external signal aborts, abort internal controller too
+      if (options.signal) {
+        abortListener = () => controller.abort();
+        options.signal.addEventListener('abort', abortListener);
+      }
+    }
+
+    const signal = controller ? controller.signal : options.signal;
+
+    try {
     // 1. Analyze complexity
     const analysisStartTime = Date.now();
     const analysis = analyzeComplexity(message);
@@ -242,6 +268,7 @@ class SerginhoOrchestrator {
           messages,
           context,
           analysis,
+          signal,
         });
         const modelExecutionTime = Date.now() - modelExecutionStartTime;
 
@@ -280,6 +307,11 @@ class SerginhoOrchestrator {
         );
 
       } catch (error) {
+        // A3: AbortError is neutral — no fallback, no metrics, no cache, no circuit breaker failure
+        if (error.name === 'AbortError') {
+          throw error;
+        }
+
         console.error(`[Serginho] Provider ${currentProvider} failed:`, error.message);
         
         const modelExecutionTime = Date.now() - orchestrationStartTime;
@@ -319,6 +351,15 @@ class SerginhoOrchestrator {
         console.log('[Serginho] Falling back to:', nextProvider);
         currentProvider = nextProvider;
         fallbackLevel++;
+      }
+    }
+    } finally {
+      // A3.1: Clean shutdown — no dangling timers or listeners
+      if (timer !== null) {
+        clearTimeout(timer);
+      }
+      if (options.signal && abortListener) {
+        options.signal.removeEventListener('abort', abortListener);
       }
     }
   }
@@ -495,7 +536,7 @@ class SerginhoOrchestrator {
    * Execute request with specific provider
    * @private
    */
-  async executeWithProvider(providerName, { message, messages, context, analysis }) {
+  async executeWithProvider(providerName, { message, messages, context, analysis, signal }) {
     const config = getProviderConfig(providerName);
     const breaker = this.circuitBreakers.get(providerName);
 
@@ -506,11 +547,11 @@ class SerginhoOrchestrator {
     return breaker.execute(async () => {
       switch (config.type) {
         case 'gemini':
-          return this.callGemini(config, message, messages, context);
+          return this.callGemini(config, message, messages, context, signal);
         case 'groq':
-          return this.callGroq(config, message, messages, context);
+          return this.callGroq(config, message, messages, context, signal);
         case 'openai':
-          return this.callOpenAI(config, message, messages, context);
+          return this.callOpenAI(config, message, messages, context, signal);
         default:
           throw new Error(`Unknown provider type: ${config.type}`);
       }
@@ -530,7 +571,7 @@ class SerginhoOrchestrator {
    * Call Gemini API
    * @private
    */
-  async callGemini(config, message, messages, context) {
+  async callGemini(config, message, messages, context, signal) {
     const formattedMessages = this.formatMessages(messages, message, 'gemini');
     
     const response = await fetch(config.endpoint, {
@@ -542,6 +583,7 @@ class SerginhoOrchestrator {
         contents: formattedMessages,
         generationConfig: config.generationConfig,
       }),
+      ...(signal ? { signal } : {}),
     });
 
     if (!response.ok) {
@@ -566,7 +608,7 @@ class SerginhoOrchestrator {
    * Call Groq API (OpenAI-compatible)
    * @private
    */
-  async callGroq(config, message, messages, context) {
+  async callGroq(config, message, messages, context, signal) {
     const apiKey = process.env.GROQ_API_KEY;
     if (!apiKey) {
       throw new Error('GROQ_API_KEY environment variable is required');
@@ -585,6 +627,7 @@ class SerginhoOrchestrator {
         messages: formattedMessages,
         ...config.defaultParams,
       }),
+      ...(signal ? { signal } : {}),
     });
 
     if (!response.ok) {
@@ -609,7 +652,7 @@ class SerginhoOrchestrator {
    * Call OpenAI API (future support)
    * @private
    */
-  async callOpenAI(config, message, messages, context) {
+  async callOpenAI(config, message, messages, context, signal) {
     const apiKey = process.env.OPENAI_API_KEY;
     if (!apiKey) {
       throw new Error('OPENAI_API_KEY environment variable is required');
@@ -628,6 +671,7 @@ class SerginhoOrchestrator {
         messages: formattedMessages,
         ...config.defaultParams,
       }),
+      ...(signal ? { signal } : {}),
     });
 
     if (!response.ok) {
