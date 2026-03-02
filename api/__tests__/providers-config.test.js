@@ -3,7 +3,9 @@ import {
   PROVIDERS, 
   getProviderConfig, 
   getProvidersByTier, 
-  getAllProviderNames 
+  getAllProviderNames,
+  getEnabledProviders,
+  parseProviderWeights,
 } from '../lib/providers-config.js';
 
 // Mock environment variables
@@ -280,5 +282,86 @@ describe('providers-config', () => {
         expect(config.endpoint).toContain(':generateContent');
       });
     });
+  });
+});
+
+describe('getEnabledProviders', () => {
+  const originalGroq = process.env.GROQ_API_KEY;
+  const originalGoogle = process.env.GOOGLE_API_KEY;
+  const originalGemini = process.env.GEMINI_API_KEY;
+  const originalGermini = process.env.GERMINI_API_KEY;
+
+  afterEach(() => {
+    if (originalGroq !== undefined) {
+      process.env.GROQ_API_KEY = originalGroq;
+    } else {
+      delete process.env.GROQ_API_KEY;
+    }
+    if (originalGoogle !== undefined) {
+      process.env.GOOGLE_API_KEY = originalGoogle;
+    } else {
+      delete process.env.GOOGLE_API_KEY;
+    }
+    if (originalGemini !== undefined) {
+      process.env.GEMINI_API_KEY = originalGemini;
+    } else {
+      delete process.env.GEMINI_API_KEY;
+    }
+    if (originalGermini !== undefined) {
+      process.env.GERMINI_API_KEY = originalGermini;
+    } else {
+      delete process.env.GERMINI_API_KEY;
+    }
+  });
+
+  test('returns only groq providers when only GROQ_API_KEY is set', () => {
+    process.env.GROQ_API_KEY = 'test-key';
+    delete process.env.GOOGLE_API_KEY;
+    delete process.env.GEMINI_API_KEY;
+    delete process.env.GERMINI_API_KEY;
+    const enabled = getEnabledProviders();
+    enabled.forEach(name => {
+      expect(PROVIDERS[name].type).toBe('groq');
+    });
+    expect(enabled.length).toBeGreaterThan(0);
+  });
+
+  test('returns empty array when no API keys are set', () => {
+    delete process.env.GROQ_API_KEY;
+    delete process.env.GOOGLE_API_KEY;
+    delete process.env.GEMINI_API_KEY;
+    delete process.env.GERMINI_API_KEY;
+    const enabled = getEnabledProviders();
+    expect(enabled).toEqual([]);
+  });
+});
+
+describe('parseProviderWeights', () => {
+  const originalWeights = process.env.HYBRID_PROVIDER_WEIGHTS;
+
+  afterEach(() => {
+    if (originalWeights !== undefined) {
+      process.env.HYBRID_PROVIDER_WEIGHTS = originalWeights;
+    } else {
+      delete process.env.HYBRID_PROVIDER_WEIGHTS;
+    }
+  });
+
+  test('returns null when env var is not set', () => {
+    delete process.env.HYBRID_PROVIDER_WEIGHTS;
+    const result = parseProviderWeights();
+    expect(result).toBeNull();
+  });
+
+  test('parses valid JSON weights', () => {
+    process.env.HYBRID_PROVIDER_WEIGHTS = '{"groq":100}';
+    const result = parseProviderWeights();
+    expect(result).toEqual({ groq: 100 });
+  });
+
+  test('returns null for invalid JSON', () => {
+    process.env.HYBRID_PROVIDER_WEIGHTS = 'not-json';
+    const result = parseProviderWeights();
+    expect(result).toBeNull();
   });
 });

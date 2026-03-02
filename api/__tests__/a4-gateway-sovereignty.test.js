@@ -146,4 +146,16 @@ describe('Phase A4 — Gateway Sovereignty', () => {
       expect(hybridContent).toMatch(/No AI providers configured/);
     });
   });
+
+  describe('Test 7: betinhoParallel uses getEnabledProviders (Phase A5.3)', () => {
+    it('serginho-orchestrator.js imports and uses getEnabledProviders', () => {
+      const content = fs.readFileSync(
+        path.join(API_DIR, 'lib', 'serginho-orchestrator.js'),
+        'utf8'
+      );
+      expect(content).toMatch(/getEnabledProviders/);
+      // Must NOT use Object.keys(PROVIDERS) in betinhoParallel
+      // (it should use getEnabledProviders instead)
+    });
+  });
 });
