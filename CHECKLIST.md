@@ -188,3 +188,19 @@ Legendas: ✅ feito | ⚠️ pendente | ⏭️ próximo
 - **Status:** ✅ Funcionando
 - **Bugs críticos:** 0
 
+### [2026-03-02] Phase A2: AbortError tratado como cancelamento neutro
+
+O que foi feito:
+- AbortError não conta como falha sistêmica.
+- Não altera circuit breaker.
+- Não altera métricas.
+- Não registra falha em ModelRegistry.
+
+Motivo:
+- Cancelamento do cliente não é erro do provider.
+- Evita degradação artificial do sistema.
+
+Validação:
+- Suite completa verde.
+- Sem alteração de comportamento em erros reais.
+

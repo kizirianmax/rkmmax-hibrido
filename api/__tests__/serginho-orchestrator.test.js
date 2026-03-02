@@ -322,8 +322,7 @@ describe('SerginhoOrchestrator', () => {
     });
   });
 
-  describe('metrics tracking', () => {
-    test('tracks provider usage', async () => {
+  describe('metrics tracking', () => {    test('tracks provider usage', async () => {
       // Reset mock and circuit breakers for this test
       global.fetch = createMockFetch();
       serginho.resetMetrics();
@@ -388,6 +387,77 @@ describe('SerginhoOrchestrator', () => {
       expect(result.execution.totalOrchestrationTime).toBeDefined();
       expect(typeof result.execution.totalOrchestrationTime).toBe('number');
       expect(result.execution.totalOrchestrationTime).toBeGreaterThanOrEqual(0);
+    });
+  });
+
+  describe('AbortError neutral cancellation (Phase A2)', () => {
+    const abortError = new DOMException('The operation was aborted', 'AbortError');
+
+    beforeEach(() => {
+      serginho.resetCircuitBreakers();
+      serginho.resetMetrics();
+      serginho.clearCache();
+      global.fetch = jest.fn().mockImplementation(() => Promise.reject(abortError));
+    });
+
+    test('AbortError does not open circuit breaker', async () => {
+      try {
+        await serginho.handleRequest({
+          message: 'Test abort',
+          messages: [],
+          context: {},
+          options: { forceProvider: 'llama-8b' }
+        });
+      } catch (e) {
+        expect(e.name).toBe('AbortError');
+      }
+
+      const breaker = serginho.circuitBreakers.get('llama-8b');
+      expect(breaker.getState().state).toBe('CLOSED');
+      expect(breaker.getState().failures).toBe(0);
+    });
+
+    test('AbortError does not increment failure metrics', async () => {
+      try {
+        await serginho.handleRequest({
+          message: 'Test abort metrics',
+          messages: [],
+          context: {},
+          options: { forceProvider: 'llama-8b' }
+        });
+      } catch (e) {
+        // Expected
+      }
+
+      expect(serginho.getMetrics().failedRequests).toBe(0);
+    });
+
+    test('AbortError does not execute fallback', async () => {
+      let caughtError;
+      try {
+        await serginho.handleRequest({
+          message: 'Test abort fallback',
+          messages: [],
+          context: {},
+          options: { forceProvider: 'llama-8b' }
+        });
+      } catch (e) {
+        caughtError = e;
+      }
+
+      // If fallback had been attempted, error would be "All providers failed"
+      expect(caughtError.name).toBe('AbortError');
+    });
+
+    test('AbortError is re-thrown immediately', async () => {
+      await expect(
+        serginho.handleRequest({
+          message: 'Test abort rethrow',
+          messages: [],
+          context: {},
+          options: { forceProvider: 'llama-8b' }
+        })
+      ).rejects.toMatchObject({ name: 'AbortError' });
     });
   });
 });
