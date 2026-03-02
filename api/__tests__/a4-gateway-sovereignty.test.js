@@ -158,4 +158,14 @@ describe('Phase A4 — Gateway Sovereignty', () => {
       // (it should use getEnabledProviders instead)
     });
   });
+
+  describe('Test 8: betinhoParallel uses getWeightedProviders (Phase A5.4)', () => {
+    it('serginho-orchestrator.js imports and uses getWeightedProviders', () => {
+      const content = fs.readFileSync(
+        path.join(API_DIR, 'lib', 'serginho-orchestrator.js'),
+        'utf8'
+      );
+      expect(content).toMatch(/getWeightedProviders/);
+    });
+  });
 });

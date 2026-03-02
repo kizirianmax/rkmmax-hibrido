@@ -180,6 +180,53 @@ export function parseProviderWeights() {
 }
 
 /**
+ * Get providers sorted by weight, deterministic and configurable.
+ * - If HYBRID_PROVIDER_WEIGHTS is NOT set or invalid → returns ['llama-120b'] if enabled,
+ *   otherwise falls back to getEnabledProviders() with groq-fallback sorted last.
+ * - If weights are set and valid → considers only enabled providers, sorts by weight desc.
+ *   Enabled providers not in the weights JSON are appended at weight 0.
+ *   If all weighted providers are disabled, falls back to getEnabledProviders().
+ * @returns {Array<string>} Ordered array of provider names
+ */
+export function getWeightedProviders() {
+  const enabled = getEnabledProviders();
+
+  const weights = parseProviderWeights();
+
+  if (!weights) {
+    // Default: prefer llama-120b single-mode
+    if (enabled.includes('llama-120b')) {
+      return ['llama-120b'];
+    }
+    // Fallback: enabled providers with groq-fallback sorted last
+    return [...enabled].sort((a, b) => {
+      if (a === 'groq-fallback') return 1;
+      if (b === 'groq-fallback') return -1;
+      return 0;
+    });
+  }
+
+  // Filter to only enabled providers, assign weight (0 for unlisted)
+  const withWeights = enabled.map((name) => ({
+    name,
+    weight: Number(weights[name]) || 0,
+  }));
+
+  // Sort by weight descending, then alphabetically for stability
+  withWeights.sort((a, b) => b.weight - a.weight || a.name.localeCompare(b.name));
+
+  const result = withWeights.map((p) => p.name);
+
+  if (result.length === 0) {
+    // Safe fallback if somehow empty
+    if (enabled.includes('llama-120b')) return ['llama-120b'];
+    return enabled;
+  }
+
+  return result;
+}
+
+/**
  * Model metadata for UI and transparency
  * Provides human-readable information about each model
  * 
@@ -258,5 +305,6 @@ export default {
   getAllProviderNames,
   getEnabledProviders,
   parseProviderWeights,
+  getWeightedProviders,
   getModelMetadata,
 };
