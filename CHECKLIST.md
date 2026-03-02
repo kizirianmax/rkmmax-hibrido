@@ -187,7 +187,12 @@ Legendas: ✅ feito | ⚠️ pendente | ⏭️ próximo
 - **Receita:** R$ 25.000-100.000/mês
 - **Lucro:** R$ 22.000-97.000/mês
 
-## 🚀 Deploy Status
+## Phase A4 — Soberania de Entrada Única (Gateway obrigatório)
+- ✅ `api/chat.js` streaming path redirected to Serginho
+- ✅ `api/lib/engine-orchestrator.js` deprecated (no longer imported by routes)
+- ✅ Anti-bypass tests added (`api/__tests__/a4-gateway-sovereignty.test.js`)
+- ✅ All `api/` route handlers use `serginho.handleRequest()` exclusively
+
 
 - **Produção:** https://rkmmax-app.vercel.app
 - **GitHub:** https://github.com/kizirianmax/Rkmmax-app
