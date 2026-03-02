@@ -21,6 +21,16 @@ export default async function handler(req, res) {
       return res.status(400).json({ error: "Message is required" });
     }
 
+    const geminiKey = process.env.GEMINI_API_KEY || process.env.GERMINI_API_KEY;
+    const groqKey = process.env.GROQ_API_KEY;
+
+    if (!geminiKey && !groqKey) {
+      return res.status(500).json({
+        error: "No AI providers configured",
+        hint: "Configure GEMINI_API_KEY or GROQ_API_KEY",
+      });
+    }
+
     // ✅ Betinho Hybrid Mode: parallel execution via serginho.betinhoParallel()
     const result = await serginho.betinhoParallel(message, {
       messages,
@@ -51,7 +61,7 @@ export default async function handler(req, res) {
     }
 
     // All providers failed
-    if (error.message && error.message.includes("All providers failed")) {
+    if (error.message && (error.message.includes("All providers failed") || error.message.includes("todos os providers falharam"))) {
       return res.status(503).json({
         error: "Service unavailable",
         message: "All AI providers are currently unavailable. Please try again later.",
