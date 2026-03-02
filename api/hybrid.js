@@ -27,7 +27,7 @@ export default async function handler(req, res) {
     if (!geminiKey && !groqKey) {
       return res.status(500).json({
         error: "No AI providers configured",
-        hint: "Configure GEMINI_API_KEY or GROQ_API_KEY",
+        hint: "Configure GROQ_API_KEY (Gemini is optional via GEMINI_API_KEY)",
       });
     }
 

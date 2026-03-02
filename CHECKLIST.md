@@ -208,6 +208,18 @@ Legendas: ✅ feito | ⚠️ pendente | ⏭️ próximo
 - ✅ Validation: POST /api/hybrid → returns 503 with helpful message when providers are down (not 500)
 
 
+## Phase A5.3 — Hybrid Groq-only Safe Mode
+- ✅ `api/lib/providers-config.js` — Added `getEnabledProviders()`: filters providers by available env vars at runtime
+- ✅ `api/lib/providers-config.js` — Added `parseProviderWeights()`: scaffolding for future weighted routing (reads HYBRID_PROVIDER_WEIGHTS env var)
+- ✅ `api/lib/serginho-orchestrator.js` — `betinhoParallel()` now uses `getEnabledProviders()` instead of `Object.keys(PROVIDERS)`
+- ✅ `api/lib/serginho-orchestrator.js` — Single-provider safe mode: when only 1 provider is enabled, executes directly without Promise.any race
+- ✅ `api/hybrid.js` — Updated hint message: "Configure GROQ_API_KEY (Gemini is optional)"
+- ✅ Tests added for `getEnabledProviders`, `parseProviderWeights`, and static verification
+- ✅ Root cause: `betinhoParallel()` was racing ALL 6 providers regardless of env vars, causing Gemini failures when only Groq is configured
+- ✅ Rollback: revert changes in providers-config.js, serginho-orchestrator.js, and hybrid.js
+- ✅ Validation: POST /api/hybrid with only GROQ_API_KEY → works without Gemini errors
+
+
 - **Produção:** https://rkmmax-app.vercel.app
 - **GitHub:** https://github.com/kizirianmax/Rkmmax-app
 - **Último deploy:** 23/10/2025

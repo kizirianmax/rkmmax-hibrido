@@ -24,7 +24,7 @@
 import { randomUUID } from 'crypto';
 import { analyzeComplexity, routeToProvider, getNextFallback, FALLBACK_CHAIN } from '../../src/utils/intelligentRouter.js';
 import CircuitBreaker from './circuit-breaker.js';
-import { getProviderConfig, getModelMetadata, PROVIDERS } from './providers-config.js';
+import { getProviderConfig, getModelMetadata, PROVIDERS, getEnabledProviders } from './providers-config.js';
 import modelRegistry from './model-registry.js';
 
 // Versão do orquestrador (para versionamento de schema)
@@ -779,14 +779,29 @@ class SerginhoOrchestrator {
    * @returns {Promise<object>} Resposta estruturada do provider mais rápido
    */
   async betinhoParallel(message, options = {}) {
-    console.log('[Serginho] betinhoParallel: disparando providers em paralelo...');
+    console.log('[Serginho] betinhoParallel: resolving enabled providers...');
 
-    const providers = Object.keys(PROVIDERS);
-    if (providers.length === 0) {
+    // Only race providers whose env vars are actually configured
+    const enabledProviders = getEnabledProviders();
+    if (enabledProviders.length === 0) {
       throw new Error('betinhoParallel: nenhum provider configurado');
     }
 
-    const promises = providers.map((provider) =>
+    // Single-provider safe mode: no unnecessary race
+    if (enabledProviders.length === 1) {
+      console.log(`[Serginho] betinhoParallel: single-provider mode → ${enabledProviders[0]}`);
+      const result = await this.handleRequest({
+        message,
+        messages: options.messages || [],
+        context: options.context || {},
+        options: { ...options, forceProvider: enabledProviders[0] },
+      });
+      return { ...result, _betinhoParallel: true, source: 'single' };
+    }
+
+    // Multi-provider parallel mode
+    console.log(`[Serginho] betinhoParallel: racing ${enabledProviders.length} providers...`);
+    const promises = enabledProviders.map((provider) =>
       this.handleRequest({
         message,
         messages: options.messages || [],

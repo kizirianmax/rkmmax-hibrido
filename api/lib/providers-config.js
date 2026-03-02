@@ -139,6 +139,47 @@ export function getAllProviderNames() {
 }
 
 /**
+ * Get providers that have their required env vars configured.
+ * Groq providers require GROQ_API_KEY.
+ * Gemini providers require GOOGLE_API_KEY (or GEMINI_API_KEY / GERMINI_API_KEY).
+ * @returns {Array<string>} Array of enabled provider names
+ */
+export function getEnabledProviders() {
+  const groqKey = process.env.GROQ_API_KEY;
+  const geminiKey = process.env.GOOGLE_API_KEY || process.env.GEMINI_API_KEY || process.env.GERMINI_API_KEY;
+
+  return Object.entries(PROVIDERS)
+    .filter(([_, config]) => {
+      if (config.type === 'groq') return !!groqKey;
+      if (config.type === 'gemini') return !!geminiKey;
+      return false;
+    })
+    .map(([name]) => name);
+}
+
+/**
+ * Parse optional provider weights from env var.
+ * Format: JSON string, e.g. '{"groq":100}' or '{"groq":70,"gemini":30}'
+ * Returns null if not configured or invalid.
+ * Phase A5.3 scaffolding — not used in routing yet.
+ * @returns {object|null}
+ */
+export function parseProviderWeights() {
+  const raw = process.env.HYBRID_PROVIDER_WEIGHTS;
+  if (!raw) return null;
+  try {
+    const weights = JSON.parse(raw);
+    if (typeof weights !== 'object' || weights === null) return null;
+    const total = Object.values(weights).reduce((sum, v) => sum + (Number(v) || 0), 0);
+    if (total <= 0) return null;
+    return weights;
+  } catch {
+    console.warn('[providers-config] Invalid HYBRID_PROVIDER_WEIGHTS, ignoring:', raw);
+    return null;
+  }
+}
+
+/**
  * Model metadata for UI and transparency
  * Provides human-readable information about each model
  * 
@@ -215,5 +256,7 @@ export default {
   getProviderConfig,
   getProvidersByTier,
   getAllProviderNames,
+  getEnabledProviders,
+  parseProviderWeights,
   getModelMetadata,
 };
