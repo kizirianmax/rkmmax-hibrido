@@ -135,4 +135,15 @@ describe('Phase A4 — Gateway Sovereignty', () => {
       );
     });
   });
+
+  describe('Test 6: hybrid.js contains env var guard (Phase A5.2)', () => {
+    it('api/hybrid.js checks for GEMINI_API_KEY or GROQ_API_KEY before executing', () => {
+      const hybridContent = fs.readFileSync(
+        path.join(API_DIR, 'hybrid.js'),
+        'utf8'
+      );
+      expect(hybridContent).toMatch(/GEMINI_API_KEY|GROQ_API_KEY/);
+      expect(hybridContent).toMatch(/No AI providers configured/);
+    });
+  });
 });

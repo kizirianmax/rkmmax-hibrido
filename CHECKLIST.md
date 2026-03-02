@@ -200,6 +200,14 @@ Legendas: ✅ feito | ⚠️ pendente | ⏭️ próximo
 - ✅ Test added: `api/__tests__/a4-gateway-sovereignty.test.js` → Test 5
 
 
+## Phase A5.2 — Hybrid Endpoint Stability Fix
+- ✅ `api/hybrid.js` — Added env var guard (GEMINI_API_KEY / GROQ_API_KEY check) before calling betinhoParallel
+- ✅ `api/hybrid.js` — Fixed error message matching: Portuguese "todos os providers falharam" from betinhoParallel now correctly maps to 503 (was falling through to generic 500)
+- ✅ Root cause: missing env guard + error message language mismatch
+- ✅ Rollback: revert these 2 changes in api/hybrid.js
+- ✅ Validation: POST /api/hybrid → returns 503 with helpful message when providers are down (not 500)
+
+
 - **Produção:** https://rkmmax-app.vercel.app
 - **GitHub:** https://github.com/kizirianmax/Rkmmax-app
 - **Último deploy:** 23/10/2025
