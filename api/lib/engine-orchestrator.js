@@ -1,4 +1,10 @@
 /**
+ * @deprecated Phase A4 — Soberania de Entrada Única (Gateway obrigatório)
+ * Use `api/lib/serginho-orchestrator.js` instead.
+ * This file is retained to avoid breaking unknown references but must NOT be
+ * imported by any route handler.
+ */
+/**
  * 🎯 ENGINE ORCHESTRATOR - Orquestração paralela de engines
  *
  * Fixes (CodeRabbit PR #95):

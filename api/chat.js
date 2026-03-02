@@ -17,7 +17,6 @@
  */
 import serginho from "./lib/serginho-orchestrator.js";
 import geniusPrompts from "../src/prompts/geniusPrompts.js";
-import { orchestrateEngines } from "./lib/engine-orchestrator.js";
 
 const { buildGeniusPrompt } = geniusPrompts;
 
@@ -69,9 +68,12 @@ async function streamResponse(res, messages, systemPrompt, options) {
     }, 3000);
 
     // Passa signal para o orquestrador poder cancelar fetches in-flight
-    const result = await orchestrateEngines(messages, systemPrompt, {
-      ...options,
-      signal: controller.signal,
+    const lastUserMsg = messages.findLast((m) => m.role === "user");
+    const result = await serginho.handleRequest({
+      message: lastUserMsg?.content || "",
+      messages,
+      context: { systemPrompt },
+      options: { signal: controller.signal, complexity: options.complexity },
     });
 
     clearTimeout(timeoutHandle);
@@ -79,7 +81,7 @@ async function streamResponse(res, messages, systemPrompt, options) {
 
     if (res.writableEnded || res.finished) return;
 
-    const response = result.response;
+    const response = result.text;
     const chunkSize = 50;
 
     for (let i = 0; i < response.length; i += chunkSize) {
@@ -95,7 +97,7 @@ async function streamResponse(res, messages, systemPrompt, options) {
       res,
       `data: ${JSON.stringify({
         model: result.model,
-        cached: result.cached,
+        cached: result.routing?.cacheHit || false,
         duration: Date.now() - startTime,
         success: true,
       })}\n\n`
