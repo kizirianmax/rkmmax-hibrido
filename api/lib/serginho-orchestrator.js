@@ -24,7 +24,7 @@
 import { randomUUID } from 'crypto';
 import { analyzeComplexity, routeToProvider, getNextFallback, FALLBACK_CHAIN } from '../../src/utils/intelligentRouter.js';
 import CircuitBreaker from './circuit-breaker.js';
-import { getProviderConfig, getModelMetadata, PROVIDERS, getEnabledProviders } from './providers-config.js';
+import { getProviderConfig, getModelMetadata, PROVIDERS, getEnabledProviders, getWeightedProviders } from './providers-config.js';
 import modelRegistry from './model-registry.js';
 
 // Versão do orquestrador (para versionamento de schema)
@@ -781,27 +781,27 @@ class SerginhoOrchestrator {
   async betinhoParallel(message, options = {}) {
     console.log('[Serginho] betinhoParallel: resolving enabled providers...');
 
-    // Only race providers whose env vars are actually configured
-    const enabledProviders = getEnabledProviders();
-    if (enabledProviders.length === 0) {
+    // Only race providers whose env vars are actually configured, ordered by weight
+    const providers = getWeightedProviders();
+    if (providers.length === 0) {
       throw new Error('betinhoParallel: nenhum provider configurado');
     }
 
     // Single-provider safe mode: no unnecessary race
-    if (enabledProviders.length === 1) {
-      console.log(`[Serginho] betinhoParallel: single-provider mode → ${enabledProviders[0]}`);
+    if (providers.length === 1) {
+      console.log(`[Serginho] betinhoParallel: single-provider mode → ${providers[0]}`);
       const result = await this.handleRequest({
         message,
         messages: options.messages || [],
         context: options.context || {},
-        options: { ...options, forceProvider: enabledProviders[0] },
+        options: { ...options, forceProvider: providers[0] },
       });
       return { ...result, _betinhoParallel: true, source: 'single' };
     }
 
     // Multi-provider parallel mode
-    console.log(`[Serginho] betinhoParallel: racing ${enabledProviders.length} providers...`);
-    const promises = enabledProviders.map((provider) =>
+    console.log(`[Serginho] betinhoParallel: racing ${providers.length} providers...`);
+    const promises = providers.map((provider) =>
       this.handleRequest({
         message,
         messages: options.messages || [],

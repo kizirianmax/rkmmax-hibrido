@@ -6,6 +6,7 @@ import {
   getAllProviderNames,
   getEnabledProviders,
   parseProviderWeights,
+  getWeightedProviders,
 } from '../lib/providers-config.js';
 
 // Mock environment variables
@@ -363,5 +364,91 @@ describe('parseProviderWeights', () => {
     process.env.HYBRID_PROVIDER_WEIGHTS = 'not-json';
     const result = parseProviderWeights();
     expect(result).toBeNull();
+  });
+});
+
+describe('getWeightedProviders (Phase A5.4)', () => {
+  const originalGroq = process.env.GROQ_API_KEY;
+  const originalGoogle = process.env.GOOGLE_API_KEY;
+  const originalGemini = process.env.GEMINI_API_KEY;
+  const originalGermini = process.env.GERMINI_API_KEY;
+  const originalWeights = process.env.HYBRID_PROVIDER_WEIGHTS;
+
+  afterEach(() => {
+    if (originalGroq !== undefined) process.env.GROQ_API_KEY = originalGroq;
+    else delete process.env.GROQ_API_KEY;
+    if (originalGoogle !== undefined) process.env.GOOGLE_API_KEY = originalGoogle;
+    else delete process.env.GOOGLE_API_KEY;
+    if (originalGemini !== undefined) process.env.GEMINI_API_KEY = originalGemini;
+    else delete process.env.GEMINI_API_KEY;
+    if (originalGermini !== undefined) process.env.GERMINI_API_KEY = originalGermini;
+    else delete process.env.GERMINI_API_KEY;
+    if (originalWeights !== undefined) process.env.HYBRID_PROVIDER_WEIGHTS = originalWeights;
+    else delete process.env.HYBRID_PROVIDER_WEIGHTS;
+  });
+
+  test('Groq-only + no weights → returns [llama-120b]', () => {
+    process.env.GROQ_API_KEY = 'test-groq-key';
+    delete process.env.GOOGLE_API_KEY;
+    delete process.env.GEMINI_API_KEY;
+    delete process.env.GERMINI_API_KEY;
+    delete process.env.HYBRID_PROVIDER_WEIGHTS;
+    const result = getWeightedProviders();
+    expect(result).toEqual(['llama-120b']);
+  });
+
+  test('valid weights sort correctly by weight descending', () => {
+    process.env.GROQ_API_KEY = 'test-groq-key';
+    delete process.env.GOOGLE_API_KEY;
+    delete process.env.GEMINI_API_KEY;
+    delete process.env.GERMINI_API_KEY;
+    process.env.HYBRID_PROVIDER_WEIGHTS = '{"llama-8b":90,"llama-120b":50,"llama-70b":70}';
+    const result = getWeightedProviders();
+    expect(result[0]).toBe('llama-8b');
+    expect(result[1]).toBe('llama-70b');
+    expect(result[2]).toBe('llama-120b');
+  });
+
+  test('weights with disabled providers (no Gemini key) → Gemini excluded', () => {
+    process.env.GROQ_API_KEY = 'test-groq-key';
+    delete process.env.GOOGLE_API_KEY;
+    delete process.env.GEMINI_API_KEY;
+    delete process.env.GERMINI_API_KEY;
+    process.env.HYBRID_PROVIDER_WEIGHTS = '{"gemini-exp-1206":100,"llama-120b":50}';
+    const result = getWeightedProviders();
+    expect(result).not.toContain('gemini-exp-1206');
+    expect(result).toContain('llama-120b');
+  });
+
+  test('invalid weights JSON → safe fallback to [llama-120b]', () => {
+    process.env.GROQ_API_KEY = 'test-groq-key';
+    delete process.env.GOOGLE_API_KEY;
+    delete process.env.GEMINI_API_KEY;
+    delete process.env.GERMINI_API_KEY;
+    process.env.HYBRID_PROVIDER_WEIGHTS = 'not-valid-json';
+    const result = getWeightedProviders();
+    expect(result).toEqual(['llama-120b']);
+  });
+
+  test('no providers enabled → returns []', () => {
+    delete process.env.GROQ_API_KEY;
+    delete process.env.GOOGLE_API_KEY;
+    delete process.env.GEMINI_API_KEY;
+    delete process.env.GERMINI_API_KEY;
+    delete process.env.HYBRID_PROVIDER_WEIGHTS;
+    const result = getWeightedProviders();
+    expect(result).toEqual([]);
+  });
+
+  test('Groq-only never includes Gemini providers', () => {
+    process.env.GROQ_API_KEY = 'test-groq-key';
+    delete process.env.GOOGLE_API_KEY;
+    delete process.env.GEMINI_API_KEY;
+    delete process.env.GERMINI_API_KEY;
+    delete process.env.HYBRID_PROVIDER_WEIGHTS;
+    const result = getWeightedProviders();
+    result.forEach((name) => {
+      expect(PROVIDERS[name].type).toBe('groq');
+    });
   });
 });

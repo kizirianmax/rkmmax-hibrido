@@ -220,6 +220,20 @@ Legendas: ✅ feito | ⚠️ pendente | ⏭️ próximo
 - ✅ Validation: POST /api/hybrid with only GROQ_API_KEY → works without Gemini errors
 
 
+## Phase A5.4 — Hybrid Weights Routing + 120B Default
+- ✅ `api/lib/providers-config.js` — Added `getWeightedProviders()`: deterministic provider selection using HYBRID_PROVIDER_WEIGHTS or defaulting to llama-120b
+- ✅ `api/lib/providers-config.js` — `parseProviderWeights()` (from A5.3) now actively consumed by `getWeightedProviders()`
+- ✅ `api/lib/serginho-orchestrator.js` — `betinhoParallel()` now uses `getWeightedProviders()` instead of `getEnabledProviders()` directly
+- ✅ `api/lib/serginho-orchestrator.js` — Default behavior: single-provider mode with llama-120b (no race, fully deterministic)
+- ✅ Tests: `getWeightedProviders()` — no weights → llama-120b; with weights → respects order; ignores disabled; Groq-only never includes Gemini
+- ✅ Static test: serginho-orchestrator.js uses getWeightedProviders (a4-gateway-sovereignty.test.js → Test 8)
+- **What**: Make `/api/hybrid` 100% deterministic — default to llama-120b, configurable via HYBRID_PROVIDER_WEIGHTS
+- **Why**: With only GROQ_API_KEY, betinhoParallel was racing 4 Groq providers (non-deterministic). Now defaults to llama-120b single-mode.
+- **Files**: `api/lib/providers-config.js`, `api/lib/serginho-orchestrator.js`, `api/__tests__/providers-config.test.js`, `api/__tests__/a4-gateway-sovereignty.test.js`, `CHECKLIST.md`
+- **Validation**: `npm test`; POST /api/hybrid with only GROQ_API_KEY → 200 + uses llama-120b
+- **Rollback**: Revert `getWeightedProviders()` in providers-config.js; revert betinhoParallel() to use `getEnabledProviders()` directly; remove tests; remove A5.4 section from CHECKLIST.md
+
+
 - **Produção:** https://rkmmax-app.vercel.app
 - **GitHub:** https://github.com/kizirianmax/Rkmmax-app
 - **Último deploy:** 23/10/2025
