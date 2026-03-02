@@ -195,6 +195,11 @@ class SerginhoOrchestrator {
     const orchestrationStartTime = Date.now();
     const traceId = randomUUID();
     
+    // Check for pre-aborted signal before starting
+    if (options.signal?.aborted) {
+      throw this._createAbortError();
+    }
+
     // 1. Analyze complexity
     const analysisStartTime = Date.now();
     const analysis = analyzeComplexity(message);
@@ -211,6 +216,11 @@ class SerginhoOrchestrator {
     let fallbackLevel = 0;
 
     while (currentProvider) {
+      // Check abort at the start of each iteration to prevent fallback after cancellation
+      if (options.signal?.aborted) {
+        throw this._createAbortError();
+      }
+
       try {
         // Check cache first
         const cacheCheckStartTime = Date.now();
@@ -242,6 +252,7 @@ class SerginhoOrchestrator {
           messages,
           context,
           analysis,
+          signal: options.signal,
         });
         const modelExecutionTime = Date.now() - modelExecutionStartTime;
 
@@ -257,8 +268,10 @@ class SerginhoOrchestrator {
         // ✨ NOVO: Registrar execução no ModelRegistry
         this.modelRegistry.recordExecution(modelId, true, modelExecutionTime, false);
 
-        // Cache successful response
-        this.cache.set(cacheKey, result);
+        // Cache successful response (skip if request was aborted)
+        if (!options.signal?.aborted) {
+          this.cache.set(cacheKey, result);
+        }
 
         const totalOrchestrationTime = Date.now() - orchestrationStartTime;
         this.metrics.recordRequest(currentProvider, totalOrchestrationTime, true, false);
@@ -280,6 +293,11 @@ class SerginhoOrchestrator {
         );
 
       } catch (error) {
+        // Re-throw AbortErrors immediately — no fallback, no metrics, no cache
+        if (this._isAbortError(error)) {
+          throw error;
+        }
+
         console.error(`[Serginho] Provider ${currentProvider} failed:`, error.message);
 
         // Phase A2: AbortError = neutral cancellation — re-throw immediately
@@ -326,6 +344,25 @@ class SerginhoOrchestrator {
         fallbackLevel++;
       }
     }
+  }
+
+  /**
+   * Creates a standardized AbortError
+   * @private
+   */
+  _createAbortError() {
+    const error = new Error('Request aborted');
+    error.name = 'AbortError';
+    return error;
+  }
+
+  /**
+   * Checks if an error is an AbortError
+   * @private
+   */
+  _isAbortError(error) {
+    return error?.name === 'AbortError' ||
+           error?.message?.toLowerCase().includes('aborted');
   }
 
   /**
@@ -500,7 +537,7 @@ class SerginhoOrchestrator {
    * Execute request with specific provider
    * @private
    */
-  async executeWithProvider(providerName, { message, messages, context, analysis }) {
+  async executeWithProvider(providerName, { message, messages, context, analysis, signal }) {
     const config = getProviderConfig(providerName);
     const breaker = this.circuitBreakers.get(providerName);
 
@@ -511,11 +548,11 @@ class SerginhoOrchestrator {
     return breaker.execute(async () => {
       switch (config.type) {
         case 'gemini':
-          return this.callGemini(config, message, messages, context);
+          return this.callGemini(config, message, messages, context, signal);
         case 'groq':
-          return this.callGroq(config, message, messages, context);
+          return this.callGroq(config, message, messages, context, signal);
         case 'openai':
-          return this.callOpenAI(config, message, messages, context);
+          return this.callOpenAI(config, message, messages, context, signal);
         default:
           throw new Error(`Unknown provider type: ${config.type}`);
       }
@@ -535,7 +572,7 @@ class SerginhoOrchestrator {
    * Call Gemini API
    * @private
    */
-  async callGemini(config, message, messages, context) {
+  async callGemini(config, message, messages, context, signal) {
     const formattedMessages = this.formatMessages(messages, message, 'gemini');
     
     const response = await fetch(config.endpoint, {
@@ -547,6 +584,7 @@ class SerginhoOrchestrator {
         contents: formattedMessages,
         generationConfig: config.generationConfig,
       }),
+      signal,
     });
 
     if (!response.ok) {
@@ -571,7 +609,7 @@ class SerginhoOrchestrator {
    * Call Groq API (OpenAI-compatible)
    * @private
    */
-  async callGroq(config, message, messages, context) {
+  async callGroq(config, message, messages, context, signal) {
     const apiKey = process.env.GROQ_API_KEY;
     if (!apiKey) {
       throw new Error('GROQ_API_KEY environment variable is required');
@@ -590,6 +628,7 @@ class SerginhoOrchestrator {
         messages: formattedMessages,
         ...config.defaultParams,
       }),
+      signal,
     });
 
     if (!response.ok) {
@@ -614,7 +653,7 @@ class SerginhoOrchestrator {
    * Call OpenAI API (future support)
    * @private
    */
-  async callOpenAI(config, message, messages, context) {
+  async callOpenAI(config, message, messages, context, signal) {
     const apiKey = process.env.OPENAI_API_KEY;
     if (!apiKey) {
       throw new Error('OPENAI_API_KEY environment variable is required');
@@ -633,6 +672,7 @@ class SerginhoOrchestrator {
         messages: formattedMessages,
         ...config.defaultParams,
       }),
+      signal,
     });
 
     if (!response.ok) {
