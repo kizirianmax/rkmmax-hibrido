@@ -299,7 +299,12 @@ class SerginhoOrchestrator {
         }
 
         console.error(`[Serginho] Provider ${currentProvider} failed:`, error.message);
-        
+
+        // Phase A2: AbortError = neutral cancellation — re-throw immediately
+        if (error.name === 'AbortError') {
+          throw error;
+        }
+
         const modelExecutionTime = Date.now() - orchestrationStartTime;
         
         // Record failed attempt

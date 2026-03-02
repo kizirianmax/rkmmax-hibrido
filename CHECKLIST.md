@@ -188,28 +188,19 @@ Legendas: ✅ feito | ⚠️ pendente | ⏭️ próximo
 - **Status:** ✅ Funcionando
 - **Bugs críticos:** 0
 
-## 🔧 Protocolo de Operações — Registro
+### [2026-03-02] Phase A2: AbortError tratado como cancelamento neutro
 
-### [2026-03-02] Phase A1: AbortSignal Propagation no Serginho Orchestrator
+O que foi feito:
+- AbortError não conta como falha sistêmica.
+- Não altera circuit breaker.
+- Não altera métricas.
+- Não registra falha em ModelRegistry.
 
-**O que foi feito:**
-- Implementação de propagação de AbortSignal no Serginho Orchestrator
-- `options.signal` aceito em `handleRequest()` e propagado até `fetch()` nos providers
-- AbortError é re-thrown imediatamente: sem fallback, sem circuit breaker, sem cache
-- Testes automatizados cobrindo 4 cenários de abort
+Motivo:
+- Cancelamento do cliente não é erro do provider.
+- Evita degradação artificial do sistema.
 
-**Por que:**
-- Cancelamento correto de requests mortos (ex.: timeout do endpoint, navegação do usuário)
-- Evitar gasto de créditos em execuções que já não serão consumidas
-- Base para unificação futura do streaming
-
-**Arquivos tocados:**
-- `api/lib/serginho-orchestrator.js` — propagação de signal, guards de abort, proteção de cache/breaker
-- `api/__tests__/serginho-orchestrator.test.js` — 4 novos testes de abort
-- `CHECKLIST.md` — este registro
-
-**Como validar:**
-- `npm test` — todos os testes devem passar
-- Verificar que testes de abort existentes passam
-- Nenhuma mudança fora do escopo (sem refatoração ampla)
+Validação:
+- Suite completa verde.
+- Sem alteração de comportamento em erros reais.
 

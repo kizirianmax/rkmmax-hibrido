@@ -63,7 +63,10 @@ export default class CircuitBreaker {
       this.onSuccess();
       return result;
     } catch (error) {
-      this.onFailure();
+      // AbortError = client cancellation, NOT a provider failure
+      if (error.name !== 'AbortError') {
+        this.onFailure();
+      }
       throw error;
     }
   }

@@ -115,4 +115,30 @@ describe('CircuitBreaker', () => {
       expect(state).toHaveProperty('nextAttempt');
     });
   });
+
+  describe('AbortError handling', () => {
+    test('ignores AbortError — state remains CLOSED and failures stay at 0', async () => {
+      const abortError = new DOMException('Aborted', 'AbortError');
+
+      // Throw AbortError multiple times (more than failureThreshold)
+      for (let i = 0; i < 3; i++) {
+        await expect(breaker.execute(async () => { throw abortError; })).rejects.toThrow('Aborted');
+      }
+
+      expect(breaker.getState().state).toBe('CLOSED');
+      expect(breaker.getState().failures).toBe(0);
+    });
+
+    test('regular errors still increment failures after AbortErrors', async () => {
+      const abortError = new DOMException('Aborted', 'AbortError');
+
+      // AbortErrors should not affect failures
+      await expect(breaker.execute(async () => { throw abortError; })).rejects.toThrow('Aborted');
+      expect(breaker.getState().failures).toBe(0);
+
+      // Regular error should increment failures
+      await expect(breaker.execute(async () => { throw new Error('real failure'); })).rejects.toThrow('real failure');
+      expect(breaker.getState().failures).toBe(1);
+    });
+  });
 });
