@@ -1,5 +1,5 @@
 // /public/service-worker.js
-const VERSION = "v1.2";
+const VERSION = "v1.3";
 const STATIC_CACHE = `rkmmax-static-${VERSION}`;
 const RUNTIME_CACHE = `rkmmax-runtime-${VERSION}`;
 
