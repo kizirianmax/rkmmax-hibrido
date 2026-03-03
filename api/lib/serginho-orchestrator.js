@@ -275,6 +275,7 @@ class SerginhoOrchestrator {
         // Record successful attempt
         const modelId = result.model || getProviderConfig(currentProvider).model;
         attemptedModels.push({
+          providerName: currentProvider,
           modelId,
           status: 'success',
           executionTime: modelExecutionTime,
@@ -321,6 +322,7 @@ class SerginhoOrchestrator {
         const isTimeout = error.message?.includes('timeout') || error.message?.includes('timed out');
         
         attemptedModels.push({
+          providerName: currentProvider,
           modelId,
           status: 'failed',
           executionTime: modelExecutionTime,
@@ -333,8 +335,14 @@ class SerginhoOrchestrator {
         
         this.metrics.recordRequest(currentProvider, modelExecutionTime, false, false);
         
-        // Get next fallback
-        const nextProvider = getNextFallback(currentProvider, attemptedModels.map(a => a.modelId));
+        // Get next fallback — use provider names for correct deduplication, skip disabled providers
+        const enabledProviders = getEnabledProviders();
+        let nextProvider = getNextFallback(currentProvider, attemptedModels.map(a => a.providerName));
+        // Skip disabled providers (e.g., Gemini when only GROQ_API_KEY is set)
+        while (nextProvider && !enabledProviders.includes(nextProvider)) {
+          console.log(`[Serginho] Skipping disabled provider: ${nextProvider}`);
+          nextProvider = getNextFallback(nextProvider, attemptedModels.map(a => a.providerName));
+        }
         
         if (!nextProvider) {
           throw new Error(`All providers failed. Tried: ${attemptedModels.map(a => a.modelId).join(', ')}`);

@@ -172,3 +172,39 @@ describe('Test D — betinhoParallel() uses getWeightedProviders(), not getEnabl
     expect(methodBody).not.toContain('getEnabledProviders()');
   });
 });
+
+// ─── Test E: Phase A5.6 — Fallback uses providerName + skips disabled ─────────
+describe('Test E — _handleStructured fallback uses providerName and skips disabled providers', () => {
+  it('attemptedModels entries contain providerName field', () => {
+    const filePath = path.resolve(__dirname, '../lib/serginho-orchestrator.js');
+    const content = fs.readFileSync(filePath, 'utf8');
+
+    // Both push calls inside _handleStructured must include providerName
+    const successPushMatch = content.match(/attemptedModels\.push\(\{[^}]*providerName: currentProvider[^}]*status: 'success'/s);
+    const failedPushMatch = content.match(/attemptedModels\.push\(\{[^}]*providerName: currentProvider[^}]*status: 'failed'/s);
+
+    expect(successPushMatch).not.toBeNull();
+    expect(failedPushMatch).not.toBeNull();
+  });
+
+  it('getNextFallback call uses providerName array, not modelId array', () => {
+    const filePath = path.resolve(__dirname, '../lib/serginho-orchestrator.js');
+    const content = fs.readFileSync(filePath, 'utf8');
+
+    // Must reference providerName in the getNextFallback call (flexible whitespace)
+    expect(/getNextFallback\s*\(\s*currentProvider\s*,\s*attemptedModels\.map\s*\(\s*a\s*=>\s*a\.providerName\s*\)\s*\)/.test(content)).toBe(true);
+    // Must NOT use modelId in any getNextFallback call (not in a comment)
+    const nonCommentLines = content.split('\n').filter(l => !l.trimStart().startsWith('//'));
+    const hasModelIdInFallback = nonCommentLines.some(l => /getNextFallback/.test(l) && /a\.modelId/.test(l));
+    expect(hasModelIdInFallback).toBe(false);
+  });
+
+  it('skips disabled providers in fallback loop (Groq-only: never attempts Gemini)', () => {
+    const filePath = path.resolve(__dirname, '../lib/serginho-orchestrator.js');
+    const content = fs.readFileSync(filePath, 'utf8');
+
+    // The while-loop that skips disabled providers must exist
+    expect(content).toContain('while (nextProvider && !enabledProviders.includes(nextProvider))');
+    expect(content).toContain('Skipping disabled provider:');
+  });
+});

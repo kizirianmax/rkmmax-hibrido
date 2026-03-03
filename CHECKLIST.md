@@ -249,6 +249,18 @@ Legendas: ✅ feito | ⚠️ pendente | ⏭️ próximo
 - **Rollback**: Delete `api/__tests__/hybrid-determinism.test.js`; remove A5.5 section from CHECKLIST.md
 
 
+## Phase A5.6 — Fallback Uses Provider Names + Skips Disabled Providers
+- ✅ `api/lib/serginho-orchestrator.js` — Change A: `providerName: currentProvider` added to successful `attemptedModels.push()`
+- ✅ `api/lib/serginho-orchestrator.js` — Change B: `providerName: currentProvider` added to failed `attemptedModels.push()`
+- ✅ `api/lib/serginho-orchestrator.js` — Change C: `getNextFallback` now uses `a.providerName` (not `a.modelId`); while-loop skips disabled providers
+- ✅ `api/__tests__/hybrid-determinism.test.js` — Test E added: static assertions that `providerName` is in push calls, `getNextFallback` uses `providerName`, and the skip-disabled while-loop is present
+- **What**: Fix fallback chain to use provider names instead of model IDs; skip disabled providers in fallback
+- **Why**: Provider names and model IDs differ (e.g., `llama-120b` vs `llama-3.3-70b-versatile`); deduplication was broken and disabled providers were attempted
+- **Files**: `api/lib/serginho-orchestrator.js`, `api/__tests__/hybrid-determinism.test.js`, `CHECKLIST.md`
+- **Validation**: `npm test`; POST /api/hybrid with only GROQ_API_KEY should never attempt Gemini providers
+- **Rollback**: Revert the 3 changes in `serginho-orchestrator.js` (remove `providerName` from `attemptedModels`, restore original `getNextFallback` call); remove Test E from `hybrid-determinism.test.js`
+
+
 - **Produção:** https://rkmmax-app.vercel.app
 - **GitHub:** https://github.com/kizirianmax/Rkmmax-app
 - **Último deploy:** 23/10/2025
