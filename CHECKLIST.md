@@ -255,3 +255,39 @@ Legendas: ✅ feito | ⚠️ pendente | ⏭️ próximo
 - **Status:** ✅ Funcionando
 - **Bugs críticos:** 0
 
+## Protocolo Oficial de Operações no Repositório
+
+> Toda alteração neste repositório deve ser documentada seguindo este protocolo.
+> Objetivo: rastreabilidade, governança e reversibilidade de cada operação.
+
+### Template de Registro de Operação
+
+```md
+### [DATA] — [TIPO DE OPERAÇÃO]
+- **O que foi feito:** descrição objetiva
+- **Justificativa:** por que foi necessário
+- **Estado resultante:** o que mudou no sistema
+- **Impacto arquitetural:** sim/não — se sim, ver docs/[ARQUIVO].md
+- **Commit:** hash e mensagem
+- **PR:** número e link (se aplicável)
+```
+
+### Tipos de Operação
+- `Feature` — nova funcionalidade
+- `Fix` — correção de bug
+- `Refactor` — reestruturação sem mudança funcional
+- `Docs` — atualização de documentação
+- `Test` — adição/alteração de testes
+- `Config` — mudança de configuração (env, CI, deploy)
+- `Governance` — mudança no protocolo ou processo
+
+### Histórico de Operações
+
+### 2026-03-01 — Formalização do Protocolo de Operações
+- **O que foi feito:** Adicionada seção "Protocolo Oficial de Operações no Repositório" ao CHECKLIST.md
+- **Justificativa:** Estabelecer governança e rastreabilidade para todas as operações futuras
+- **Estado resultante:** CHECKLIST.md agora inclui template e regras de documentação de operações
+- **Impacto arquitetural:** não
+- **Commit:** commit desta PR
+- **PR:** [#119](https://github.com/kizirianmax/rkmmax-hibrido/pull/119)
+
