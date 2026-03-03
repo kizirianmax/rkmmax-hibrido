@@ -1,10 +1,9 @@
 // /public/service-worker.js
-const VERSION = "v1.3";
+const VERSION = "v1.4";
 const STATIC_CACHE = `rkmmax-static-${VERSION}`;
 const RUNTIME_CACHE = `rkmmax-runtime-${VERSION}`;
 
 const ASSETS = [
-  "/",
   "/index.html",
   "/manifest.json"
 ];
