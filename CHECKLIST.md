@@ -261,6 +261,35 @@ Legendas: ✅ feito | ⚠️ pendente | ⏭️ próximo
 - **Rollback**: Revert the 3 changes in `serginho-orchestrator.js` (remove `providerName` from `attemptedModels`, restore original `getNextFallback` call); remove Test E from `hybrid-determinism.test.js`
 
 
+## Phase A5.5 — Health endpoint + Hybrid smoke test (incubadora-ready)
+
+**O que:** Adicionado GET /api/health para observabilidade de saúde do sistema + smoke test do hybrid em modo Groq-only.
+
+**Por quê:** Maturidade de produto (incubadora-ready). Sistema precisa de endpoint observável para monitoria e validação determinística do pipeline híbrido.
+
+**Arquivos:**
+- `api/health.js` (atualizado) — endpoint de saúde simplificado com campos obrigatórios
+- `api/__tests__/health-and-hybrid-smoke.test.js` (novo) — smoke tests
+- `CHECKLIST.md` — esta entrada
+
+**Estado resultante:**
+- GET /api/health responde 200 com status, commit, providers
+- Smoke test garante Groq-only determinístico
+- Fallback não tenta providers desabilitados
+
+**Impacto arquitetural:** Não. Adição pura, sem alteração de fluxo existente.
+
+**Validação:**
+- `npm test` — todos os testes passam
+- `curl GET /api/health` — responde 200 com JSON correto
+- Deploy preview verde
+
+**Rollback:**
+- Restaurar `api/health.js` para versão anterior
+- Remover arquivo de teste `api/__tests__/health-and-hybrid-smoke.test.js`
+- Reverter entrada no CHECKLIST.md
+
+
 - **Produção:** https://rkmmax-app.vercel.app
 - **GitHub:** https://github.com/kizirianmax/Rkmmax-app
 - **Último deploy:** 23/10/2025

@@ -409,12 +409,29 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ## 📊 Project Stats
 
 - 📦 1,719 npm packages
-- 📝 284 passing tests
+- 📝 396 passing tests
 - 📈 24% code coverage (growing)
-- 🚀 18 API endpoints
+- 🚀 19 API endpoints
 - 🤖 13 AI agents (1 orchestrator + 12 specialists)
 - 📄 25+ React pages
 - ⚡ Sub-second response times with caching
+
+---
+
+## Como validar produção
+
+### Verificar saúde
+```bash
+curl https://kizirianmax.site/api/health
+```
+
+### Smoke test do híbrido
+```bash
+npm test
+```
+
+### Domínio oficial
+- Produção: https://kizirianmax.site
 
 ---
 
