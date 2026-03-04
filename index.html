@@ -41,11 +41,39 @@
 <body>
   <noscript>Você precisa habilitar o JavaScript para rodar esta aplicação.</noscript>
   <div id="root"></div>
-  <!-- Service Worker: registro simples -->
+  <!-- SW kill-switch: remove legacy SWs/caches before bundle loads (1x per session) -->
+  <script>
+    (function () {
+      try {
+        var KEY = "rkmmax_sw_kill_html_v1";
+        if (!navigator.serviceWorker || sessionStorage.getItem(KEY) === "1") return;
+
+        Promise.all([
+          navigator.serviceWorker.getRegistrations().then(function (regs) {
+            return Promise.all(regs.map(function (r) { return r.unregister(); }));
+          }),
+          typeof caches !== "undefined"
+            ? caches.keys().then(function (keys) {
+                return Promise.all(
+                  keys
+                    .filter(function (k) { return k.indexOf("rkmmax-") === 0; })
+                    .map(function (k) { return caches.delete(k); })
+                );
+              })
+            : Promise.resolve([])
+        ]).then(function (results) {
+          var changed = (results[0] || []).some(Boolean) || (results[1] || []).some(Boolean);
+          sessionStorage.setItem(KEY, "1");
+          if (changed) window.location.reload();
+        });
+      } catch (e) { /* silent */ }
+    })();
+  </script>
+  <!-- Service Worker: registro (só roda após kill-switch permitir) -->
   <script>
     if ("serviceWorker" in navigator) {
-      window.addEventListener("load", () => {
-        navigator.serviceWorker.register("/service-worker.js").catch(() => {});
+      window.addEventListener("load", function () {
+        navigator.serviceWorker.register("/service-worker.js").catch(function () {});
       });
     }
   </script>
