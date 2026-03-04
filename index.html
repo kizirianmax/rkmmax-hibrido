@@ -48,9 +48,6 @@
         var KEY = "rkmmax_sw_kill_html_v1";
         if (!navigator.serviceWorker || sessionStorage.getItem(KEY) === "1") return;
 
-        var changed = false;
-        sessionStorage.setItem(KEY, "1");
-
         Promise.all([
           navigator.serviceWorker.getRegistrations().then(function (regs) {
             return Promise.all(regs.map(function (r) { return r.unregister(); }));
@@ -65,9 +62,8 @@
               })
             : Promise.resolve([])
         ]).then(function (results) {
-          var swResults = results[0] || [];
-          var cacheResults = results[1] || [];
-          changed = swResults.some(Boolean) || cacheResults.some(Boolean);
+          var changed = (results[0] || []).some(Boolean) || (results[1] || []).some(Boolean);
+          sessionStorage.setItem(KEY, "1");
           if (changed) window.location.reload();
         });
       } catch (e) { /* silent */ }
