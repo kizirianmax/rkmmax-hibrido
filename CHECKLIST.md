@@ -332,3 +332,75 @@ Legendas: ✅ feito | ⚠️ pendente | ⏭️ próximo
 - **Commit:** commit desta PR
 - **PR:** [#119](https://github.com/kizirianmax/rkmmax-hibrido/pull/119)
 
+
+
+---
+
+## Consolidação: rkmmax-hibrido como Repositório Soberano (2026-03-04)
+
+> Esta seção documenta a migração definitiva de `rkmmax-app` → `rkmmax-hibrido` como fonte de verdade.
+
+### Domínio e DNS
+
+| Item | Status | Detalhe |
+|---|---|---|
+| `kizirianmax.site` → `rkmmax-hibrido` | ✅ Concluído | Primary domain configurado |
+| `www.kizirianmax.site` → redirect 308 | ✅ Concluído | Redireciona para `kizirianmax.site` |
+| `rkmmax-app` sem domínio principal | ✅ Concluído | Apenas `rkmmax-app.vercel.app` |
+| Service Worker v1.5 + kill switch | ✅ Concluído | PR #125 mergeado |
+
+### ENV Vars — Status no Vercel (rkmmax-hibrido)
+
+| Variável | Status | Ação Necessária |
+|---|---|---|
+| `GROQ_API_KEY` | ✅ Configurada | — |
+| `GEMINI_API_KEY` | ⏭️ Pendente | Inserir manualmente |
+| `SUPABASE_URL` | ⏭️ Pendente | Inserir manualmente |
+| `SUPABASE_SERVICE_ROLE_KEY` | ⏭️ Pendente | Inserir manualmente |
+| `REACT_APP_SUPABASE_URL` | ⏭️ Pendente | Copiar do rkmmax-app |
+| `REACT_APP_SUPABASE_ANON_KEY` | ⏭️ Pendente | Copiar do rkmmax-app |
+| `STRIPE_SECRET_KEY_RKMMAX` | ⏭️ Pendente | Inserir manualmente |
+| `STRIPE_WEBHOOK_SECRET` | ⏭️ Pendente | Inserir manualmente |
+| `REACT_APP_STRIPE_PAYMENT_LINK_BASIC_BR` | ⏭️ Pendente | Copiar do rkmmax-app |
+| `REACT_APP_STRIPE_PAYMENT_LINK_BASIC_US` | ⏭️ Pendente | Copiar do rkmmax-app |
+| `REACT_APP_STRIPE_PAYMENT_LINK_INTERMEDIATE_BR` | ⏭️ Pendente | Copiar do rkmmax-app |
+| `REACT_APP_STRIPE_PAYMENT_LINK_INTERMEDIATE_US` | ⏭️ Pendente | Copiar do rkmmax-app |
+| `REACT_APP_STRIPE_PAYMENT_LINK_PREMIUM_BR` | ⏭️ Pendente | Copiar do rkmmax-app |
+| `REACT_APP_STRIPE_PAYMENT_LINK_PREMIUM_US` | ⏭️ Pendente | Copiar do rkmmax-app |
+| `GITHUB_TOKEN` | ⏭️ Pendente | Copiar do rkmmax-app |
+| `GITHUB_REPO` | ⏭️ Pendente | Valor: `kizirianmax/rkmmax-hibrido` |
+| `GITHUB_OAUTH_CLIENT_ID` | ⏭️ Pendente | Inserir manualmente |
+| `GITHUB_OAUTH_CLIENT_SECRET` | ⏭️ Pendente | Inserir manualmente |
+| `GITHUB_OAUTH_REDIRECT_URI` | ⏭️ Pendente | Valor: `https://kizirianmax.site/api/auth/github/callback` |
+| `RESEND_API_KEY` | ⏭️ Pendente | Inserir manualmente |
+| `FROM_EMAIL` | ⏭️ Pendente | Valor: `noreply@kizirianmax.site` |
+
+### Validação Final (executar após configurar ENV vars + redeploy)
+
+```bash
+# 1. Health check
+curl -s https://kizirianmax.site/api/health | python3 -m json.tool
+# Esperado: groq=true, gemini=true, service=rkmmax-hibrido
+
+# 2. Domínio principal (sem redirect)
+curl -sI https://kizirianmax.site/ | head -3
+# Esperado: HTTP/2 200
+
+# 3. www redirect
+curl -sI https://www.kizirianmax.site/ | head -3
+# Esperado: HTTP/2 308 + location: https://kizirianmax.site/
+```
+
+### Rollback
+
+Para reverter para `rkmmax-app` como produção:
+1. Remover `kizirianmax.site` das configurações de domínio do `rkmmax-hibrido` na Vercel
+2. Adicionar `kizirianmax.site` de volta ao `rkmmax-app` na Vercel
+3. Fazer redeploy do `rkmmax-app`
+
+### 2026-03-04 — Config: Consolidação de Domínio e ENV Vars
+- **O que foi feito:** `.env.example` atualizado com todas as variáveis necessárias; `CHECKLIST.md` atualizado com status de consolidação; domínio `kizirianmax.site` configurado como primary no `rkmmax-hibrido`
+- **Justificativa:** Tornar `rkmmax-hibrido` a única fonte de verdade para produção, eliminando dependência do `rkmmax-app`
+- **Estado resultante:** `.env.example` documenta 21 variáveis críticas + 9 opcionais; CHECKLIST.md tem status de cada variável
+- **Impacto arquitetural:** não — apenas documentação e configuração
+- **PR:** #126
