@@ -13,21 +13,26 @@ initializeSecrets();
     const KEY = "rkmmax_sw_kill_v1";
     if (typeof window === "undefined") return;
     if (sessionStorage.getItem(KEY) === "1") return;
-    sessionStorage.setItem(KEY, "1");
+
+    let changed = false;
 
     if ("serviceWorker" in navigator) {
       const regs = await navigator.serviceWorker.getRegistrations();
-      await Promise.all(regs.map(r => r.unregister()));
+      const results = await Promise.all(regs.map(r => r.unregister()));
+      if (results.some(Boolean)) changed = true;
     }
 
     if ("caches" in window) {
       const keys = await caches.keys();
-      await Promise.all(
+      const results = await Promise.all(
         keys.filter(k => k.startsWith("rkmmax-")).map(k => caches.delete(k))
       );
+      if (results.some(Boolean)) changed = true;
     }
 
-    window.location.reload();
+    sessionStorage.setItem(KEY, "1");
+
+    if (changed) window.location.reload();
   } catch (e) {
     // no-op: falha silenciosa para não travar UI
   }
