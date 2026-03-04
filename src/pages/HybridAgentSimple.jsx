@@ -2,6 +2,42 @@ import { useState, useRef, useEffect } from "react";
 import "../styles/HybridAgent.css";
 
 /**
+ * Renders AI response text with basic markdown formatting.
+ * Supports: paragraphs (\n\n), line breaks (\n), **bold**, `code`.
+ */
+function SimpleMarkdown({ text }) {
+  if (!text) return null;
+
+  const processInline = (str, keyPrefix) => {
+    const regex = /(\*\*[\s\S]+?\*\*|`[^`]+`)/g;
+    const parts = str.split(regex);
+    return parts.map((part, i) => {
+      if (part.startsWith("**") && part.endsWith("**")) {
+        return <strong key={`${keyPrefix}-b${i}`}>{part.slice(2, -2)}</strong>;
+      }
+      if (part.startsWith("`") && part.endsWith("`")) {
+        return <code key={`${keyPrefix}-c${i}`}>{part.slice(1, -1)}</code>;
+      }
+      return part;
+    });
+  };
+
+  const paragraphs = text.split(/\n\n+/);
+  return (
+    <>
+      {paragraphs.map((para, pi) => {
+        const lines = para.split("\n");
+        const content = lines.flatMap((line, li) => {
+          const inlined = processInline(line, `p${pi}l${li}`);
+          return li < lines.length - 1 ? [...inlined, <br key={`br-${pi}-${li}`} />] : inlined;
+        });
+        return <p key={pi}>{content}</p>;
+      })}
+    </>
+  );
+}
+
+/**
  * RKMMAX HYBRID - VERSÃO KIZI INTELIGENTE
  * Sistema 100% Groq com 3 modelos em cascata:
  * - KIZI Primary (openai/gpt-oss-120b) - Modelo principal
@@ -92,28 +128,21 @@ export default function HybridAgentSimple() {
 
     try {
 
-      // Chamar /api/ai com prompts de gênio + otimização
-      const response = await fetch("/api/ai", {
+      // Chamar /api/hybrid (100% openai/gpt-oss-120b via betinhoParallel)
+      const response = await fetch("/api/hybrid", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          messages: [
-            ...messages
-              .filter((msg) => msg.type !== "system")
-              .map((msg) => ({
-                role: msg.type === "user" ? "user" : "assistant",
-                content: msg.content,
-              })),
-            {
-              role: "user",
-              content: userInput,
-            },
-          ],
-          type: "genius", // Endpoint unificado
-          agentType: "hybrid", // Prompts de gênio do Híbrido
-          mode: mode.toUpperCase(), // MANUAL ou OTIMIZADO
+          message: userInput,
+          messages: messages
+            .filter((msg) => msg.type !== "system")
+            .map((msg) => ({
+              role: msg.type === "user" ? "user" : "assistant",
+              content: msg.content,
+            })),
+          sessionId: "hybrid-session",
         }),
       });
 
@@ -122,10 +151,10 @@ export default function HybridAgentSimple() {
       }
 
       const data = await response.json();
-      const aiResponse = data.response || data.message || "Sem resposta";
-      const provider = data.provider || "unknown";
-      const tier = data.tier || "standard";
-      const complexity = data.complexity || 0;
+      const aiResponse = data.text || data.response || data.message || "Sem resposta";
+      const provider = data.model?.displayName || data.model?.modelId || data.provider || "unknown";
+      const tier = data.routing?.selectedTier || data.tier || "standard";
+      const complexity = data.routing?.analyzedComplexity || data.complexity || 0;
 
 
       // Adicionar resposta do agente
@@ -370,7 +399,13 @@ export default function HybridAgentSimple() {
                   <span className="timestamp">{msg.timestamp.toLocaleTimeString()}</span>
                 </div>
               )}
-              <div className="message-content">{msg.content}</div>
+              <div className="message-content">
+                {msg.type === "agent" ? (
+                  <SimpleMarkdown text={msg.content} />
+                ) : (
+                  msg.content
+                )}
+              </div>
             </div>
           ))}
 
