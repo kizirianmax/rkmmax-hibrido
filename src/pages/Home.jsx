@@ -1,6 +1,6 @@
 import React from "react";
 import { BRAND } from "../config/brand.js";
-import FeedbackButton from "../components/FeedbackButton.jsx";
+
 
 /**
  * Home — RKMMAX Infinity Matrix/Study
@@ -8,48 +8,12 @@ import FeedbackButton from "../components/FeedbackButton.jsx";
  * - Card do Serginho + CTA para /agents
  * - Preview dos especialistas + link
  * - Card de Planos + CTA para /pricing
- * - Estilos inline leves (sem dependências)
+ * - Design profissional com tema azul
  */
 
 export default function Home() {
   return (
     <main style={sx.page} role="main" aria-label="Página inicial">
-      {/* Banner de Acesso Gratuito Beta */}
-      <div
-        style={{
-          background: "linear-gradient(135deg, #10b981 0%, #059669 100%)",
-          color: "#fff",
-          padding: "16px 24px",
-          borderRadius: "16px",
-          marginBottom: "24px",
-          textAlign: "center",
-          boxShadow: "0 4px 12px rgba(16, 185, 129, 0.3)",
-        }}
-      >
-        <div style={{ fontSize: "24px", marginBottom: "8px" }}>🎉</div>
-        <h2 style={{ fontSize: "20px", fontWeight: 800, margin: "0 0 8px 0" }}>
-          Acesso Gratuito Durante a Fase Beta!
-        </h2>
-        <p style={{ margin: "0 0 12px 0", fontSize: "15px" }}>
-          Todos os 54 especialistas + Serginho + Study Lab - 100% grátis!
-        </p>
-        <a
-          href="/serginho"
-          style={{
-            display: "inline-block",
-            padding: "10px 24px",
-            background: "#fff",
-            color: "#059669",
-            borderRadius: "12px",
-            fontWeight: 800,
-            textDecoration: "none",
-            boxShadow: "0 2px 8px rgba(0,0,0,0.1)",
-          }}
-        >
-          🚀 Começar Agora
-        </a>
-      </div>
-
       {/* Header / Hero */}
       <header style={sx.hero} aria-labelledby="hero-title">
         <div style={sx.heroOverlay} aria-hidden />
@@ -77,9 +41,7 @@ export default function Home() {
           />
 
           <div>
-            <h2 id="serginho-title" style={sx.h2}>
-              Serginho
-            </h2>
+            <h2 id="serginho-title" style={sx.h2}>Serginho</h2>
             <p style={sx.role}>Orquestrador</p>
           </div>
 
@@ -89,26 +51,50 @@ export default function Home() {
         </div>
 
         <p style={sx.p}>
-          Agente especial e generalista. Orquestra os especialistas, supervisiona e articula todas
-          as interações para resolver <strong>qualquer tarefa</strong>.
+          Agente especial e generalista. Orquestra os especialistas, supervisiona
+          e articula todas as interações para resolver <strong>qualquer tarefa</strong>.
         </p>
 
         <div style={{ display: "flex", gap: "10px", flexDirection: "column", marginTop: 16 }}>
-          <a href="/serginho" style={sx.ctaBlue} role="button" aria-label="Falar com o Serginho">
+          <a
+            href="/serginho"
+            style={sx.ctaPrimary}
+            role="button"
+            aria-label="Falar com o Serginho"
+          >
             🤖 Falar com o Serginho
           </a>
           <a
             href="/specialists"
-            style={sx.ctaPurple}
+            style={sx.ctaSecondary}
             role="button"
             aria-label="Explorar Especialistas"
           >
             👥 Explorar Especialistas
           </a>
-          <a href="/study" style={sx.ctaGreen} role="button" aria-label="Abrir Study Lab">
+          <a
+            href="/study"
+            style={sx.ctaTertiary}
+            role="button"
+            aria-label="Abrir Study Lab"
+          >
             📚 Abrir Study Lab
           </a>
-          <a href="/pricing" style={sx.ctaOrange} role="button" aria-label="Ver Planos">
+          <a
+            href="/hybrid"
+            style={sx.ctaHybrid}
+            role="button"
+            aria-label="Agente Híbrido"
+          >
+            <img src="/avatars/hybrid.png" alt="Avatar do Agente Híbrido" style={sx.hybridAvatar} />
+            Agente Híbrido
+          </a>
+          <a
+            href="/pricing"
+            style={sx.ctaOutline}
+            role="button"
+            aria-label="Ver Planos"
+          >
             💳 Ver Planos
           </a>
         </div>
@@ -117,18 +103,14 @@ export default function Home() {
       {/* Informações e Regulamento */}
       <section style={sx.infoCard} aria-labelledby="info-title">
         <div style={sx.infoHeader}>
-          <div style={sx.infoIcon} aria-hidden>
-            📜
-          </div>
-          <h3 id="info-title" style={sx.infoTitle}>
-            Sobre o RKMMAX
-          </h3>
+          <div style={sx.infoIcon} aria-hidden>📜</div>
+          <h3 id="info-title" style={sx.infoTitle}>Sobre o RKMMAX</h3>
         </div>
 
         <p style={sx.infoText}>
-          Plataforma completa com <strong>54 especialistas de IA</strong> orquestrados pelo
-          Serginho. Pagamento seguro via <strong>Stripe</strong>, acesso imediato e suporte dedicado
-          para transformar suas ideias em realidade.
+          Plataforma completa com <strong>54 especialistas de IA</strong> orquestrados pelo Serginho. 
+          Pagamento seguro via <strong>Stripe</strong>, acesso imediato e suporte dedicado para 
+          transformar suas ideias em realidade.
         </p>
 
         <div style={sx.benefitsList}>
@@ -150,8 +132,8 @@ export default function Home() {
           </div>
         </div>
 
-        <a
-          href="/regulamento"
+        <a 
+          href="/regulamento" 
           style={sx.regulamentoButton}
           role="button"
           aria-label="Ver regulamento do projeto"
@@ -166,13 +148,12 @@ export default function Home() {
         </small>
       </footer>
 
-      {/* Botão Feedback - apenas na Home */}
-      <FeedbackButton />
+
     </main>
   );
 }
 
-/* ─── design tokens / estilos ─── */
+/* ─── design tokens / estilos AZUL PROFISSIONAL ─── */
 
 const tone = {
   ink: "#0f172a",
@@ -181,9 +162,12 @@ const tone = {
   soft: "#64748b",
   line: "rgba(148,163,184,.35)",
   bgCard: "#ffffff",
-  grad: "linear-gradient(90deg, rgba(59,130,246,1) 0%, rgba(79,70,229,1) 100%)",
-  chipGrad: "linear-gradient(180deg,#6366f1,#9333ea)",
-  heartGrad: "radial-gradient(120% 120% at 10% 0%, #ec4899, #8b5cf6)",
+  // Gradientes azuis profissionais
+  gradPrimary: "linear-gradient(135deg, #1e40af 0%, #3b82f6 100%)",
+  gradSecondary: "linear-gradient(135deg, #1d4ed8 0%, #60a5fa 100%)",
+  gradTertiary: "linear-gradient(135deg, #0369a1 0%, #0ea5e9 100%)",
+  // Badge azul
+  badgeGrad: "linear-gradient(135deg, #1e40af 0%, #3b82f6 50%, #60a5fa 100%)"
 };
 
 const sx = {
@@ -191,24 +175,25 @@ const sx = {
     maxWidth: 1120,
     margin: "0 auto",
     padding: "28px 16px 56px",
-    paddingBottom: "96px", // Espaço para botão flutuante no mobile
-    fontFamily: 'system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial',
+    paddingBottom: "96px",
+    fontFamily:
+      'system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial',
     color: tone.ink,
-    lineHeight: 1.45,
+    lineHeight: 1.45
   },
-  hero: {
+  hero: { 
     marginBottom: 12,
     position: "relative",
     padding: "32px 20px",
     borderRadius: 16,
     background: "url('/hero-bg.png') center/cover no-repeat",
-    overflow: "hidden",
+    overflow: "hidden"
   },
   heroOverlay: {
     position: "absolute",
     inset: 0,
-    background: "linear-gradient(135deg, rgba(255,255,255,0.75) 0%, rgba(255,255,255,0.65) 100%)",
-    borderRadius: 16,
+    background: "linear-gradient(135deg, rgba(15,23,42,0.75) 0%, rgba(30,58,138,0.7) 100%)",
+    borderRadius: 16
   },
   title: {
     fontSize: 36,
@@ -217,14 +202,10 @@ const sx = {
     margin: "0 0 10px",
     position: "relative",
     zIndex: 1,
+    color: "#ffffff",
+    textShadow: "0 2px 8px rgba(0,0,0,0.5)"
   },
-  brand: {
-    background: tone.grad,
-    WebkitBackgroundClip: "text",
-    backgroundClip: "text",
-    color: "transparent",
-  },
-  sub: { margin: "0 0 24px", fontSize: 18, color: tone.mute, position: "relative", zIndex: 1 },
+  sub: { margin: "0 0 24px", fontSize: 18, color: "rgba(255,255,255,0.95)", position: "relative", zIndex: 1, textShadow: "0 1px 4px rgba(0,0,0,0.4)" },
 
   card: {
     background: tone.bgCard,
@@ -232,6 +213,7 @@ const sx = {
     padding: 20,
     boxShadow: "0 10px 20px rgba(2,8,23,.06), 0 2px 6px rgba(2,8,23,.04)",
     marginBottom: 16,
+    border: "1px solid rgba(59,130,246,0.1)"
   },
   row: { display: "flex", gap: 16, alignItems: "center" },
   sergImg: {
@@ -239,9 +221,9 @@ const sx = {
     height: 64,
     borderRadius: 14,
     objectFit: "cover",
-    background: "linear-gradient(180deg, #0ea5e9, #8b5cf6)",
+    background: "linear-gradient(180deg, #1e40af, #3b82f6)",
     boxShadow: "inset 0 0 3px rgba(255,255,255,.6)",
-    flexShrink: 0,
+    flexShrink: 0
   },
   badgePWA: {
     marginLeft: "auto",
@@ -250,220 +232,158 @@ const sx = {
     fontSize: 13,
     fontWeight: 800,
     color: "#fff",
-    background: "linear-gradient(135deg, #8b5cf6 0%, #ec4899 50%, #f59e0b 100%)",
-    boxShadow: "0 4px 12px rgba(139,92,246,.35), 0 2px 6px rgba(236,72,153,.25)",
+    background: tone.badgeGrad,
+    boxShadow: "0 4px 12px rgba(30,64,175,.35)",
     backdropFilter: "blur(2px)",
-    letterSpacing: "1px",
+    letterSpacing: "1px"
   },
-  h2: { fontSize: 24, fontWeight: 900, margin: 0 },
+  h2: { fontSize: 24, fontWeight: 900, margin: 0, color: tone.ink },
   h3: { margin: "18px 0 6px", fontSize: 18, fontWeight: 900, color: tone.ink2 },
-  role: { margin: "2px 0 0", fontSize: 14, color: tone.soft },
+  role: { margin: "2px 0 0", fontSize: 14, color: "#3b82f6", fontWeight: 600 },
   p: { margin: "12px 0", color: "#374151" },
 
-  ctaBlue: {
+  // Botões em tons de azul profissional
+  ctaPrimary: {
     display: "block",
-    padding: "12px 20px",
+    padding: "14px 20px",
     textAlign: "center",
     borderRadius: 12,
     color: "#fff",
     fontWeight: 700,
     fontSize: 15,
-    background: "linear-gradient(135deg, #3b82f6 0%, #2563eb 100%)",
-    boxShadow: "0 4px 12px rgba(59,130,246,.3)",
+    background: "linear-gradient(135deg, #1e40af 0%, #2563eb 100%)",
+    boxShadow: "0 4px 12px rgba(30,64,175,.35)",
     textDecoration: "none",
-    touchAction: "manipulation",
+    touchAction: "manipulation"
   },
-  ctaPurple: {
+  ctaSecondary: {
     display: "block",
-    padding: "12px 20px",
+    padding: "14px 20px",
     textAlign: "center",
     borderRadius: 12,
     color: "#fff",
     fontWeight: 700,
     fontSize: 15,
-    background: "linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%)",
-    boxShadow: "0 4px 12px rgba(139,92,246,.3)",
+    background: "linear-gradient(135deg, #1d4ed8 0%, #3b82f6 100%)",
+    boxShadow: "0 4px 12px rgba(29,78,216,.3)",
     textDecoration: "none",
-    touchAction: "manipulation",
+    touchAction: "manipulation"
   },
-  ctaGreen: {
+  ctaTertiary: {
     display: "block",
-    padding: "12px 20px",
+    padding: "14px 20px",
     textAlign: "center",
     borderRadius: 12,
     color: "#fff",
     fontWeight: 700,
     fontSize: 15,
-    background: "linear-gradient(135deg, #10b981 0%, #059669 100%)",
-    boxShadow: "0 4px 12px rgba(16,185,129,.3)",
+    background: "linear-gradient(135deg, #0369a1 0%, #0ea5e9 100%)",
+    boxShadow: "0 4px 12px rgba(3,105,161,.3)",
     textDecoration: "none",
-    touchAction: "manipulation",
+    touchAction: "manipulation"
   },
-  ctaOrange: {
+  ctaHybrid: {
     display: "block",
-    padding: "12px 20px",
+    padding: "14px 20px",
     textAlign: "center",
     borderRadius: 12,
     color: "#fff",
     fontWeight: 700,
     fontSize: 15,
-    background: "linear-gradient(135deg, #f59e0b 0%, #d97706 100%)",
-    boxShadow: "0 4px 12px rgba(245,158,11,.3)",
+    background: "linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%)",
+    boxShadow: "0 4px 12px rgba(99,102,241,.35)",
     textDecoration: "none",
-    touchAction: "manipulation",
+    touchAction: "manipulation"
   },
-
-  sectionHeader: {
-    display: "flex",
-    alignItems: "baseline",
-    justifyContent: "space-between",
-    marginTop: 12,
-    marginBottom: 8,
+  hybridAvatar: {
+    width: 20,
+    height: 20,
+    borderRadius: 4,
+    marginRight: 8,
+    verticalAlign: "middle"
   },
-  link: { fontWeight: 900, color: "#4338ca", textDecoration: "none" },
-
-  chipsRow: {
-    marginTop: 12,
-    display: "flex",
-    gap: 12,
-    overflowX: "auto",
-    paddingBottom: 6,
-  },
-  chip: {
-    display: "inline-flex",
-    alignItems: "center",
-    gap: 10,
-    padding: "10px 14px",
-    borderRadius: 14,
-    background: "#fff",
-    border: `1px solid ${tone.line}`,
-    boxShadow: "0 4px 10px rgba(2,8,23,.06)",
-    whiteSpace: "nowrap",
-    outline: "none",
-  },
-  chipIcon: {
-    width: 36,
-    height: 36,
-    borderRadius: 10,
-    display: "grid",
-    placeItems: "center",
-    background: tone.chipGrad,
-    color: "#fff",
-    fontWeight: 900,
-    fontSize: 18,
-    flexShrink: 0,
-  },
-  chipBadge: {
-    padding: "4px 10px",
-    borderRadius: 999,
-    fontSize: 12,
-    fontWeight: 900,
-    color: tone.ink2,
-    background: "#f1f5f9",
-    border: `1px solid ${tone.line}`,
-  },
-
-  plansIcon: {
-    width: 64,
-    height: 64,
-    borderRadius: 14,
-    display: "grid",
-    placeItems: "center",
-    background: tone.heartGrad,
-    color: "#fff",
-    fontSize: 28,
-    flexShrink: 0,
-  },
-  buttonDark: {
-    display: "inline-block",
-    padding: "12px 20px",
-    minHeight: 48,
-    borderRadius: 16,
-    fontWeight: 900,
-    fontSize: 16,
-    color: "#fff",
-    background: "#0f172a",
-    textDecoration: "none",
-    marginTop: 2,
-    touchAction: "manipulation",
-  },
-  features: {
-    marginTop: 12,
-    padding: "12px 14px",
+  ctaOutline: {
+    display: "block",
+    padding: "14px 20px",
+    textAlign: "center",
     borderRadius: 12,
-    background: "linear-gradient(180deg, rgba(255,255,255,.65), rgba(255,255,255,.95))",
-    border: `1px solid ${tone.line}`,
-    color: tone.mute,
+    color: "#1e40af",
+    fontWeight: 700,
     fontSize: 15,
+    background: "transparent",
+    border: "2px solid #3b82f6",
+    boxShadow: "0 2px 8px rgba(59,130,246,.15)",
+    textDecoration: "none",
+    touchAction: "manipulation"
   },
 
+  // Info Card
   infoCard: {
-    background: "linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%)",
+    background: "linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%)",
     borderRadius: 16,
-    padding: 24,
-    marginBottom: 20,
-    border: "1px solid #e2e8f0",
-    boxShadow: "0 4px 12px rgba(15,23,42,.08)",
+    padding: 20,
+    marginBottom: 16,
+    border: "1px solid rgba(59,130,246,0.2)"
   },
   infoHeader: {
     display: "flex",
     alignItems: "center",
     gap: 12,
-    marginBottom: 16,
+    marginBottom: 12
   },
   infoIcon: {
-    width: 48,
-    height: 48,
-    borderRadius: 12,
-    display: "grid",
-    placeItems: "center",
-    background: "linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%)",
-    fontSize: 24,
-    flexShrink: 0,
+    fontSize: 24
   },
   infoTitle: {
-    fontSize: 20,
-    fontWeight: 900,
-    margin: 0,
-    color: tone.ink2,
+    fontSize: 18,
+    fontWeight: 800,
+    color: "#1e40af",
+    margin: 0
   },
   infoText: {
-    margin: "0 0 16px",
+    color: "#334155",
     fontSize: 15,
     lineHeight: 1.6,
-    color: "#475569",
+    margin: "0 0 16px 0"
   },
   benefitsList: {
     display: "grid",
+    gridTemplateColumns: "repeat(2, 1fr)",
     gap: 10,
-    marginBottom: 20,
+    marginBottom: 16
   },
   benefitItem: {
     display: "flex",
     alignItems: "center",
-    gap: 10,
+    gap: 8,
     fontSize: 14,
-    color: "#334155",
+    color: "#334155"
   },
   benefitIcon: {
-    fontSize: 16,
-    flexShrink: 0,
+    fontSize: 16
   },
   regulamentoButton: {
     display: "block",
     padding: "12px 20px",
     textAlign: "center",
     borderRadius: 12,
-    color: "#fff",
+    color: "#1e40af",
     fontWeight: 700,
-    fontSize: 15,
-    background: "linear-gradient(135deg, #0f172a 0%, #334155 100%)",
-    boxShadow: "0 4px 12px rgba(15,23,42,.25)",
+    fontSize: 14,
+    background: "#fff",
+    border: "1px solid #3b82f6",
     textDecoration: "none",
-    touchAction: "manipulation",
-    border: "1px solid #1e293b",
+    boxShadow: "0 2px 8px rgba(59,130,246,.1)"
   },
 
-  footer: { marginTop: 24, textAlign: "center" },
-  muted: { color: tone.soft },
+  footer: {
+    textAlign: "center",
+    marginTop: 32,
+    paddingTop: 20,
+    borderTop: "1px solid rgba(59,130,246,0.15)"
+  },
+  muted: {
+    color: tone.soft,
+    fontSize: 13
+  }
 };

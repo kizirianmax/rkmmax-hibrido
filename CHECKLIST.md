@@ -404,3 +404,28 @@ Para reverter para `rkmmax-app` como produção:
 - **Estado resultante:** `.env.example` documenta 21 variáveis críticas + 9 opcionais; CHECKLIST.md tem status de cada variável
 - **Impacto arquitetural:** não — apenas documentação e configuração
 - **PR:** #126
+
+
+## 🎨 Restauração Frontend Novo (Tema Azul Profissional)
+
+**Data:** 2026-03-04  
+**O quê:** Portado o visual "novo/evoluído" do Rkmmax-app para rkmmax-hibrido  
+**Por quê:** O visual em produção estava com o tema "antigo" multicolorido; o tema azul profissional é mais elegante e coerente
+
+### Arquivos alterados
+| Arquivo | Mudança |
+|---------|---------|
+| `src/pages/Home.jsx` | Tema azul profissional: hero dark overlay, CTAs em tons de azul, info card azul, sem banner beta, layout limpo |
+| `src/components/Header.jsx` | flexWrap, gap 12, alignItems center no nav |
+| `CHECKLIST.md` | Esta documentação |
+
+### Validação
+- [ ] Abrir `/` (Home) — tema azul profissional visível (hero escuro com texto branco, CTAs azuis)
+- [ ] Navegar `/serginho` — padrão visual mantido
+- [ ] Navegar `/hybrid` — funcionalidade mantida
+
+### Rollback
+```bash
+git revert <commit-sha>
+```
+Ou restaurar os arquivos antigos do commit anterior.

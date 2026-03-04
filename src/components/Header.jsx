@@ -12,6 +12,8 @@ export default function Header() {
         display: "flex",
         alignItems: "center",
         justifyContent: "space-between",
+        flexWrap: "wrap",
+        gap: 12,
       }}
     >
       <Link to="/" style={{ fontWeight: 800, textDecoration: "none", color: "#111" }}>
@@ -19,7 +21,7 @@ export default function Header() {
         <span className="brand-short">{BRAND.shortLockup}</span>
       </Link>
 
-      <nav className="nav" style={{ display: "flex", gap: 12 }}>
+      <nav className="nav" style={{ display: "flex", gap: 12, alignItems: "center" }}>
         <NavLink to="/">Home</NavLink>
         <NavLink to="/serginho">Serginho</NavLink>
         <NavLink to="/hybrid" title="Sistema Híbrido Otimizado">
