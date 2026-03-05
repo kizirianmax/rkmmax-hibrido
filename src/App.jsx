@@ -22,11 +22,11 @@ import Success from "./pages/Success.jsx";
 import Subscription from "./pages/Subscription.jsx";
 import Onboarding from "./components/Onboarding.jsx";
 import OptionalSignupBanner from "./components/OptionalSignupBanner.jsx";
-import Footer from "./components/Footer.jsx";
 import ConsentBanner from "./components/ConsentBanner.jsx";
 import Privacy from "./pages/Privacy.jsx";
 import Terms from "./pages/Terms.jsx";
 import Refund from "./pages/Refund.jsx";
+import Regulamento from "./pages/Regulamento.jsx";
 import HybridAgentSimple from "./pages/HybridAgentSimple.jsx";
 import GitHubCallback from "./pages/GitHubCallback.jsx";
 
@@ -105,13 +105,11 @@ export default function App() {
         <Route path="/privacy" element={<Privacy />} />
         <Route path="/terms" element={<Terms />} />
         <Route path="/refund" element={<Refund />} />
+        <Route path="/regulamento" element={<Regulamento />} />
 
         {/* Fallback */}
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
-
-      {/* Footer */}
-      <Footer />
     </BrowserRouter>
   );
 }
