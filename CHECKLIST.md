@@ -1,4 +1,32 @@
 # ✅ Checklist Projeto RKMMax (Atualizado — 23/10/2025)
+
+## 2026-03-05 — Feature: Rota /regulamento + Footer exclusivo
+
+### O que foi feito
+- Criado `src/pages/Regulamento.jsx` portando conteúdo do Rkmmax-app
+- Registrada rota `/regulamento` no App.jsx
+- Removido `<Footer />` global do App.jsx (footer agora só aparece dentro de /regulamento)
+- Adicionado `scrollTo(0,0)` no mount do Regulamento para corrigir scroll
+
+### Justificativa
+Footer + normas estavam poluindo todas as telas. Regulamento precisa de uma rota dedicada. Link na Home apontava para 404.
+
+### Arquivos alterados
+| Arquivo | Mudança |
+|---------|---------|
+| `src/pages/Regulamento.jsx` | NOVO — página completa com conformidades, normas, políticas e footer |
+| `src/App.jsx` | Adicionada rota /regulamento, removido Footer global |
+| `CHECKLIST.md` | Esta entrada |
+
+### Validação
+- [ ] Abrir Home: campo de escrever NÃO fica escondido/espremido, footer pesado NÃO aparece
+- [ ] Clicar "📜 Regulamento do Projeto" na Home → abre /regulamento
+- [ ] Regulamento: footer + normas aparecem organizados; navegação não dá "pulo" de scroll
+- [ ] Voltar para Home: página no topo, sem salto estranho
+- [ ] /privacy, /terms, /refund continuam funcionando
+
+### Rollback
+git revert <commit-sha>
 Legendas: ✅ feito | ⚠️ pendente | ⏭️ próximo
 
 1) Infra / Vercel
