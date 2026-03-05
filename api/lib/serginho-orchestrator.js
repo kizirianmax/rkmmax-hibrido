@@ -236,6 +236,19 @@ class SerginhoOrchestrator {
     let currentProvider = options.forceProvider || routing.provider;
     let fallbackLevel = 0;
 
+    // Phase A5.7: Guard against forcing a disabled provider (e.g., Gemini without GOOGLE_API_KEY)
+    const enabledProvidersList = getEnabledProviders();
+    if (options.forceProvider && !enabledProvidersList.includes(options.forceProvider)) {
+      console.warn(`[Serginho] forceProvider "${options.forceProvider}" is disabled (missing API key). Falling back to auto-route: ${routing.provider}`);
+      warnings.push({
+        code: 'FORCED_PROVIDER_DISABLED',
+        message: `Requested provider "${options.forceProvider}" is disabled. Using ${routing.provider} instead.`,
+        severity: 'warning',
+        timestamp: new Date().toISOString()
+      });
+      currentProvider = routing.provider;
+    }
+
     while (currentProvider) {
       try {
         // Check cache first
