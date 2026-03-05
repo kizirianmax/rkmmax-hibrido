@@ -469,3 +469,33 @@ Ou restaurar os arquivos antigos do commit anterior.
 | **Arquivos** | `api/lib/providers-config.js`, `api/hybrid.js`, `CHECKLIST.md` |
 | **Validação** | 1) POST `/api/hybrid` → Vercel Logs deve mostrar `[HYBRID] provider=groq model=openai/gpt-oss-120b groqOnly=true` 2) Resposta 200 deve ter `model.modelId` = `openai/gpt-oss-120b` 3) Se GROQ_API_KEY ausente → 503 |
 | **Rollback** | `git revert <commit>` — volta para `betinhoParallel()` com 70B |
+
+## Phase A5.7 — Disable Gemini When No Google Key (Minimal Guard)
+
+**O que:** Added runtime guard to prevent Gemini providers from being selected or forced when `GOOGLE_API_KEY` is absent.
+
+**Por quê:** Although `getEnabledProviders()` already filters Gemini, two code paths could still attempt Gemini: (1) `forceProvider` in `_handleStructured()` bypassed the enabled check, and (2) `api/transcribe.js` hardcoded `forceProvider: 'gemini-2.0-flash'`.
+
+**Arquivos:**
+- `api/lib/serginho-orchestrator.js` — Added guard in `_handleStructured()`: if `forceProvider` is not in enabled list, falls back to auto-routed provider with warning log
+- `api/transcribe.js` — Added `getEnabledProviders()` check before forcing gemini-2.0-flash; omits `forceProvider` if Gemini is disabled
+- `CHECKLIST.md` — This entry
+
+**Estado resultante:**
+- With `GOOGLE_API_KEY` absent, ALL routes (`/api/chat`, `/api/specialist-chat`, `/api/hybrid`, `/api/transcribe`, `/api/ai`) use only Groq providers
+- `forceProvider` for disabled providers produces a warning log + graceful fallback (no crash)
+- No providers removed from `PROVIDERS` object (guard-only)
+- Existing tests continue to pass
+
+**Impacto arquitetural:** Não. Guard-only, no new dependencies, no routing logic changes.
+
+**Validação:**
+- `npm test` — all tests pass
+- With `GOOGLE_API_KEY` empty: Vercel Logs show only groq providers; no `gemini-*` selection
+- `POST /api/transcribe` with no Google key → falls back to Groq auto-route (no crash)
+- `POST /api/hybrid` → unchanged (already forces llama-120b)
+
+**Rollback:**
+- Revert the guard in `serginho-orchestrator.js` (remove the `if (options.forceProvider && !enabledProvidersList.includes(...))` block)
+- Revert `transcribe.js` to hardcode `forceProvider: 'gemini-2.0-flash'`
+- Remove A5.7 section from `CHECKLIST.md`

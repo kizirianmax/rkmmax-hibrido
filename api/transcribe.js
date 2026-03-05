@@ -11,6 +11,7 @@
  */
 import busboy from "busboy";
 import serginho from "./lib/serginho-orchestrator.js";
+import { getEnabledProviders } from './lib/providers-config.js';
 
 /**
  * Transcribe audio using Serginho Orchestrator
@@ -23,7 +24,10 @@ async function transcribeAudio(audioBuffer) {
   const prompt = `Transcreva este áudio em português. Retorne APENAS o texto transcrito, sem explicações ou comentários adicionais.`;
   
   // Use Serginho Orchestrator with forced provider for fast transcription
-  // Force gemini-2.0-flash for optimal speed/accuracy balance
+  // Phase A5.7: Only force gemini-2.0-flash if Gemini is actually enabled
+  const enabledProviders = getEnabledProviders();
+  const geminiAvailable = enabledProviders.includes('gemini-2.0-flash');
+
   const result = await serginho.handleRequest({
     message: prompt,
     messages: [],
@@ -33,7 +37,7 @@ async function transcribeAudio(audioBuffer) {
       mimeType: 'audio/mpeg',
     },
     options: {
-      forceProvider: 'gemini-2.0-flash', // Force Flash for speed
+      ...(geminiAvailable ? { forceProvider: 'gemini-2.0-flash' } : {}),
     },
   });
   
