@@ -53,6 +53,16 @@ export default async function handler(req, res) {
     return res.status(405).json({ error: "Method not allowed" });
   }
 
+  // Guard: transcription requires Gemini (GOOGLE_API_KEY)
+  const googleKey = process.env.GOOGLE_API_KEY || process.env.GEMINI_API_KEY || process.env.GERMINI_API_KEY;
+  if (!googleKey) {
+    return res.status(503).json({
+      error: 'Service unavailable',
+      message: 'Transcrição de áudio requer GOOGLE_API_KEY. Configure a variável de ambiente para habilitar este recurso.',
+      hint: 'Set GOOGLE_API_KEY in Vercel environment variables',
+    });
+  }
+
   try {
     console.log("📝 Recebendo áudio para transcrição...");
 

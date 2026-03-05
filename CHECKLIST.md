@@ -469,3 +469,13 @@ Ou restaurar os arquivos antigos do commit anterior.
 | **Arquivos** | `api/lib/providers-config.js`, `api/hybrid.js`, `CHECKLIST.md` |
 | **Validação** | 1) POST `/api/hybrid` → Vercel Logs deve mostrar `[HYBRID] provider=groq model=openai/gpt-oss-120b groqOnly=true` 2) Resposta 200 deve ter `model.modelId` = `openai/gpt-oss-120b` 3) Se GROQ_API_KEY ausente → 503 |
 | **Rollback** | `git revert <commit>` — volta para `betinhoParallel()` com 70B |
+
+## Phase A5.7 — Transcribe guard: 503 when GOOGLE_API_KEY absent
+
+| Item | Detalhe |
+|------|---------|
+| **O quê** | `api/transcribe.js` agora retorna 503 imediatamente se nenhuma GOOGLE_API_KEY está configurada, em vez de crashar ao tentar forçar `gemini-2.0-flash` |
+| **Por quê** | Em modo Groq-only (produção atual), POST `/api/transcribe` crashava porque `forceProvider: 'gemini-2.0-flash'` não tem API key |
+| **Arquivos** | `api/transcribe.js`, `CHECKLIST.md` |
+| **Validação** | 1) Sem GOOGLE_API_KEY: POST `/api/transcribe` → 503 com mensagem clara 2) Com GOOGLE_API_KEY: POST `/api/transcribe` → funciona normalmente com Gemini |
+| **Rollback** | `git revert <commit>` — remove o guard, volta ao comportamento anterior (crash sem key) |
