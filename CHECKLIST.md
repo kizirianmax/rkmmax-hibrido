@@ -429,3 +429,15 @@ Para reverter para `rkmmax-app` como produção:
 git revert <commit-sha>
 ```
 Ou restaurar os arquivos antigos do commit anterior.
+
+---
+
+## 16. Fix: Hybrid endpoint enforces openai/gpt-oss-120b (Groq-only, no fallback)
+
+| Item | Detalhe |
+|------|---------|
+| **O quê** | `/api/hybrid` agora usa EXATAMENTE `openai/gpt-oss-120b` via Groq, sem fallback |
+| **Por quê** | Provider `llama-120b` mapeava para `llama-3.3-70b-versatile` (70B errado). `betinhoParallel()` fazia race entre providers mascarando erros |
+| **Arquivos** | `api/lib/providers-config.js`, `api/hybrid.js`, `CHECKLIST.md` |
+| **Validação** | 1) POST `/api/hybrid` → Vercel Logs deve mostrar `[HYBRID] provider=groq model=openai/gpt-oss-120b groqOnly=true` 2) Resposta 200 deve ter `model.modelId` = `openai/gpt-oss-120b` 3) Se GROQ_API_KEY ausente → 503 |
+| **Rollback** | `git revert <commit>` — volta para `betinhoParallel()` com 70B |
