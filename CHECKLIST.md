@@ -499,3 +499,13 @@ Ou restaurar os arquivos antigos do commit anterior.
 - Revert the guard in `serginho-orchestrator.js` (remove the `if (options.forceProvider && !enabledProvidersList.includes(...))` block)
 - Revert `transcribe.js` to hardcode `forceProvider: 'gemini-2.0-flash'`
 - Remove A5.7 section from `CHECKLIST.md`
+
+## Fix: Serginho markdown rendering (formatação "tudo grudado")
+
+| Item | Detalhe |
+|------|---------|
+| **O quê** | Aplicou renderização de markdown simples nas mensagens do agente em `/serginho`, usando o mesmo padrão `SimpleMarkdown` já existente em `/hybrid` |
+| **Por quê** | Respostas do Serginho apareciam "tudo junto" sem parágrafos, quebras de linha, negrito ou code — diferente do `/hybrid` onde já estava resolvido |
+| **Arquivos** | `src/pages/Serginho.jsx` (adicionou `SimpleMarkdown` local + usou no render), `src/pages/Serginho.css` (estilos para `<p>`, `<code>`, `<strong>` dentro de `.message-bubble`), `CHECKLIST.md` |
+| **Validação** | 1) Abrir `/serginho`, perguntar algo que gere lista/títulos → aparece com parágrafos e quebras 2) Input/scroll/chat não quebram 3) Mensagens do usuário continuam como texto simples |
+| **Rollback** | `git revert <commit>` — remove SimpleMarkdown e CSS, volta ao `{msg.content}` raw |

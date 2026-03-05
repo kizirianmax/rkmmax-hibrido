@@ -2,6 +2,42 @@
 import React, { useState, useRef, useEffect } from "react";
 import "./Serginho.css";
 
+/**
+ * Renders AI response text with basic markdown formatting.
+ * Supports: paragraphs (\n\n), line breaks (\n), **bold**, `code`.
+ */
+function SimpleMarkdown({ text }) {
+  if (!text) return null;
+
+  const processInline = (str, keyPrefix) => {
+    const regex = /(\*\*[\s\S]+?\*\*|`[^`]+`)/g;
+    const parts = str.split(regex);
+    return parts.map((part, i) => {
+      if (part.startsWith("**") && part.endsWith("**")) {
+        return <strong key={`${keyPrefix}-b${i}`}>{part.slice(2, -2)}</strong>;
+      }
+      if (part.startsWith("`") && part.endsWith("`")) {
+        return <code key={`${keyPrefix}-c${i}`}>{part.slice(1, -1)}</code>;
+      }
+      return part;
+    });
+  };
+
+  const paragraphs = text.split(/\n\n+/);
+  return (
+    <>
+      {paragraphs.map((para, pi) => {
+        const lines = para.split("\n");
+        const content = lines.flatMap((line, li) => {
+          const inlined = processInline(line, `p${pi}l${li}`);
+          return li < lines.length - 1 ? [...inlined, <br key={`br-${pi}-${li}`} />] : inlined;
+        });
+        return <p key={pi}>{content}</p>;
+      })}
+    </>
+  );
+}
+
 export default function Serginho() {
   const [messages, setMessages] = useState([
     {
@@ -397,7 +433,11 @@ export default function Serginho() {
                   }}
                 />
               )}
-              {msg.content}
+              {msg.role === "assistant" ? (
+                <SimpleMarkdown text={msg.content} />
+              ) : (
+                msg.content
+              )}
             </div>
           </div>
         ))}
