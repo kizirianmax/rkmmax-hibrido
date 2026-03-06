@@ -1,5 +1,15 @@
 # ✅ Checklist Projeto RKMMax (Atualizado — 23/10/2025)
 
+## 2026-03-06 — feat(abnt): rota interna /abnt + subdomínio abnt.kizirianmax.site
+
+### Atualização (fix/abnt-url-subdomain)
+- `ABNT_URL` atualizado de `https://formatador-abnt.vercel.app` para `https://abnt.kizirianmax.site`
+- Domínio `abnt.kizirianmax.site` adicionado ao projeto `formatador-abnt` na Vercel (SSO bypassado para domínios customizados)
+- Registro DNS criado: `CNAME abnt → cname.vercel-dns.com` no provedor DNS do `kizirianmax.site`
+- Rollback: trocar `ABNT_URL` de volta para `https://formatador-abnt.vercel.app` + remover CNAME do DNS
+
+---
+
 ## 2026-03-06 — feat(abnt): rota interna /abnt + StudyLab apontando para ela (sem iframe)
 
 ### O que foi feito
