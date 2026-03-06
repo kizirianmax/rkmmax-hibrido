@@ -1,5 +1,5 @@
 /**
- * STUDY LAB ENDPOINT — backend Groq (studyLabClient), server-side
+ * STUDY LAB ENDPOINT — backend Groq via serginho-orchestrator, server-side
  *
  * Centraliza todas as ferramentas do Study Lab.
  * Nenhuma chave de API é exposta ao frontend.
@@ -21,6 +21,10 @@
 
 import serginho from "./lib/serginho-orchestrator.js";
 
+/**
+ * Delegates an AI call to serginho-orchestrator.js (the single gateway).
+ * Model selection, temperature, and token limits are managed by the orchestrator.
+ */
 async function callAI(systemPrompt, userPrompt) {
   const result = await serginho.handleRequest({
     message: userPrompt,
