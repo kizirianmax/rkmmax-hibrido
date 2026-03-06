@@ -1,14 +1,16 @@
 // src/pages/StudyLab.jsx
 import React from "react";
+import { useNavigate } from "react-router-dom";
 
 export default function StudyLab() {
+  const navigate = useNavigate();
   const tools = [
     {
       id: "abnt",
       title: "📝 Formatador ABNT/APA",
       description: "Formate seus trabalhos acadêmicos automaticamente nas normas ABNT ou APA",
       status: "Disponível",
-      action: () => (window.location.href = "/abnt"),
+      action: () => navigate("/abnt"),
     },
     {
       id: "cronograma",

@@ -29,7 +29,7 @@
 - [ ] CI verde / Vercel preview ok
 
 ### Rollback
-```
+```bash
 git revert <commit-sha>
 ```
 Ou manualmente: remover `Abnt.jsx`, reverter linha em `App.jsx` (import + rota) e restaurar `StudyLab.jsx` com `window.open("https://formatador-abnt.vercel.app", "_blank")`.
