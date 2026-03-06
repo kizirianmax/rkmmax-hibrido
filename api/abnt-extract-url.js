@@ -89,6 +89,13 @@ function isPrivateIP(ip) {
   }
   if (net.isIPv6(ip)) {
     const lower = ip.toLowerCase();
+    // IPv4-mapped IPv6: ::ffff:<ipv4> — validate the embedded IPv4 part
+    const V4_MAPPED_PREFIX = "::ffff:";
+    if (lower.startsWith(V4_MAPPED_PREFIX)) {
+      const embedded = lower.slice(V4_MAPPED_PREFIX.length);
+      // If it looks like a valid IPv4, delegate to IPv4 check; otherwise block it.
+      return net.isIPv4(embedded) ? isPrivateIP(embedded) : true;
+    }
     return lower === "::1" || lower.startsWith("fc") || lower.startsWith("fd") || lower.startsWith("fe80:");
   }
   return false;
@@ -122,6 +129,7 @@ async function validateDns(hostname) {
 
 async function extractMetadata(safeUrl) {
   const response = await fetch(safeUrl, {
+    redirect: "manual",
     headers: {
       "User-Agent":
         "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
@@ -129,6 +137,10 @@ async function extractMetadata(safeUrl) {
     },
     signal: AbortSignal.timeout(8000),
   });
+
+  if (response.type === "opaqueredirect" || (response.status >= 300 && response.status < 400)) {
+    throw Object.assign(new Error("Redirect não permitido."), { status: 502 });
+  }
 
   if (!response.ok) {
     throw new Error(`HTTP ${response.status} ao acessar a URL`);
