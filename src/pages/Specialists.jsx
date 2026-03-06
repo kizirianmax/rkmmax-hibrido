@@ -1,68 +1,69 @@
-import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { useSpecialistVisibility } from "../hooks/useSpecialistVisibility.js";
-import {
-  specialists,
-  categories,
-  getTotalSpecialists,
-} from "../config/specialists";
-import { canUseSpecialist } from "../config/fairUse";
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useSpecialistVisibility } from '../hooks/useSpecialistVisibility.js';
+import { specialists, categories, getTotalSpecialists } from '../config/specialists.js';
+import { canUseSpecialist } from '../config/fairUse.js';
 
 function Specialists() {
   const navigate = useNavigate();
   const { isVisible } = useSpecialistVisibility();
-  const [selectedCategory, setSelectedCategory] = useState("all");
-  const [searchTerm, setSearchTerm] = useState("");
-
+  const [selectedCategory, setSelectedCategory] = useState('all');
+  const [searchTerm, setSearchTerm] = useState('');
+  
   // Mock: usuário atual (substituir por contexto real)
-  const userPlan = "premium"; // ou 'basic', 'intermediate', 'free'
-
+  const userPlan = 'premium'; // ou 'basic', 'intermediate', 'free'
+  
   // Filtrar especialistas
   const filteredSpecialists = Object.values(specialists).filter((specialist) => {
-    const matchesCategory = selectedCategory === "all" || specialist.category === selectedCategory;
-    const matchesSearch =
-      specialist.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      specialist.description.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesCategory = selectedCategory === 'all' || specialist.category === selectedCategory;
+    const matchesSearch = specialist.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         specialist.description.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesVisibility = isVisible(specialist.id);
     return matchesCategory && matchesSearch && matchesVisibility;
   });
-
+  
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-50 via-white to-blue-50 py-12 px-4">
-      <div className="max-w-7xl mx-auto">
+    <div style={{ minHeight: '100vh', background: 'linear-gradient(135deg, #f3e8ff 0%, #fff 50%, #dbeafe 100%)', padding: '48px 16px' }}>
+      <div style={{ maxWidth: '1280px', margin: '0 auto' }}>
         {/* Header */}
-        <div className="text-center mb-12">
-          <h1 className="text-5xl font-bold bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent mb-4">
+        <div style={{ textAlign: 'center', marginBottom: '32px' }}>
+          <h1 style={{ fontSize: '2rem', fontWeight: 'bold', background: 'linear-gradient(90deg, #9333ea, #2563eb)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', marginBottom: '8px' }}>
             {getTotalSpecialists()}+ Especialistas
           </h1>
-          <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-            Serginho orquestra todos os especialistas para resolver qualquer desafio. Escolha um
-            especialista ou deixe o Serginho decidir automaticamente.
+          <p style={{ fontSize: '0.95rem', color: '#4b5563', maxWidth: '600px', margin: '0 auto', lineHeight: 1.5 }}>
+            Serginho orquestra todos os especialistas para resolver qualquer desafio. 
+            Escolha um especialista ou deixe o Serginho decidir automaticamente.
           </p>
         </div>
-
+        
         {/* Search and Filter */}
-        <div className="mb-8 space-y-4">
+        <div style={{ marginBottom: '24px' }}>
           {/* Search Bar */}
-          <div className="max-w-2xl mx-auto">
+          <div style={{ maxWidth: '500px', margin: '0 auto 16px' }}>
             <input
               type="text"
               placeholder="Buscar especialista..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full px-6 py-4 rounded-2xl border-2 border-gray-200 focus:border-purple-500 focus:outline-none text-lg"
+              style={{ width: '100%', padding: '12px 16px', borderRadius: '12px', border: '2px solid #e5e7eb', fontSize: '1rem', outline: 'none' }}
             />
           </div>
-
+          
           {/* Category Filter */}
-          <div className="flex flex-wrap justify-center gap-3">
+          <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: '6px', padding: '0 8px' }}>
             <button
-              onClick={() => setSelectedCategory("all")}
-              className={`px-6 py-3 rounded-xl font-medium transition-all ${
-                selectedCategory === "all"
-                  ? "bg-purple-600 text-white shadow-lg"
-                  : "bg-white text-gray-700 hover:bg-gray-50"
-              }`}
+              onClick={() => setSelectedCategory('all')}
+              style={{
+                padding: '6px 12px',
+                borderRadius: '8px',
+                fontSize: '0.75rem',
+                fontWeight: 500,
+                border: 'none',
+                cursor: 'pointer',
+                background: selectedCategory === 'all' ? '#9333ea' : '#fff',
+                color: selectedCategory === 'all' ? '#fff' : '#374151',
+                boxShadow: selectedCategory === 'all' ? '0 4px 6px rgba(147, 51, 234, 0.3)' : '0 1px 3px rgba(0,0,0,0.1)',
+              }}
             >
               ✨ Todos
             </button>
@@ -70,105 +71,159 @@ function Specialists() {
               <button
                 key={category.id}
                 onClick={() => setSelectedCategory(category.id)}
-                className={`px-6 py-3 rounded-xl font-medium transition-all ${
-                  selectedCategory === category.id
-                    ? "bg-purple-600 text-white shadow-lg"
-                    : "bg-white text-gray-700 hover:bg-gray-50"
-                }`}
+                style={{
+                  padding: '6px 12px',
+                  borderRadius: '8px',
+                  fontSize: '0.75rem',
+                  fontWeight: 500,
+                  border: selectedCategory === category.id ? 'none' : '1px solid #e5e7eb',
+                  cursor: 'pointer',
+                  whiteSpace: 'nowrap',
+                  background: selectedCategory === category.id ? '#9333ea' : '#fff',
+                  color: selectedCategory === category.id ? '#fff' : '#374151',
+                  boxShadow: selectedCategory === category.id ? '0 4px 6px rgba(147, 51, 234, 0.3)' : 'none',
+                }}
               >
                 {category.emoji} {category.name}
               </button>
             ))}
           </div>
         </div>
-
+        
         {/* Specialists Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '16px' }}>
           {filteredSpecialists.map((specialist) => {
             const isAvailable = canUseSpecialist(userPlan, specialist.id);
-
+            
             return (
               <div
                 key={specialist.id}
                 onClick={() => isAvailable && navigate(`/specialist/${specialist.id}`)}
-                className={`bg-white rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all ${
-                  !isAvailable ? "opacity-50" : "hover:-translate-y-1 cursor-pointer"
-                }`}
+                style={{
+                  background: '#fff',
+                  borderRadius: '16px',
+                  padding: '16px',
+                  boxShadow: '0 4px 6px rgba(0,0,0,0.07)',
+                  cursor: isAvailable ? 'pointer' : 'default',
+                  opacity: isAvailable ? 1 : 0.6,
+                  transition: 'all 0.2s',
+                }}
               >
-                <div className="flex items-start justify-between mb-4">
-                  <img
-                    src={`${specialist.avatar || `/avatars/${specialist.id}.png`}?v=2`}
+                {/* Header do Card */}
+                <div style={{ display: 'flex', alignItems: 'flex-start', gap: '12px', marginBottom: '12px' }}>
+                  <img 
+                    src={`${specialist.avatar || `/avatars/${specialist.id}.png`}?v=2`} 
                     alt={specialist.name}
-                    className="w-10 h-10 rounded-xl object-cover shadow-md"
-                    onError={(e) => {
-                      e.currentTarget.style.display = "none";
-                      e.currentTarget.nextSibling.style.display = "block";
+                    style={{
+                      width: '56px',
+                      height: '56px',
+                      borderRadius: '12px',
+                      objectFit: 'cover',
+                      boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
+                      flexShrink: 0,
+                    }}
+                    onError={(e) => { 
+                      e.currentTarget.style.display = 'none'; 
+                      e.currentTarget.nextSibling.style.display = 'flex'; 
                     }}
                   />
-                  <div className="text-4xl" style={{ display: "none" }}>
+                  <div 
+                    style={{
+                      width: '56px',
+                      height: '56px',
+                      borderRadius: '12px',
+                      background: 'linear-gradient(135deg, #f3e8ff, #dbeafe)',
+                      display: 'none',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      fontSize: '24px',
+                      flexShrink: 0,
+                    }}
+                  >
                     {specialist.emoji}
                   </div>
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <h3 style={{ fontSize: '1.1rem', fontWeight: 700, color: '#111827', margin: 0, marginBottom: '4px' }}>
+                      {specialist.name}
+                    </h3>
+                    <span style={{ fontSize: '0.7rem', color: '#6b7280' }}>
+                      {categories[specialist.category]?.emoji} {categories[specialist.category]?.name}
+                    </span>
+                  </div>
                   {!isAvailable && (
-                    <span className="px-3 py-1 bg-purple-100 text-purple-600 text-xs font-medium rounded-full">
+                    <span style={{
+                      padding: '4px 8px',
+                      background: '#f3e8ff',
+                      color: '#9333ea',
+                      fontSize: '0.65rem',
+                      fontWeight: 600,
+                      borderRadius: '999px',
+                    }}>
                       Premium
                     </span>
                   )}
                 </div>
-
-                <h3
-                  className="text-2xl font-extrabold text-gray-900 mb-2"
-                  style={{ fontSize: "1.5rem", fontWeight: 900 }}
-                >
-                  {specialist.name}
-                </h3>
-
-                <p className="text-gray-700 mb-4" style={{ fontSize: "0.95rem", color: "#374151" }}>
+                
+                {/* Descrição */}
+                <p style={{ fontSize: '0.85rem', color: '#4b5563', marginBottom: '12px', lineHeight: 1.4 }}>
                   {specialist.description}
                 </p>
-
-                <div className="flex items-center justify-between">
-                  <span className="text-sm text-gray-500">
-                    {categories[specialist.category]?.emoji} {categories[specialist.category]?.name}
-                  </span>
-
-                  <button
-                    disabled={!isAvailable}
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      if (isAvailable) navigate(`/specialist/${specialist.id}`);
-                    }}
-                    className={`px-8 py-3 rounded-xl font-bold text-base transition-all transform shadow-md ${
-                      isAvailable
-                        ? "bg-gradient-to-r from-purple-600 to-blue-600 text-white hover:from-purple-700 hover:to-blue-700 hover:shadow-xl hover:scale-105"
-                        : "bg-gray-300 text-gray-500 cursor-not-allowed"
-                    }`}
-                  >
-                    {isAvailable ? "💬 Conversar" : "🔒 Bloqueado"}
-                  </button>
-                </div>
+                
+                {/* Botão */}
+                <button
+                  disabled={!isAvailable}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    if (isAvailable) navigate(`/specialist/${specialist.id}`);
+                  }}
+                  style={{
+                    width: '100%',
+                    padding: '10px 16px',
+                    borderRadius: '10px',
+                    fontWeight: 600,
+                    fontSize: '0.85rem',
+                    border: 'none',
+                    cursor: isAvailable ? 'pointer' : 'not-allowed',
+                    background: isAvailable ? 'linear-gradient(90deg, #9333ea, #2563eb)' : '#e5e7eb',
+                    color: isAvailable ? '#fff' : '#9ca3af',
+                  }}
+                >
+                  {isAvailable ? '💬 Conversar' : '🔒 Premium'}
+                </button>
               </div>
             );
           })}
         </div>
-
+        
         {/* Empty State */}
         {filteredSpecialists.length === 0 && (
-          <div className="text-center py-12">
-            <p className="text-xl text-gray-500">
+          <div style={{ textAlign: 'center', padding: '48px 0' }}>
+            <p style={{ fontSize: '1.1rem', color: '#6b7280' }}>
               Nenhum especialista encontrado. Tente outra busca!
             </p>
           </div>
         )}
-
+        
         {/* CTA */}
-        <div className="mt-16 text-center bg-gradient-to-r from-purple-600 to-blue-600 rounded-3xl p-12 text-white">
-          <h2 className="text-3xl font-bold mb-4">Não sabe qual especialista escolher?</h2>
-          <p className="text-xl mb-8 opacity-90">
+        <div style={{ marginTop: '48px', textAlign: 'center', background: 'linear-gradient(90deg, #9333ea, #2563eb)', borderRadius: '24px', padding: '32px 24px', color: '#fff' }}>
+          <h2 style={{ fontSize: '1.5rem', fontWeight: 'bold', marginBottom: '12px' }}>
+            Não sabe qual especialista escolher?
+          </h2>
+          <p style={{ fontSize: '1rem', marginBottom: '20px', opacity: 0.9 }}>
             Deixe o Serginho analisar sua tarefa e escolher automaticamente!
           </p>
-          <button
-            onClick={() => navigate("/serginho")}
-            className="px-8 py-4 bg-white text-purple-600 rounded-xl font-bold text-lg hover:shadow-2xl transition-all"
+          <button 
+            onClick={() => navigate('/serginho')}
+            style={{
+              padding: '12px 24px',
+              background: '#fff',
+              color: '#9333ea',
+              borderRadius: '12px',
+              fontWeight: 'bold',
+              fontSize: '1rem',
+              border: 'none',
+              cursor: 'pointer',
+            }}
           >
             Falar com o Serginho 🤖
           </button>
