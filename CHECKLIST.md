@@ -1,5 +1,57 @@
 # ✅ Checklist Projeto RKMMax (Atualizado — 23/10/2025)
 
+## 2026-03-06 — feat(abnt): portar ABNT completo do rkmmax-app para rkmmax-hibrido
+
+### O que foi feito
+- Substituído `src/pages/Abnt.jsx` (que abria `abnt.kizirianmax.site` em nova aba) pelo editor ABNT completo portado do `rkmmax-app`
+- Criados 4 componentes em `src/components/abnt/`:
+  - `CitationGenerator.jsx` — gerador de citações ABNT (livro, artigo, site, tese) 100% local
+  - `URLImporter.jsx` — importa metadados de URL via `POST /api/abnt-extract-url`
+  - `DocumentExporter.jsx` — exporta Word/HTML/PDF via print, 100% local
+  - `ReferenceLibrary.jsx` — biblioteca de referências com `localStorage`, 100% local
+- Criado `api/abnt-extract-url.js` — scraping HTTP de metadados (sem IA, sem chaves)
+- Editor com 4 abas: Capa, Resumo, Conteúdo, Referências — todos os campos clicáveis e editáveis
+- Sidebar com 4 ferramentas: Citações, URL, Biblioteca, Exportar
+- Nenhuma chave de API exposta no frontend
+- Nenhuma chamada de IA no ABNT (tudo local ou scraping)
+- Nenhuma dependência nova adicionada ao `package.json`
+
+### Por quê
+- Antes: `/abnt` abria `abnt.kizirianmax.site` em nova aba (UX ruim, requeria login separado)
+- Agora: editor completo integrado diretamente em `kizirianmax.site/abnt`
+- Campos editáveis, abas funcionais, exportação local — sem dependência de deploy externo
+
+### Arquivos alterados
+
+| Arquivo | Mudança |
+|---|---|
+| `src/pages/Abnt.jsx` | SUBSTITUÍDO — editor completo com 4 abas e sidebar |
+| `src/components/abnt/CitationGenerator.jsx` | NOVO — gerador de citações ABNT local |
+| `src/components/abnt/URLImporter.jsx` | NOVO — importação de metadados via backend |
+| `src/components/abnt/DocumentExporter.jsx` | NOVO — exportação Word/HTML/PDF local |
+| `src/components/abnt/ReferenceLibrary.jsx` | NOVO — biblioteca localStorage |
+| `api/abnt-extract-url.js` | NOVO — scraping HTTP de metadados de URL |
+| `CHECKLIST.md` | Esta entrada |
+
+### ENV VAR necessária
+- Nenhuma nova variável de ambiente necessária
+
+### Validação
+1. `kizirianmax.site/study` → card "Formatador ABNT/APA" clica e navega para `/abnt`
+2. `/abnt` exibe editor com 4 abas (Capa, Resumo, Conteúdo, Referências) — todos os campos clicáveis
+3. Sidebar: Citações gera referência ABNT, URL importa metadados, Biblioteca salva, Exportar baixa `.doc`
+4. Build: `npx vite build` → `✓ built in ~6s` sem erros
+5. A4 Gateway Sovereignty: nenhum arquivo novo faz fetch a `api.groq.com`, `api.openai.com`, etc.
+
+### Rollback
+```bash
+git revert <sha-deste-commit>
+# Restaura Abnt.jsx que abria abnt.kizirianmax.site em nova aba
+# Remove src/components/abnt/ e api/abnt-extract-url.js
+```
+
+---
+
 ## 2026-03-06 — fix(study-lab): migrar ferramentas de IA para backend Groq-only (sem chaves no frontend)
 
 ### O que foi feito
