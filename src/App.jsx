@@ -27,6 +27,7 @@ import Privacy from "./pages/Privacy.jsx";
 import Terms from "./pages/Terms.jsx";
 import Refund from "./pages/Refund.jsx";
 import Regulamento from "./pages/Regulamento.jsx";
+import Abnt from "./pages/Abnt.jsx";
 import HybridAgentSimple from "./pages/HybridAgentSimple.jsx";
 import GitHubCallback from "./pages/GitHubCallback.jsx";
 
@@ -106,6 +107,8 @@ export default function App() {
         <Route path="/terms" element={<Terms />} />
         <Route path="/refund" element={<Refund />} />
         <Route path="/regulamento" element={<Regulamento />} />
+        {/* Formatador ABNT/APA */}
+        <Route path="/abnt" element={<Abnt />} />
 
         {/* Fallback */}
         <Route path="*" element={<Navigate to="/" replace />} />

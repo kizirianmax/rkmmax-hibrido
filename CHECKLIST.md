@@ -1,5 +1,48 @@
 # ✅ Checklist Projeto RKMMax (Atualizado — 23/10/2025)
 
+## 2026-03-06 — feat(abnt): rota interna /abnt + StudyLab apontando para ela (sem iframe)
+
+### O que foi feito
+- Criado `src/pages/Abnt.jsx` — página interna com botão "Abrir Formatador" (nova aba)
+- Registrada rota `/abnt` no `src/App.jsx`
+- Trocado o `action` do card ABNT no `src/pages/StudyLab.jsx` de link externo para `/abnt`
+- URL do formatador isolada na constante `ABNT_URL` no topo do `Abnt.jsx` para fácil troca
+
+### Por quê
+- Link externo (`formatador-abnt.vercel.app`) abria versão incompleta/inconsistente
+- `formatador-abnt-rkmmax.vercel.app` tem SSO + `X-Frame-Options: DENY` — iframe não funciona
+- Rota interna mantém acesso controlado dentro do RKMMAX
+
+### Arquivos alterados
+
+| Arquivo | Mudança |
+|---------|--------|
+| `src/pages/Abnt.jsx` | NOVO — página interna /abnt com botão para abrir formatador em nova aba |
+| `src/App.jsx` | +1 import + +1 rota `/abnt` |
+| `src/pages/StudyLab.jsx` | Trocado link externo por `navigate("/abnt")` |
+| `CHECKLIST.md` | Esta entrada |
+
+### Validação
+- [ ] Abrir `/study` → card "📝 Formatador ABNT/APA" → clicar → navega para `/abnt` (sem nova aba)
+- [ ] Em `/abnt` → clicar "Abrir Formatador →" → abre `https://formatador-abnt.vercel.app` em nova aba
+- [ ] Link "← Voltar ao Study Lab" em `/abnt` → volta para `/study`
+- [ ] Nenhuma outra tela foi afetada
+- [ ] CI verde / Vercel preview ok
+
+### Rollback
+```bash
+git revert <commit-sha>
+```
+Ou manualmente: remover `Abnt.jsx`, reverter linha em `App.jsx` (import + rota) e restaurar `StudyLab.jsx` com `window.open("https://formatador-abnt.vercel.app", "_blank")`.
+
+### Para trocar a URL do formatador depois
+Editar apenas a constante no topo de `src/pages/Abnt.jsx`:
+```js
+const ABNT_URL = "https://nova-url-do-formatador.vercel.app";
+```
+
+---
+
 ## 2026-03-05 — Feature: Rota /regulamento + Footer exclusivo
 
 ### O que foi feito
