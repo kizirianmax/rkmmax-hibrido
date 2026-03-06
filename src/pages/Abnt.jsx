@@ -158,12 +158,18 @@ export default function Abnt() {
   const set = (field, value) => setWork((w) => ({ ...w, [field]: value }));
 
   const handleAddReference = (ref, type = "outro") => {
-    set("references", work.references ? work.references + "\n\n" + ref : ref);
+    setWork((prev) => ({
+      ...prev,
+      references: prev.references ? prev.references + "\n\n" + ref : ref,
+    }));
     addReference(ref, type);
   };
 
   const handleSelectFromLibrary = (ref) => {
-    set("references", work.references ? work.references + "\n\n" + ref : ref);
+    setWork((prev) => ({
+      ...prev,
+      references: prev.references ? prev.references + "\n\n" + ref : ref,
+    }));
   };
 
   return (

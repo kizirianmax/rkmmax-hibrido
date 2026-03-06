@@ -14,7 +14,63 @@
  * Segurança:
  *   - Apenas http/https permitidos (SSRF: sem file://, ftp://, etc.)
  *   - Hosts locais e ranges RFC1918 bloqueados (SSRF: sem localhost, 127.x, 10.x, etc.)
+ *   - Validação DNS para bloquear DNS rebinding / SSRF via resolução
+ *   - Limite de 2MB na resposta HTML
  */
+
+import dns from "node:dns";
+import net from "node:net";
+
+// ─── DNS / IP HELPERS ────────────────────────────────────────────────────────
+
+/**
+ * Verifica se um endereço IP (v4 ou v6) pertence a ranges privados/loopback/link-local.
+ */
+function isPrivateIP(ip) {
+  if (net.isIPv4(ip)) {
+    const parts = ip.split(".").map(Number);
+    const [a, b] = parts;
+    return (
+      a === 127 ||                                   // 127.0.0.0/8
+      a === 10 ||                                    // 10.0.0.0/8
+      a === 0 ||                                     // 0.0.0.0/8
+      (a === 172 && b >= 16 && b <= 31) ||           // 172.16.0.0/12
+      (a === 192 && b === 168) ||                    // 192.168.0.0/16
+      (a === 169 && b === 254)                       // 169.254.0.0/16
+    );
+  }
+  if (net.isIPv6(ip)) {
+    const lower = ip.toLowerCase();
+    return (
+      lower === "::1" ||                             // loopback
+      lower.startsWith("fc") ||                     // fc00::/7 unique local (fc and fd prefixes)
+      lower.startsWith("fd") ||
+      lower.startsWith("fe8") ||                    // fe80::/10 link-local
+      lower.startsWith("fe9") ||
+      lower.startsWith("fea") ||
+      lower.startsWith("feb")
+    );
+  }
+  return false;
+}
+
+/**
+ * Resolve o hostname via DNS e lança erro se qualquer IP resolvido for privado.
+ */
+async function validateDns(hostname) {
+  let addresses;
+  try {
+    addresses = await dns.promises.lookup(hostname, { all: true });
+  } catch {
+    throw Object.assign(new Error("Não foi possível resolver o domínio da URL."), { status: 400 });
+  }
+  if (addresses.some(({ address }) => isPrivateIP(address))) {
+    throw Object.assign(
+      new Error("URL não permitida: endereço resolve para IP privado."),
+      { status: 400 },
+    );
+  }
+}
 
 // ─── SSRF GUARD ───────────────────────────────────────────────────────────────
 
@@ -69,6 +125,8 @@ function validateUrl(rawUrl) {
 // ─── EXTRAÇÃO DE METADADOS ────────────────────────────────────────────────────
 
 async function extractMetadata(safeUrl) {
+  await validateDns(new URL(safeUrl).hostname);
+
   const response = await fetch(safeUrl, {
     headers: {
       "User-Agent":
@@ -82,7 +140,40 @@ async function extractMetadata(safeUrl) {
     throw new Error(`HTTP ${response.status} ao acessar a URL`);
   }
 
-  const html = await response.text();
+  const MAX_BODY = 2 * 1024 * 1024; // 2 MB
+
+  const contentLength = response.headers.get("content-length");
+  if (contentLength && Number(contentLength) > MAX_BODY) {
+    throw Object.assign(new Error("Resposta muito grande (limite: 2 MB)."), { status: 400 });
+  }
+
+  const reader = response.body.getReader();
+  const decoder = new TextDecoder();
+  const chunks = [];
+  let totalBytes = 0;
+
+  while (true) {
+    const { done, value } = await reader.read();
+    if (done) break;
+    totalBytes += value.byteLength;
+    if (totalBytes > MAX_BODY) {
+      await reader.cancel();
+      throw Object.assign(new Error("Resposta muito grande (limite: 2 MB)."), { status: 400 });
+    }
+    chunks.push(value);
+  }
+
+  const html = decoder.decode(
+    (() => {
+      const buf = new Uint8Array(totalBytes);
+      let offset = 0;
+      for (const chunk of chunks) {
+        buf.set(chunk, offset);
+        offset += chunk.byteLength;
+      }
+      return buf;
+    })(),
+  );
 
   const get = (patterns) => {
     for (const re of patterns) {
@@ -196,7 +287,7 @@ export default async function handler(req, res) {
     return res.status(200).json({ success: true, data, abntReference });
   } catch (err) {
     console.error("[ABNT-EXTRACT-URL] error:", err.message);
-    return res.status(500).json({
+    return res.status(err.status || 500).json({
       success: false,
       error: err.message || "Erro ao extrair metadados.",
     });
