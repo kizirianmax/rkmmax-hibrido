@@ -1,6 +1,6 @@
 // src/pages/SourceProof.jsx
 import React, { useState } from "react";
-import { studyLabAI } from "../lib/StudyLabAI.js";
+import studyLabClient from "../lib/studyLabClient.js";
 
 // Domínios acadêmicos confiáveis
 const DOMINIOS_CONFIAVEIS = [
@@ -147,7 +147,7 @@ export default function SourceProof() {
 
     // Tentar usar IA para análise mais profunda
     try {
-      const analiseIA = await studyLabAI.analisarFontes(urls);
+      const analiseIA = await studyLabClient.analisarFontes(urls);
       if (analiseIA && analiseIA.length > 0) {
         setResultados(analiseIA);
         setIsAnalyzing(false);

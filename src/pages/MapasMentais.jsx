@@ -1,6 +1,6 @@
 // src/pages/MapasMentais.jsx
 import React, { useState, useRef } from "react";
-import { studyLabAI } from "../lib/StudyLabAI.js";
+import studyLabClient from "../lib/studyLabClient.js";
 
 const CORES_TEMA = [
   { id: "azul", cor: "#3b82f6", nome: "Azul" },
@@ -106,7 +106,7 @@ export default function MapasMentais() {
     
     try {
       // Usar IA real do Gemini
-      const mapaIA = await studyLabAI.gerarMapaMental(texto, temaCentral);
+      const mapaIA = await studyLabClient.gerarMapaMental(texto, temaCentral);
       setMapa({
         centro: mapaIA.centro || temaCentral,
         cor: corTema.cor,

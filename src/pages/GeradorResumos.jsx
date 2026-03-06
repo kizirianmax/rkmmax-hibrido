@@ -1,6 +1,6 @@
 // src/pages/GeradorResumos.jsx
 import React, { useState } from "react";
-import { studyLabAI } from "../lib/StudyLabAI.js";
+import studyLabClient from "../lib/studyLabClient.js";
 
 const ESTILOS_RESUMO = [
   { value: "academico", label: "📚 Acadêmico", desc: "Formal, com citações e referências" },
@@ -125,7 +125,7 @@ export default function GeradorResumos() {
     
     try {
       // Usar IA real do Gemini
-      const resultado = await studyLabAI.gerarResumo(texto, estilo, tamanho);
+      const resultado = await studyLabClient.gerarResumo(texto, estilo, tamanho);
       setResumoGerado(resultado);
     } catch (error) {
       console.error('Erro ao gerar resumo com IA:', error);

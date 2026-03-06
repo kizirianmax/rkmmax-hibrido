@@ -1,5 +1,52 @@
 # ✅ Checklist Projeto RKMMax (Atualizado — 23/10/2025)
 
+## 2026-03-06 — fix(study-lab): migrar ferramentas de IA para backend Groq-only (sem chaves no frontend)
+
+### O que foi feito
+- Criado `api/study-lab.js` — endpoint serverless Groq-only que centraliza todas as chamadas de IA (Resumos, Flashcards, Mapas Mentais, Cronograma, Source-Proof)
+- Criado `src/lib/studyLabClient.js` — substitui `StudyLabAI.js`; faz `POST /api/study-lab` sem expor chaves
+- Removida dependência de `StudyLabAI.js` (Gemini frontend) em: `Flashcards.jsx`, `GeradorResumos.jsx`, `MapasMentais.jsx`, `SourceProof.jsx`
+- `GROQ_API_KEY` já estava configurada na Vercel (Production + Preview) — nenhuma nova variável necessária
+
+### Por quê
+- `StudyLabAI.js` usava `REACT_APP_GEMINI_API_KEY` no frontend (exposta no bundle do browser)
+- Requisito de segurança: todas as chamadas de IA devem passar pelo backend com chave server-side
+- Provedor unificado: Groq (`llama-3.3-70b-versatile`) — sem Gemini, sem chaves no frontend
+
+### Arquivos alterados
+
+| Arquivo | Mudança |
+|---|---|
+| `api/study-lab.js` | NOVO — endpoint Groq-only para todas as ferramentas de IA |
+| `src/lib/studyLabClient.js` | NOVO — cliente frontend que chama `/api/study-lab` |
+| `src/pages/Flashcards.jsx` | `import studyLabAI` → `import studyLabClient`; chamada atualizada |
+| `src/pages/GeradorResumos.jsx` | `import studyLabAI` → `import studyLabClient`; chamada atualizada |
+| `src/pages/MapasMentais.jsx` | `import studyLabAI` → `import studyLabClient`; chamada atualizada |
+| `src/pages/SourceProof.jsx` | `import studyLabAI` → `import studyLabClient`; chamada atualizada |
+| `CHECKLIST.md` | Esta entrada |
+
+### ENV VAR necessária
+- `GROQ_API_KEY` (Production + Preview) — **já configurada** na Vercel do projeto `rkmmax-hibrido`
+- `REACT_APP_GEMINI_API_KEY` **não é mais necessária** (removida do fluxo de IA)
+
+### Validação
+- [ ] `POST /api/study-lab` com `{"tool":"resumo","texto":"..."}` retorna `{"success":true,"data":{...}}`
+- [ ] `/gerador-resumos` → colar texto → clicar Gerar → resumo aparece sem prompt de chave
+- [ ] `/flashcards` → colar texto → gerar → cards aparecem
+- [ ] `/mapas-mentais` → colar texto + tema → gerar → mapa aparece
+- [ ] `/source-proof` → inserir URLs → analisar → resultado aparece
+- [ ] `/cronograma` → preencher → gerar → cronograma aparece (sem IA, 100% local)
+- [ ] Nenhuma chave de API visível no bundle (DevTools → Sources)
+- [ ] CI verde / Vercel preview ok
+
+### Rollback
+```bash
+git revert <commit-hash>
+```
+Ou manualmente: remover `api/study-lab.js` e `src/lib/studyLabClient.js`; restaurar imports de `StudyLabAI.js` nas 4 páginas.
+
+---
+
 ## 2026-03-06 — feat(study-lab): Study Lab 100% funcional — 6 ferramentas ativas
 
 ### O que foi feito

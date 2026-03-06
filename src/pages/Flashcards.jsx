@@ -1,6 +1,6 @@
 // src/pages/Flashcards.jsx
 import React, { useState } from "react";
-import { studyLabAI } from "../lib/StudyLabAI.js";
+import studyLabClient from "../lib/studyLabClient.js";
 
 export default function Flashcards() {
   const [texto, setTexto] = useState("");
@@ -99,7 +99,7 @@ export default function Flashcards() {
     
     try {
       // Usar IA real do Gemini
-      const cardsIA = await studyLabAI.gerarFlashcards(texto, numCards);
+      const cardsIA = await studyLabClient.gerarFlashcards(texto, numCards);
       const cards = cardsIA.map((c, i) => ({
         id: i + 1,
         frente: c.pergunta,
