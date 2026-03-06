@@ -168,6 +168,11 @@ export default function DocumentExporter({ workData }) {
     try {
       const html = buildHtmlContent(workData);
       const win = window.open("", "_blank");
+      if (!win) {
+        alert("Não foi possível abrir a janela de impressão. Desabilite o bloqueador de pop-ups e tente novamente.");
+        setExporting(null);
+        return;
+      }
       win.document.write(html);
       win.document.close();
       win.focus();
