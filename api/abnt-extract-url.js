@@ -1,3 +1,6 @@
+import dns from "node:dns";
+import net from "node:net";
+
 /**
  * api/abnt-extract-url.js
  *
@@ -14,6 +17,7 @@
  * Segurança:
  *   - Apenas http/https permitidos (SSRF: sem file://, ftp://, etc.)
  *   - Hosts locais e ranges RFC1918 bloqueados (SSRF: sem localhost, 127.x, 10.x, etc.)
+ *   - Validação DNS pós-resolução para bloquear DNS rebinding (TOCTOU)
  */
 
 // ─── SSRF GUARD ───────────────────────────────────────────────────────────────
@@ -66,6 +70,54 @@ function validateUrl(rawUrl) {
   return parsed.href; // URL normalizada e segura
 }
 
+// ─── DNS REBINDING GUARD ──────────────────────────────────────────────────────
+
+/**
+ * Retorna true se o IP for privado/loopback/link-local.
+ */
+function isPrivateIP(ip) {
+  if (net.isIPv4(ip)) {
+    const PRIVATE_V4 = [
+      /^127\./,           // 127.0.0.0/8 loopback
+      /^10\./,            // 10.0.0.0/8
+      /^172\.(1[6-9]|2\d|3[01])\./, // 172.16.0.0/12
+      /^192\.168\./,      // 192.168.0.0/16
+      /^169\.254\./,      // 169.254.0.0/16 link-local
+      /^0\./,             // 0.0.0.0/8
+    ];
+    return PRIVATE_V4.some((re) => re.test(ip));
+  }
+  if (net.isIPv6(ip)) {
+    const lower = ip.toLowerCase();
+    return lower === "::1" || lower.startsWith("fc") || lower.startsWith("fd") || lower.startsWith("fe80:");
+  }
+  return false;
+}
+
+/**
+ * Resolve o hostname via DNS e bloqueia se qualquer endereço resolvido
+ * for um IP privado/loopback (defesa contra DNS rebinding).
+ */
+async function validateDns(hostname) {
+  try {
+    const addresses = await dns.promises.lookup(hostname, { all: true });
+    for (const addr of addresses) {
+      if (isPrivateIP(addr.address)) {
+        throw Object.assign(
+          new Error("URL não permitida: endereço resolve para IP privado."),
+          { status: 400 }
+        );
+      }
+    }
+  } catch (err) {
+    if (err.status === 400) throw err;
+    throw Object.assign(
+      new Error("Não foi possível resolver o domínio da URL."),
+      { status: 400 }
+    );
+  }
+}
+
 // ─── EXTRAÇÃO DE METADADOS ────────────────────────────────────────────────────
 
 async function extractMetadata(safeUrl) {
@@ -82,7 +134,31 @@ async function extractMetadata(safeUrl) {
     throw new Error(`HTTP ${response.status} ao acessar a URL`);
   }
 
-  const html = await response.text();
+  const MAX_BODY = 2 * 1024 * 1024; // 2 MB
+
+  // Verificação rápida via Content-Length (se disponível)
+  const contentLength = parseInt(response.headers.get("content-length") || "0", 10);
+  if (contentLength > MAX_BODY) {
+    throw new Error("Resposta muito grande (limite: 2 MB).");
+  }
+
+  // Leitura em stream com guarda de tamanho
+  const reader = response.body.getReader();
+  const chunks = [];
+  let totalBytes = 0;
+
+  let chunk = await reader.read();
+  while (!chunk.done) {
+    totalBytes += chunk.value.length;
+    if (totalBytes > MAX_BODY) {
+      reader.cancel();
+      throw new Error("Resposta muito grande (limite: 2 MB).");
+    }
+    chunks.push(chunk.value);
+    chunk = await reader.read();
+  }
+
+  const html = Buffer.concat(chunks).toString("utf-8");
 
   const get = (patterns) => {
     for (const re of patterns) {
@@ -186,6 +262,13 @@ export default async function handler(req, res) {
   let safeUrl;
   try {
     safeUrl = validateUrl(url);
+  } catch (err) {
+    return res.status(err.status || 400).json({ success: false, error: err.message });
+  }
+
+  // Validação DNS — bloqueia DNS rebinding para IPs privados
+  try {
+    await validateDns(new URL(safeUrl).hostname);
   } catch (err) {
     return res.status(err.status || 400).json({ success: false, error: err.message });
   }
