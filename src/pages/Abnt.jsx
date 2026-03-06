@@ -5,7 +5,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
 
-const ABNT_URL = "https://formatador-abnt.vercel.app";
+const ABNT_URL = "https://abnt.kizirianmax.site";
 
 export default function Abnt() {
   return (

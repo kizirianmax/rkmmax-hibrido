@@ -130,7 +130,7 @@ Ou manualmente: remover os 6 arquivos copiados, reverter App.jsx e StudyLab.jsx.
 
 ### Validação
 - [ ] Abrir `/study` → card "📝 Formatador ABNT/APA" → clicar → navega para `/abnt` (sem nova aba)
-- [ ] Em `/abnt` → clicar "Abrir Formatador →" → abre `https://formatador-abnt.vercel.app` em nova aba
+- [ ] Em `/abnt` → clicar "Abrir Formatador →" → abre `https://abnt.kizirianmax.site` em nova aba
 - [ ] Link "← Voltar ao Study Lab" em `/abnt` → volta para `/study`
 - [ ] Nenhuma outra tela foi afetada
 - [ ] CI verde / Vercel preview ok
