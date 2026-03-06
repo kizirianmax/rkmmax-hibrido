@@ -14,11 +14,12 @@
 - Rota interna mantém acesso controlado dentro do RKMMAX
 
 ### Arquivos alterados
+
 | Arquivo | Mudança |
 |---------|--------|
 | `src/pages/Abnt.jsx` | NOVO — página interna /abnt com botão para abrir formatador em nova aba |
 | `src/App.jsx` | +1 import + +1 rota `/abnt` |
-| `src/pages/StudyLab.jsx` | Trocado link externo por `window.location.href = "/abnt"` |
+| `src/pages/StudyLab.jsx` | Trocado link externo por `navigate("/abnt")` |
 | `CHECKLIST.md` | Esta entrada |
 
 ### Validação
