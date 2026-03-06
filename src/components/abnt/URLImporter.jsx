@@ -54,7 +54,7 @@ export default function URLImporter({ onAddReference }) {
 
   const handleInsert = () => {
     if (result?.abntReference && onAddReference) {
-      onAddReference(result.abntReference);
+      onAddReference(result.abntReference, "site");
       setResult(null);
       setUrl("");
     }

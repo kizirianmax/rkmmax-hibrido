@@ -27,15 +27,17 @@ function formatAuthor(author) {
 
 function generateCitation(type, data) {
   const fa = formatAuthor(data.author);
+  // authorPrefix garante que não saia ". " no início quando não há autor
+  const authorPrefix = fa ? `${fa}. ` : "";
   switch (type) {
     case "livro":
-      return `${fa}. **${data.title}**${data.subtitle ? `: ${data.subtitle}` : ""}. ${data.edition ? `${data.edition}. ed. ` : ""}${data.city || "Local"}: ${data.publisher || "Editora"}, ${data.year || "Ano"}.`;
+      return `${authorPrefix}${data.title}${data.subtitle ? `: ${data.subtitle}` : ""}. ${data.edition ? `${data.edition}. ed. ` : ""}${data.city || "Local"}: ${data.publisher || "Editora"}, ${data.year || "Ano"}.`;
     case "artigo":
-      return `${fa}. ${data.title}. **${data.journal || "Nome da Revista"}**, ${data.city || "Local"}, v. ${data.volume || "X"}, n. ${data.number || "X"}, p. ${data.pages || "X-X"}, ${data.month || ""} ${data.year || "Ano"}.`;
+      return `${authorPrefix}${data.title}. ${data.journal || "Nome da Revista"}, ${data.city || "Local"}, v. ${data.volume || "X"}, n. ${data.number || "X"}, p. ${data.pages || "X-X"}, ${data.month || ""} ${data.year || "Ano"}.`;
     case "site":
-      return `${fa ? fa + ". " : ""}**${data.title}**. ${data.siteName || "Nome do site"}, ${data.year || new Date().getFullYear()}. Disponível em: ${data.url || "URL"}. Acesso em: ${data.accessDate || new Date().toLocaleDateString("pt-BR")}.`;
+      return `${authorPrefix}${data.title}. ${data.siteName || "Nome do site"}, ${data.year || new Date().getFullYear()}. Dispon\u00edvel em: ${data.url || "URL"}. Acesso em: ${data.accessDate || new Date().toLocaleDateString("pt-BR")}.`;
     case "tese":
-      return `${fa}. **${data.title}**. ${data.year || "Ano"}. ${data.pages ? `${data.pages} f. ` : ""}${data.type || "Dissertação"} (${data.degree || "Mestrado"}) - ${data.institution || "Instituição"}, ${data.city || "Local"}, ${data.year || "Ano"}.`;
+      return `${authorPrefix}${data.title}. ${data.year || "Ano"}. ${data.pages ? `${data.pages} f. ` : ""}${data.type || "Disserta\u00e7\u00e3o"} (${data.degree || "Mestrado"}) - ${data.institution || "Institui\u00e7\u00e3o"}, ${data.city || "Local"}, ${data.year || "Ano"}.`;
     default:
       return "";
   }
@@ -81,7 +83,7 @@ export default function CitationGenerator({ onInsertCitation }) {
   };
 
   const handleInsert = () => {
-    if (onInsertCitation && citation) onInsertCitation(citation);
+    if (onInsertCitation && citation) onInsertCitation(citation, type);
   };
 
   return (

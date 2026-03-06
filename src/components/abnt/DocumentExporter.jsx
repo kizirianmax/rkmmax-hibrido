@@ -26,12 +26,68 @@ const s = {
   success: { color: "#10b981", fontSize: 12, textAlign: "center", marginTop: 4 },
 };
 
+// ─── XSS GUARD ───────────────────────────────────────────────────────────────
+
+/** Escapa caracteres especiais HTML para prevenir XSS no documento exportado. */
+function escapeHtml(text) {
+  if (!text) return "";
+  return String(text)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
+}
+
+/** Escapa o texto e converte quebras de linha em parágrafos HTML. */
+function toParagraphs(text) {
+  if (!text) return "";
+  return escapeHtml(text).replace(/\n/g, "</p><p>");
+}
+
+// ─── HTML BUILDER ─────────────────────────────────────────────────────────────
+
 function buildHtmlContent(workData) {
+  const title = escapeHtml(workData.title) || "Trabalho Acadêmico";
+  const institution = escapeHtml(workData.institution);
+  const author = escapeHtml(workData.author);
+  const city = escapeHtml(workData.city);
+  const year = escapeHtml(workData.year);
+  const keywords = escapeHtml(workData.keywords);
+
+  const resumoSection = workData.abstract
+    ? `<div class="resumo">
+    <h2>Resumo</h2>
+    <p>${toParagraphs(workData.abstract)}</p>
+    ${workData.keywords ? `<p class="keywords"><span class="keywords-label">Palavras-chave:</span> ${keywords}</p>` : ""}
+  </div>`
+    : "";
+
+  const introSection = workData.introduction
+    ? `<h2>1 Introdução</h2><p>${toParagraphs(workData.introduction)}</p>`
+    : "";
+
+  const devSection = workData.development
+    ? `<h2>2 Desenvolvimento</h2><p>${toParagraphs(workData.development)}</p>`
+    : "";
+
+  const concSection = workData.conclusion
+    ? `<h2>3 Conclusão</h2><p>${toParagraphs(workData.conclusion)}</p>`
+    : "";
+
+  const refsSection = workData.references
+    ? `<div class="referencias"><h2>Referências</h2>${workData.references
+        .split("\n")
+        .filter(Boolean)
+        .map((r) => `<p>${escapeHtml(r)}</p>`)
+        .join("")}</div>`
+    : "";
+
   return `<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8" />
-<title>${workData.title || "Trabalho Acadêmico"}</title>
+<title>${title}</title>
 <style>
   body { font-family: "Times New Roman", serif; font-size: 12pt; margin: 3cm 2cm 2cm 3cm; line-height: 1.5; color: #000; }
   h1 { font-size: 14pt; text-align: center; text-transform: uppercase; font-weight: bold; }
@@ -50,24 +106,21 @@ function buildHtmlContent(workData) {
 </head>
 <body>
   <div class="capa">
-    <p class="instituicao">${workData.institution || ""}</p>
-    <p class="autor">${workData.author || ""}</p>
-    <h1>${workData.title || ""}</h1>
-    <p class="rodape">${workData.city || ""}<br/>${workData.year || ""}</p>
+    <p class="instituicao">${institution}</p>
+    <p class="autor">${author}</p>
+    <h1>${title}</h1>
+    <p class="rodape">${city}<br/>${year}</p>
   </div>
-  ${workData.abstract ? `
-  <div class="resumo">
-    <h2>Resumo</h2>
-    <p>${workData.abstract.replace(/\n/g, "</p><p>")}</p>
-    ${workData.keywords ? `<p class="keywords"><span class="keywords-label">Palavras-chave:</span> ${workData.keywords}</p>` : ""}
-  </div>` : ""}
-  ${workData.introduction ? `<h2>1 Introdução</h2><p>${workData.introduction.replace(/\n/g, "</p><p>")}</p>` : ""}
-  ${workData.development ? `<h2>2 Desenvolvimento</h2><p>${workData.development.replace(/\n/g, "</p><p>")}</p>` : ""}
-  ${workData.conclusion ? `<h2>3 Conclusão</h2><p>${workData.conclusion.replace(/\n/g, "</p><p>")}</p>` : ""}
-  ${workData.references ? `<div class="referencias"><h2>Referências</h2>${workData.references.split("\n").filter(Boolean).map(r => `<p>${r}</p>`).join("")}</div>` : ""}
+  ${resumoSection}
+  ${introSection}
+  ${devSection}
+  ${concSection}
+  ${refsSection}
 </body>
 </html>`;
 }
+
+// ─── COMPONENTE ───────────────────────────────────────────────────────────────
 
 export default function DocumentExporter({ workData }) {
   const [exporting, setExporting] = useState(null);

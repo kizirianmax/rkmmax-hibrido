@@ -10,10 +10,66 @@
  * Response: { success: true, data: {...}, abntReference: string }
  *
  * Não viola A4 Gateway Sovereignty: não faz fetch a providers de IA.
+ *
+ * Segurança:
+ *   - Apenas http/https permitidos (SSRF: sem file://, ftp://, etc.)
+ *   - Hosts locais e ranges RFC1918 bloqueados (SSRF: sem localhost, 127.x, 10.x, etc.)
  */
 
-async function extractMetadata(url) {
-  const response = await fetch(url, {
+// ─── SSRF GUARD ───────────────────────────────────────────────────────────────
+
+/**
+ * Valida a URL contra SSRF:
+ * - Apenas protocolo http/https
+ * - Bloqueia localhost, 127.x, ::1, 0.0.0.0
+ * - Bloqueia ranges RFC1918: 10.x, 172.16-31.x, 192.168.x
+ * - Bloqueia link-local: 169.254.x
+ * Retorna a URL validada ou lança erro com mensagem clara.
+ */
+function validateUrl(rawUrl) {
+  let parsed;
+  try {
+    parsed = new URL(rawUrl);
+  } catch {
+    throw Object.assign(new Error("URL inválida."), { status: 400 });
+  }
+
+  if (parsed.protocol !== "http:" && parsed.protocol !== "https:") {
+    throw Object.assign(new Error("URL não permitida: apenas http/https são aceitos."), { status: 400 });
+  }
+
+  const hostname = parsed.hostname.toLowerCase();
+
+  // Bloquear hosts literais
+  const BLOCKED_HOSTS = ["localhost", "127.0.0.1", "::1", "0.0.0.0", "[::1]"];
+  if (BLOCKED_HOSTS.includes(hostname)) {
+    throw Object.assign(new Error("URL não permitida."), { status: 400 });
+  }
+
+  // Bloquear ranges RFC1918 e link-local por regex
+  const PRIVATE_RANGES = [
+    /^127\./,           // 127.0.0.0/8
+    /^10\./,            // 10.0.0.0/8
+    /^172\.(1[6-9]|2\d|3[01])\./,  // 172.16.0.0/12
+    /^192\.168\./,      // 192.168.0.0/16
+    /^169\.254\./,      // 169.254.0.0/16 (link-local)
+    /^0\./,             // 0.0.0.0/8
+    /^::1$/,            // IPv6 loopback
+    /^fc00:/,           // IPv6 unique local
+    /^fe80:/,           // IPv6 link-local
+  ];
+
+  if (PRIVATE_RANGES.some((re) => re.test(hostname))) {
+    throw Object.assign(new Error("URL não permitida."), { status: 400 });
+  }
+
+  return parsed.href; // URL normalizada e segura
+}
+
+// ─── EXTRAÇÃO DE METADADOS ────────────────────────────────────────────────────
+
+async function extractMetadata(safeUrl) {
+  const response = await fetch(safeUrl, {
     headers: {
       "User-Agent":
         "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
@@ -58,7 +114,7 @@ async function extractMetadata(url) {
     get([
       /<meta[^>]*property=["']og:site_name["'][^>]*content=["']([^"']+)["']/i,
       /<meta[^>]*content=["']([^"']+)["'][^>]*property=["']og:site_name["']/i,
-    ]) || new URL(url).hostname.replace(/^www\./, "");
+    ]) || new URL(safeUrl).hostname.replace(/^www\./, "");
 
   let publishedDate = "";
   const year = rawDate
@@ -81,8 +137,10 @@ async function extractMetadata(url) {
 
   const accessDate = new Date().toLocaleDateString("pt-BR");
 
-  return { title, author, publishedDate, siteName, url, accessDate, year };
+  return { title, author, publishedDate, siteName, url: safeUrl, accessDate, year };
 }
+
+// ─── GERAÇÃO DE REFERÊNCIA ABNT ───────────────────────────────────────────────
 
 function generateABNTReference(data) {
   const { author, title, siteName, year, url, accessDate } = data;
@@ -98,9 +156,11 @@ function generateABNTReference(data) {
     }
   }
 
-  let ref = "";
-  if (formattedAuthor) ref += `${formattedAuthor}. `;
-  if (title) ref += `**${title}**. `;
+  // authorPrefix garante que não saia ". " no começo quando não há autor
+  const authorPrefix = formattedAuthor ? `${formattedAuthor}. ` : "";
+
+  let ref = authorPrefix;
+  if (title) ref += `${title}. `;   // sem ** — texto ABNT puro
   if (siteName) ref += `${siteName}, `;
   ref += `${year}. `;
   ref += `Disponível em: ${url}. `;
@@ -108,6 +168,8 @@ function generateABNTReference(data) {
 
   return ref;
 }
+
+// ─── HANDLER ──────────────────────────────────────────────────────────────────
 
 export default async function handler(req, res) {
   if (req.method !== "POST") {
@@ -120,14 +182,16 @@ export default async function handler(req, res) {
     return res.status(400).json({ success: false, error: "URL é obrigatória." });
   }
 
+  // Validação SSRF — lança erro com .status se inválida
+  let safeUrl;
   try {
-    new URL(url);
-  } catch {
-    return res.status(400).json({ success: false, error: "URL inválida." });
+    safeUrl = validateUrl(url);
+  } catch (err) {
+    return res.status(err.status || 400).json({ success: false, error: err.message });
   }
 
   try {
-    const data = await extractMetadata(url);
+    const data = await extractMetadata(safeUrl);
     const abntReference = generateABNTReference(data);
     return res.status(200).json({ success: true, data, abntReference });
   } catch (err) {
