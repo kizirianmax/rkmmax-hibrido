@@ -1,3 +1,6 @@
+import dns from "node:dns";
+import net from "node:net";
+
 /**
  * api/abnt-extract-url.js
  *
