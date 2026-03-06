@@ -28,6 +28,11 @@ import Terms from "./pages/Terms.jsx";
 import Refund from "./pages/Refund.jsx";
 import Regulamento from "./pages/Regulamento.jsx";
 import Abnt from "./pages/Abnt.jsx";
+import Cronograma from "./pages/Cronograma.jsx";
+import Flashcards from "./pages/Flashcards.jsx";
+import GeradorResumos from "./pages/GeradorResumos.jsx";
+import MapasMentais from "./pages/MapasMentais.jsx";
+import SourceProof from "./pages/SourceProof.jsx";
 import HybridAgentSimple from "./pages/HybridAgentSimple.jsx";
 import GitHubCallback from "./pages/GitHubCallback.jsx";
 
@@ -109,6 +114,13 @@ export default function App() {
         <Route path="/regulamento" element={<Regulamento />} />
         {/* Formatador ABNT/APA */}
         <Route path="/abnt" element={<Abnt />} />
+
+        {/* Study Lab — Ferramentas */}
+        <Route path="/cronograma" element={<Cronograma />} />
+        <Route path="/flashcards" element={<Flashcards />} />
+        <Route path="/gerador-resumos" element={<GeradorResumos />} />
+        <Route path="/mapas-mentais" element={<MapasMentais />} />
+        <Route path="/source-proof" element={<SourceProof />} />
 
         {/* Fallback */}
         <Route path="*" element={<Navigate to="/" replace />} />
