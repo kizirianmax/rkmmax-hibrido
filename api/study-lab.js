@@ -1,8 +1,9 @@
 /**
- * STUDY LAB ENDPOINT — Groq-only, server-side
+ * STUDY LAB ENDPOINT — backend Groq (studyLabClient), server-side
  *
  * Centraliza todas as ferramentas do Study Lab.
  * Nenhuma chave de API é exposta ao frontend.
+ * Todas as chamadas de IA passam pelo gateway serginho-orchestrator.js.
  *
  * Tools disponíveis (via body.tool):
  *   - resumo       → gerarResumo(texto, estilo, tamanho)
@@ -18,41 +19,15 @@
  * Error:    { success: false, error: string }
  */
 
-const GROQ_API_URL = "https://api.groq.com/openai/v1/chat/completions";
-const MODEL = "llama-3.3-70b-versatile"; // Groq-only, determinístico
+import serginho from "./lib/serginho-orchestrator.js";
 
-async function callGroq(systemPrompt, userPrompt, options = {}) {
-  const groqKey = process.env.GROQ_API_KEY;
-  if (!groqKey) {
-    throw new Error("GROQ_API_KEY não configurada no servidor.");
-  }
-
-  const { maxTokens = 2000, temperature = 0.3 } = options;
-
-  const response = await fetch(GROQ_API_URL, {
-    method: "POST",
-    headers: {
-      Authorization: `Bearer ${groqKey}`,
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      model: MODEL,
-      messages: [
-        { role: "system", content: systemPrompt },
-        { role: "user", content: userPrompt },
-      ],
-      max_tokens: maxTokens,
-      temperature,
-    }),
+async function callAI(systemPrompt, userPrompt) {
+  const result = await serginho.handleRequest({
+    message: userPrompt,
+    context: { systemPrompt },
+    options: {},
   });
-
-  if (!response.ok) {
-    const err = await response.text();
-    throw new Error(`Groq API error ${response.status}: ${err}`);
-  }
-
-  const data = await response.json();
-  return data.choices?.[0]?.message?.content || "";
+  return result.text || "";
 }
 
 // ─── TOOLS ──────────────────────────────────────────────────────────────────
@@ -86,12 +61,12 @@ INSTRUÇÕES:
 
 Retorne APENAS o resumo.`;
 
-  const resumo = await callGroq(system, user, { maxTokens: 1500, temperature: 0.3 });
+  const resumo = await callAI(system, user);
 
   // Extrair palavras-chave em chamada separada
   const kwSystem = "Você extrai palavras-chave de textos acadêmicos. Retorne APENAS as palavras separadas por vírgula, sem explicações.";
   const kwUser = `Extraia as 8 palavras-chave mais importantes do texto abaixo.\n\nTEXTO:\n${texto.slice(0, 3000)}\n\nPALAVRAS-CHAVE:`;
-  const kwResult = await callGroq(kwSystem, kwUser, { maxTokens: 100, temperature: 0.2 });
+  const kwResult = await callAI(kwSystem, kwUser);
   const palavrasChave = kwResult.split(",").map((p) => p.trim()).filter((p) => p.length > 0);
 
   return {
@@ -127,7 +102,7 @@ FORMATO DE RESPOSTA (JSON):
 
 Retorne APENAS o JSON.`;
 
-  const resultado = await callGroq(system, user, { maxTokens: 2000, temperature: 0.5 });
+  const resultado = await callAI(system, user);
 
   try {
     const jsonMatch = resultado.match(/\[[\s\S]*\]/);
@@ -172,7 +147,7 @@ FORMATO DE RESPOSTA (JSON):
 
 Retorne APENAS o JSON.`;
 
-  const resultado = await callGroq(system, user, { maxTokens: 1500, temperature: 0.4 });
+  const resultado = await callAI(system, user);
 
   try {
     const jsonMatch = resultado.match(/\{[\s\S]*\}/);
@@ -234,7 +209,7 @@ FORMATO DE RESPOSTA (JSON):
 
 Retorne APENAS o JSON.`;
 
-  const resultado = await callGroq(system, user, { maxTokens: 3000, temperature: 0.3 });
+  const resultado = await callAI(system, user);
 
   try {
     const jsonMatch = resultado.match(/\{[\s\S]*\}/);
@@ -294,7 +269,7 @@ export default async function handler(req, res) {
     return res.status(400).json({ success: false, error: "Campo 'tool' é obrigatório." });
   }
 
-  console.log(`[STUDY-LAB] tool=${tool} provider=groq model=${MODEL}`);
+  console.log(`[STUDY-LAB] tool=${tool} via serginho-orchestrator`);
 
   try {
     let data;
