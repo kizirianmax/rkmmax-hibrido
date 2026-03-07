@@ -7,7 +7,12 @@
 .hybrid-container {
   display: flex;
   flex-direction: column;
+  /* fix(mobile): viewport fixo — sem pulo ao abrir teclado */
+  height: 100dvh;
   min-height: 100vh;
+  max-width: 100%;
+  box-sizing: border-box;
+  overflow: hidden;
   background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #0f172a 100%);
   color: #e2e8f0;
   font-family:
@@ -131,26 +136,33 @@
 .chat-container {
   display: flex;
   flex-direction: column;
+  /* fix(mobile): cresce para preencher o espaço restante, permite scroll interno */
   flex: 1;
+  min-height: 0;
+  overflow: hidden;
   padding: 1.5rem 2rem;
   gap: 1rem;
   max-width: 1200px;
   margin: 0 auto;
   width: 100%;
+  box-sizing: border-box;
 }
 
 /* Messages Area */
 .messages-area {
+  /* fix(mobile): área de scroll — cresce, nunca colapsa, rola internamente */
   flex: 1;
+  min-height: 0;
   background: rgba(0, 0, 0, 0.4);
   border: 1px solid rgba(168, 85, 247, 0.2);
   border-radius: 0.75rem;
   padding: 1.5rem;
   overflow-y: auto;
+  overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
   display: flex;
   flex-direction: column;
   gap: 1rem;
-  min-height: 400px;
 }
 
 /* Message Styles */
@@ -303,11 +315,18 @@
 
 /* ===== INPUT AREA ===== */
 .input-area {
+  /* fix(mobile): footer fixo — não sobe com o teclado, respeita safe-area */
+  position: sticky;
+  bottom: 0;
+  z-index: 1000;
+  width: 100%;
+  box-sizing: border-box;
   display: flex;
   flex-direction: column;
   gap: 0.75rem;
   border-top: 1px solid rgba(168, 85, 247, 0.2);
   padding: 1rem;
+  padding-bottom: max(1rem, env(safe-area-inset-bottom));
   background: rgba(0, 0, 0, 0.2);
   border-radius: 0 0 0.75rem 0.75rem;
 }
@@ -421,7 +440,11 @@
 }
 
 textarea {
+  /* fix(mobile): sem overflow horizontal, cabe no container */
   flex: 1;
+  width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
   padding: 0.75rem;
   background: rgba(30, 27, 75, 0.5);
   border: 1px solid rgba(168, 85, 247, 0.2);
