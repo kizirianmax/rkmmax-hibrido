@@ -10,9 +10,11 @@
   /* fix(mobile): viewport fixo — sem pulo ao abrir teclado */
   height: 100dvh;
   min-height: 100vh;
+  width: 100%;
   max-width: 100%;
   box-sizing: border-box;
-  overflow: hidden;
+  overflow-y: hidden;
+  overflow-x: hidden;
   background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #0f172a 100%);
   color: #e2e8f0;
   font-family:
@@ -153,6 +155,8 @@
   /* fix(mobile): área de scroll — cresce, nunca colapsa, rola internamente */
   flex: 1;
   min-height: 0;
+  max-width: 100%;
+  box-sizing: border-box;
   background: rgba(0, 0, 0, 0.4);
   border: 1px solid rgba(168, 85, 247, 0.2);
   border-radius: 0.75rem;
@@ -320,6 +324,7 @@
   bottom: 0;
   z-index: 1000;
   width: 100%;
+  max-width: 100%;
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
