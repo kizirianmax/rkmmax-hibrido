@@ -608,3 +608,14 @@
     font-size: 12px;
   }
 }
+
+/* Mobile: ocultar topo para priorizar a conversa */
+@media (max-width: 640px) {
+  .serginho-header {
+    display: none;
+  }
+
+  .welcome-container-compact {
+    display: none;
+  }
+}
