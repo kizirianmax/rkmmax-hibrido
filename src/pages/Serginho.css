@@ -3,14 +3,12 @@
 .serginho-container {
   display: flex;
   flex-direction: column;
-  height: 100vh;
+  position: fixed;
+  inset: 0;
   background: linear-gradient(to bottom, #f8fafc 0%, #e2e8f0 100%);
-  position: relative;
   overflow: hidden;
   width: 100%;
-  max-width: 100%;
   box-sizing: border-box;
-  overflow-x: hidden;
 }
 
 /* Header */
@@ -19,8 +17,6 @@
   border-bottom: 1px solid #e2e8f0;
   padding: 16px 20px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-  position: sticky;
-  top: 0;
   z-index: 10;
   box-sizing: border-box;
   width: 100%;
@@ -124,8 +120,10 @@
 /* Messages Container */
 .messages-container {
   flex: 1;
+  min-height: 0;
   overflow-y: auto;
   overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
   padding: 0 20px 120px;
   max-width: 900px;
   margin: 0 auto;
@@ -532,8 +530,8 @@
 
 /* Welcome Card Compacto - Fixo no topo */
 .welcome-container-compact {
-  position: sticky;
-  top: 73px; /* Altura do header */
+  position: relative;
+  flex-shrink: 0;
   z-index: 9;
   background: #f8fafc;
   padding: 8px 20px;
@@ -589,7 +587,6 @@
 /* Mobile */
 @media (max-width: 768px) {
   .welcome-container-compact {
-    top: 65px;
     padding: 6px 16px;
   }
 
