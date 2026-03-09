@@ -99,6 +99,20 @@ export default function HybridAgentSimple() {
     scrollToBottom();
   }, [messages]);
 
+  // Lock body scroll while this page is mounted so Android Chrome cannot
+  // auto-scroll the document when the virtual keyboard opens/closes.
+  // This eliminates the "step jump" on /hibrido on focus/blur of the textarea.
+  useEffect(() => {
+    const prevBodyOverflow = document.body.style.overflow;
+    const prevHtmlOverflow = document.documentElement.style.overflow;
+    document.body.style.overflow = "hidden";
+    document.documentElement.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = prevBodyOverflow;
+      document.documentElement.style.overflow = prevHtmlOverflow;
+    };
+  }, []);
+
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
     const token = urlParams.get("github_token");
