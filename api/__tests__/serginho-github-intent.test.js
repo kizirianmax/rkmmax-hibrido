@@ -534,8 +534,9 @@ describe('Orchestrator — fluxo normal preservado para mensagens não-GitHub', 
 
     try {
       await serginho.handleRequest('qual a previsão do tempo?');
-    } catch {
-      // Esperado: sem provider real configurado, pode falhar
+    } catch (err) {
+      // Esperado: sem provider real configurado, pode falhar — o importante é que analyzeComplexity foi chamado
+      expect(err).toBeDefined();
     }
 
     expect(analysisWasCalled).toBe(true);
@@ -554,8 +555,9 @@ describe('Orchestrator — fluxo normal preservado para mensagens não-GitHub', 
 
     try {
       await serginho.handleRequest('como implementar autenticação JWT?');
-    } catch {
+    } catch (err) {
       // Sem provider real, falha esperada — o que importa é que o router foi chamado
+      expect(err).toBeDefined();
     }
 
     expect(analysisWasCalled).toBe(true);

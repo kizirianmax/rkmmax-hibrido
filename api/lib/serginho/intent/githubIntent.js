@@ -132,12 +132,16 @@ export function detectGitHubIntent(message) {
  */
 function extractOwnerRepo(message) {
   // Tenta "owner/repo" — exclui padrões que são caminhos de arquivo (terminam em .ext)
-  // Usa somente hifens e underscores (sem ponto) no segundo grupo para evitar
-  // confundir "src/App" (de "src/App.jsx") com owner/repo.
+  // O segundo grupo usa apenas hifens e underscores (sem ponto) para que "src/App.jsx"
+  // seja capturado como "src/App" (parando antes do "."), e então descartado pela verificação
+  // abaixo. Isso significa que repos com ponto no nome (ex: "my.project") não serão extraídos
+  // diretamente; nesses casos, o usuário pode usar o formato "owner/my.project" e o nome
+  // será detectado via repoContextPattern.
   const ownerRepoRegex = /\b([a-zA-Z0-9][a-zA-Z0-9_.-]*)\/([a-zA-Z0-9][a-zA-Z0-9_-]*)\b/g;
   let match;
   while ((match = ownerRepoRegex.exec(message)) !== null) {
-    // Se o próximo caractere após o match for '.', é parte de um caminho de arquivo (ex: src/App.jsx)
+    // Se o próximo caractere após o match for '.', é parte de um caminho de arquivo
+    // (ex: "src/App" de "src/App.jsx"). undefined (fim de string) é distinto de '.' e não descarta.
     const nextChar = message[match.index + match[0].length];
     if (nextChar === '.') continue;
     return { owner: match[1], repo: match[2], missing: [] };

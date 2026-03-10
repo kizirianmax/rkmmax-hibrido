@@ -119,6 +119,9 @@ class MetricsTracker {
   }
 }
 
+// Limite máximo de conteúdo de arquivo exibido ao usuário (em caracteres)
+const MAX_FILE_CONTENT_LENGTH = 2000;
+
 // ---------------------------------------------------------------------------
 // GitHub tools result formatter (usado pelo early-return de intenção)
 // ---------------------------------------------------------------------------
@@ -157,9 +160,9 @@ function formatGitHubResult(toolName, data) {
     if (file.content && file.encoding === 'base64') {
       try {
         content = Buffer.from(file.content, 'base64').toString('utf-8');
-        // Limita a exibição a 2000 caracteres para não sobrecarregar
-        if (content.length > 2000) {
-          content = content.slice(0, 2000) + '\n\n…(truncado)';
+        // Limita a exibição para não sobrecarregar a resposta
+        if (content.length > MAX_FILE_CONTENT_LENGTH) {
+          content = content.slice(0, MAX_FILE_CONTENT_LENGTH) + '\n\n…(truncado)';
         }
         content = `\n\n\`\`\`\n${content}\n\`\`\``;
       } catch {
