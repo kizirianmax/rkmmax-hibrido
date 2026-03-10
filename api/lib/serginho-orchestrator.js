@@ -29,6 +29,7 @@ import modelRegistry from './model-registry.js';
 // GitHub intent detection — early-return sem chamada LLM (reversível: remover bloco abaixo)
 import { detectGitHubIntent } from './serginho/intent/githubIntent.js';
 import { getToolByName } from './serginho/tools/index.js';
+import { formatGitHubToolResult, formatErrorResponse as formatGitHubError } from './serginho/formatters/githubResponseFormatter.js';
 
 // Versão do orquestrador (para versionamento de schema)
 const ORCHESTRATOR_VERSION = '2.1.0';
@@ -119,60 +120,22 @@ class MetricsTracker {
   }
 }
 
-// Limite máximo de conteúdo de arquivo exibido ao usuário (em caracteres)
-const MAX_FILE_CONTENT_LENGTH = 2000;
-
 // ---------------------------------------------------------------------------
-// GitHub tools result formatter (usado pelo early-return de intenção)
+// GitHub tools result formatter (delegado para githubResponseFormatter)
 // ---------------------------------------------------------------------------
 
 /**
  * Formata o resultado de uma tool GitHub em texto legível para o usuário.
+ * Delega para o módulo formatters/githubResponseFormatter para formatação
+ * inteligente por tipo de arquivo/operação.
  *
  * @param {string} toolName
  * @param {object} data
+ * @param {{ owner?: string, repo?: string, path?: string }} [context]
  * @returns {string}
  */
-function formatGitHubResult(toolName, data) {
-  if (toolName === 'github_list_repos') {
-    const repos = data?.repos ?? [];
-    if (repos.length === 0) return '📂 Nenhum repositório encontrado.';
-    const list = repos
-      .map((r) => `• **${r.fullName || r.name}**${r.description ? ` — ${r.description}` : ''}`)
-      .join('\n');
-    return `📂 Repositórios encontrados (${repos.length}):\n\n${list}`;
-  }
-
-  if (toolName === 'github_list_branches') {
-    const branches = data?.branches ?? [];
-    if (branches.length === 0) return '🌿 Nenhuma branch encontrada.';
-    const list = branches
-      .map((b) => `• ${b.name}${b.protected ? ' 🔒' : ''}`)
-      .join('\n');
-    return `🌿 Branches encontradas (${branches.length}):\n\n${list}`;
-  }
-
-  if (toolName === 'github_get_file') {
-    const file = data?.file ?? {};
-    const name = file.name || file.path || 'arquivo';
-    const size = file.size != null ? ` (${file.size} bytes)` : '';
-    let content = '';
-    if (file.content && file.encoding === 'base64') {
-      try {
-        content = Buffer.from(file.content, 'base64').toString('utf-8');
-        // Limita a exibição para não sobrecarregar a resposta
-        if (content.length > MAX_FILE_CONTENT_LENGTH) {
-          content = content.slice(0, MAX_FILE_CONTENT_LENGTH) + '\n\n…(truncado)';
-        }
-        content = `\n\n\`\`\`\n${content}\n\`\`\``;
-      } catch {
-        content = '';
-      }
-    }
-    return `📄 **${name}**${size}${content}`;
-  }
-
-  return `✅ Operação concluída: ${toolName}`;
+function formatGitHubResult(toolName, data, context = {}) {
+  return formatGitHubToolResult(toolName, data, context);
 }
 
 // ---------------------------------------------------------------------------
@@ -300,7 +263,7 @@ class SerginhoOrchestrator {
         const result = await tool.execute(githubIntent.params);
         if (result.success) {
           return {
-            text: formatGitHubResult(githubIntent.tool, result.data),
+            text: formatGitHubResult(githubIntent.tool, result.data, githubIntent.params),
             model: 'serginho-intent',
             provider: 'serginho-tools',
             traceId,
@@ -309,7 +272,7 @@ class SerginhoOrchestrator {
           };
         } else {
           return {
-            text: `❌ ${result.error.message}${result.error.details ? ` (${result.error.details})` : ''}`,
+            text: formatGitHubError(result.error),
             model: 'serginho-intent',
             provider: 'serginho-tools',
             traceId,

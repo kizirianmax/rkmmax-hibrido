@@ -1,5 +1,39 @@
 # ✅ Checklist Projeto RKMMax (Atualizado — 23/10/2025)
 
+## 2026-03-10 — feat(serginho): respostas contextualizadas para GitHub read-only
+
+### O que foi feito
+- Criado `api/lib/serginho/formatters/githubResponseFormatter.js` — módulo de formatação inteligente com: `formatReposResponse()` (lista com count, numeração, visibilidade 🔓/🔒, branch default, descrição), `formatBranchesResponse()` (lista com indicador 🛡️ de proteção, repo alvo), `formatFileResponse()` com **smart file-type handling**: `package.json` (nome, versão, scripts, deps, devDeps), `*.md`/`README.md` (primeiro parágrafo, seções detectadas), `*.json` (estrutura/chaves), `*.js|*.jsx|*.ts|*.tsx` (exports e funções detectados), arquivos genéricos (primeiras N linhas); truncamento seguro com aviso `[conteúdo truncado — mostrando primeiros X caracteres]`; `formatErrorResponse()` para GITHUB_DISABLED, GITHUB_NO_TOKEN, GITHUB_VALIDATION_ERROR, GITHUB_API_ERROR com mensagens amigáveis sem vazar código técnico; `formatGitHubToolResult()` como entrada principal
+- Modificado minimamente `api/lib/serginho-orchestrator.js`: import do novo formatter; `formatGitHubResult()` agora delega para `formatGitHubToolResult(toolName, data, context)`; erro da tool formatado com `formatErrorResponse()`; context de `githubIntent.params` (owner/repo/path) passado para o formatter; removida constante `MAX_FILE_CONTENT_LENGTH` redundante; zero impacto no fluxo normal não-GitHub
+- Criado `api/__tests__/serginho-github-formatter.test.js` — 85 testes cobrindo: repos (count, visibilidade, branch, descrição, top 10, vazio), branches (protected indicator, repo label, count, vazio), arquivo (decode base64, truncamento, sem conteúdo), package.json smart (nome, versão, scripts, deps, devDeps, JSON inválido), README.md (parágrafo, seções), *.json (estrutura), JS/TS (exports, funções), truncamento seguro, formatErrorResponse (todos os códigos), formatGitHubToolResult (dispatch), modo stub, resultados vazios sem crash, segurança (sem token/stacktrace), integração com orchestrator (sem regressão no fluxo normal)
+
+### Por quê
+- PR #172 adicionou detecção de intenção GitHub e formatação básica inline no orchestrator — agora a formatação foi extraída para módulo dedicado e enriquecida com lógica contextual por tipo de arquivo
+- Respostas mais úteis e legíveis para o usuário final sem alterar a cadeia de chamadas (intent → tools → gateway → service)
+
+### Arquivos alterados/criados
+
+| Arquivo | Mudança |
+|---|---|
+| `api/lib/serginho/formatters/githubResponseFormatter.js` | NOVO — formatador inteligente |
+| `api/lib/serginho-orchestrator.js` | MODIFICADO MINIMAMENTE — import + delegação para formatter + context passado |
+| `api/__tests__/serginho-github-formatter.test.js` | NOVO — 85 testes |
+| `CHECKLIST.md` | Esta entrada |
+| `CHANGELOG.md` | Entrada em `[Unreleased]` |
+
+### Validação
+1. `NODE_OPTIONS='--experimental-vm-modules' ./node_modules/.bin/jest --no-coverage` → 681 testes passando (596 existentes + 85 novos)
+2. Nenhum arquivo em `src/` alterado
+3. Nenhum endpoint público `/api/github` alterado
+4. Nenhuma dependência nova
+5. Fluxo normal do Serginho (prompts não-GitHub) intacto — verificado via teste de integração
+
+### Rollback
+```bash
+git revert <sha-deste-commit>
+# Remove githubResponseFormatter.js, desfaz o import e delegação no orchestrator, remove o test file
+```
+
 ## 2026-03-10 — feat(serginho): detecção de intenção GitHub read-only no orchestrator
 
 ### O que foi feito
