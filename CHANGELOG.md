@@ -8,6 +8,7 @@ e este projeto adere ao [Semantic Versioning](https://semver.org/lang/pt-BR/).
 ## [Unreleased] — v3.1.0-kizi
 
 ### ✨ Adicionado
+- **Serginho GitHub Intent Detection (N3)**: adicionada detecção de intenção GitHub read-only no Serginho Orchestrator — `api/lib/serginho/intent/githubIntent.js` com `detectGitHubIntent(message)` usando keyword/regex matching (sem LLM) para reconhecer pedidos de listar repos/branches e ler arquivos em PT-BR e EN; early-return mínimo no início de `_handleStructured` (antes da análise de complexidade) que chama a tool correspondente via `getToolByName(tool).execute(params)` e retorna resposta formatada; helper `formatGitHubResult()` para texto legível; 38 testes cobrindo todos os cenários. Zero dependências novas. Zero breaking changes. Rollback com `git revert`. (este PR)
 - **Serginho GitHub Tools (N2)**: criada camada de orquestração de tools GitHub para uso interno do Serginho — `api/lib/serginho/tools/githubTools.js` com três tools estruturadas (`runGitHubListReposTool`, `runGitHubListBranchesTool`, `runGitHubGetFileTool`) que validam parâmetros e verificam a feature flag antes de chamar o gateway, e `api/lib/serginho/tools/index.js` com registry (`GITHUB_TOOLS`, `getToolByName`, `getAllTools`, `isGitHubToolsAvailable`). 54 testes cobrindo todos os cenários (flag off, stub, oauth, validação, sanitização, registry, garantia). Zero dependências novas. Zero breaking changes. (este PR)
 
 ### 📝 Documentação

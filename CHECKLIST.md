@@ -1,5 +1,40 @@
 # ✅ Checklist Projeto RKMMax (Atualizado — 23/10/2025)
 
+## 2026-03-10 — feat(serginho): detecção de intenção GitHub read-only no orchestrator
+
+### O que foi feito
+- Criado `api/lib/serginho/intent/githubIntent.js` — detector leve de intenção GitHub por keyword/regex matching (sem LLM), detecta: `github_list_repos`, `github_list_branches`, `github_get_file` em PT-BR e EN; extrai `owner`, `repo`, `path`; retorna `missing[]` quando parâmetros faltam; retorna `null` para mensagens não-GitHub
+- Adicionado early-return no início de `_handleStructured` em `api/lib/serginho-orchestrator.js` (ANTES da análise de complexidade) — quando intenção GitHub é detectada, chama a tool correspondente via `getToolByName(tool).execute(params)` e retorna resposta estruturada; se `null`, fluxo normal continua inalterado
+- Adicionada função helper `formatGitHubResult(toolName, data)` no orchestrator — formata resultado de repos/branches/arquivo em texto legível (com emoji, listas, conteúdo base64 decodificado)
+- Criado `api/__tests__/serginho-github-intent.test.js` — 38 testes cobrindo: todos os padrões PT/EN, extração de parâmetros, mensagens ambíguas → null, parâmetros faltando → missing[], flag off, stub mode, oauth sem token, integração com orchestrator, fluxo normal preservado, garantia de camadas
+
+### Por quê
+- PR #170 criou o gateway GitHub, PR #171 criou a tool layer — agora o Serginho precisa detectar intenções simples de GitHub e usar as tools sem depender de uma chamada LLM extra
+- Regra estrutural: NADA executa fora do Serginho — o early-return garante que as tools GitHub são consumidas pelo orchestrator principal
+
+### Arquivos alterados/criados
+
+| Arquivo | Mudança |
+|---|---|
+| `api/lib/serginho/intent/githubIntent.js` | NOVO — detector de intenção GitHub |
+| `api/lib/serginho-orchestrator.js` | MODIFICADO MINIMAMENTE — import + early-return + helper |
+| `api/__tests__/serginho-github-intent.test.js` | NOVO — 38 testes |
+| `CHECKLIST.md` | Esta entrada |
+| `CHANGELOG.md` | Entrada em `[Unreleased]` |
+
+### Validação
+1. `NODE_OPTIONS='--experimental-vm-modules' ./node_modules/.bin/jest serginho-github --no-coverage` → 134 testes passando (96 existentes + 38 novos)
+2. Nenhum arquivo em `src/` alterado
+3. Nenhum endpoint público `/api/github` alterado
+4. Nenhuma dependência nova
+5. Nenhum LLM extra chamado para detecção de intenção
+
+### Rollback
+```bash
+git revert <sha-deste-commit>
+# Remove githubIntent.js, desfaz as 3 alterações no orchestrator, remove o test file
+```
+
 ## 2026-03-06 — feat(abnt): portar ABNT completo do rkmmax-app para rkmmax-hibrido
 
 ### O que foi feito

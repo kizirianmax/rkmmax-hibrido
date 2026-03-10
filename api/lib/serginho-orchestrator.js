@@ -26,6 +26,9 @@ import { analyzeComplexity, routeToProvider, getNextFallback, FALLBACK_CHAIN } f
 import CircuitBreaker from './circuit-breaker.js';
 import { getProviderConfig, getModelMetadata, PROVIDERS, getEnabledProviders, getWeightedProviders } from './providers-config.js';
 import modelRegistry from './model-registry.js';
+// GitHub intent detection — early-return sem chamada LLM (reversível: remover bloco abaixo)
+import { detectGitHubIntent } from './serginho/intent/githubIntent.js';
+import { getToolByName } from './serginho/tools/index.js';
 
 // Versão do orquestrador (para versionamento de schema)
 const ORCHESTRATOR_VERSION = '2.1.0';
@@ -115,6 +118,64 @@ class MetricsTracker {
     };
   }
 }
+
+// Limite máximo de conteúdo de arquivo exibido ao usuário (em caracteres)
+const MAX_FILE_CONTENT_LENGTH = 2000;
+
+// ---------------------------------------------------------------------------
+// GitHub tools result formatter (usado pelo early-return de intenção)
+// ---------------------------------------------------------------------------
+
+/**
+ * Formata o resultado de uma tool GitHub em texto legível para o usuário.
+ *
+ * @param {string} toolName
+ * @param {object} data
+ * @returns {string}
+ */
+function formatGitHubResult(toolName, data) {
+  if (toolName === 'github_list_repos') {
+    const repos = data?.repos ?? [];
+    if (repos.length === 0) return '📂 Nenhum repositório encontrado.';
+    const list = repos
+      .map((r) => `• **${r.fullName || r.name}**${r.description ? ` — ${r.description}` : ''}`)
+      .join('\n');
+    return `📂 Repositórios encontrados (${repos.length}):\n\n${list}`;
+  }
+
+  if (toolName === 'github_list_branches') {
+    const branches = data?.branches ?? [];
+    if (branches.length === 0) return '🌿 Nenhuma branch encontrada.';
+    const list = branches
+      .map((b) => `• ${b.name}${b.protected ? ' 🔒' : ''}`)
+      .join('\n');
+    return `🌿 Branches encontradas (${branches.length}):\n\n${list}`;
+  }
+
+  if (toolName === 'github_get_file') {
+    const file = data?.file ?? {};
+    const name = file.name || file.path || 'arquivo';
+    const size = file.size != null ? ` (${file.size} bytes)` : '';
+    let content = '';
+    if (file.content && file.encoding === 'base64') {
+      try {
+        content = Buffer.from(file.content, 'base64').toString('utf-8');
+        // Limita a exibição para não sobrecarregar a resposta
+        if (content.length > MAX_FILE_CONTENT_LENGTH) {
+          content = content.slice(0, MAX_FILE_CONTENT_LENGTH) + '\n\n…(truncado)';
+        }
+        content = `\n\n\`\`\`\n${content}\n\`\`\``;
+      } catch {
+        content = '';
+      }
+    }
+    return `📄 **${name}**${size}${content}`;
+  }
+
+  return `✅ Operação concluída: ${toolName}`;
+}
+
+// ---------------------------------------------------------------------------
 
 /**
  * Serginho Orchestrator Class
@@ -221,6 +282,45 @@ class SerginhoOrchestrator {
     const signal = controller ? controller.signal : options.signal;
 
     try {
+    // GitHub intent early-return — sem chamada LLM (reversível: remover este bloco)
+    const githubIntent = detectGitHubIntent(message);
+    if (githubIntent) {
+      const tool = getToolByName(githubIntent.tool);
+      if (tool) {
+        if (githubIntent.missing && githubIntent.missing.length > 0) {
+          return {
+            text: `Para executar essa ação, preciso dos seguintes dados: ${githubIntent.missing.join(', ')}. Pode fornecer?`,
+            model: 'serginho-intent',
+            provider: 'serginho-tools',
+            traceId,
+            orchestrationTime: Date.now() - orchestrationStartTime,
+            _meta: { intent: githubIntent.tool, missing: githubIntent.missing },
+          };
+        }
+        const result = await tool.execute(githubIntent.params);
+        if (result.success) {
+          return {
+            text: formatGitHubResult(githubIntent.tool, result.data),
+            model: 'serginho-intent',
+            provider: 'serginho-tools',
+            traceId,
+            orchestrationTime: Date.now() - orchestrationStartTime,
+            _meta: { intent: githubIntent.tool, mode: result.data?.mode },
+          };
+        } else {
+          return {
+            text: `❌ ${result.error.message}${result.error.details ? ` (${result.error.details})` : ''}`,
+            model: 'serginho-intent',
+            provider: 'serginho-tools',
+            traceId,
+            orchestrationTime: Date.now() - orchestrationStartTime,
+            _meta: { intent: githubIntent.tool, errorCode: result.error.code },
+          };
+        }
+      }
+    }
+    // Fim do bloco GitHub intent
+
     // 1. Analyze complexity
     const analysisStartTime = Date.now();
     const analysis = analyzeComplexity(message);
