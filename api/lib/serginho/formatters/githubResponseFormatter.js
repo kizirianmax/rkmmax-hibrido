@@ -370,7 +370,7 @@ function _formatJavaScript(fileName, filePath, raw, repoLabel) {
     lines.push(`**Funções:** ${functions.slice(0, 8).join(', ')}${functions.length > 8 ? '…' : ''}`);
   }
 
-  lines.push('', '```', truncated, '```');
+  lines.push('', '```javascript', truncated, '```');
 
   if (wasTruncated) {
     lines.push(`_[conteúdo truncado — mostrando primeiros ${MAX_FILE_CONTENT_CHARS} caracteres]_`);
@@ -393,7 +393,7 @@ function _formatPlainFile(fileName, filePath, raw, repoLabel) {
     content = content.slice(0, MAX_FILE_CONTENT_CHARS);
   }
 
-  const lines = [`📄 **${fileName}**${repoLabel}`, '', '```', content, '```'];
+  const lines = [`📄 **${fileName}**${repoLabel}`, '', '```text', content, '```'];
 
   if (tooManyLines) {
     lines.push(
