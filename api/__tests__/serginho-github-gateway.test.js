@@ -12,10 +12,17 @@
  */
 
 import { jest } from '@jest/globals';
+import { fileURLToPath } from 'url';
+import path from 'path';
+
+// Resolve paths relative to this test file (portable across environments)
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const configModulePath = path.resolve(__dirname, '../lib/github/githubConfig.js');
+const serviceModulePath = path.resolve(__dirname, '../lib/github/githubService.js');
 
 // ---------------------------------------------------------------------------
 // Mocks de módulos — devem ser declarados ANTES de qualquer import dinâmico.
-// Usamos caminhos absolutos para evitar problemas com moduleNameMapper no ESM.
+// Usamos caminhos absolutos calculados via import.meta.url para portabilidade.
 // ---------------------------------------------------------------------------
 
 const mockGetGitHubConfig = jest.fn();
@@ -23,22 +30,15 @@ const mockListRepos = jest.fn();
 const mockListBranches = jest.fn();
 const mockGetFile = jest.fn();
 
-// Absolute paths to avoid relative-path resolution issues with jest.unstable_mockModule + ESM
-jest.unstable_mockModule(
-  '/home/runner/work/rkmmax-hibrido/rkmmax-hibrido/api/lib/github/githubConfig.js',
-  () => ({ getGitHubConfig: mockGetGitHubConfig }),
-);
+jest.unstable_mockModule(configModulePath, () => ({ getGitHubConfig: mockGetGitHubConfig }));
 
-jest.unstable_mockModule(
-  '/home/runner/work/rkmmax-hibrido/rkmmax-hibrido/api/lib/github/githubService.js',
-  () => ({
-    listRepos: mockListRepos,
-    listBranches: mockListBranches,
-    getFile: mockGetFile,
-    putFile: jest.fn(),
-    createPR: jest.fn(),
-  }),
-);
+jest.unstable_mockModule(serviceModulePath, () => ({
+  listRepos: mockListRepos,
+  listBranches: mockListBranches,
+  getFile: mockGetFile,
+  putFile: jest.fn(),
+  createPR: jest.fn(),
+}));
 
 // ---------------------------------------------------------------------------
 // Importação dinâmica do módulo em teste (após mocks registrados)
