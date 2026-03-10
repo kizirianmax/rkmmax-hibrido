@@ -24,7 +24,8 @@ e este projeto adere ao [Semantic Versioning](https://semver.org/lang/pt-BR/).
 
 ### ✨ Adicionado
 - **Integração GitHub (Construtor)**: base de integração com feature flag `GITHUB_INTEGRATION_ENABLED`, cliente HTTP com retry, endpoints `GET /api/github/status` e `GET /api/github/repos` (PR #166)
-- **GitHub backend hardening**: padronização de erros (`{ error: { code, message, details? } }`), endpoints `?route=branches` e `?route=file` (read-only), input validation (400), stub data, `githubErrors.js` com `formatErrorResponse`/`mapClientError`/`sanitizeMessage`, 50 novos testes de hardening em `github-hardening.test.js`, documentação em `docs/README.md` (este PR)
+- **GitHub backend hardening**: padronização de erros (`{ error: { code, message, details? } }`), endpoints `?route=branches` e `?route=file` (read-only), input validation (400), stub data, `githubErrors.js` com `formatErrorResponse`/`mapClientError`/`sanitizeMessage`, 50 novos testes de hardening em `github-hardening.test.js`, documentação em `docs/README.md` (PR #169)
+- **Serginho GitHub Gateway**: criado `api/lib/serginho/githubGateway.js` — gateway interno que torna o Serginho o único ponto de entrada para integração GitHub no backend. Funções `serginhoListRepos()`, `serginhoListBranches({ owner, repo })`, `serginhoGetFile({ owner, repo, path, ref })` com retorno padronizado `{ success, data|error }` e 42 testes cobrindo todos os cenários (flag off, stub, oauth sem/com token, validação, erros de API) (este PR)
 
 ---
 

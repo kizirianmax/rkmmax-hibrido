@@ -886,3 +886,33 @@ Ou remover manualmente: `api/github.js`, `api/lib/github/`, `api/__tests__/githu
 | **Arquivos** | `api/github.js`, `api/lib/github/githubErrors.js` (novo), `api/__tests__/github.test.js` (atualizado), `api/__tests__/github-hardening.test.js` (novo), `docs/README.md`, `CHANGELOG.md`, `CHECKLIST.md` |
 | **Validação** | 1) `npm test -- --testPathPattern=github` → 66 testes passam 2) Flag false: `?route=status` → 200, `?route=repos` → 501 com `error.code=GITHUB_DISABLED` 3) Flag true stub: `?route=repos` → 200 mock, `?route=branches` sem params → 400 `MISSING_PARAMS`, `?route=branches&owner=u&repo=r` → 200 stub, `?route=file&owner=u&repo=r&path=f` → 200 stub 4) Nenhum endpoint retorna token/segredo na resposta |
 | **Rollback** | `git revert <commit-sha>` — remove `githubErrors.js`, reverte `github.js` para versão anterior, remove `github-hardening.test.js`, reverte seção de docs |
+
+---
+
+## 2026-03-10 — feat(serginho): gateway GitHub read-only (backend, behind flag)
+
+**PR:** este PR
+
+| Item | Detalhe |
+|------|---------|
+| **O quê** | Criado `api/lib/serginho/githubGateway.js` — gateway interno que torna o Serginho o único ponto de entrada para a integração GitHub no backend. Funções: `serginhoListRepos()`, `serginhoListBranches({ owner, repo })`, `serginhoGetFile({ owner, repo, path, ref })`. Retorno padronizado `{ success: true, data }` / `{ success: false, error: { code, message, details? } }` |
+| **Por quê** | Regra do projeto: NADA executa fora do Serginho. A integração GitHub (PR #166 + #169) existe como endpoints HTTP, mas o Serginho precisava de uma camada interna para chamar esses serviços diretamente no backend, sem depender de HTTP |
+| **Arquivos** | `api/lib/serginho/githubGateway.js` (novo), `api/__tests__/serginho-github-gateway.test.js` (novo), `CHECKLIST.md`, `CHANGELOG.md` |
+| **Validação** | 1) `npm test -- --testPathPattern=serginho-github-gateway` → 42 testes passam 2) Flag false: `serginhoListRepos()` retorna `{ success: false, error: { code: 'GITHUB_DISABLED' } }` 3) Stub: `serginhoListRepos()` retorna `{ success: true, data: { repos: [...], mode: 'stub' } }` sem chamar `fetch` 4) OAuth: `serginhoListBranches/serginhoGetFile` chamam `githubService` corretamente 5) Validação: owner/repo/path ausentes retornam `GITHUB_VALIDATION_ERROR` 6) Nenhuma resposta vaza token ou stacktrace |
+| **Rollback** | `git revert <commit-sha>` — remove `api/lib/serginho/githubGateway.js` e `api/__tests__/serginho-github-gateway.test.js`, reverte `CHECKLIST.md` e `CHANGELOG.md` |
+| **Impacto** | Zero breaking changes — nenhum endpoint existente alterado, nenhuma UI tocada, nenhuma dependência nova. A flag `GITHUB_INTEGRATION_ENABLED=false` por padrão garante que nada muda em produção |
+
+### Códigos de erro do gateway
+
+| Código | Quando |
+|--------|--------|
+| `GITHUB_DISABLED` | `GITHUB_INTEGRATION_ENABLED` está `false`/ausente |
+| `GITHUB_NO_TOKEN` | Modo `oauth` ativo mas `GITHUB_TOKEN` não configurado |
+| `GITHUB_VALIDATION_ERROR` | Parâmetros obrigatórios `owner`/`repo`/`path` ausentes |
+| `GITHUB_API_ERROR` | Erro na chamada à API real do GitHub (capturado e sanitizado) |
+
+### TODOs futuros (Serginho N2)
+
+1. **Serginho chamar o gateway** — adicionar detecção de intenção no orquestrador para chamar `serginhoListRepos`/`serginhoListBranches`/`serginhoGetFile` quando o usuário pedir info sobre repos
+2. **Contexto de repositório** — injetar conteúdo de arquivo no prompt do Serginho para assistência de código contextual
+3. **Escrita (N3)** — quando GitHub App estiver implementado, adicionar `serginhoWriteFile`/`serginhoCreatePR` ao gateway
