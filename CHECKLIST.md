@@ -710,3 +710,95 @@ Ou restaurar os arquivos antigos do commit anterior.
 | **Arquivos** | `src/pages/Serginho.jsx` (adicionou `SimpleMarkdown` local + usou no render), `src/pages/Serginho.css` (estilos para `<p>`, `<code>`, `<strong>` dentro de `.message-bubble`), `CHECKLIST.md` |
 | **Validação** | 1) Abrir `/serginho`, perguntar algo que gere lista/títulos → aparece com parágrafos e quebras 2) Input/scroll/chat não quebram 3) Mensagens do usuário continuam como texto simples |
 | **Rollback** | `git revert <commit>` — remove SimpleMarkdown e CSS, volta ao `{msg.content}` raw |
+
+---
+
+## feat(github): base de integração do Construtor (flag + service + endpoints mínimos)
+
+**Data:** 2026-03-10  
+**Issue:** #165  
+**PR:** feat(github): base de integração do Construtor (flag + service + endpoints mínimos)
+
+### O que mudou / Por quê
+
+Adicionada a base de integração GitHub para o produto Construtor, com arquitetura limpa, feature flag obrigatória e sem quebrar produção existente.
+
+**Por quê:** O Construtor precisa integrar com repositórios GitHub (listar repos, branches, arquivos) para permitir edição assistida por IA. Esta PR cria a fundação segura antes de implementar o fluxo de autenticação completo (GitHub App).
+
+### Arquivos alterados
+
+| Arquivo | Mudança |
+|---------|---------|
+| `api/lib/github/githubConfig.js` | Feature flag + leitura segura de env (sem expor tokens) |
+| `api/lib/github/githubClient.js` | Wrapper HTTP com timeout, retry linear, erro padronizado |
+| `api/lib/github/githubService.js` | listRepos, listBranches, getFile (reais); putFile/createPR (stubs NOT_IMPLEMENTED) |
+| `api/lib/github/githubTypes.js` | JSDoc/types para padronizar retornos |
+| `api/github.js` | Endpoints: GET /api/github/status e GET /api/github/repos |
+| `api/__tests__/github.test.js` | Testes unitários (flag, status, repos, stubs) |
+| `.env.example` | Documentadas 3 novas variáveis de integração GitHub |
+| `vercel.json` | Rewrites para /api/github/status e /api/github/repos |
+| `CHECKLIST.md` | Esta entrada |
+
+### Endpoints criados
+
+| Endpoint | Método | Comportamento |
+|----------|--------|---------------|
+| `/api/github/status` | GET | Sempre 200; retorna `{ enabled, mode, message }` |
+| `/api/github/repos` | GET | 501 se flag false; 200 (mock) se stub; 200 (real) se oauth com token |
+
+### Feature flag
+
+```bash
+# Padrão — integração DESABILITADA (seguro para produção)
+GITHUB_INTEGRATION_ENABLED=false
+
+# Para habilitar em modo stub (sem credenciais reais):
+GITHUB_INTEGRATION_ENABLED=true
+
+# Para habilitar em modo oauth (com token real):
+GITHUB_INTEGRATION_ENABLED=true
+GITHUB_TOKEN=ghp_seutoken
+```
+
+### Como testar localmente
+
+```bash
+# 1. Iniciar servidor de desenvolvimento (Vercel CLI ou vite proxy)
+npm start   # ou: vercel dev
+
+# 2. Com flag false (padrão):
+curl http://localhost:3000/api/github/status
+# → 200: { "enabled": false, "mode": "stub", "message": "..." }
+
+curl http://localhost:3000/api/github/repos
+# → 501: { "error": "...", "message": "...GITHUB_INTEGRATION_ENABLED=true..." }
+
+# 3. Com flag true e sem token (modo stub):
+GITHUB_INTEGRATION_ENABLED=true vercel dev
+curl http://localhost:3000/api/github/repos
+# → 200: { "repos": [...mock...], "mode": "stub" }
+
+# 4. Rodar testes unitários:
+npm test -- --testPathPattern=github
+```
+
+### Rollback
+
+```bash
+git revert <commit-sha>
+```
+
+Ou remover manualmente: `api/github.js`, `api/lib/github/`, `api/__tests__/github.test.js` + reverter `vercel.json` e `.env.example`.
+
+### TODOs futuros (GitHub App)
+
+1. **Fluxo de instalação GitHub App** — rota `/api/github/install` que redireciona para GitHub App install URL
+2. **Callback de instalação** — `/api/github/app-callback` recebe `installation_id` após instalação
+3. **Storage do installation_id** — persistir em Supabase (tabela `github_installations` com user_id + installation_id)
+4. **Geração de token por instalação** — JWT assinado com `GITHUB_APP_PRIVATE_KEY` → exchange por access token temporário (60 min)
+
+### Impacto em produção
+
+- **Zero breaking changes**: flag false por padrão — endpoints novos não afetam nada existente
+- **Sem dependências novas**: usa `fetch` nativo do Node.js 22
+- **Sem alterações em UI** ou outros endpoints existentes

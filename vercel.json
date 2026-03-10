@@ -27,6 +27,14 @@
       "destination": "/api/chat?mode=stream"
     },
     {
+      "source": "/api/github/status",
+      "destination": "/api/github?route=status"
+    },
+    {
+      "source": "/api/github/repos",
+      "destination": "/api/github?route=repos"
+    },
+    {
       "source": "/(.*)",
       "destination": "/index.html"
     }
