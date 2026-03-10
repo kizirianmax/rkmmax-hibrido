@@ -153,8 +153,9 @@ describe('GET /api/github/repos — flag false → 501', () => {
     await handler(req, res);
     expect(res._status).toBe(501);
     expect(res._body).toHaveProperty('error');
-    expect(res._body).toHaveProperty('message');
-    expect(res._body.message).toContain('GITHUB_INTEGRATION_ENABLED');
+    expect(res._body.error).toHaveProperty('code', 'GITHUB_DISABLED');
+    expect(res._body.error).toHaveProperty('message');
+    expect(res._body.error.details).toContain('GITHUB_INTEGRATION_ENABLED');
   });
 
   test('retorna 501 sem flag definida', async () => {

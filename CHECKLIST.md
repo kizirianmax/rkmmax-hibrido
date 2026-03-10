@@ -872,3 +872,17 @@ Ou remover manualmente: `api/github.js`, `api/lib/github/`, `api/__tests__/githu
 | **Arquivos** | `docs/README.md` (novo), `docs/INDEX.md` (novo), `README.md` (seção adicionada), `CHECKLIST.md`, `CHANGELOG.md` |
 | **Validação** | 1) Abrir `docs/README.md` e verificar que todos os links apontam para arquivos existentes 2) Abrir `docs/INDEX.md` e verificar links rápidos 3) Verificar seção "📚 Documentação" no `README.md` da raiz 4) CI não deve quebrar (mudanças apenas em `.md`) |
 | **Rollback** | `git revert <commit-sha>` — remove os arquivos `docs/README.md` e `docs/INDEX.md` e reverte as alterações no `README.md`, `CHECKLIST.md` e `CHANGELOG.md` |
+
+---
+
+## 2026-03-10 — chore(github): hardening da base GitHub (read-only + guardas + testes)
+
+**PR:** este PR
+
+| Item | Detalhe |
+|------|---------|
+| **O quê** | Hardening da integração GitHub backend: formato de erro padronizado `{ error: { code, message, details? } }`, novos endpoints `?route=branches` e `?route=file` (read-only), validação de input (400), stub data para branches e file, `api/lib/github/githubErrors.js` com helpers `formatErrorResponse`/`mapClientError`/`sanitizeMessage`, 50 novos testes de hardening, documentação em `docs/README.md` |
+| **Por quê** | A base GitHub (PR #166) tinha formato de erro inconsistente, sem endpoints branches/file, sem validação de input e sem cobertura de testes de segurança. Necessário para evoluir para "Construtor N2" sem dívida técnica |
+| **Arquivos** | `api/github.js`, `api/lib/github/githubErrors.js` (novo), `api/__tests__/github.test.js` (atualizado), `api/__tests__/github-hardening.test.js` (novo), `docs/README.md`, `CHANGELOG.md`, `CHECKLIST.md` |
+| **Validação** | 1) `npm test -- --testPathPattern=github` → 66 testes passam 2) Flag false: `?route=status` → 200, `?route=repos` → 501 com `error.code=GITHUB_DISABLED` 3) Flag true stub: `?route=repos` → 200 mock, `?route=branches` sem params → 400 `MISSING_PARAMS`, `?route=branches&owner=u&repo=r` → 200 stub, `?route=file&owner=u&repo=r&path=f` → 200 stub 4) Nenhum endpoint retorna token/segredo na resposta |
+| **Rollback** | `git revert <commit-sha>` — remove `githubErrors.js`, reverte `github.js` para versão anterior, remove `github-hardening.test.js`, reverte seção de docs |

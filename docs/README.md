@@ -149,6 +149,90 @@ Consulte [.env.example](../.env.example) para a lista completa.
 
 ---
 
+## 🔗 Integração GitHub (Backend)
+
+A integração com o GitHub é gerida exclusivamente no backend (`api/`). O frontend **não** acessa a API do GitHub diretamente.
+
+### Variáveis de Ambiente
+
+| Variável | Obrigatória | Padrão | Descrição |
+|----------|-------------|--------|-----------|
+| `GITHUB_INTEGRATION_ENABLED` | Não | `false` | Feature flag principal. Defina `true` para ativar. |
+| `GITHUB_TOKEN` | Não | — | Personal Access Token (OAuth). Quando ausente com flag ativa, modo é `stub`. |
+| `GITHUB_REQUEST_TIMEOUT_MS` | Não | `8000` | Timeout em ms para requisições à API GitHub. |
+| `GITHUB_API_BASE_URL` | Não | `https://api.github.com` | URL base da API GitHub (útil para testes). |
+
+### Modos de Operação
+
+| Modo | Condição | Comportamento |
+|------|----------|---------------|
+| desabilitado | `GITHUB_INTEGRATION_ENABLED=false` (padrão) | Todos os endpoints exceto `/status` retornam 501 `GITHUB_DISABLED` |
+| `stub` | Flag ativa, sem `GITHUB_TOKEN` | Retorna dados mock; **nunca** chama a API real |
+| `oauth` | Flag ativa, com `GITHUB_TOKEN` | Chama a API real autenticada com token OAuth |
+
+### Endpoints Disponíveis
+
+Todos os endpoints usam `GET /api/github?route=<rota>`.
+
+#### `GET /api/github?route=status`
+Sempre retorna `200`. Não é bloqueado pela feature flag.
+```bash
+curl "https://seu-deploy.vercel.app/api/github?route=status"
+# { "enabled": false, "mode": "stub", "message": "..." }
+```
+
+#### `GET /api/github?route=repos`
+Lista repositórios do usuário autenticado.
+```bash
+curl "https://seu-deploy.vercel.app/api/github?route=repos"
+# Flag off → 501 | stub → 200 mock | oauth → 200 real
+```
+
+#### `GET /api/github?route=branches&owner=USER&repo=REPO`
+Lista branches de um repositório. Parâmetros `owner` e `repo` são obrigatórios.
+```bash
+curl "https://seu-deploy.vercel.app/api/github?route=branches&owner=kizirianmax&repo=rkmmax-hibrido"
+# Flag off → 501 | sem params → 400 | stub → 200 mock | oauth → 200 real
+```
+
+#### `GET /api/github?route=file&owner=USER&repo=REPO&path=PATH[&ref=REF]`
+Obtém conteúdo de um arquivo. Parâmetros `owner`, `repo` e `path` são obrigatórios. `ref` é opcional (branch, tag ou commit SHA).
+```bash
+curl "https://seu-deploy.vercel.app/api/github?route=file&owner=kizirianmax&repo=rkmmax-hibrido&path=README.md&ref=main"
+# Flag off → 501 | sem params → 400 | stub → 200 mock | oauth → 200 real
+```
+
+### Códigos de Erro
+
+Todos os erros seguem o formato: `{ "error": { "code": "...", "message": "...", "details": "..." } }`
+
+| Código | Status HTTP | Descrição |
+|--------|-------------|-----------|
+| `GITHUB_DISABLED` | 501 | Feature flag desabilitada |
+| `GITHUB_NO_TOKEN` | 401 | Token não configurado (oauth mode) |
+| `GITHUB_UNAUTHORIZED` | 401/403 | Token inválido ou sem permissão |
+| `GITHUB_NOT_FOUND` | 404 | Recurso não encontrado na API GitHub |
+| `GITHUB_TIMEOUT` | 504 | Timeout na requisição à API GitHub |
+| `GITHUB_API_ERROR` | 5xx | Erro genérico na API GitHub |
+| `MISSING_PARAMS` | 400 | Parâmetros obrigatórios ausentes |
+| `METHOD_NOT_ALLOWED` | 405 | Método HTTP inválido (só GET é aceito) |
+| `NOT_FOUND` | 404 | Rota desconhecida |
+| `INTERNAL_ERROR` | 500 | Erro interno inesperado |
+
+### Arquivos Relevantes
+
+| Arquivo | Descrição |
+|---------|-----------|
+| `api/github.js` | Handler principal, roteamento e handlers por rota |
+| `api/lib/github/githubConfig.js` | Feature flag e leitura segura de variáveis de ambiente |
+| `api/lib/github/githubClient.js` | Wrapper HTTP com timeout, retry e `GitHubClientError` |
+| `api/lib/github/githubService.js` | Funções de negócio: `listRepos`, `listBranches`, `getFile` |
+| `api/lib/github/githubErrors.js` | `formatErrorResponse`, `mapClientError`, `sanitizeMessage` |
+| `api/__tests__/github.test.js` | Testes unitários base |
+| `api/__tests__/github-hardening.test.js` | Testes de hardening e segurança |
+
+---
+
 ## 🏗️ Produto / Construtor
 
 | Documento | Descrição |

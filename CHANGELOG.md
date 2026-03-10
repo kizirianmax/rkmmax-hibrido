@@ -24,6 +24,7 @@ e este projeto adere ao [Semantic Versioning](https://semver.org/lang/pt-BR/).
 
 ### ✨ Adicionado
 - **Integração GitHub (Construtor)**: base de integração com feature flag `GITHUB_INTEGRATION_ENABLED`, cliente HTTP com retry, endpoints `GET /api/github/status` e `GET /api/github/repos` (PR #166)
+- **GitHub backend hardening**: padronização de erros (`{ error: { code, message, details? } }`), endpoints `?route=branches` e `?route=file` (read-only), input validation (400), stub data, `githubErrors.js` com `formatErrorResponse`/`mapClientError`/`sanitizeMessage`, 50 novos testes de hardening em `github-hardening.test.js`, documentação em `docs/README.md` (este PR)
 
 ---
 
