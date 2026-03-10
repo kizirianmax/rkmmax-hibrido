@@ -911,8 +911,33 @@ Ou remover manualmente: `api/github.js`, `api/lib/github/`, `api/__tests__/githu
 | `GITHUB_VALIDATION_ERROR` | Parâmetros obrigatórios `owner`/`repo`/`path` ausentes |
 | `GITHUB_API_ERROR` | Erro na chamada à API real do GitHub (capturado e sanitizado) |
 
-### TODOs futuros (Serginho N2)
+### TODOs futuros (Serginho N2 → N3)
 
-1. **Serginho chamar o gateway** — adicionar detecção de intenção no orquestrador para chamar `serginhoListRepos`/`serginhoListBranches`/`serginhoGetFile` quando o usuário pedir info sobre repos
-2. **Contexto de repositório** — injetar conteúdo de arquivo no prompt do Serginho para assistência de código contextual
-3. **Escrita (N3)** — quando GitHub App estiver implementado, adicionar `serginhoWriteFile`/`serginhoCreatePR` ao gateway
+1. ~~**Serginho chamar o gateway** — adicionar detecção de intenção no orquestrador para chamar `serginhoListRepos`/`serginhoListBranches`/`serginhoGetFile` quando o usuário pedir info sobre repos~~ ✅ **concluído** — tools orchestration layer criada (este PR)
+2. **Detecção de intenção** — integrar o tools registry no `serginho-orchestrator.js` para detecção automática de intenção GitHub (próximo PR)
+3. **Contexto de repositório** — injetar conteúdo de arquivo no prompt do Serginho para assistência de código contextual
+4. **Escrita (N3)** — quando GitHub App estiver implementado, adicionar `serginhoWriteFile`/`serginhoCreatePR` ao gateway
+
+---
+
+## 2026-03-10 — feat(serginho): GitHub read-only tools orchestration layer (backend only)
+
+**PR:** este PR
+
+| Item | Detalhe |
+|------|---------|
+| **O quê** | Criada camada de orquestração de tools GitHub para uso interno do Serginho. Módulo `api/lib/serginho/tools/githubTools.js` expõe três tools estruturadas (`github_list_repos`, `github_list_branches`, `github_get_file`) com validação de parâmetros e verificação de feature flag ANTES de chamar o gateway. Módulo `api/lib/serginho/tools/index.js` implementa o registry com `GITHUB_TOOLS`, `getToolByName()`, `getAllTools()` e `isGitHubToolsAvailable()`. |
+| **Por quê** | Serginho N2: criar a camada de tools que o orchestrator poderá consumir na próxima iteração (detecção de intenção). Regra do projeto: NADA executa fora do Serginho. As tools chamam APENAS o gateway interno — nunca `githubService` diretamente. |
+| **Arquivos** | `api/lib/serginho/tools/githubTools.js` (novo), `api/lib/serginho/tools/index.js` (novo), `api/__tests__/serginho-github-tools.test.js` (novo), `CHECKLIST.md`, `CHANGELOG.md` |
+| **Validação** | 1) `npm test -- --testPathPattern=serginho-github-tools` → 54 testes passam 2) Validação de parâmetros ocorre ANTES de chamar o gateway 3) Flag off: tools retornam `GITHUB_DISABLED` sem chamar o gateway 4) Stub: tools repassam dados stub do gateway 5) Registry: `getToolByName('github_list_repos')` retorna descritor correto 6) `isGitHubToolsAvailable()` reflete o estado da feature flag |
+| **Rollback** | `git revert <commit-sha>` — remove `api/lib/serginho/tools/githubTools.js`, `api/lib/serginho/tools/index.js` e `api/__tests__/serginho-github-tools.test.js`, reverte `CHECKLIST.md` e `CHANGELOG.md` |
+| **Impacto** | Zero breaking changes — nenhum endpoint existente alterado, nenhuma UI tocada, nenhuma dependência nova. Nenhum código existente foi modificado. A flag `GITHUB_INTEGRATION_ENABLED=false` por padrão garante que nada muda em produção. |
+
+### Códigos de erro das tools
+
+| Código | Quando |
+|--------|--------|
+| `GITHUB_DISABLED` | `GITHUB_INTEGRATION_ENABLED` está `false`/ausente (verificado pela tool antes de chamar o gateway) |
+| `GITHUB_VALIDATION_ERROR` | Parâmetros obrigatórios `owner`/`repo`/`path` ausentes (verificado pela tool antes de chamar o gateway) |
+| `GITHUB_NO_TOKEN` | Modo `oauth` ativo mas `GITHUB_TOKEN` não configurado (repassado do gateway) |
+| `GITHUB_API_ERROR` | Erro na chamada à API real do GitHub (repassado do gateway, sem stacktrace) |
