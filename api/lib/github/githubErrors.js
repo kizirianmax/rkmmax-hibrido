@@ -21,7 +21,7 @@
  */
 export function formatErrorResponse(code, message, details) {
   const error = { code, message };
-  if (details !== undefined && details !== null) {
+  if (details != null) {
     error.details = details;
   }
   return { error };

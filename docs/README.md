@@ -166,6 +166,7 @@ A integração com o GitHub é gerida exclusivamente no backend (`api/`). O fron
 
 | Modo | Condição | Comportamento |
 |------|----------|---------------|
+| desabilitado | `GITHUB_INTEGRATION_ENABLED=false` (padrão) | Todos os endpoints exceto `/status` retornam 501 `GITHUB_DISABLED` |
 | `stub` | Flag ativa, sem `GITHUB_TOKEN` | Retorna dados mock; **nunca** chama a API real |
 | `oauth` | Flag ativa, com `GITHUB_TOKEN` | Chama a API real autenticada com token OAuth |
 

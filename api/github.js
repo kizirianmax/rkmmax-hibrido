@@ -249,7 +249,7 @@ async function handleFile(req, res) {
   }
 
   try {
-    const ref = req.query?.ref || undefined;
+    const ref = req.query?.ref;
     const file = await getFile(owner, repo, path, ref);
     return res.status(200).json({ file, mode: 'oauth' });
   } catch (err) {

@@ -225,7 +225,7 @@ describe('Modo STUB — retorna mock data, nunca chama API real', () => {
     process.env.GITHUB_INTEGRATION_ENABLED = 'true';
     delete process.env.GITHUB_TOKEN;
     // Espiona global.fetch para garantir que não é chamado no modo stub
-    fetchSpy = jest.spyOn(global, 'fetch').mockRejectedValue(new Error('fetch should not be called in stub mode'));
+    fetchSpy = jest.spyOn(global, 'fetch').mockRejectedValue(new Error('[stub mode] fetch must not be called'));
   });
 
   afterEach(() => {
