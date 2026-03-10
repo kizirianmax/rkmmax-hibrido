@@ -802,3 +802,59 @@ Ou remover manualmente: `api/github.js`, `api/lib/github/`, `api/__tests__/githu
 - **Zero breaking changes**: flag false por padrão — endpoints novos não afetam nada existente
 - **Sem dependências novas**: usa `fetch` nativo do Node.js 22
 - **Sem alterações em UI** ou outros endpoints existentes
+
+---
+
+## 2026-03-10 — fix(serginho): eliminar degrau no mobile (app-like, isolado)
+
+**PR:** #163
+
+| Item | Detalhe |
+|------|---------|
+| **O quê** | Corrigido layout app-like no `/serginho`: `position: fixed; inset: 0` no container raiz, cadeia flex correta (header/footer com `flex-shrink: 0`, messages com `min-height: 0; overflow-y: auto`), scroll-lock no `body`/`html` via `useEffect` no mount/unmount |
+| **Por quê** | Em mobile, a página `/serginho` "subia um degrau" ao focar o textarea — o body inteiro scrollava. O padrão `position: fixed; inset: 0` elimina esse comportamento travando o container no viewport |
+| **Arquivos** | `src/pages/Serginho.css`, `src/pages/Serginho.jsx`, `CHECKLIST.md` |
+| **Validação** | 1) Abrir `/serginho` em 360×740 e 390×844 → focar textarea → digitar → enviar → receber resposta → ZERO pulo/degrau 2) Somente `.messages-container` rola 3) Desktop: visual idêntico |
+| **Rollback** | `git revert <commit-sha>` — restaura layout anterior do Serginho |
+
+---
+
+## 2026-03-10 — fix(hybrid): esconder topo no mobile e priorizar conversa
+
+**PR:** #164
+
+| Item | Detalhe |
+|------|---------|
+| **O quê** | Em mobile (`max-width: 640px`), o header do `/hybrid` (bloco com "RKMMAX Híbrido", "Modo", "Sistema", chips de status) é ocultado via `display: none` — o espaço liberado é 100% ocupado pela área de mensagens |
+| **Por quê** | No mobile, o header ocupa espaço valioso da tela dificultando a conversa. A ocultação é CSS-only, reversível, e não afeta desktop |
+| **Arquivos** | `src/styles/HybridAgent.css`, `CHECKLIST.md` |
+| **Validação** | 1) Mobile: abrir `/hybrid` → confirmar sem topo → só chat+input → sem degrau 2) Desktop: topo continua aparecendo igual |
+| **Rollback** | `git revert <commit-sha>` — restaura exibição do header em mobile |
+
+---
+
+## 2026-03-10 — feat(github): base de integração do Construtor (flag + service + endpoints mínimos)
+
+**PR:** #166
+
+| Item | Detalhe |
+|------|---------|
+| **O quê** | Adicionada fundação de integração GitHub para o Construtor: feature flag `GITHUB_INTEGRATION_ENABLED`, cliente HTTP com retry, serviço com `listRepos`/`listBranches`/`getFile` reais e stubs `putFile`/`createPR`, endpoints `GET /api/github/status` e `GET /api/github/repos` |
+| **Por quê** | O Construtor precisa integrar com repositórios GitHub para edição assistida por IA. Esta PR cria a fundação segura antes do fluxo de autenticação completo (GitHub App) |
+| **Arquivos** | `api/lib/github/`, `api/github.js`, `api/__tests__/github.test.js`, `.env.example`, `vercel.json`, `CHECKLIST.md` |
+| **Validação** | 1) `curl /api/github/status` → 200 2) Com flag false: `curl /api/github/repos` → 501 3) Com flag true: 200 com mock 4) `npm test -- --testPathPattern=github` → todos passam |
+| **Rollback** | `git revert <commit-sha>` — remove endpoints e arquivos de integração GitHub |
+
+---
+
+## 2026-03-10 — chore(governance): finalizar governança (SECURITY + CHECKLIST + copilot-instructions + CHANGELOG)
+
+**PR:** #167 (este PR)
+
+| Item | Detalhe |
+|------|---------|
+| **O quê** | Governança finalizada: `SECURITY.md` expandido com política real de divulgação responsável, `CHECKLIST.md` atualizado com PRs #163/#164/#166, `.github/copilot-instructions.md` criado com instruções para o Copilot Agent, `CHANGELOG.md` atualizado com entradas recentes |
+| **Por quê** | O `SECURITY.md` era o template genérico do GitHub (versões fictícias 5.x). O `CHECKLIST.md` não registrava os PRs recentes. Não havia instruções para orientar o Copilot no repositório |
+| **Arquivos** | `SECURITY.md`, `CHECKLIST.md`, `.github/copilot-instructions.md`, `CHANGELOG.md` |
+| **Validação** | 1) `SECURITY.md` contém contato, prazos e escopo reais 2) `CHECKLIST.md` lista PRs #163, #164, #166, #167 3) `.github/copilot-instructions.md` existe com instruções completas 4) `CHANGELOG.md` tem entrada `[Unreleased]` com mudanças recentes |
+| **Rollback** | `git revert <commit-sha>` — reverte todos os arquivos de governança ao estado anterior |
