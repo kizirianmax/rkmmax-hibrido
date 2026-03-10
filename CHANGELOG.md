@@ -5,6 +5,25 @@ Todas as mudanças notáveis neste projeto serão documentadas neste arquivo.
 O formato é baseado em [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.0/),
 e este projeto adere ao [Semantic Versioning](https://semver.org/lang/pt-BR/).
 
+## [Unreleased] — v3.1.0-kizi
+
+### 🔒 Segurança
+- **`SECURITY.md`** expandido: substituído o template genérico do GitHub por política de segurança real com contato, prazos de resposta, escopo de vulnerabilidades e política de divulgação responsável (PR #167)
+
+### 📝 Documentação / Governança
+- **`CHECKLIST.md`** atualizado: PRs #163, #164, #166 registrados no histórico de operações; seção de validação e rollback adicionada (PR #167)
+- **`.github/copilot-instructions.md`** criado: instruções completas para o Copilot Agent sobre arquitetura, stack, padrões de código, convenções de commit, segurança e idioma (PR #167)
+- **`CHANGELOG.md`** atualizado: entradas para PRs #163, #164, #166, #167 adicionadas (PR #167)
+
+### 🐛 Corrigido
+- **`/serginho` mobile**: eliminado o "degrau" (jump) ao focar o textarea — layout app-like com `position: fixed; inset: 0`, cadeia flex correta e scroll-lock no `body`/`html` via `useEffect` (PR #163)
+- **`/hybrid` mobile**: header ocultado em mobile (`max-width: 640px`) para priorizar área de conversa — 100% da tela disponível para chat+input (PR #164)
+
+### ✨ Adicionado
+- **Integração GitHub (Construtor)**: base de integração com feature flag `GITHUB_INTEGRATION_ENABLED`, cliente HTTP com retry, endpoints `GET /api/github/status` e `GET /api/github/repos` (PR #166)
+
+---
+
 ## [1.0.0] - 2025-10-15
 
 ### 🎉 Lançamento Inicial
