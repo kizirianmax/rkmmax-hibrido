@@ -51,7 +51,7 @@ Se não receber resposta dentro de 48 horas, tente reenviar com o mesmo assunto.
 - Rate limiting genérico sem impacto real de segurança
 - Bugs em versões não suportadas (< 3.0)
 
-## Divulgação Responsável (Responsible Disclosure)
+## Divulgação Responsável
 
 Seguimos o modelo de **divulgação coordenada**:
 
