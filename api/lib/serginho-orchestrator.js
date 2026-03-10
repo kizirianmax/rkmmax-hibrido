@@ -30,6 +30,8 @@ import modelRegistry from './model-registry.js';
 import { detectGitHubIntent } from './serginho/intent/githubIntent.js';
 import { getToolByName } from './serginho/tools/index.js';
 import { formatGitHubToolResult, formatErrorResponse as formatGitHubError } from './serginho/formatters/githubResponseFormatter.js';
+// GitHub conversation context — per-request in-memory (reversível: remover bloco abaixo)
+import { createGitHubContext, updateContextFromToolResult, resolveParamsFromContext, getContextSummary } from './serginho/context/githubConversationContext.js';
 
 // Versão do orquestrador (para versionamento de schema)
 const ORCHESTRATOR_VERSION = '2.1.0';
@@ -141,6 +143,34 @@ function formatGitHubResult(toolName, data, context = {}) {
 // ---------------------------------------------------------------------------
 
 /**
+ * Calcula quais parâmetros obrigatórios ainda estão faltando para uma tool GitHub,
+ * após a resolução a partir do contexto de conversa.
+ *
+ * @param {string} toolName
+ * @param {{ owner?: string, repo?: string, path?: string }} params
+ * @returns {string[]}
+ */
+function _computeMissingParams(toolName, params) {
+  if (toolName === 'github_list_repos') return [];
+  if (toolName === 'github_list_branches') {
+    const m = [];
+    if (!params.owner) m.push('owner');
+    if (!params.repo) m.push('repo');
+    return m;
+  }
+  if (toolName === 'github_get_file') {
+    const m = [];
+    if (!params.owner) m.push('owner');
+    if (!params.repo) m.push('repo');
+    if (!params.path) m.push('path');
+    return m;
+  }
+  return [];
+}
+
+// ---------------------------------------------------------------------------
+
+/**
  * Serginho Orchestrator Class
  */
 class SerginhoOrchestrator {
@@ -245,30 +275,42 @@ class SerginhoOrchestrator {
     const signal = controller ? controller.signal : options.signal;
 
     try {
+    // GitHub conversation context — per-request, in-memory (reversível: remover bloco abaixo)
+    // Cópia rasa é suficiente: todos os campos do contexto são primitivos (strings/null).
+    const githubCtx = context.githubContext
+      ? { ...context.githubContext }
+      : createGitHubContext();
+
     // GitHub intent early-return — sem chamada LLM (reversível: remover este bloco)
     const githubIntent = detectGitHubIntent(message);
     if (githubIntent) {
       const tool = getToolByName(githubIntent.tool);
       if (tool) {
-        if (githubIntent.missing && githubIntent.missing.length > 0) {
+        // Resolve parâmetros faltantes a partir do contexto de conversa
+        const resolvedParams = resolveParamsFromContext(githubCtx, githubIntent.params);
+        const remainingMissing = _computeMissingParams(githubIntent.tool, resolvedParams);
+
+        if (remainingMissing.length > 0) {
           return {
-            text: `Para executar essa ação, preciso dos seguintes dados: ${githubIntent.missing.join(', ')}. Pode fornecer?`,
+            text: `Para executar essa ação, preciso dos seguintes dados: ${remainingMissing.join(', ')}. Pode fornecer?`,
             model: 'serginho-intent',
             provider: 'serginho-tools',
             traceId,
             orchestrationTime: Date.now() - orchestrationStartTime,
-            _meta: { intent: githubIntent.tool, missing: githubIntent.missing },
+            _meta: { intent: githubIntent.tool, missing: remainingMissing, githubContext: githubCtx },
           };
         }
-        const result = await tool.execute(githubIntent.params);
+        const result = await tool.execute(resolvedParams);
+        // Atualiza contexto após execução da tool
+        updateContextFromToolResult(githubCtx, githubIntent.tool, resolvedParams, result);
         if (result.success) {
           return {
-            text: formatGitHubResult(githubIntent.tool, result.data, githubIntent.params),
+            text: formatGitHubResult(githubIntent.tool, result.data, resolvedParams),
             model: 'serginho-intent',
             provider: 'serginho-tools',
             traceId,
             orchestrationTime: Date.now() - orchestrationStartTime,
-            _meta: { intent: githubIntent.tool, mode: result.data?.mode },
+            _meta: { intent: githubIntent.tool, mode: result.data?.mode, githubContext: githubCtx },
           };
         } else {
           return {
@@ -277,12 +319,18 @@ class SerginhoOrchestrator {
             provider: 'serginho-tools',
             traceId,
             orchestrationTime: Date.now() - orchestrationStartTime,
-            _meta: { intent: githubIntent.tool, errorCode: result.error.code },
+            _meta: { intent: githubIntent.tool, errorCode: result.error.code, githubContext: githubCtx },
           };
         }
       }
     }
     // Fim do bloco GitHub intent
+
+    // Injeta resumo do contexto GitHub (se disponível) para perguntas de acompanhamento
+    const githubCtxSummary = getContextSummary(githubCtx);
+    const effectiveMessage = githubCtxSummary
+      ? `[Contexto GitHub]\n${githubCtxSummary}\n\n${message}`
+      : message;
 
     // 1. Analyze complexity
     const analysisStartTime = Date.now();
@@ -316,7 +364,7 @@ class SerginhoOrchestrator {
       try {
         // Check cache first
         const cacheCheckStartTime = Date.now();
-        const cacheKey = this.getCacheKey(message, currentProvider);
+        const cacheKey = this.getCacheKey(effectiveMessage, currentProvider);
         const cached = this.cache.get(cacheKey);
         const cacheCheckTime = Date.now() - cacheCheckStartTime;
         
@@ -340,7 +388,7 @@ class SerginhoOrchestrator {
         // Execute with circuit breaker
         const modelExecutionStartTime = Date.now();
         const result = await this.executeWithProvider(currentProvider, {
-          message,
+          message: effectiveMessage,
           messages,
           context,
           analysis,

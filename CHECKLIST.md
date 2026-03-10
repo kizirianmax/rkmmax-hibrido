@@ -1,6 +1,39 @@
 # ✅ Checklist Projeto RKMMax (Atualizado — 23/10/2025)
 
-## 2026-03-10 — feat(serginho): respostas contextualizadas para GitHub read-only
+## 2026-03-10 — feat(serginho): contexto de conversa GitHub temporário (N5)
+
+### O que foi feito
+- Criado `api/lib/serginho/context/githubConversationContext.js` — módulo de contexto in-memory por conversa com: `createGitHubContext()` (contexto limpo, não-singleton), `updateContextFromToolResult(ctx, toolName, params, result)` (atualiza após tool call de repos/branches/file), `resolveParamsFromContext(ctx, params)` (preenche owner/repo faltantes do contexto; path NÃO é auto-preenchido), `getContextSummary(ctx)` (retorna resumo truncado e seguro para injeção no LLM), `clearGitHubContext(ctx)` (reseta todos os campos); snippets truncados em 2000 chars, summaries em 500 chars; nunca vaza token, stacktrace ou headers; sem persistência em banco ou disco
+- Modificado minimamente `api/lib/serginho-orchestrator.js`: import do módulo de contexto; criação/recuperação de `githubCtx` a partir de `context.githubContext` no início de `_handleStructured`; uso de `resolveParamsFromContext` para preencher params faltantes antes de chamar tools GitHub; `_computeMissingParams` helper para recalcular missing após resolução; `updateContextFromToolResult` chamado após execução de tool; `githubContext: githubCtx` incluído em `_meta` de todas as respostas GitHub; `getContextSummary` injetado como prefixo em `effectiveMessage` para chamadas LLM de acompanhamento; zero impacto no fluxo normal (sem contexto GitHub, effectiveMessage === message)
+- Criado `api/__tests__/serginho-github-context.test.js` — 49 testes cobrindo: criação limpa, não-singleton; update por tipo (repos/branches/file); resolução de params (preenchimento e não-preenchimento de path); getContextSummary (null sem tipo, com summary, com snippet, truncamento); clearGitHubContext; segurança (sem token leak, snippet ≤2000, summary ≤500); fluxo normal preservado; integração orchestrator (githubContext em _meta, resolução de missing por contexto, pedido de dados faltantes); sem regressão em intent/formatter/gateway/tools
+
+### Por quê
+- PR #173 adicionou formatação contextual, mas o Serginho não tinha memória de conversa — perguntas de acompanhamento ("o que você conclui?", "resuma esse arquivo") requeriam re-fetch ou falha
+- Regra estrutural: NADA executa fora do Serginho; o contexto é propagado via `context.githubContext` / `_meta.githubContext` sem quebrar a cadeia intent → tools → gateway → service
+
+### Arquivos alterados/criados
+
+| Arquivo | Mudança |
+|---|---|
+| `api/lib/serginho/context/githubConversationContext.js` | NOVO — módulo de contexto de conversa |
+| `api/lib/serginho-orchestrator.js` | MODIFICADO MINIMAMENTE — import + criação/uso de contexto + _computeMissingParams + effectiveMessage |
+| `api/__tests__/serginho-github-context.test.js` | NOVO — 49 testes |
+| `CHECKLIST.md` | Esta entrada |
+| `CHANGELOG.md` | Entrada em `[Unreleased]` |
+
+### Validação
+1. `NODE_OPTIONS='--experimental-vm-modules' ./node_modules/.bin/jest --no-coverage` → 730 testes passando (681 existentes + 49 novos)
+2. Nenhum arquivo em `src/` alterado
+3. Nenhum endpoint público `/api/github` alterado
+4. Zero dependências novas
+5. Fluxo normal do Serginho (prompts não-GitHub) intacto
+
+### Rollback
+```bash
+git revert <sha-deste-commit>
+# Remove githubConversationContext.js, desfaz import e mudanças mínimas no orchestrator, remove test file
+```
+
 
 ### O que foi feito
 - Criado `api/lib/serginho/formatters/githubResponseFormatter.js` — módulo de formatação inteligente com: `formatReposResponse()` (lista com count, numeração, visibilidade 🔓/🔒, branch default, descrição), `formatBranchesResponse()` (lista com indicador 🛡️ de proteção, repo alvo), `formatFileResponse()` com **smart file-type handling**: `package.json` (nome, versão, scripts, deps, devDeps), `*.md`/`README.md` (primeiro parágrafo, seções detectadas), `*.json` (estrutura/chaves), `*.js|*.jsx|*.ts|*.tsx` (exports e funções detectados), arquivos genéricos (primeiras N linhas); truncamento seguro com aviso `[conteúdo truncado — mostrando primeiros X caracteres]`; `formatErrorResponse()` para GITHUB_DISABLED, GITHUB_NO_TOKEN, GITHUB_VALIDATION_ERROR, GITHUB_API_ERROR com mensagens amigáveis sem vazar código técnico; `formatGitHubToolResult()` como entrada principal
