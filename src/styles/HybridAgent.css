@@ -545,7 +545,7 @@ textarea:disabled {
 
 @media (max-width: 640px) {
   .hybrid-header {
-    padding: 1rem;
+    display: none;
   }
 
   .header-left h1 {
