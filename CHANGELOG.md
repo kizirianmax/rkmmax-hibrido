@@ -7,6 +7,9 @@ e este projeto adere ao [Semantic Versioning](https://semver.org/lang/pt-BR/).
 
 ## [Unreleased] — v3.1.0-kizi
 
+### 📝 Documentação
+- **Docs:** adicionado índice de documentação (`docs/README.md`, `docs/INDEX.md`) com todos os 40+ arquivos Markdown organizados por categoria (PR #168)
+
 ### 🔒 Segurança
 - **`SECURITY.md`** expandido: substituído o template genérico do GitHub por política de segurança real com contato, prazos de resposta, escopo de vulnerabilidades e política de divulgação responsável (PR #167)
 

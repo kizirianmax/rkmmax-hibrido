@@ -343,6 +343,12 @@ npm test -- circuit        # Run specific test suite
 
 ---
 
+## 📚 Documentação
+
+Para documentação completa do projeto, acesse o [Índice de Documentação](docs/README.md).
+
+---
+
 ## 🛠️ Tech Stack
 
 **Frontend:**

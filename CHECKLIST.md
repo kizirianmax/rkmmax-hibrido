@@ -858,3 +858,17 @@ Ou remover manualmente: `api/github.js`, `api/lib/github/`, `api/__tests__/githu
 | **Arquivos** | `SECURITY.md`, `CHECKLIST.md`, `.github/copilot-instructions.md`, `CHANGELOG.md` |
 | **Validação** | 1) `SECURITY.md` contém contato, prazos e escopo reais 2) `CHECKLIST.md` lista PRs #163, #164, #166, #167 3) `.github/copilot-instructions.md` existe com instruções completas 4) `CHANGELOG.md` tem entrada `[Unreleased]` com mudanças recentes |
 | **Rollback** | `git revert <commit-sha>` — reverte todos os arquivos de governança ao estado anterior |
+
+---
+
+## 2026-03-10 — chore(docs): criar índice de documentação (docs index)
+
+**PR:** #168
+
+| Item | Detalhe |
+|------|---------|
+| **O quê** | Criado índice de documentação centralizado: `docs/README.md` (índice completo com seções — Visão Geral, Arquitetura, Governança, Operação/Dev, Produto, Histórico — linkando todos os 40+ arquivos Markdown) e `docs/INDEX.md` (mapa rápido / TL;DR). Adicionada seção "📚 Documentação" no `README.md` da raiz com link para o índice |
+| **Por quê** | O repositório tem 40+ arquivos `.md` sem um ponto de entrada centralizado para navegação. O índice permite navegar facilmente sem mover/deletar arquivos |
+| **Arquivos** | `docs/README.md` (novo), `docs/INDEX.md` (novo), `README.md` (seção adicionada), `CHECKLIST.md`, `CHANGELOG.md` |
+| **Validação** | 1) Abrir `docs/README.md` e verificar que todos os links apontam para arquivos existentes 2) Abrir `docs/INDEX.md` e verificar links rápidos 3) Verificar seção "📚 Documentação" no `README.md` da raiz 4) CI não deve quebrar (mudanças apenas em `.md`) |
+| **Rollback** | `git revert <commit-sha>` — remove os arquivos `docs/README.md` e `docs/INDEX.md` e reverte as alterações no `README.md`, `CHECKLIST.md` e `CHANGELOG.md` |
