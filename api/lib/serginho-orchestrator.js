@@ -40,6 +40,8 @@ import { formatAnalyticalResponse } from './serginho/analysis/githubAnalyticalRe
 import { isComparativeFollowUp, hasEnoughContextForComparison, buildComparisonPrompt, getInsufficientComparisonContextMessage } from './serginho/analysis/githubContextComparison.js';
 // GitHub action recommendations — recommendation follow-up sem re-fetch (reversível: remover bloco abaixo)
 import { isActionRecommendationFollowUp, hasEnoughContextForRecommendations, buildRecommendationPrompt, formatRecommendationResponse, getInsufficientRecommendationContextMessage } from './serginho/analysis/githubActionRecommendations.js';
+// GitHub action plan — sequential plan follow-up sem re-fetch (reversível: remover bloco abaixo)
+import { isActionPlanFollowUp, hasEnoughContextForActionPlan, buildActionPlanPrompt, formatActionPlanResponse, getInsufficientActionPlanContextMessage } from './serginho/analysis/githubActionPlan.js';
 
 // Versão do orquestrador (para versionamento de schema)
 const ORCHESTRATOR_VERSION = '2.1.0';
@@ -288,6 +290,41 @@ class SerginhoOrchestrator {
     const githubCtx = context.githubContext
       ? { ...context.githubContext }
       : createGitHubContext();
+
+    // GitHub action plan — sem re-fetch (reversível: remover este bloco)
+    if (!context._skipActionPlanCheck && isActionPlanFollowUp(message)) {
+      if (hasEnoughContextForActionPlan(githubCtx)) {
+        const actionPlanPrompt = buildActionPlanPrompt(message, githubCtx);
+        if (actionPlanPrompt) {
+          const actionPlanResult = await this._handleStructured({
+            message: actionPlanPrompt,
+            messages,
+            context: { ...context, githubContext: githubCtx, _skipActionPlanCheck: true, _skipRecommendationCheck: true, _skipComparisonCheck: true, _skipAnalyticalCheck: true },
+            options,
+          });
+          if (actionPlanResult && actionPlanResult._meta) {
+            actionPlanResult._meta.githubContext = githubCtx;
+            actionPlanResult._meta.actionPlanFollowUp = true;
+          }
+          if (actionPlanResult && actionPlanResult.text) {
+            actionPlanResult.text = formatActionPlanResponse(actionPlanResult.text);
+            actionPlanResult._meta = actionPlanResult._meta || {};
+            actionPlanResult._meta.actionPlanFormatted = true;
+          }
+          return actionPlanResult;
+        }
+      } else {
+        return {
+          text: getInsufficientActionPlanContextMessage(),
+          model: 'serginho-intent',
+          provider: 'serginho-action-plan',
+          traceId,
+          orchestrationTime: Date.now() - orchestrationStartTime,
+          _meta: { actionPlanFollowUp: true, insufficientContext: true, githubContext: githubCtx },
+        };
+      }
+    }
+    // Fim do bloco action plan
 
     // GitHub action recommendations — sem re-fetch (reversível: remover este bloco)
     if (!context._skipRecommendationCheck && isActionRecommendationFollowUp(message)) {

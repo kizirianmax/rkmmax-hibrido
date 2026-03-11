@@ -1,5 +1,37 @@
 # ✅ Checklist Projeto RKMMax (Atualizado — 23/10/2025)
 
+## 2026-03-11 — feat(serginho): plano de ação sobre contexto GitHub carregado (N10)
+
+### O que foi feito
+- Criado `api/lib/serginho/analysis/githubActionPlan.js` — helper de plano de ação sequencial com: `isActionPlanFollowUp(message)` (detecta perguntas de plano/roadmap/sequência em PT-BR e EN por regex), `hasEnoughContextForActionPlan(githubContext)` (verifica se há ao menos um campo de contexto disponível), `buildActionPlanPrompt(message, githubContext)` (monta prompt estruturado com contexto atual, contexto anterior se disponível, pergunta e instruções de sequenciamento + prioridade/impacto/esforço/risco), `formatActionPlanResponse(rawText, options)` (pós-processa resposta LLM: adiciona cabeçalho, rodapé, truncamento seguro, redação de tokens, indicador de contexto parcial), `getInsufficientActionPlanContextMessage()` (mensagem amigável quando contexto insuficiente)
+- Modificado minimamente `api/lib/serginho-orchestrator.js`: import do novo helper; bloco action plan follow-up adicionado ANTES do bloco N9 (recommendation), com guarda `_skipActionPlanCheck` anti-loop; todas as guardas passadas na recursão; `_meta.actionPlanFollowUp = true` e `_meta.actionPlanFormatted = true` na resposta
+- Criado `api/__tests__/serginho-github-action-plan.test.js` — testes cobrindo todos os cenários de plano de ação e não-regressão de N6/N7/N8/N9
+
+### Por quê
+- N9 (PR #180) adicionou recomendações priorizadas, mas o Serginho não conseguia montar um plano sequencial ordenado — perguntas como "me dê um plano de ação" ou "qual a sequência ideal?" não tinham fluxo especializado
+- Com contexto GitHub carregado (N5), o Serginho tem material para propor um mini-roadmap, mas precisava de um prompt especializado em sequenciamento com prioridade/impacto/esforço/risco
+
+### Arquivos alterados/criados
+
+| Arquivo | Mudança |
+|---|---|
+| `api/lib/serginho/analysis/githubActionPlan.js` | NOVO — helper de plano de ação sequencial |
+| `api/lib/serginho-orchestrator.js` | MODIFICADO MINIMAMENTE — import + bloco action plan |
+| `api/__tests__/serginho-github-action-plan.test.js` | NOVO — 100 testes completos |
+| `CHECKLIST.md` | Esta entrada |
+| `CHANGELOG.md` | Entrada em `[Unreleased]` |
+
+### Validação
+1. `NODE_OPTIONS='--experimental-vm-modules' ./node_modules/.bin/jest --no-coverage` → 1130 testes passando (100 novos)
+2. Nenhum arquivo em `src/` alterado
+3. Zero dependências novas
+4. Fluxos N5/N6/N7/N8/N9 intactos
+
+### Rollback
+```bash
+git revert <commit-sha>
+```
+
 ## 2026-03-11 — feat(serginho): recomendações acionáveis sobre contexto GitHub carregado (N9)
 
 ### O que foi feito
