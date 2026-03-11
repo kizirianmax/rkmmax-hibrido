@@ -1,5 +1,37 @@
 # ✅ Checklist Projeto RKMMax (Atualizado — 23/10/2025)
 
+## 2026-03-11 — feat(serginho): formatação analítica acionável sobre contexto GitHub (N7)
+
+### O que foi feito
+- Criado `api/lib/serginho/analysis/githubAnalyticalResponseFormatter.js` — pós-processador de respostas analíticas com: `detectAnalyticalSections(rawText)` (heurística por regex/padrões PT-BR+EN para extrair summary, strengths, risks, nextSteps, confidence), `formatAnalyticalResponse(rawText, options)` (estrutura resposta LLM em blocos Markdown leve com `includeStructure` e `maxLength`; nunca inventa conteúdo; fallback para texto original se nenhuma seção detectada)
+- Modificado minimamente `api/lib/serginho-orchestrator.js`: import do novo formatter; pós-processamento aplicado após obter resposta analítica do LLM no bloco analytical follow-up (N6); `_meta.analyticalFormatted = true` na resposta pós-processada; zero impacto no fluxo normal não-analítico
+- Criado `api/__tests__/serginho-github-analytical-formatter.test.js` — 55 testes cobrindo detectAnalyticalSections (summary, strengths, risks, nextSteps, confidence, edge cases), formatAnalyticalResponse (com/sem estrutura, truncamento, segurança, fallback), integração no orchestrator e não-regressão
+
+### Por quê
+- N6 (PR #177) criou análise incremental, mas a resposta do LLM era entregue como texto livre sem estrutura — difícil de consumir
+- Esta etapa adiciona estruturação leve e acionável sem alterar a lógica de roteamento nem o fluxo de contexto
+
+### Arquivos alterados/criados
+
+| Arquivo | Mudança |
+|---|---|
+| `api/lib/serginho/analysis/githubAnalyticalResponseFormatter.js` | NOVO — pós-processador de respostas analíticas |
+| `api/lib/serginho-orchestrator.js` | MODIFICADO MINIMAMENTE — import + pós-processamento no bloco analytical |
+| `api/__tests__/serginho-github-analytical-formatter.test.js` | NOVO — 55 testes completos |
+| `CHECKLIST.md` | Esta entrada |
+| `CHANGELOG.md` | Entrada em `[Unreleased]` |
+
+### Validação
+1. `NODE_OPTIONS='--experimental-vm-modules' npx jest --no-coverage` → todos os 874 testes passando
+2. Nenhum arquivo em `src/` alterado
+3. Zero dependências novas
+4. Fluxo normal do Serginho (prompts não-GitHub e não-analíticos) intacto
+
+### Rollback
+```bash
+git revert <commit-sha>
+```
+
 ## 2026-03-11 — feat(serginho): análise incremental sobre contexto GitHub carregado (N6)
 
 ### O que foi feito
