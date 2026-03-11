@@ -1,5 +1,39 @@
 # ✅ Checklist Projeto RKMMax (Atualizado — 23/10/2025)
 
+## 2026-03-11 — feat(serginho): comparação entre contextos GitHub carregados (N8)
+
+### O que foi feito
+- Criado `api/lib/serginho/analysis/githubContextComparison.js` — helper de comparação com: `isComparativeFollowUp(message)` (detecta perguntas comparativas PT-BR e EN por regex), `hasEnoughContextForComparison(githubContext)` (verifica se há contexto atual E anterior para comparar), `buildComparisonPrompt(message, githubContext)` (monta prompt estruturado com Artefato 1 + Artefato 2 + instruções anti-alucinação), `getInsufficientComparisonContextMessage()` (mensagem amigável quando contexto insuficiente)
+- Modificado minimamente `api/lib/serginho/context/githubConversationContext.js`: adicionados 4 campos `previous*` em `createGitHubContext()`; shift de `last*` para `previous*` no início de `updateContextFromToolResult()`; limpeza de `previous*` em `clearGitHubContext()`; zero impacto em N5/N6/N7
+- Modificado minimamente `api/lib/serginho-orchestrator.js`: import do novo helper; bloco comparative follow-up adicionado ANTES do bloco analytical (N6), com guarda `_skipComparisonCheck` anti-loop; reutiliza `formatAnalyticalResponse` do N7; `_meta.comparativeFollowUp = true` na resposta
+- Criado `api/__tests__/serginho-github-comparison.test.js` — 80 testes cobrindo todos os cenários comparativos, shift de contexto, integração no orchestrator e não-regressão
+
+### Por quê
+- N7 (PR #178) adicionou formatação analítica, mas o Serginho não conseguia comparar dois artefatos já vistos na conversa — perguntas como "compare isso com o README" caíam no fluxo analítico genérico sem estrutura comparativa
+- O contexto por conversa (N5) já guardava o artefato atual; esta etapa adiciona o anterior com mínima extensão reversível
+
+### Arquivos alterados/criados
+
+| Arquivo | Mudança |
+|---|---|
+| `api/lib/serginho/analysis/githubContextComparison.js` | NOVO — helper de comparação entre contextos |
+| `api/lib/serginho/context/githubConversationContext.js` | MODIFICADO MINIMAMENTE — 4 campos previous* + shift em updateContextFromToolResult + clear |
+| `api/lib/serginho-orchestrator.js` | MODIFICADO MINIMAMENTE — import + bloco comparative follow-up |
+| `api/__tests__/serginho-github-comparison.test.js` | NOVO — 80 testes completos |
+| `CHECKLIST.md` | Esta entrada |
+| `CHANGELOG.md` | Entrada em `[Unreleased]` |
+
+### Validação
+1. `NODE_OPTIONS='--experimental-vm-modules' jest --no-coverage` → 954 testes passando (80 novos)
+2. Nenhum arquivo em `src/` alterado
+3. Zero dependências novas
+4. Fluxos N5/N6/N7 intactos
+
+### Rollback
+```bash
+git revert <commit-sha>
+```
+
 ## 2026-03-11 — feat(serginho): formatação analítica acionável sobre contexto GitHub (N7)
 
 ### O que foi feito
