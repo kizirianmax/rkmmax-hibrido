@@ -217,7 +217,7 @@ export function formatRecommendationResponse(rawText, options = {}) {
   if (!text) return '';
 
   // Sanitize: remove potential token leaks or stack traces
-  text = text.replace(/\b(sk-[a-zA-Z0-9]{20,}|Bearer\s+\S+)\b/g, '[REDACTED]');
+  text = text.replace(/\b(sk-[a-zA-Z0-9]{20,}|Bearer\s+\S+|ghp_[a-zA-Z0-9]{36}|gho_[a-zA-Z0-9]{36}|ghs_[a-zA-Z0-9]{36}|github_pat_[a-zA-Z0-9_]{22,})\b/g, '[REDACTED]');
 
   // Truncate if maxLength provided
   if (options.maxLength && text.length > options.maxLength) {
