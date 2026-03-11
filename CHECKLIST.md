@@ -1,5 +1,35 @@
 # ✅ Checklist Projeto RKMMax (Atualizado — 23/10/2025)
 
+## 2026-03-11 — fix(specialists): restore missing avatar fields for law and home
+
+### O que foi feito
+- Adicionado campo `avatar: '/avatars/law.png'` ao especialista `law` em `src/config/specialists.js`
+- Adicionado campo `avatar: '/avatars/home.png'` ao especialista `home` em `src/config/specialists.js`
+
+### Por quê
+Auditoria comparativa entre `Rkmmax-app` e `rkmmax-hibrido` identificou que `law` e `home` eram os únicos 2 de 44 especialistas sem o campo `avatar` no híbrido. Qualquer componente que renderize `specialist.avatar` receberá `undefined` para esses dois, causando fallback visual inconsistente.
+
+### Campo `useGeniusPrompt` — auditado e descartado
+O campo `useGeniusPrompt: true` presente no `Rkmmax-app` foi auditado: não existe nenhuma ocorrência de consumo desse campo em todo o `rkmmax-hibrido`. O híbrido aplica genius prompts incondicionalmente via `api/ai.js` para todos os especialistas. Adicionar o campo seria metadado morto — não foi incluído neste PR.
+
+### Arquivos alterados
+
+| Arquivo | Mudança |
+|---|---|
+| `src/config/specialists.js` | `law.avatar` e `home.avatar` adicionados |
+| `CHECKLIST.md` | Esta entrada |
+
+### Validação
+1. `law` e `home` agora têm `avatar` consistente com os outros 42 especialistas
+2. Nenhum outro especialista foi tocado
+3. Nenhuma lógica de prompt alterada
+4. Nenhum campo `useGeniusPrompt` adicionado
+
+### Rollback
+```bash
+git revert <commit-sha>
+```
+
 ## 2026-03-11 — feat(serginho): dependências de execução sobre contexto GitHub carregado (N13)
 
 ### O que foi feito
