@@ -32,6 +32,8 @@ import { getToolByName } from './serginho/tools/index.js';
 import { formatGitHubToolResult, formatErrorResponse as formatGitHubError } from './serginho/formatters/githubResponseFormatter.js';
 // GitHub conversation context — per-request in-memory (reversível: remover bloco abaixo)
 import { createGitHubContext, updateContextFromToolResult, resolveParamsFromContext, getContextSummary } from './serginho/context/githubConversationContext.js';
+// GitHub incremental analysis — analytical follow-up sem re-fetch (reversível: remover bloco abaixo)
+import { isAnalyticalFollowUp, hasEnoughContextForAnalysis, buildAnalysisPrompt, getInsufficientContextMessage } from './serginho/analysis/githubContextAnalysis.js';
 
 // Versão do orquestrador (para versionamento de schema)
 const ORCHESTRATOR_VERSION = '2.1.0';
@@ -280,6 +282,36 @@ class SerginhoOrchestrator {
     const githubCtx = context.githubContext
       ? { ...context.githubContext }
       : createGitHubContext();
+
+    // GitHub analytical follow-up — sem re-fetch (reversível: remover este bloco)
+    if (!context._skipAnalyticalCheck && isAnalyticalFollowUp(message)) {
+      if (hasEnoughContextForAnalysis(githubCtx)) {
+        const analysisPrompt = buildAnalysisPrompt(message, githubCtx);
+        if (analysisPrompt) {
+          const analysisResult = await this._handleStructured({
+            message: analysisPrompt,
+            messages,
+            context: { ...context, githubContext: githubCtx, _skipAnalyticalCheck: true },
+            options,
+          });
+          if (analysisResult && analysisResult._meta) {
+            analysisResult._meta.githubContext = githubCtx;
+            analysisResult._meta.analyticalFollowUp = true;
+          }
+          return analysisResult;
+        }
+      } else {
+        return {
+          text: getInsufficientContextMessage(),
+          model: 'serginho-intent',
+          provider: 'serginho-analysis',
+          traceId,
+          orchestrationTime: Date.now() - orchestrationStartTime,
+          _meta: { analyticalFollowUp: true, insufficientContext: true, githubContext: githubCtx },
+        };
+      }
+    }
+    // Fim do bloco analytical follow-up
 
     // GitHub intent early-return — sem chamada LLM (reversível: remover este bloco)
     const githubIntent = detectGitHubIntent(message);

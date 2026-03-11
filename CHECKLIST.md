@@ -1,5 +1,37 @@
 # ✅ Checklist Projeto RKMMax (Atualizado — 23/10/2025)
 
+## 2026-03-11 — feat(serginho): análise incremental sobre contexto GitHub carregado (N6)
+
+### O que foi feito
+- Criado `api/lib/serginho/analysis/githubContextAnalysis.js` — helper de análise incremental com: `isAnalyticalFollowUp(message)` (detecta perguntas analíticas de follow-up em PT-BR e EN), `hasEnoughContextForAnalysis(githubContext)` (verifica se há contexto suficiente para análise), `buildAnalysisPrompt(message, githubContext)` (monta prompt estruturado com contexto + instruções obrigatórias), `getInsufficientContextMessage()` (mensagem amigável quando contexto insuficiente)
+- Modificado minimamente `api/lib/serginho-orchestrator.js`: import do novo helper; bloco analytical follow-up adicionado ANTES do bloco GitHub intent, com guarda `_skipAnalyticalCheck` para evitar recursão; contexto propagado em `_meta.githubContext`; sem LLM chamado quando contexto insuficiente
+- Criado `api/__tests__/serginho-github-incremental-analysis.test.js` — 89 testes cobrindo todos os cenários de análise incremental, integração, e verificação de não-regressão
+
+### Por quê
+- PR anterior criou contexto de conversa GitHub temporário, mas o Serginho não tinha capacidade de detectar perguntas analíticas de follow-up e usar o contexto para responder sem re-fetch
+- Sem esta etapa, perguntas como "o que você conclui desse projeto?" após ler um package.json resultariam em resposta genérica ou re-fetch desnecessário
+
+### Arquivos alterados/criados
+
+| Arquivo | Mudança |
+|---|---|
+| `api/lib/serginho/analysis/githubContextAnalysis.js` | NOVO — helper de análise incremental |
+| `api/lib/serginho-orchestrator.js` | MODIFICADO MINIMAMENTE — import + bloco analytical follow-up |
+| `api/__tests__/serginho-github-incremental-analysis.test.js` | NOVO — 89 testes |
+| `CHECKLIST.md` | Esta entrada |
+| `CHANGELOG.md` | Entrada em `[Unreleased]` |
+
+### Validação
+1. `npm test -- --no-coverage` → todos os testes passando
+2. Nenhum arquivo em `src/` alterado
+3. Zero dependências novas
+4. Fluxo normal do Serginho (prompts não-GitHub) intacto
+
+### Rollback
+```bash
+git revert <commit-sha>
+```
+
 ## 2026-03-10 — feat(serginho): contexto de conversa GitHub temporário (N5)
 
 ### O que foi feito
