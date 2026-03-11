@@ -1,5 +1,37 @@
 # ✅ Checklist Projeto RKMMax (Atualizado — 23/10/2025)
 
+## 2026-03-11 — feat(serginho): recomendações acionáveis sobre contexto GitHub carregado (N9)
+
+### O que foi feito
+- Criado `api/lib/serginho/analysis/githubActionRecommendations.js` — helper de recomendações com: `isActionRecommendationFollowUp(message)` (detecta perguntas de recomendação/priorização/próximos passos em PT-BR e EN por regex), `hasEnoughContextForRecommendations(githubContext)` (verifica se há ao menos um campo de contexto disponível), `buildRecommendationPrompt(message, githubContext)` (monta prompt estruturado com contexto atual, contexto anterior se disponível, pergunta e instruções de priorização PT-BR + anti-alucinação), `formatRecommendationResponse(rawText, options)` (pós-processa resposta LLM: adiciona cabeçalho, rodapé, truncamento seguro, redação de tokens), `getInsufficientRecommendationContextMessage()` (mensagem amigável quando contexto insuficiente)
+- Modificado minimamente `api/lib/serginho-orchestrator.js`: import do novo helper; bloco recommendation follow-up adicionado ANTES dos blocos N8 e N6, com guarda `_skipRecommendationCheck` anti-loop; todas as guardas (`_skipRecommendationCheck`, `_skipComparisonCheck`, `_skipAnalyticalCheck`) passadas na recursão para evitar cascata; `_meta.recommendationFollowUp = true` e `_meta.recommendationFormatted = true` na resposta
+- Criado `api/__tests__/serginho-github-recommendations.test.js` — 76 testes cobrindo todos os cenários de recomendação e não-regressão de N6/N7/N8
+
+### Por quê
+- N8 (PR #179) adicionou comparação, mas o Serginho não conseguia sugerir ações práticas priorizadas — perguntas como "o que eu deveria fazer primeiro?" não tinham fluxo especializado, caíam no analítico genérico
+- Com contexto GitHub carregado (N5), o Serginho tem material suficiente para recomendar próximos passos, mas precisava de um prompt especializado orientado a ação
+
+### Arquivos alterados/criados
+
+| Arquivo | Mudança |
+|---|---|
+| `api/lib/serginho/analysis/githubActionRecommendations.js` | NOVO — helper de recomendações acionáveis |
+| `api/lib/serginho-orchestrator.js` | MODIFICADO MINIMAMENTE — import + bloco recommendation follow-up |
+| `api/__tests__/serginho-github-recommendations.test.js` | NOVO — 76 testes completos |
+| `CHECKLIST.md` | Esta entrada |
+| `CHANGELOG.md` | Entrada em `[Unreleased]` |
+
+### Validação
+1. `NODE_OPTIONS='--experimental-vm-modules' ./node_modules/.bin/jest --no-coverage` → 1030 testes passando (76 novos)
+2. Nenhum arquivo em `src/` alterado
+3. Zero dependências novas
+4. Fluxos N5/N6/N7/N8 intactos
+
+### Rollback
+```bash
+git revert <commit-sha>
+```
+
 ## 2026-03-11 — feat(serginho): comparação entre contextos GitHub carregados (N8)
 
 ### O que foi feito
