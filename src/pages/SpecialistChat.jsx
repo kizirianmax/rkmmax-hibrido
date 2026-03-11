@@ -5,6 +5,42 @@ import { specialists } from "../config/specialists.js";
 import "../pages/Serginho.css";
 import "../pages/SpecialistChat.css";
 
+/**
+ * Renders AI response text with basic markdown formatting.
+ * Supports: paragraphs (\n\n), line breaks (\n), **bold**, `code`.
+ */
+function SimpleMarkdown({ text }) {
+  if (!text) return null;
+
+  const processInline = (str, keyPrefix) => {
+    const regex = /(\*\*[\s\S]+?\*\*|`[^`]+`)/g;
+    const parts = str.split(regex);
+    return parts.map((part, i) => {
+      if (part.startsWith("**") && part.endsWith("**")) {
+        return <strong key={`${keyPrefix}-b${i}`}>{part.slice(2, -2)}</strong>;
+      }
+      if (part.startsWith("`") && part.endsWith("`")) {
+        return <code key={`${keyPrefix}-c${i}`}>{part.slice(1, -1)}</code>;
+      }
+      return part;
+    });
+  };
+
+  const paragraphs = text.split(/\n\n+/);
+  return (
+    <>
+      {paragraphs.map((para, pi) => {
+        const lines = para.split("\n");
+        const content = lines.flatMap((line, li) => {
+          const inlined = processInline(line, `p${pi}l${li}`);
+          return li < lines.length - 1 ? [...inlined, <br key={`br-${pi}-${li}`} />] : inlined;
+        });
+        return <p key={pi}>{content}</p>;
+      })}
+    </>
+  );
+}
+
 export default function SpecialistChat() {
   const { specialistId } = useParams();
   const navigate = useNavigate();
@@ -16,6 +52,17 @@ export default function SpecialistChat() {
       navigate("/specialists");
     }
   }, [specialist, navigate]);
+
+  // Scroll para o topo ao carregar a página
+  useEffect(() => {
+    document.documentElement.classList.add('serginho-page');
+    window.scrollTo(0, 0);
+    document.body.scrollTop = 0;
+    document.documentElement.scrollTop = 0;
+    return () => {
+      document.documentElement.classList.remove('serginho-page');
+    };
+  }, []);
 
   const [messages, setMessages] = useState([
     {
@@ -34,6 +81,12 @@ export default function SpecialistChat() {
   useEffect(() => {
     scrollToBottom();
   }, [messages]);
+
+  // Função para remover bloco <thinking> das respostas
+  const removeThinking = (text) => {
+    if (!text) return text;
+    return text.replace(/<thinking>[\s\S]*?<\/thinking>/gi, '').trim();
+  };
 
   const handleSend = async () => {
     if (!input.trim() || isLoading) return;
@@ -65,13 +118,14 @@ export default function SpecialistChat() {
       }
 
       const data = await response.json();
+      const cleanResponse = removeThinking(data.response);
 
       // Adicionar resposta da IA
       setMessages((prev) => [
         ...prev,
         {
           role: "assistant",
-          content: data.response,
+          content: cleanResponse,
         },
       ]);
     } catch (error) {
@@ -171,7 +225,13 @@ export default function SpecialistChat() {
                 {msg.role === "assistant" && (
                   <span className="assistant-emoji">{specialist.emoji}</span>
                 )}
-                <div className="message-text">{msg.content}</div>
+                <div className="message-text">
+                  {msg.role === "assistant" ? (
+                    <SimpleMarkdown text={msg.content} />
+                  ) : (
+                    msg.content
+                  )}
+                </div>
               </div>
             </div>
           ))}

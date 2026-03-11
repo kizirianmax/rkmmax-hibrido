@@ -1,5 +1,40 @@
 # ✅ Checklist Projeto RKMMax (Atualizado — 23/10/2025)
 
+## 2026-03-11 — fix(specialist-chat): restore markdown rendering and defensive UX helpers
+
+### O que foi feito
+- Adicionado `SimpleMarkdown` inline em `src/pages/SpecialistChat.jsx` — mesmo padrão já presente em `Serginho.jsx` e `HybridAgentSimple.jsx` do híbrido; zero dependências novas
+- Adicionado `removeThinking` — remove blocos `<thinking>...</thinking>` da resposta LLM antes de exibir ao usuário (proteção defensiva)
+- Adicionado `useEffect` de mount com `serginho-page` class + `window.scrollTo(0,0)` — evita scroll residual ao navegar para o chat
+
+### Por quê
+- Auditoria comparativa com `Rkmmax-app` identificou que `SpecialistChat.jsx` do híbrido exibia texto plano bruto — listas, negrito, `code` e parágrafos apareciam sem formatação
+- `removeThinking` é proteção defensiva: se o modelo usar chain-of-thought com `<thinking>`, o raciocínio interno ficava exposto
+- `scroll-on-mount` é consistência com o comportamento do `Serginho.jsx` do legado
+
+### O que NÃO entra neste PR
+- Voz/transcrição — PR futuro após validar `/api/transcribe` no contexto de especialistas
+- Upload de imagem/visão — PR futuro após validar `/api/vision`
+- `MarkdownMessage` do legado — não absorvido pois depende de `react-markdown`/`remark-gfm`/`react-syntax-highlighter`, ausentes no `package.json` do híbrido
+
+### Arquivos alterados
+
+| Arquivo | Mudança |
+|---|---|
+| `src/pages/SpecialistChat.jsx` | `SimpleMarkdown` + `removeThinking` + `useEffect` mount |
+| `CHECKLIST.md` | Esta entrada |
+
+### Validação
+1. Abrir chat de qualquer especialista → enviar mensagem que gere lista ou negrito → aparecer formatado
+2. Nenhuma feature existente do híbrido regredida (emoji fallback, textarea, botões, CSS)
+3. Nenhuma dependência nova adicionada ao `package.json`
+4. Build: `npx vite build` → sem erros
+
+### Rollback
+```bash
+git revert <commit-sha>
+```
+
 ## 2026-03-11 — fix(specialists): restore missing avatar fields for law and home
 
 ### O que foi feito
