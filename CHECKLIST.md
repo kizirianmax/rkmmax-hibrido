@@ -1,6 +1,55 @@
 # ✅ Checklist Projeto RKMMax (Atualizado — 23/10/2025)
 
-## 2026-03-11 — fix(specialist-chat): restore markdown rendering and defensive UX helpers
+## 2026-03-11 — fix(specialist-chat): restore voice transcription with Groq Whisper
+
+### O que foi feito
+- Substituído backend de transcrição em `api/transcribe.js`: removida dependência do Serginho Orchestrator e do Gemini; chamada direta ao Groq Whisper (`whisper-large-v3-turbo`) via `POST https://api.groq.com/openai/v1/audio/transcriptions`
+- Mecanismo de `multipart/form-data`: package `form-data@^4.0.5` (já em `dependencies`) — `new FormData()` + `.append(buffer, { filename, contentType })` + `.getHeaders()` para injetar `Content-Type: multipart/form-data; boundary=...` no `fetch` nativo do Node 22
+- Adicionado botão de voz `🎤` em `src/pages/SpecialistChat.jsx` com `handleVoiceInput`, `isRecording` state e `mediaRecorderRef`
+- Adicionado CSS `.mic-button` e `.mic-button.recording` em `src/pages/SpecialistChat.css`
+- Contrato externo de `/api/transcribe` não alterado: continua aceitando `multipart/form-data`, continua retornando `{ success, transcript, text }`
+
+### Por quê
+- `SpecialistChat` era o único chat sem botão de voz no híbrido
+- O backend anterior usava `forceProvider: 'gemini-2.0-flash'` para transcrição — dependência desnecessária do Gemini para um recurso de Speech-to-Text dedicado
+- Groq Whisper (`whisper-large-v3-turbo`) é o provedor correto: $0.04/h de áudio, latência baixa, aceita `audio/webm` (formato nativo do `MediaRecorder` no Chrome)
+
+### Validação
+1. Abrir `/specialists/:id` → botão `🎤` visível ao lado do botão de envio
+2. Clicar `🎤` → solicitar permissão de microfone → gravar → clicar `⏹` → texto transcrito aparece no input
+3. `POST /api/transcribe` no Vercel Logs → provider: `groq`, model: `whisper-large-v3-turbo` (não `gemini-*`)
+4. `Serginho.jsx` e `HybridAgentSimple.jsx` sem regressão (não tocados)
+5. `npm run build` → sem erros
+6. Zero dependências novas em `package.json`
+
+### Mecanismo multipart/form-data — detalhes técnicos
+- Runtime: Node 22 no Vercel (fetch nativo disponível)
+- Package: `form-data@^4.0.5` (já em `dependencies`) — **não** `node:stream`, **não** DOM `FormData`
+- `groqForm.append('file', audioBuffer, { filename: 'audio.webm', contentType: mimeType })` — Buffer passado diretamente
+- `...groqForm.getHeaders()` injeta `Content-Type: multipart/form-data; boundary=XXXX` no header do `fetch`
+- `response_format=text` → `await response.text()` (não JSON)
+
+### O que NÃO entra neste PR
+- Imagem/visão — PR futuro
+- `api/vision.js` / `api/multimodal.js` — não tocados
+- Serginho Orchestrator — não tocado
+- Outros pages — não tocados
+
+### Arquivos alterados
+
+| Arquivo | Mudança |
+|---|---|
+| `api/transcribe.js` | Substituído internals: Groq Whisper direto via `form-data` package |
+| `src/pages/SpecialistChat.jsx` | Botão `🎤` + `handleVoiceInput` + `isRecording` state |
+| `src/pages/SpecialistChat.css` | `.mic-button` + `.mic-button.recording` + `@keyframes pulse-recording` |
+| `CHECKLIST.md` | Esta entrada |
+
+### Rollback
+```bash
+git revert <commit-sha>
+```
+
+
 
 ### O que foi feito
 - Adicionado `SimpleMarkdown` inline em `src/pages/SpecialistChat.jsx` — mesmo padrão já presente em `Serginho.jsx` e `HybridAgentSimple.jsx` do híbrido; zero dependências novas
