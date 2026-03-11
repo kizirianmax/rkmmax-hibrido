@@ -46,6 +46,8 @@ import { isActionPlanFollowUp, hasEnoughContextForActionPlan, buildActionPlanPro
 import { isExecutionChecklistFollowUp, hasEnoughContextForChecklist, buildChecklistPrompt, formatChecklistResponse, getInsufficientChecklistContextMessage } from './serginho/analysis/githubExecutionChecklist.js';
 // GitHub acceptance criteria — validation/acceptance follow-up sem re-fetch (reversível: remover bloco abaixo)
 import { isAcceptanceCriteriaFollowUp, hasEnoughContextForAcceptanceCriteria, buildAcceptanceCriteriaPrompt, formatAcceptanceCriteriaResponse, getInsufficientAcceptanceCriteriaContextMessage } from './serginho/analysis/githubAcceptanceCriteria.js';
+// GitHub execution dependencies — dependency/blocker/prerequisite follow-up sem re-fetch (reversível: remover bloco abaixo)
+import { isExecutionDependenciesFollowUp, hasEnoughContextForExecutionDependencies, buildExecutionDependenciesPrompt, formatExecutionDependenciesResponse, getInsufficientExecutionDependenciesContextMessage } from './serginho/analysis/githubExecutionDependencies.js';
 
 // Versão do orquestrador (para versionamento de schema)
 const ORCHESTRATOR_VERSION = '2.1.0';
@@ -294,6 +296,41 @@ class SerginhoOrchestrator {
     const githubCtx = context.githubContext
       ? { ...context.githubContext }
       : createGitHubContext();
+
+    // GitHub execution dependencies — sem re-fetch (reversível: remover este bloco)
+    if (!context._skipExecutionDependenciesCheck && isExecutionDependenciesFollowUp(message)) {
+      if (hasEnoughContextForExecutionDependencies(githubCtx)) {
+        const executionDepsPrompt = buildExecutionDependenciesPrompt(message, githubCtx);
+        if (executionDepsPrompt) {
+          const executionDepsResult = await this._handleStructured({
+            message: executionDepsPrompt,
+            messages,
+            context: { ...context, githubContext: githubCtx, _skipExecutionDependenciesCheck: true, _skipAcceptanceCriteriaCheck: true, _skipExecutionChecklistCheck: true, _skipActionPlanCheck: true, _skipRecommendationCheck: true, _skipComparisonCheck: true, _skipAnalyticalCheck: true },
+            options,
+          });
+          if (executionDepsResult && executionDepsResult._meta) {
+            executionDepsResult._meta.githubContext = githubCtx;
+            executionDepsResult._meta.executionDependenciesFollowUp = true;
+          }
+          if (executionDepsResult && executionDepsResult.text) {
+            executionDepsResult.text = formatExecutionDependenciesResponse(executionDepsResult.text);
+            executionDepsResult._meta = executionDepsResult._meta || {};
+            executionDepsResult._meta.executionDependenciesFormatted = true;
+          }
+          return executionDepsResult;
+        }
+      } else {
+        return {
+          text: getInsufficientExecutionDependenciesContextMessage(),
+          model: 'serginho-intent',
+          provider: 'serginho-execution-dependencies',
+          traceId,
+          orchestrationTime: Date.now() - orchestrationStartTime,
+          _meta: { executionDependenciesFollowUp: true, insufficientContext: true, githubContext: githubCtx },
+        };
+      }
+    }
+    // Fim do bloco execution dependencies
 
     // GitHub acceptance criteria — sem re-fetch (reversível: remover este bloco)
     if (!context._skipAcceptanceCriteriaCheck && isAcceptanceCriteriaFollowUp(message)) {
