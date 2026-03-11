@@ -34,6 +34,8 @@ import { formatGitHubToolResult, formatErrorResponse as formatGitHubError } from
 import { createGitHubContext, updateContextFromToolResult, resolveParamsFromContext, getContextSummary } from './serginho/context/githubConversationContext.js';
 // GitHub incremental analysis — analytical follow-up sem re-fetch (reversível: remover bloco abaixo)
 import { isAnalyticalFollowUp, hasEnoughContextForAnalysis, buildAnalysisPrompt, getInsufficientContextMessage } from './serginho/analysis/githubContextAnalysis.js';
+// GitHub analytical response formatter — pós-processamento estruturado (reversível: remover bloco abaixo)
+import { formatAnalyticalResponse } from './serginho/analysis/githubAnalyticalResponseFormatter.js';
 
 // Versão do orquestrador (para versionamento de schema)
 const ORCHESTRATOR_VERSION = '2.1.0';
@@ -297,6 +299,12 @@ class SerginhoOrchestrator {
           if (analysisResult && analysisResult._meta) {
             analysisResult._meta.githubContext = githubCtx;
             analysisResult._meta.analyticalFollowUp = true;
+          }
+          // Pós-processa a resposta analítica para estrutura mais útil (reversível)
+          if (analysisResult && analysisResult.text) {
+            analysisResult.text = formatAnalyticalResponse(analysisResult.text);
+            analysisResult._meta = analysisResult._meta || {};
+            analysisResult._meta.analyticalFormatted = true;
           }
           return analysisResult;
         }
