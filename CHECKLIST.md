@@ -1,5 +1,37 @@
 # ✅ Checklist Projeto RKMMax (Atualizado — 23/10/2025)
 
+## 2026-03-11 — feat(serginho): dependências de execução sobre contexto GitHub carregado (N13)
+
+### O que foi feito
+- Criado `api/lib/serginho/analysis/githubExecutionDependencies.js` — helper de dependências de execução com: `isExecutionDependenciesFollowUp(message)` (detecta perguntas de dependências/bloqueios/pré-requisitos/paralelismo em PT-BR e EN por regex), `hasEnoughContextForExecutionDependencies(githubContext)` (verifica contexto — inclui campos anteriores), `buildExecutionDependenciesPrompt(message, githubContext)` (monta prompt estruturado com contexto + instruções para identificar dependências, bloqueios, pré-requisitos, paralelismo, ordem e risco de inversão), `formatExecutionDependenciesResponse(rawText, options)` (pós-processa resposta LLM: header, footer, truncamento seguro, redação de tokens), `getInsufficientExecutionDependenciesContextMessage()` (mensagem amigável)
+- Modificado minimamente `api/lib/serginho-orchestrator.js`: import do novo helper; bloco N13 adicionado ANTES do bloco N12, com guarda `_skipExecutionDependenciesCheck` anti-loop; todas as guardas passadas na recursão
+- Criado `api/__tests__/serginho-github-execution-dependencies.test.js` — testes completos
+
+### Por quê
+- N12 (PR #183) adicionou critérios de aceite, mas o Serginho não tinha fluxo especializado para perguntas de dependências/bloqueios entre itens — "o que depende do quê?", "blockers", "pode rodar em paralelo?"
+- Com contexto GitHub carregado (N5), o Serginho pode usar o LLM para identificar dependências estruturais sem re-fetch
+
+### Arquivos alterados/criados
+
+| Arquivo | Mudança |
+|---|---|
+| `api/lib/serginho/analysis/githubExecutionDependencies.js` | NOVO — helper N13 |
+| `api/lib/serginho-orchestrator.js` | MODIFICADO MINIMAMENTE — import + bloco N13 |
+| `api/__tests__/serginho-github-execution-dependencies.test.js` | NOVO — testes |
+| `CHECKLIST.md` | Esta entrada |
+| `CHANGELOG.md` | Entrada em `[Unreleased]` |
+
+### Validação
+1. `NODE_OPTIONS='--experimental-vm-modules' npx jest --no-coverage` → todos os testes passando (1521 testes)
+2. Nenhum arquivo em `src/` alterado
+3. Zero dependências novas
+4. Fluxos N5/N6/N7/N8/N9/N10/N11/N12 intactos
+
+### Rollback
+```bash
+git revert <commit-sha>
+```
+
 ## 2026-03-11 — feat(serginho): critérios de aceite sobre contexto GitHub carregado (N12)
 
 ### O que foi feito
