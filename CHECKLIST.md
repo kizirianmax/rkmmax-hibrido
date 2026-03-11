@@ -1,5 +1,37 @@
 # ✅ Checklist Projeto RKMMax (Atualizado — 23/10/2025)
 
+## 2026-03-11 — feat(serginho): checklist executável sobre contexto GitHub carregado (N11)
+
+### O que foi feito
+- Criado `api/lib/serginho/analysis/githubExecutionChecklist.js` — helper de checklist executável com: `isExecutionChecklistFollowUp(message)` (detecta perguntas de checklist/tarefas/lista executável em PT-BR e EN por regex), `hasEnoughContextForChecklist(githubContext)` (verifica se há ao menos um campo de contexto disponível), `buildChecklistPrompt(message, githubContext)` (monta prompt estruturado com contexto atual, contexto anterior se disponível, pergunta e instruções de checklist com prioridade/dependência/critério de conclusão), `formatChecklistResponse(rawText, options)` (pós-processa resposta LLM: adiciona cabeçalho `## Checklist sugerido`, rodapé, truncamento seguro, redação de tokens, indicador de contexto parcial), `getInsufficientChecklistContextMessage()` (mensagem amigável quando contexto insuficiente)
+- Modificado minimamente `api/lib/serginho-orchestrator.js`: import do novo helper; bloco checklist follow-up adicionado ANTES do bloco N10 (action plan), com guarda `_skipExecutionChecklistCheck` anti-loop; todas as guardas passadas na recursão; `_meta.executionChecklistFollowUp = true` e `_meta.executionChecklistFormatted = true` na resposta
+- Criado `api/__tests__/serginho-github-execution-checklist.test.js` — testes cobrindo todos os cenários de checklist e não-regressão de N6/N7/N8/N9/N10
+
+### Por quê
+- N10 (PR #181) adicionou plano de ação sequencial, mas o Serginho não conseguia gerar um checklist executável de curto prazo — perguntas como "me dê um checklist" ou "quebra isso em tarefas" não tinham fluxo especializado
+- Com contexto GitHub carregado (N5), o Serginho tem material para propor itens práticos e executáveis com prioridade, dependência e critério de conclusão
+
+### Arquivos alterados/criados
+
+| Arquivo | Mudança |
+|---|---|
+| `api/lib/serginho/analysis/githubExecutionChecklist.js` | NOVO — helper de checklist executável |
+| `api/lib/serginho-orchestrator.js` | MODIFICADO MINIMAMENTE — import + bloco checklist |
+| `api/__tests__/serginho-github-execution-checklist.test.js` | NOVO — testes completos |
+| `CHECKLIST.md` | Esta entrada |
+| `CHANGELOG.md` | Entrada em `[Unreleased]` |
+
+### Validação
+1. `NODE_OPTIONS='--experimental-vm-modules' ./node_modules/.bin/jest --no-coverage` → todos os testes passando (incluindo os novos de N11)
+2. Nenhum arquivo em `src/` alterado
+3. Zero dependências novas
+4. Fluxos N5/N6/N7/N8/N9/N10 intactos
+
+### Rollback
+```bash
+git revert <commit-sha>
+```
+
 ## 2026-03-11 — feat(serginho): plano de ação sobre contexto GitHub carregado (N10)
 
 ### O que foi feito

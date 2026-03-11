@@ -42,6 +42,8 @@ import { isComparativeFollowUp, hasEnoughContextForComparison, buildComparisonPr
 import { isActionRecommendationFollowUp, hasEnoughContextForRecommendations, buildRecommendationPrompt, formatRecommendationResponse, getInsufficientRecommendationContextMessage } from './serginho/analysis/githubActionRecommendations.js';
 // GitHub action plan — sequential plan follow-up sem re-fetch (reversível: remover bloco abaixo)
 import { isActionPlanFollowUp, hasEnoughContextForActionPlan, buildActionPlanPrompt, formatActionPlanResponse, getInsufficientActionPlanContextMessage } from './serginho/analysis/githubActionPlan.js';
+// GitHub execution checklist — checklist follow-up sem re-fetch (reversível: remover bloco abaixo)
+import { isExecutionChecklistFollowUp, hasEnoughContextForChecklist, buildChecklistPrompt, formatChecklistResponse, getInsufficientChecklistContextMessage } from './serginho/analysis/githubExecutionChecklist.js';
 
 // Versão do orquestrador (para versionamento de schema)
 const ORCHESTRATOR_VERSION = '2.1.0';
@@ -290,6 +292,41 @@ class SerginhoOrchestrator {
     const githubCtx = context.githubContext
       ? { ...context.githubContext }
       : createGitHubContext();
+
+    // GitHub execution checklist — sem re-fetch (reversível: remover este bloco)
+    if (!context._skipExecutionChecklistCheck && isExecutionChecklistFollowUp(message)) {
+      if (hasEnoughContextForChecklist(githubCtx)) {
+        const checklistPrompt = buildChecklistPrompt(message, githubCtx);
+        if (checklistPrompt) {
+          const checklistResult = await this._handleStructured({
+            message: checklistPrompt,
+            messages,
+            context: { ...context, githubContext: githubCtx, _skipExecutionChecklistCheck: true, _skipActionPlanCheck: true, _skipRecommendationCheck: true, _skipComparisonCheck: true, _skipAnalyticalCheck: true },
+            options,
+          });
+          if (checklistResult && checklistResult._meta) {
+            checklistResult._meta.githubContext = githubCtx;
+            checklistResult._meta.executionChecklistFollowUp = true;
+          }
+          if (checklistResult && checklistResult.text) {
+            checklistResult.text = formatChecklistResponse(checklistResult.text);
+            checklistResult._meta = checklistResult._meta || {};
+            checklistResult._meta.executionChecklistFormatted = true;
+          }
+          return checklistResult;
+        }
+      } else {
+        return {
+          text: getInsufficientChecklistContextMessage(),
+          model: 'serginho-intent',
+          provider: 'serginho-checklist',
+          traceId,
+          orchestrationTime: Date.now() - orchestrationStartTime,
+          _meta: { executionChecklistFollowUp: true, insufficientContext: true, githubContext: githubCtx },
+        };
+      }
+    }
+    // Fim do bloco execution checklist
 
     // GitHub action plan — sem re-fetch (reversível: remover este bloco)
     if (!context._skipActionPlanCheck && isActionPlanFollowUp(message)) {
