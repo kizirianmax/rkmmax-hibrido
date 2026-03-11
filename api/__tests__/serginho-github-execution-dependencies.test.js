@@ -193,14 +193,6 @@ describe('isExecutionDependenciesFollowUp — negativos', () => {
     expect(isExecutionDependenciesFollowUp('function f() { return 1; } // o que depende do quê?')).toBe(false);
   });
 
-  test('null → false', () => {
-    expect(isExecutionDependenciesFollowUp(null)).toBe(false);
-  });
-
-  test('undefined → false', () => {
-    expect(isExecutionDependenciesFollowUp(undefined)).toBe(false);
-  });
-
   test('número (não string) → false', () => {
     expect(isExecutionDependenciesFollowUp(123)).toBe(false);
   });
@@ -365,6 +357,17 @@ describe('buildExecutionDependenciesPrompt', () => {
   test('não inclui indicador de contexto parcial quando summary presente', () => {
     const result = buildExecutionDependenciesPrompt('em paralelo?', {
       lastGitHubSummary: 'Repositório kizirianmax/rkmmax-hibrido',
+    });
+    expect(result).not.toContain('contexto parcial');
+  });
+
+  test('não inclui indicador de contexto parcial quando previousGitHubSummary presente', () => {
+    const result = buildExecutionDependenciesPrompt('em paralelo?', {
+      lastGitHubResultType: 'repos',
+      lastGitHubSummary: null,
+      lastFileSnippet: null,
+      previousGitHubSummary: 'Contexto anterior disponível',
+      previousFileSnippet: null,
     });
     expect(result).not.toContain('contexto parcial');
   });

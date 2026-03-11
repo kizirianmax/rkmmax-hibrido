@@ -236,7 +236,8 @@ export function buildExecutionDependenciesPrompt(message, githubContext) {
     }
   }
 
-  const isPartialContext = !githubContext.lastGitHubSummary && !githubContext.lastFileSnippet;
+  const isPartialContext = !githubContext.lastGitHubSummary && !githubContext.lastFileSnippet &&
+    !githubContext.previousGitHubSummary && !githubContext.previousFileSnippet;
 
   parts.push('');
   parts.push(`Pergunta do usuário: ${message}`);
