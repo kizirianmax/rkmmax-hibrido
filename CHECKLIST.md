@@ -1,5 +1,37 @@
 # ✅ Checklist Projeto RKMMax (Atualizado — 23/10/2025)
 
+## 2026-03-11 — feat(serginho): critérios de aceite sobre contexto GitHub carregado (N12)
+
+### O que foi feito
+- Criado `api/lib/serginho/analysis/githubAcceptanceCriteria.js` — helper de critérios de aceite com: `isAcceptanceCriteriaFollowUp(message)` (detecta perguntas de validação/aceite/definição de pronto em PT-BR e EN por regex), `hasEnoughContextForAcceptanceCriteria(githubContext)` (verifica se há ao menos um campo de contexto disponível — incluindo contexto anterior), `buildAcceptanceCriteriaPrompt(message, githubContext)` (monta prompt estruturado com contexto atual, contexto anterior se disponível, pergunta e instruções para propor critérios com Condição de pronto / Evidência esperada / Risco se não validar), `formatAcceptanceCriteriaResponse(rawText, options)` (pós-processa resposta LLM: adiciona cabeçalho `## Critérios de aceite sugeridos`, rodapé, truncamento seguro, redação de tokens, indicador de contexto parcial), `getInsufficientAcceptanceCriteriaContextMessage()` (mensagem amigável quando contexto insuficiente)
+- Modificado minimamente `api/lib/serginho-orchestrator.js`: import do novo helper; bloco acceptance criteria follow-up adicionado ANTES do bloco N11 (execution checklist), com guarda `_skipAcceptanceCriteriaCheck` anti-loop; todas as guardas passadas na recursão; `_meta.acceptanceCriteriaFollowUp = true` e `_meta.acceptanceCriteriaFormatted = true` na resposta
+- Criado `api/__tests__/serginho-github-acceptance-criteria.test.js` — testes cobrindo todos os cenários de critérios de aceite e não-regressão de N6/N7/N8/N9/N10/N11
+
+### Por quê
+- N11 (PR #182) adicionou checklist executável, mas o Serginho não conseguia propor critérios objetivos de validação — perguntas como "como eu valido isso?" ou "quais são os critérios de aceite?" não tinham fluxo especializado
+- Com contexto GitHub carregado (N5), o Serginho tem material para propor critérios verificáveis com condição de pronto, evidência esperada e risco se não validar
+
+### Arquivos alterados/criados
+
+| Arquivo | Mudança |
+|---|---|
+| `api/lib/serginho/analysis/githubAcceptanceCriteria.js` | NOVO — helper de critérios de aceite |
+| `api/lib/serginho-orchestrator.js` | MODIFICADO MINIMAMENTE — import + bloco acceptance criteria |
+| `api/__tests__/serginho-github-acceptance-criteria.test.js` | NOVO — testes completos |
+| `CHECKLIST.md` | Esta entrada |
+| `CHANGELOG.md` | Entrada em `[Unreleased]` |
+
+### Validação
+1. `NODE_OPTIONS='--experimental-vm-modules' ./node_modules/.bin/jest --no-coverage` → todos os testes passando (incluindo os novos de N12)
+2. Nenhum arquivo em `src/` alterado
+3. Zero dependências novas
+4. Fluxos N5/N6/N7/N8/N9/N10/N11 intactos
+
+### Rollback
+```bash
+git revert <commit-sha>
+```
+
 ## 2026-03-11 — feat(serginho): checklist executável sobre contexto GitHub carregado (N11)
 
 ### O que foi feito

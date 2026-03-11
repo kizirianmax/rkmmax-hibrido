@@ -44,6 +44,8 @@ import { isActionRecommendationFollowUp, hasEnoughContextForRecommendations, bui
 import { isActionPlanFollowUp, hasEnoughContextForActionPlan, buildActionPlanPrompt, formatActionPlanResponse, getInsufficientActionPlanContextMessage } from './serginho/analysis/githubActionPlan.js';
 // GitHub execution checklist — checklist follow-up sem re-fetch (reversível: remover bloco abaixo)
 import { isExecutionChecklistFollowUp, hasEnoughContextForChecklist, buildChecklistPrompt, formatChecklistResponse, getInsufficientChecklistContextMessage } from './serginho/analysis/githubExecutionChecklist.js';
+// GitHub acceptance criteria — validation/acceptance follow-up sem re-fetch (reversível: remover bloco abaixo)
+import { isAcceptanceCriteriaFollowUp, hasEnoughContextForAcceptanceCriteria, buildAcceptanceCriteriaPrompt, formatAcceptanceCriteriaResponse, getInsufficientAcceptanceCriteriaContextMessage } from './serginho/analysis/githubAcceptanceCriteria.js';
 
 // Versão do orquestrador (para versionamento de schema)
 const ORCHESTRATOR_VERSION = '2.1.0';
@@ -292,6 +294,41 @@ class SerginhoOrchestrator {
     const githubCtx = context.githubContext
       ? { ...context.githubContext }
       : createGitHubContext();
+
+    // GitHub acceptance criteria — sem re-fetch (reversível: remover este bloco)
+    if (!context._skipAcceptanceCriteriaCheck && isAcceptanceCriteriaFollowUp(message)) {
+      if (hasEnoughContextForAcceptanceCriteria(githubCtx)) {
+        const acceptanceCriteriaPrompt = buildAcceptanceCriteriaPrompt(message, githubCtx);
+        if (acceptanceCriteriaPrompt) {
+          const acceptanceCriteriaResult = await this._handleStructured({
+            message: acceptanceCriteriaPrompt,
+            messages,
+            context: { ...context, githubContext: githubCtx, _skipAcceptanceCriteriaCheck: true, _skipExecutionChecklistCheck: true, _skipActionPlanCheck: true, _skipRecommendationCheck: true, _skipComparisonCheck: true, _skipAnalyticalCheck: true },
+            options,
+          });
+          if (acceptanceCriteriaResult && acceptanceCriteriaResult._meta) {
+            acceptanceCriteriaResult._meta.githubContext = githubCtx;
+            acceptanceCriteriaResult._meta.acceptanceCriteriaFollowUp = true;
+          }
+          if (acceptanceCriteriaResult && acceptanceCriteriaResult.text) {
+            acceptanceCriteriaResult.text = formatAcceptanceCriteriaResponse(acceptanceCriteriaResult.text);
+            acceptanceCriteriaResult._meta = acceptanceCriteriaResult._meta || {};
+            acceptanceCriteriaResult._meta.acceptanceCriteriaFormatted = true;
+          }
+          return acceptanceCriteriaResult;
+        }
+      } else {
+        return {
+          text: getInsufficientAcceptanceCriteriaContextMessage(),
+          model: 'serginho-intent',
+          provider: 'serginho-acceptance-criteria',
+          traceId,
+          orchestrationTime: Date.now() - orchestrationStartTime,
+          _meta: { acceptanceCriteriaFollowUp: true, insufficientContext: true, githubContext: githubCtx },
+        };
+      }
+    }
+    // Fim do bloco acceptance criteria
 
     // GitHub execution checklist — sem re-fetch (reversível: remover este bloco)
     if (!context._skipExecutionChecklistCheck && isExecutionChecklistFollowUp(message)) {
