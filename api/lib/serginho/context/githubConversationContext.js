@@ -44,6 +44,10 @@ const MAX_SUMMARY_CHARS = 500;
  *   lastGitHubResultType: 'repos'|'branches'|'file'|null,
  *   lastGitHubSummary: string|null,
  *   lastFileSnippet: string|null,
+ *   previousGitHubResultType: 'repos'|'branches'|'file'|null,
+ *   previousGitHubSummary: string|null,
+ *   previousFileSnippet: string|null,
+ *   previousFilePath: string|null,
  * }}
  */
 export function createGitHubContext() {
@@ -56,6 +60,11 @@ export function createGitHubContext() {
     lastGitHubResultType: null,
     lastGitHubSummary: null,
     lastFileSnippet: null,
+    // Campos para comparação (N8) — contexto anterior
+    previousGitHubResultType: null,
+    previousGitHubSummary: null,
+    previousFileSnippet: null,
+    previousFilePath: null,
   };
 }
 
@@ -70,6 +79,12 @@ export function createGitHubContext() {
  */
 export function updateContextFromToolResult(context, toolName, params, result) {
   if (!context || !result || !result.success) return;
+
+  // Shift: mover estado atual para previous* antes de sobrescrever (N8 — comparação)
+  context.previousGitHubResultType = context.lastGitHubResultType;
+  context.previousGitHubSummary = context.lastGitHubSummary;
+  context.previousFileSnippet = context.lastFileSnippet;
+  context.previousFilePath = context.lastFilePath;
 
   if (toolName === 'github_list_repos') {
     context.lastGitHubResultType = 'repos';
@@ -209,6 +224,11 @@ export function clearGitHubContext(context) {
   context.lastGitHubResultType = null;
   context.lastGitHubSummary = null;
   context.lastFileSnippet = null;
+  // Campos N8
+  context.previousGitHubResultType = null;
+  context.previousGitHubSummary = null;
+  context.previousFileSnippet = null;
+  context.previousFilePath = null;
 }
 
 // ---------------------------------------------------------------------------

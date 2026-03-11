@@ -36,6 +36,8 @@ import { createGitHubContext, updateContextFromToolResult, resolveParamsFromCont
 import { isAnalyticalFollowUp, hasEnoughContextForAnalysis, buildAnalysisPrompt, getInsufficientContextMessage } from './serginho/analysis/githubContextAnalysis.js';
 // GitHub analytical response formatter — pós-processamento estruturado (reversível: remover bloco abaixo)
 import { formatAnalyticalResponse } from './serginho/analysis/githubAnalyticalResponseFormatter.js';
+// GitHub context comparison — comparative follow-up sem re-fetch (reversível: remover bloco abaixo)
+import { isComparativeFollowUp, hasEnoughContextForComparison, buildComparisonPrompt, getInsufficientComparisonContextMessage } from './serginho/analysis/githubContextComparison.js';
 
 // Versão do orquestrador (para versionamento de schema)
 const ORCHESTRATOR_VERSION = '2.1.0';
@@ -284,6 +286,42 @@ class SerginhoOrchestrator {
     const githubCtx = context.githubContext
       ? { ...context.githubContext }
       : createGitHubContext();
+
+    // GitHub comparative follow-up — sem re-fetch (reversível: remover este bloco)
+    if (!context._skipComparisonCheck && isComparativeFollowUp(message)) {
+      if (hasEnoughContextForComparison(githubCtx)) {
+        const comparisonPrompt = buildComparisonPrompt(message, githubCtx);
+        if (comparisonPrompt) {
+          const comparisonResult = await this._handleStructured({
+            message: comparisonPrompt,
+            messages,
+            context: { ...context, githubContext: githubCtx, _skipComparisonCheck: true, _skipAnalyticalCheck: true },
+            options,
+          });
+          if (comparisonResult && comparisonResult._meta) {
+            comparisonResult._meta.githubContext = githubCtx;
+            comparisonResult._meta.comparativeFollowUp = true;
+          }
+          // Pós-processa a resposta comparativa com o formatter analítico existente (reversível)
+          if (comparisonResult && comparisonResult.text) {
+            comparisonResult.text = formatAnalyticalResponse(comparisonResult.text);
+            comparisonResult._meta = comparisonResult._meta || {};
+            comparisonResult._meta.analyticalFormatted = true;
+          }
+          return comparisonResult;
+        }
+      } else {
+        return {
+          text: getInsufficientComparisonContextMessage(),
+          model: 'serginho-intent',
+          provider: 'serginho-comparison',
+          traceId,
+          orchestrationTime: Date.now() - orchestrationStartTime,
+          _meta: { comparativeFollowUp: true, insufficientContext: true, githubContext: githubCtx },
+        };
+      }
+    }
+    // Fim do bloco comparative follow-up
 
     // GitHub analytical follow-up — sem re-fetch (reversível: remover este bloco)
     if (!context._skipAnalyticalCheck && isAnalyticalFollowUp(message)) {
