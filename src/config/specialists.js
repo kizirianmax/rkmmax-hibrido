@@ -268,6 +268,7 @@ export const specialists = {
     id: "law",
     name: "Law",
     emoji: "⚖️",
+    avatar: "/avatars/law.png",
     category: "business",
     description: "Jurídico e contratos",
     systemPrompt:
@@ -291,6 +292,7 @@ export const specialists = {
     id: "home",
     name: "Home",
     emoji: "🏠",
+    avatar: "/avatars/home.png",
     category: "lifestyle",
     description: "Decoração e organização",
     systemPrompt:
