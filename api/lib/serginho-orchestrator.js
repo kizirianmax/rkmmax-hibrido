@@ -38,6 +38,8 @@ import { isAnalyticalFollowUp, hasEnoughContextForAnalysis, buildAnalysisPrompt,
 import { formatAnalyticalResponse } from './serginho/analysis/githubAnalyticalResponseFormatter.js';
 // GitHub context comparison — comparative follow-up sem re-fetch (reversível: remover bloco abaixo)
 import { isComparativeFollowUp, hasEnoughContextForComparison, buildComparisonPrompt, getInsufficientComparisonContextMessage } from './serginho/analysis/githubContextComparison.js';
+// GitHub action recommendations — recommendation follow-up sem re-fetch (reversível: remover bloco abaixo)
+import { isActionRecommendationFollowUp, hasEnoughContextForRecommendations, buildRecommendationPrompt, formatRecommendationResponse, getInsufficientRecommendationContextMessage } from './serginho/analysis/githubActionRecommendations.js';
 
 // Versão do orquestrador (para versionamento de schema)
 const ORCHESTRATOR_VERSION = '2.1.0';
@@ -286,6 +288,41 @@ class SerginhoOrchestrator {
     const githubCtx = context.githubContext
       ? { ...context.githubContext }
       : createGitHubContext();
+
+    // GitHub action recommendations — sem re-fetch (reversível: remover este bloco)
+    if (!context._skipRecommendationCheck && isActionRecommendationFollowUp(message)) {
+      if (hasEnoughContextForRecommendations(githubCtx)) {
+        const recommendationPrompt = buildRecommendationPrompt(message, githubCtx);
+        if (recommendationPrompt) {
+          const recommendationResult = await this._handleStructured({
+            message: recommendationPrompt,
+            messages,
+            context: { ...context, githubContext: githubCtx, _skipRecommendationCheck: true, _skipComparisonCheck: true, _skipAnalyticalCheck: true },
+            options,
+          });
+          if (recommendationResult && recommendationResult._meta) {
+            recommendationResult._meta.githubContext = githubCtx;
+            recommendationResult._meta.recommendationFollowUp = true;
+          }
+          if (recommendationResult && recommendationResult.text) {
+            recommendationResult.text = formatRecommendationResponse(recommendationResult.text);
+            recommendationResult._meta = recommendationResult._meta || {};
+            recommendationResult._meta.recommendationFormatted = true;
+          }
+          return recommendationResult;
+        }
+      } else {
+        return {
+          text: getInsufficientRecommendationContextMessage(),
+          model: 'serginho-intent',
+          provider: 'serginho-recommendations',
+          traceId,
+          orchestrationTime: Date.now() - orchestrationStartTime,
+          _meta: { recommendationFollowUp: true, insufficientContext: true, githubContext: githubCtx },
+        };
+      }
+    }
+    // Fim do bloco action recommendations
 
     // GitHub comparative follow-up — sem re-fetch (reversível: remover este bloco)
     if (!context._skipComparisonCheck && isComparativeFollowUp(message)) {
