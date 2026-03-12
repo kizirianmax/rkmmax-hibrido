@@ -1,37 +1,34 @@
 # ✅ Checklist Projeto RKMMax (Atualizado — 23/10/2025)
 
-## 2026-03-11 — fix(specialist-chat): restore voice transcription with Groq Whisper
+## 2026-03-12 — fix(specialist-chat): restore voice button + revert transcribe.js for sovereignty compliance
 
 ### O que foi feito
-- Substituído backend de transcrição em `api/transcribe.js`: removida dependência do Serginho Orchestrator e do Gemini; chamada direta ao Groq Whisper (`whisper-large-v3-turbo`) via `POST https://api.groq.com/openai/v1/audio/transcriptions`
-- Mecanismo de `multipart/form-data`: package `form-data@^4.0.5` (já em `dependencies`) — `new FormData()` + `.append(buffer, { filename, contentType })` + `.getHeaders()` para injetar `Content-Type: multipart/form-data; boundary=...` no `fetch` nativo do Node 22
-- Adicionado botão de voz `🎤` em `src/pages/SpecialistChat.jsx` com `handleVoiceInput`, `isRecording` state e `mediaRecorderRef`
-- Adicionado CSS `.mic-button` e `.mic-button.recording` em `src/pages/SpecialistChat.css`
+- Revertido `api/transcribe.js` para o estado original (roteamento via `serginho.handleRequest` com `forceProvider`) — a implementação anterior com chamada direta a `api.groq.com` violava a regra de soberania de gateway (`a4-gateway-sovereignty.test.js` Test 2)
+- Mantido botão de voz `🎤` em `src/pages/SpecialistChat.jsx` com `handleVoiceInput`, `isRecording` state e `mediaRecorderRef` — frontend correto e sem violações
+- Mantido CSS `.mic-button` e `.mic-button.recording` em `src/pages/SpecialistChat.css`
 - Contrato externo de `/api/transcribe` não alterado: continua aceitando `multipart/form-data`, continua retornando `{ success, transcript, text }`
 
 ### Por quê
 - `SpecialistChat` era o único chat sem botão de voz no híbrido
-- O backend anterior usava `forceProvider: 'gemini-2.0-flash'` para transcrição — dependência desnecessária do Gemini para um recurso de Speech-to-Text dedicado
-- Groq Whisper (`whisper-large-v3-turbo`) é o provedor correto: $0.04/h de áudio, latência baixa, aceita `audio/webm` (formato nativo do `MediaRecorder` no Chrome)
+- A implementação anterior (`api/transcribe.js` com fetch direto para Groq Whisper) violava dois conjuntos de testes:
+  - `a4-gateway-sovereignty.test.js` Test 2: somente `serginho-orchestrator.js` pode chamar providers AI diretamente
+  - `integration.test.js`: múltiplas asserções requerem `serginho.handleRequest`, `forceProvider`, circuit breaker patterns e docs enterprise
+- **Groq Whisper não pode ser chamado de `api/transcribe.js` diretamente** sem violar a soberania. A única forma de usá-lo sem bypass seria estender o Serginho Orchestrator com suporte a STT — o que está fora do escopo deste PR
+
+### Decisão arquitetural
+O `serginho-orchestrator.js` é o único ponto soberano autorizado a chamar `api.groq.com` diretamente (conforme `EXCLUDED_FROM_ENDPOINT_SCAN` em `a4-gateway-sovereignty.test.js`). O `api/transcribe.js` deve passar pelo gateway via `serginho.handleRequest`. Suporte nativo a Groq Whisper no orquestrador é melhoria futura.
 
 ### Validação
 1. Abrir `/specialists/:id` → botão `🎤` visível ao lado do botão de envio
 2. Clicar `🎤` → solicitar permissão de microfone → gravar → clicar `⏹` → texto transcrito aparece no input
-3. `POST /api/transcribe` no Vercel Logs → provider: `groq`, model: `whisper-large-v3-turbo` (não `gemini-*`)
-4. `Serginho.jsx` e `HybridAgentSimple.jsx` sem regressão (não tocados)
-5. `npm run build` → sem erros
-6. Zero dependências novas em `package.json`
-
-### Mecanismo multipart/form-data — detalhes técnicos
-- Runtime: Node 22 no Vercel (fetch nativo disponível)
-- Package: `form-data@^4.0.5` (já em `dependencies`) — **não** `node:stream`, **não** DOM `FormData`
-- `groqForm.append('file', audioBuffer, { filename: 'audio.webm', contentType: mimeType })` — Buffer passado diretamente
-- `...groqForm.getHeaders()` injeta `Content-Type: multipart/form-data; boundary=XXXX` no header do `fetch`
-- `response_format=text` → `await response.text()` (não JSON)
+3. `Serginho.jsx` e `HybridAgentSimple.jsx` sem regressão (não tocados)
+4. `npm run build` → sem erros
+5. `a4-gateway-sovereignty.test.js` → 5/5 testes passando
+6. `integration.test.js` → 17/17 testes passando
 
 ### O que NÃO entra neste PR
+- Groq Whisper direto — incompatível com a arquitetura de soberania atual
 - Imagem/visão — PR futuro
-- `api/vision.js` / `api/multimodal.js` — não tocados
 - Serginho Orchestrator — não tocado
 - Outros pages — não tocados
 
@@ -39,7 +36,7 @@
 
 | Arquivo | Mudança |
 |---|---|
-| `api/transcribe.js` | Substituído internals: Groq Whisper direto via `form-data` package |
+| `api/transcribe.js` | **Revertido** para estado pré-PR (Serginho Orchestrator via `handleRequest`) |
 | `src/pages/SpecialistChat.jsx` | Botão `🎤` + `handleVoiceInput` + `isRecording` state |
 | `src/pages/SpecialistChat.css` | `.mic-button` + `.mic-button.recording` + `@keyframes pulse-recording` |
 | `CHECKLIST.md` | Esta entrada |
@@ -50,19 +47,6 @@ git revert <commit-sha>
 ```
 
 
-
-### O que foi feito
-- Adicionado `SimpleMarkdown` inline em `src/pages/SpecialistChat.jsx` — mesmo padrão já presente em `Serginho.jsx` e `HybridAgentSimple.jsx` do híbrido; zero dependências novas
-- Adicionado `removeThinking` — remove blocos `<thinking>...</thinking>` da resposta LLM antes de exibir ao usuário (proteção defensiva)
-- Adicionado `useEffect` de mount com `serginho-page` class + `window.scrollTo(0,0)` — evita scroll residual ao navegar para o chat
-
-### Por quê
-- Auditoria comparativa com `Rkmmax-app` identificou que `SpecialistChat.jsx` do híbrido exibia texto plano bruto — listas, negrito, `code` e parágrafos apareciam sem formatação
-- `removeThinking` é proteção defensiva: se o modelo usar chain-of-thought com `<thinking>`, o raciocínio interno ficava exposto
-- `scroll-on-mount` é consistência com o comportamento do `Serginho.jsx` do legado
-
-### O que NÃO entra neste PR
-- Voz/transcrição — PR futuro após validar `/api/transcribe` no contexto de especialistas
 - Upload de imagem/visão — PR futuro após validar `/api/vision`
 - `MarkdownMessage` do legado — não absorvido pois depende de `react-markdown`/`remark-gfm`/`react-syntax-highlighter`, ausentes no `package.json` do híbrido
 

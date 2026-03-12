@@ -1,48 +1,47 @@
 /**
  * API de Transcrição de Áudio
- * Transcrição direta via Groq Whisper (whisper-large-v3-turbo)
- *
+ * Enterprise-grade transcription using Serginho Orchestrator
+ * 
  * Features:
- * - Chamada direta ao Groq Whisper — sem dependência do Serginho Orchestrator
- * - multipart/form-data montado com package form-data@^4.0.5
- * - fetch nativo do Node 22
- * - response_format=text → body plain string
+ * - Serginho Orchestrator for centralized provider management
+ * - Circuit breaker protection
+ * - Timeout protection
+ * - Automatic fallback
+ * - Optimized for fast transcription (uses gemini-2.0-flash)
  */
 import busboy from "busboy";
-import FormData from "form-data";
+import serginho from "./lib/serginho-orchestrator.js";
+import { getEnabledProviders } from './lib/providers-config.js';
 
 /**
- * Transcreve áudio via Groq Whisper (whisper-large-v3-turbo).
- * @param {Buffer} audioBuffer - Buffer do arquivo de áudio
- * @param {string} mimeType - MIME type do áudio (ex: audio/webm)
- * @returns {Promise<string>} Texto transcrito
+ * Transcribe audio using Serginho Orchestrator
  */
-async function transcribeWithGroq(audioBuffer, mimeType = 'audio/webm') {
-  const apiKey = process.env.GROQ_API_KEY;
-  if (!apiKey) throw new Error('GROQ_API_KEY not configured');
+async function transcribeAudio(audioBuffer) {
+  // Convert audio to base64
+  const audioBase64 = audioBuffer.toString("base64");
+  
+  // Create transcription prompt
+  const prompt = `Transcreva este áudio em português. Retorne APENAS o texto transcrito, sem explicações ou comentários adicionais.`;
+  
+  // Use Serginho Orchestrator with forced provider for fast transcription
+  // Phase A5.7: Only force gemini-2.0-flash if Gemini is actually enabled
+  const enabledProviders = getEnabledProviders();
+  const geminiAvailable = enabledProviders.includes('gemini-2.0-flash');
 
-  const groqForm = new FormData();
-  groqForm.append('file', audioBuffer, { filename: 'audio.webm', contentType: mimeType });
-  groqForm.append('model', 'whisper-large-v3-turbo');
-  groqForm.append('language', 'pt');
-  groqForm.append('response_format', 'text');
-
-  const response = await fetch('https://api.groq.com/openai/v1/audio/transcriptions', {
-    method: 'POST',
-    headers: {
-      'Authorization': `Bearer ${apiKey}`,
-      ...groqForm.getHeaders(),
+  const result = await serginho.handleRequest({
+    message: prompt,
+    messages: [],
+    context: {
+      type: 'audio-transcription',
+      audioData: audioBase64,
+      mimeType: 'audio/mpeg',
     },
-    body: groqForm,
+    options: {
+      ...(geminiAvailable ? { forceProvider: 'gemini-2.0-flash' } : {}),
+    },
   });
-
-  if (!response.ok) {
-    const errText = await response.text();
-    throw new Error(`Groq Whisper error ${response.status}: ${errText}`);
-  }
-
-  // response_format=text → body é string pura (não JSON)
-  return (await response.text()).trim();
+  
+  return result.text;
 }
 
 export default async function handler(req, res) {
@@ -63,11 +62,9 @@ export default async function handler(req, res) {
 
     const bb = busboy({ headers: req.headers });
     let audioBuffer = null;
-    let audioMimeType = 'audio/webm';
 
     bb.on("file", (fieldname, file, info) => {
       console.log(`📁 Arquivo recebido: ${fieldname} (${info.mimeType})`);
-      audioMimeType = info.mimeType || 'audio/webm';
       const chunks = [];
       file.on("data", (data) => chunks.push(data));
       file.on("end", () => {
@@ -85,9 +82,10 @@ export default async function handler(req, res) {
       }
 
       try {
-        console.log("🔄 Iniciando transcrição via Groq Whisper...");
+        console.log("🔄 Iniciando transcrição via aiAdapter...");
 
-        const transcript = await transcribeWithGroq(audioBuffer, audioMimeType);
+        // Transcribe via aiAdapter (automatic provider selection)
+        const transcript = await transcribeAudio(audioBuffer);
         
         console.log("✅ Transcrição bem-sucedida");
 
@@ -98,6 +96,32 @@ export default async function handler(req, res) {
         });
       } catch (error) {
         console.error("❌ Erro na transcrição:", error);
+
+        // Circuit breaker error
+        if (error.message && error.message.includes('Circuit breaker')) {
+          return res.status(503).json({
+            error: 'Service unavailable',
+            message: 'Transcription service is temporarily unavailable.',
+            retryAfter: 60,
+          });
+        }
+
+        // Timeout error
+        if (error.message && error.message.includes('Timeout')) {
+          return res.status(504).json({
+            error: 'Gateway timeout',
+            message: 'Transcription took too long. Please try with a shorter audio.',
+            maxTimeout: 8000,
+          });
+        }
+
+        // All providers failed
+        if (error.message && error.message.includes('All providers failed')) {
+          return res.status(503).json({
+            error: 'Service unavailable',
+            message: 'All transcription providers are currently unavailable.',
+          });
+        }
 
         return res.status(500).json({
           error: "Transcription failed",
