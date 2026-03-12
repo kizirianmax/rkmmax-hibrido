@@ -1,5 +1,51 @@
 # ✅ Checklist Projeto RKMMax (Atualizado — 23/10/2025)
 
+## 2026-03-12 — fix(planCaps): align billing caps with official paid plans
+
+### O que foi feito
+- Atualizado `PLAN` em `src/lib/planCaps.js`: adicionados `INTERMEDIATE`, `ULTRA`, `DEV`; removido `MID` (legado)
+- Atualizado `LIMITS` para cobrir os 5 planos oficiais: `basic`, `intermediate`, `premium`, `ultra`, `dev`
+- Atualizado `MODEL_BY_PLAN`, `FEATURES` e `PLAN_LABEL` para cobrir os 5 planos oficiais
+- Atualizado `capsByPlan` para cobrir os 5 planos oficiais — elimina o `throw` de `guardAndBill` para `intermediate`, `ultra` e `dev`
+- `ultra` e `dev` configurados com `limit_tokens_per_day: 0` (sem limite, conforme `hard_limit: false` em `api/_utils/plans.json`)
+- `mid` removido de todas as estruturas — chave legada, nunca foi exposta ao usuário final
+- `free` continua ausente — coerente com a decisão estratégica de produto apenas pago
+
+### Por quê
+- Auditoria de `api/_utils/guardAndBill.js` confirmou dívida arquitetural: `ensureCaps(plan)` faz `throw Error("Plano inválido: ...")` para qualquer chave ausente em `capsByPlan`
+- Com o estado anterior, qualquer usuário com plano `intermediate`, `ultra` ou `dev` seria bloqueado completamente caso o billing fosse ativado
+- `mid` era legado sem consumo real no produto
+
+### Arquivos alterados
+
+| Arquivo | Mudança |
+|---|---|
+| `src/lib/planCaps.js` | `PLAN`, `LIMITS`, `MODEL_BY_PLAN`, `FEATURES`, `PLAN_LABEL`, `capsByPlan` alinhados aos 5 planos oficiais; `mid` removido |
+| `CHECKLIST.md` | Esta entrada |
+
+### Validação
+1. `Object.keys(capsByPlan)` → `['basic', 'intermediate', 'premium', 'ultra', 'dev']`
+2. `guardAndBill({ user: {id:'x'}, plan: 'intermediate', promptSize: 100 })` → sem throw
+3. `guardAndBill({ user: {id:'x'}, plan: 'ultra', promptSize: 100 })` → sem throw (sem limite)
+4. `guardAndBill({ user: {id:'x'}, plan: 'dev', promptSize: 100 })` → sem throw (sem limite)
+5. `guardAndBill({ user: {id:'x'}, plan: 'mid', promptSize: 100 })` → throw `"Plano inválido: mid"` ✅ correto
+6. `guardAndBill({ user: {id:'x'}, plan: 'free', promptSize: 100 })` → throw `"Plano inválido: free"` ✅ correto
+7. `npm test` → todos os testes passando (nenhum teste referencia `PLAN.MID` ou `"mid"` diretamente)
+8. `npx vite build` → sem erros
+
+### O que NÃO entra neste PR
+- `src/config/fairUse.js` — PR futuro: remover `free`, adicionar `ultra`/`dev`
+- `api/admin.js` `handleMePlan()` — PR futuro: retornar plano real do Supabase para todos os planos
+- `api/_utils/guardAndBill.js` — lógica sã, corrigida indiretamente por este PR
+- Serginho Orchestrator — não tocado
+
+### Rollback
+```bash
+git revert <commit-sha>
+# Restaura src/lib/planCaps.js ao estado anterior (basic/mid/premium)
+```
+
+
 ## 2026-03-12 — fix(specialist-chat): restore voice button + revert transcribe.js for sovereignty compliance
 
 ### O que foi feito
