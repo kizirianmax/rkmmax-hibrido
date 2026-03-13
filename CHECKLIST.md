@@ -1,5 +1,50 @@
 # ✅ Checklist Projeto RKMMax (Atualizado — 23/10/2025)
 
+## 2026-03-13 — fix(fairUse): remover plano free e alinhar com planos pagos oficiais
+
+### O que foi feito
+- Removido `plans.free` de `src/config/fairUse.js` — plano gratuito não existe no produto
+- Substituídos 3 fallbacks silenciosos `|| plans.free` por função `resolvePlan(userPlan)` que lança `Error` explícito para plano desconhecido
+- Adicionados `plans.ultra` e `plans.dev` com `messagesPerDay: 0` / `messagesPerMonth: 0` (0 = sem limite)
+- `checkLimit` adaptado: `0` no limite → `Infinity` interno → `null` no retorno (sem bloqueio para ultra/dev)
+- `getLimitMessage` adaptado: guarda `!== null` antes de comparar remanescente
+- Nenhuma outra lógica alterada; assinatura pública de todas as funções exportadas preservada
+
+### Por quê
+- `plans.free` era metadado morto — produto não tem plano gratuito; confundia manutenção e criava risco de regressão
+- O fallback `|| plans.free` era um bug silencioso: qualquer plano desconhecido (inclusive `ultra`, `dev`) recebia limites mínimos de free (10 msgs/dia), bloqueando o usuário sem erro visível
+- `ultra` e `dev` estavam ausentes de `fairUse.js` mas presentes em `planCaps.js` — inconsistência entre as duas fontes de verdade
+
+### Arquivos alterados
+
+| Arquivo | Mudança |
+|---|---|
+| `src/config/fairUse.js` | `free` removido; `ultra`/`dev` adicionados; fallbacks `\|\| plans.free` → `resolvePlan()` |
+| `CHECKLIST.md` | Esta entrada |
+
+### Validação
+1. `Object.keys(plans)` → `['basic', 'intermediate', 'premium', 'ultra', 'dev']` (sem `free`)
+2. `checkLimit('ultra', {messagesToday: 999})` → `{ canSendMessage: true, dailyRemaining: null, monthlyRemaining: null }`
+3. `checkLimit('dev',   {messagesToday: 999})` → `{ canSendMessage: true, dailyRemaining: null, monthlyRemaining: null }`
+4. `checkLimit('free',  {})` → lança `Error: [fairUse] Plano desconhecido: "free"...`
+5. `checkLimit('basic', {messagesToday: 99})` → `{ canSendMessage: true, dailyRemaining: 1 }`
+6. `checkLimit('basic', {messagesToday: 100})` → `{ canSendMessage: false, dailyRemaining: 0 }`
+7. `canUseSpecialist('ultra', 'any-specialist')` → `true`
+8. `getAIModel('ultra', 'advanced')` → `'llama-70b'`
+9. `npx vite build` → sem erros
+10. `npm test` → todos os testes passando
+
+### O que NÃO entra neste PR
+- `api/admin.js` `handleMePlan()` — PR futuro (P3)
+- `src/pages/Chat.jsx` fallback local `"free"` — escopo separado, não crítico para billing
+- Preços de `ultra`/`dev` em `plans` — `price: null` intencional (definido pelo comercial)
+
+### Rollback
+```bash
+git revert <commit-sha>
+# Restaura src/config/fairUse.js ao estado anterior (com plans.free e fallbacks)
+```
+
 ## 2026-03-12 — fix(planCaps): align billing caps with official paid plans
 
 ### O que foi feito
