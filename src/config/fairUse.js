@@ -61,8 +61,8 @@ export const plans = {
     price: 150,
     currency: "BRL",
     limits: {
-      messagesPerDay: 0,      // sem limite (hard_limit: false)
-      messagesPerMonth: 0,    // sem limite
+      messagesPerDay: 1000,
+      messagesPerMonth: 30000,
       specialists: "all",
       maxTokensPerMessage: 16000,
       features: {
@@ -79,8 +79,8 @@ export const plans = {
     price: 0,
     currency: "BRL",
     limits: {
-      messagesPerDay: 0,      // sem limite (plano interno)
-      messagesPerMonth: 0,    // sem limite
+      messagesPerDay: 1500,
+      messagesPerMonth: 45000,
       specialists: "all",
       maxTokensPerMessage: 16000,
       features: {
@@ -96,21 +96,16 @@ export const plans = {
 export const checkLimit = (userPlan, usage) => {
   const plan = plans[userPlan] || plans.basic;
 
-  const dailyLimit = plan.limits.messagesPerDay;
-  const monthlyLimit = plan.limits.messagesPerMonth;
-
-  const dailyRemaining = dailyLimit === 0 ? Infinity : dailyLimit - (usage.messagesToday || 0);
-  const monthlyRemaining = monthlyLimit === 0 ? Infinity : monthlyLimit - (usage.messagesThisMonth || 0);
+  const dailyRemaining = plan.limits.messagesPerDay - (usage.messagesToday || 0);
+  const monthlyRemaining = plan.limits.messagesPerMonth - (usage.messagesThisMonth || 0);
 
   return {
     canSendMessage: dailyRemaining > 0 && monthlyRemaining > 0,
-    dailyRemaining: dailyRemaining === Infinity ? null : dailyRemaining,
-    monthlyRemaining: monthlyRemaining === Infinity ? null : monthlyRemaining,
-    dailyLimit: dailyLimit === 0 ? null : dailyLimit,
-    monthlyLimit: monthlyLimit === 0 ? null : monthlyLimit,
-    softLimitReached:
-      (dailyRemaining !== Infinity && dailyRemaining < 10) ||
-      (monthlyRemaining !== Infinity && monthlyRemaining < 50),
+    dailyRemaining,
+    monthlyRemaining,
+    dailyLimit: plan.limits.messagesPerDay,
+    monthlyLimit: plan.limits.messagesPerMonth,
+    softLimitReached: dailyRemaining < 10 || monthlyRemaining < 50,
   };
 };
 
