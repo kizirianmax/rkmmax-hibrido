@@ -1,24 +1,9 @@
 // Sistema de Fair Use - Limites por Plano
 // Garante uso sustentável e controle de custos
+// Planos oficiais: basic | intermediate | premium | ultra | dev
+// "free" removido — produto opera apenas com planos pagos.
 
 export const plans = {
-  free: {
-    id: "free",
-    name: "Gratuito",
-    price: 0,
-    currency: "BRL",
-    limits: {
-      messagesPerDay: 10,
-      messagesPerMonth: 100,
-      specialists: ["serginho", "didak", "edu"], // Apenas 3 especialistas
-      maxTokensPerMessage: 1000,
-      features: {
-        studyLab: false,
-        prioritySupport: false,
-        advancedModels: false,
-      },
-    },
-  },
   basic: {
     id: "basic",
     name: "Básico",
@@ -70,11 +55,46 @@ export const plans = {
       },
     },
   },
+  ultra: {
+    id: "ultra",
+    name: "ULTRA",
+    price: 150,
+    currency: "BRL",
+    limits: {
+      messagesPerDay: 1000,
+      messagesPerMonth: 30000,
+      specialists: "all",
+      maxTokensPerMessage: 16000,
+      features: {
+        studyLab: true,
+        prioritySupport: true,
+        advancedModels: true,
+        compliance: true,     // LGPD/GDPR/SLA
+      },
+    },
+  },
+  dev: {
+    id: "dev",
+    name: "Dev",
+    price: 0,
+    currency: "BRL",
+    limits: {
+      messagesPerDay: 1500,
+      messagesPerMonth: 45000,
+      specialists: "all",
+      maxTokensPerMessage: 16000,
+      features: {
+        studyLab: true,
+        prioritySupport: true,
+        advancedModels: true,
+      },
+    },
+  },
 };
 
 // Verificar se usuário atingiu limite
 export const checkLimit = (userPlan, usage) => {
-  const plan = plans[userPlan] || plans.free;
+  const plan = plans[userPlan] || plans.basic;
 
   const dailyRemaining = plan.limits.messagesPerDay - (usage.messagesToday || 0);
   const monthlyRemaining = plan.limits.messagesPerMonth - (usage.messagesThisMonth || 0);
@@ -131,7 +151,7 @@ export const getLimitMessage = (limitStatus) => {
 
 // Verificar se especialista está disponível no plano
 export const canUseSpecialist = (userPlan, specialistId) => {
-  const plan = plans[userPlan] || plans.free;
+  const plan = plans[userPlan] || plans.basic;
 
   if (plan.limits.specialists === "all") {
     return true;
@@ -142,7 +162,7 @@ export const canUseSpecialist = (userPlan, specialistId) => {
 
 // Obter modelo de IA baseado no plano
 export const getAIModel = (userPlan, messageType = "standard") => {
-  const plan = plans[userPlan] || plans.free;
+  const plan = plans[userPlan] || plans.basic;
 
   // Premium pode escolher modelo avançado
   if (plan.limits.features.advancedModels && messageType === "advanced") {

@@ -1,5 +1,46 @@
 # ✅ Checklist Projeto RKMMax (Atualizado — 23/10/2025)
 
+## 2026-03-13 — fix(fairUse): alinhar planos com planCaps.js — remover `free`, adicionar `ultra` e `dev`
+
+### O que foi feito
+- Removido plano `free` de `src/config/fairUse.js` — plano inexistente no produto (produto é 100% pago)
+- Adicionado plano `ultra` em `src/config/fairUse.js` — sem limite de mensagens (`messagesPerDay: 0`), feature `compliance: true`
+- Adicionado plano `dev` em `src/config/fairUse.js` — sem limite de mensagens, uso interno
+- Corrigido fallback em `checkLimit`: `plans.free` → `plans.basic`
+- Ajustada lógica de `checkLimit` para tratar `messagesPerDay === 0` como ilimitado (`Infinity`), retornando `null` nesses campos para não enganar consumidores
+
+### Por quê
+- `planCaps.js` (fonte canônica) já possui os 5 planos oficiais; `fairUse.js` estava desalinhado
+- `free` nunca existiu como plano real — qualquer lookup por plano desconhecido caía nele silenciosamente via fallback, mascarando bugs
+- `ultra` e `dev` sem entrada em `fairUse.js` causariam `checkLimit` retornando limites do `basic` — bloqueando indevidamente usuários desses planos
+
+### Arquivos alterados
+
+| Arquivo | Mudança |
+|---|---|
+| `src/config/fairUse.js` | Removido `free`; adicionados `ultra` e `dev`; corrigido fallback; lógica `Infinity` para planos sem limite |
+| `CHECKLIST.md` | Esta entrada |
+
+### Validação
+1. `Object.keys(plans)` → `['basic', 'intermediate', 'premium', 'ultra', 'dev']` — sem `free`
+2. `checkLimit('ultra', {messagesToday:99999})` → `canSendMessage: true`, `dailyRemaining: null`, `dailyLimit: null`
+3. `checkLimit('dev', {messagesToday:99999})` → `canSendMessage: true`, `dailyRemaining: null`, `dailyLimit: null`
+4. `checkLimit('unknown_plan', {messagesToday:0})` → fallback para `basic`, `dailyLimit: 100`
+5. `checkLimit('basic', {messagesToday:101})` → `canSendMessage: false`
+6. `npm run build` → sem erros
+7. `src/pages/Specialists.jsx` sem regressão — `canUseSpecialist` continua funcionando
+
+### O que NÃO entra neste PR
+- `src/config/fairUse.js` price/currency para `ultra`/`dev` — valores orientativos, sem impacto em billing real (billing canônico é `planCaps.js`)
+- `api/admin.js` `handleMePlan()` — PR futuro
+- `src/pages/Specialists.jsx` mock `userPlan: 'premium'` — PR futuro
+
+### Rollback
+```bash
+git revert <commit-sha>
+# Restaura fairUse.js com free + sem ultra/dev
+```
+
 ## 2026-03-12 — fix(planCaps): align billing caps with official paid plans
 
 ### O que foi feito
