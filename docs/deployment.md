@@ -192,6 +192,10 @@ CREATE TABLE subscriptions (
   created_at TIMESTAMP DEFAULT NOW()
 );
 
+-- Migration: add optional plan column to subscriptions (run when ready)
+-- ALTER TABLE subscriptions ADD COLUMN IF NOT EXISTS plan TEXT;
+-- Without this column, handleMePlan() resolves tier via stripe_price_id ENV map instead.
+
 -- Create usage table
 CREATE TABLE usage (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),

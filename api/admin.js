@@ -175,7 +175,7 @@ async function handleMePlan(req, res) {
   try {
     const { data, error } = await supabase
       .from("subscriptions")
-      .select("status, stripe_price_id, current_period_end, plan")
+      .select("*")
       .eq("email", email)
       .order("current_period_end", { ascending: false })
       .limit(1)
