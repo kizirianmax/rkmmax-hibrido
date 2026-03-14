@@ -119,22 +119,17 @@ const FALLBACK_PLAN = "basic";
 
 /**
  * Mapeia stripe_price_id (via ENV) → tier canônico.
- * Suporta as variantes BR e US.
- * ultra e dev são resolvidos prioritariamente pelo campo `plan` da tabela;
- * R_ULTRA, R_ULTRA_US e R_DEV são incluídos como fallback adicional caso configurados.
+ * Apenas variantes BR. ultra e dev são resolvidos prioritariamente pelo
+ * campo `plan` da tabela; R_ULTRA e R_DEV são fallback adicional caso configurados.
  */
 const PLAN_TIERS = (() => {
   const map = {};
   const pairs = [
-    [process.env.R_BASIC,       "basic"],
-    [process.env.R_INTER,       "intermediate"],
-    [process.env.R_PREMIUM,     "premium"],
-    [process.env.R_BASIC_US,    "basic"],
-    [process.env.R_INTER_US,    "intermediate"],
-    [process.env.R_PREMIUM_US,  "premium"],
-    [process.env.R_ULTRA,       "ultra"],
-    [process.env.R_ULTRA_US,    "ultra"],
-    [process.env.R_DEV,         "dev"],
+    [process.env.R_BASIC,    "basic"],
+    [process.env.R_INTER,    "intermediate"],
+    [process.env.R_PREMIUM,  "premium"],
+    [process.env.R_ULTRA,    "ultra"],
+    [process.env.R_DEV,      "dev"],
   ];
   for (const [id, tier] of pairs) {
     if (id) map[id] = tier;
