@@ -1,5 +1,58 @@
 # ✅ Checklist Projeto RKMMax (Atualizado — 23/10/2025)
 
+## 2026-03-14 — fix(admin): handleMePlan retorna plano real para todos os 5 planos oficiais (P3)
+
+### O que foi feito
+- Eliminado `userPlan: "premium"` hardcoded em `handleMePlan()` — bug que retornava premium para qualquer assinatura ativa
+- Adicionado mapeamento `PLAN_TIERS` que resolve `stripe_price_id` → tier canônico via variáveis de ambiente (`R_BASIC`, `R_INTER`, `R_PREMIUM`, `R_BASIC_US`, `R_INTER_US`, `R_PREMIUM_US`, `R_ULTRA`, `R_ULTRA_US`, `R_DEV`)
+- Adicionado suporte ao campo `plan` da tabela `subscriptions` — prioridade 1 para `ultra` e `dev` (planos internos sem price_id Stripe)
+- Adicionado `plan_source` no retorno para diagnóstico (`supabase_plan_column` | `price_id_map` | `fallback`)
+- Preservado `FALLBACK_PLAN = "basic"` para assinaturas ativas com plano não reconhecível
+
+### Por quê
+- P3 da absorção final do RKMmax-app: `handleMePlan()` nunca discriminava entre planos — todos os assinantes ativos recebiam `premium`
+- Com `basic`/`intermediate` recebendo `premium`, o PlanGate e `fairUse.js` não podiam aplicar limites corretos
+- `ultra` e `dev` eram completamente ignorados
+
+### Arquivos alterados
+
+| Arquivo | Mudança |
+|---|---|
+| `api/admin.js` | Constante `PLAN_TIERS` + `VALID_PLANS`; SELECT inclui coluna `plan`; retorno resolve plano real com prioridade: coluna `plan` > price_id map > fallback |
+| `CHECKLIST.md` | Esta entrada |
+
+### Validação
+1. Usuário com `stripe_price_id` = `$R_BASIC` ativo → `userPlan: "basic"`
+2. Usuário com `stripe_price_id` = `$R_INTER` ativo → `userPlan: "intermediate"`
+3. Usuário com `stripe_price_id` = `$R_PREMIUM` ativo → `userPlan: "premium"`
+4. Usuário com coluna `plan = "ultra"` e assinatura ativa → `userPlan: "ultra"`
+5. Usuário com coluna `plan = "dev"` e assinatura ativa → `userPlan: "dev"`
+6. Usuário sem assinatura → `userPlan: "basic"`, `reason: "no_subscription"`
+7. Assinatura inativa → `userPlan: "basic"`, `reason: "inactive"`
+8. `npm run build` → sem erros
+9. Nenhum outro fluxo (PlanGate, guardAndBill, fairUse) alterado
+
+### Cenários que passam a funcionar corretamente
+- Usuário `basic`: recebia `premium`, agora recebe `basic` → PlanGate e fairUse aplicam limites corretos
+- Usuário `intermediate`: recebia `premium`, agora recebe `intermediate`
+- Usuário `ultra`: era ignorado (caía no fallback `basic`), agora resolvido via coluna `plan`
+- Usuário `dev`: era ignorado, agora resolvido via coluna `plan` ou `R_DEV` env
+
+### Riscos
+- **Baixo**: Usuários `basic`/`intermediate` que antes recebiam `premium` passarão a receber seus planos reais — pode ser percebido como downgrade de funcionalidade se PlanGate estiver ativo no front. Esperado e correto.
+- Se ENV `R_BASIC`/`R_INTER`/`R_PREMIUM` não estiverem configuradas e `plan` column não existir → cai no fallback `basic` (comportamento conservador, sem crash).
+
+### O que NÃO entra neste PR
+- `src/config/fairUse.js` — concluído em PR anterior
+- `src/lib/planCaps.js` — não tocado
+- `api/_utils/guardAndBill.js` — não tocado
+
+### Rollback
+```bash
+git revert <commit-sha>
+# Restaura handleMePlan com userPlan: "premium" hardcoded
+```
+
 ## 2026-03-13 — fix(fairUse): alinhar planos com planCaps.js — remover `free`, adicionar `ultra` e `dev`
 
 ### O que foi feito
