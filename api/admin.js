@@ -117,6 +117,28 @@ async function handlePrices(req, res) {
 ───────────────────────────────────────────── */
 const FALLBACK_PLAN = "basic";
 
+/**
+ * Mapeia stripe_price_id (via ENV) → tier canônico.
+ * Apenas variantes BR. ultra e dev são resolvidos prioritariamente pelo
+ * campo `plan` da tabela; R_ULTRA e R_DEV são fallback adicional caso configurados.
+ */
+const PLAN_TIERS = (() => {
+  const map = {};
+  const pairs = [
+    [process.env.R_BASIC,    "basic"],
+    [process.env.R_INTER,    "intermediate"],
+    [process.env.R_PREMIUM,  "premium"],
+    [process.env.R_ULTRA,    "ultra"],
+    [process.env.R_DEV,      "dev"],
+  ];
+  for (const [id, tier] of pairs) {
+    if (id) map[id] = tier;
+  }
+  return map;
+})();
+
+const VALID_PLANS = new Set(["basic", "intermediate", "premium", "ultra", "dev"]);
+
 async function handleMePlan(req, res) {
   if (!["GET", "HEAD"].includes(req.method)) {
     res.setHeader("Allow", "GET, HEAD, OPTIONS");
@@ -148,7 +170,7 @@ async function handleMePlan(req, res) {
   try {
     const { data, error } = await supabase
       .from("subscriptions")
-      .select("status, stripe_price_id, current_period_end")
+      .select("*")
       .eq("email", email)
       .order("current_period_end", { ascending: false })
       .limit(1)
@@ -157,10 +179,26 @@ async function handleMePlan(req, res) {
     if (!data) return res.status(200).json({ userPlan: "basic", reason: "no_subscription" });
     const isActive = ["active", "trialing"].includes(data.status);
     if (!isActive) return res.status(200).json({ userPlan: "basic", reason: "inactive" });
+    // 1) campo `plan` direto na tabela (ultra/dev ou webhook admin)
+    let resolvedPlan = data.plan && VALID_PLANS.has(data.plan) ? data.plan : null;
+
+    // 2) fallback: mapear price_id via ENV
+    if (!resolvedPlan && data.stripe_price_id) {
+      resolvedPlan = PLAN_TIERS[data.stripe_price_id] || null;
+    }
+
+    // 3) último fallback: se assinatura ativa mas plano não reconhecido → basic
+    if (!resolvedPlan) {
+      resolvedPlan = FALLBACK_PLAN;
+    }
+
     return res.status(200).json({
-      userPlan: "premium",
+      userPlan: resolvedPlan,
       current_period_end: data.current_period_end,
       price_id: data.stripe_price_id,
+      plan_source: data.plan && VALID_PLANS.has(data.plan) ? "supabase_plan_column"
+                 : data.stripe_price_id && PLAN_TIERS[data.stripe_price_id] ? "price_id_map"
+                 : "fallback",
     });
   } catch (e) {
     return res.status(500).json({ userPlan: "basic", error: String(e) });
