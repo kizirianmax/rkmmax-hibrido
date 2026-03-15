@@ -1,5 +1,58 @@
 # ✅ Checklist Projeto RKMMax (Atualizado — 23/10/2025)
 
+## 2026-03-15 — fix(plans): align fairUse and Specialists gating with official paid plans
+
+### O que foi feito
+- Removido plano `free` de `src/config/fairUse.js` — produto é 100% pago; `free` não existe nos planos oficiais
+- Adicionados planos `ultra` e `dev` em `src/config/fairUse.js` — sem limite de mensagens/tokens (`messagesPerDay: 0`, `messagesPerMonth: 0`)
+- Fallback de plano desconhecido alterado de `plans.free` para `plans.basic` em todos os helpers: `checkLimit()`, `canUseSpecialist()`, `getAIModel()`, `estimateMessageCost()`
+- `checkLimit()` ajustado para retornar "sem limite" quando `messagesPerDay === 0` — evita cálculo incorreto para `ultra`/`dev`
+- Substituído `const userPlan = 'premium'` hardcoded em `src/pages/Specialists.jsx` por `const { plan: userPlan } = usePlan()` — gating real de especialistas agora usa o plano real do usuário
+- Adicionado import de `usePlan` em `Specialists.jsx`
+
+### Por quê
+- P1 da absorção final: `fairUse.js` tinha `free` (legado) e não cobria `ultra`/`dev`; qualquer usuário com plano desconhecido caía em `free`, recebendo acesso a apenas 3 especialistas
+- P2 da absorção final: `Specialists.jsx` usava `'premium'` hardcoded, desativando silenciosamente o gating por plano — todos os usuários viam todos os especialistas independentemente do plano real
+- `usePlan()` já existia e já lia `/api/me-plan` corretamente — só faltava conectar
+
+### Arquivos alterados
+
+| Arquivo | Mudança |
+|---|---|
+| `src/config/fairUse.js` | Remove `free`; adiciona `ultra` e `dev`; fallback → `plans.basic`; `checkLimit` suporta limite 0 |
+| `src/pages/Specialists.jsx` | `userPlan` hardcoded → `usePlan()`; import adicionado |
+| `CHECKLIST.md` | Esta entrada |
+
+### Planos finais em fairUse.js
+`basic`, `intermediate`, `premium`, `ultra`, `dev` — 5 planos pagos oficiais ✅
+
+### Validação
+1. `Object.keys(plans)` em `fairUse.js` → `['basic', 'intermediate', 'premium', 'ultra', 'dev']`
+2. `plans.free` → `undefined` ✅
+3. `checkLimit('ultra', { messagesToday: 9999 })` → `{ canSendMessage: true }` ✅
+4. `checkLimit('dev', { messagesToday: 9999 })` → `{ canSendMessage: true }` ✅
+5. `checkLimit('unknown_plan', { messagesToday: 0 })` → fallback para `basic`, não para `free` ✅
+6. `canUseSpecialist('basic', 'law')` → `true` (specialists: "all") ✅
+7. `Specialists.jsx` usa `usePlan()` como fonte de plano ✅
+8. `userPlan = 'premium'` hardcoded removido ✅
+9. `npm run build` → sem erros ✅
+
+### Riscos
+- Baixo: usuários com plano desconhecido/nulo antes caíam em `free` (3 especialistas). Agora caem em `basic` (todos especialistas, limites mais conservadores de tokens/dia). Comportamento mais correto e coerente com produto pago.
+- Se `usePlan()` retornar `"basic"` enquanto carrega (estado inicial), `Specialists.jsx` pode temporariamente mostrar todos os especialistas antes de re-renderizar com o plano real — aceitável, sem regressão visual.
+
+### O que NÃO entra neste PR
+- `api/admin.js` `handleMePlan()` — corrigido em PR anterior
+- `src/lib/planCaps.js` — não tocado
+- `api/_utils/plans.js` — PR futuro: `R_ULTRA`, `R_ULTRA_US`, `R_DEV`
+- `api/admin.js` `handlePrices` sem ultra — PR futuro
+
+### Rollback
+```bash
+git revert <commit-sha>
+# Restaura free em fairUse.js e userPlan = 'premium' em Specialists.jsx
+```
+
 ## 2026-03-14 — fix(admin): handleMePlan retorna plano real para todos os 5 planos oficiais (P3)
 
 ### O que foi feito
