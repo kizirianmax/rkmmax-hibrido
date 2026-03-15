@@ -31,6 +31,7 @@ const TIER_ALIASES = {
   basic: ["basic", "básico"],
   intermediate: ["intermediate", "intermediario", "intermediário", "medio", "médio"],
   premium: ["premium"],
+  ultra: ["ultra"],
 };
 
 function matchesRegion(price, region) {
@@ -72,11 +73,11 @@ async function handlePrices(req, res) {
       expand: ["data.product"],
     });
     const regional = list.data.filter((p) => matchesRegion(p, region));
-    const tiers = ["basic", "intermediate", "premium"];
+    const tiers = ["basic", "intermediate", "premium", "ultra"];
     const labels =
       region === "US"
-        ? { basic: "Basic", intermediate: "Intermediate", premium: "Premium" }
-        : { basic: "Básico", intermediate: "Intermediário", premium: "Premium" };
+        ? { basic: "Basic", intermediate: "Intermediate", premium: "Premium", ultra: "Ultra" }
+        : { basic: "Básico", intermediate: "Intermediário", premium: "Premium", ultra: "Ultra" };
     const resultados = tiers
       .map((tier) => {
         const candidates = regional.filter((p) => matchesTier(p, tier));
