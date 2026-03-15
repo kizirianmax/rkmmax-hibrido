@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useSpecialistVisibility } from '../hooks/useSpecialistVisibility.js';
 import { specialists, categories, getTotalSpecialists } from '../config/specialists.js';
 import { canUseSpecialist } from '../config/fairUse.js';
+import usePlan from '../hooks/usePlan.js';
 
 function Specialists() {
   const navigate = useNavigate();
@@ -10,8 +11,7 @@ function Specialists() {
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [searchTerm, setSearchTerm] = useState('');
   
-  // Mock: usuário atual (substituir por contexto real)
-  const userPlan = 'premium'; // ou 'basic', 'intermediate', 'free'
+  const { plan: userPlan } = usePlan();
   
   // Filtrar especialistas
   const filteredSpecialists = Object.values(specialists).filter((specialist) => {

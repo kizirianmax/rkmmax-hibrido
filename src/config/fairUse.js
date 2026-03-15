@@ -61,10 +61,10 @@ export const plans = {
     price: 150,
     currency: "BRL",
     limits: {
-      messagesPerDay: 1000,
-      messagesPerMonth: 30000,
+      messagesPerDay: 0,       // 0 = sem limite
+      messagesPerMonth: 0,     // 0 = sem limite
       specialists: "all",
-      maxTokensPerMessage: 16000,
+      maxTokensPerMessage: 0,  // 0 = sem limite
       features: {
         studyLab: true,
         prioritySupport: true,
@@ -79,14 +79,15 @@ export const plans = {
     price: 0,
     currency: "BRL",
     limits: {
-      messagesPerDay: 1500,
-      messagesPerMonth: 45000,
+      messagesPerDay: 0,       // 0 = sem limite
+      messagesPerMonth: 0,     // 0 = sem limite
       specialists: "all",
-      maxTokensPerMessage: 16000,
+      maxTokensPerMessage: 0,  // 0 = sem limite
       features: {
         studyLab: true,
         prioritySupport: true,
         advancedModels: true,
+        devMode: true,
       },
     },
   },
@@ -95,6 +96,18 @@ export const plans = {
 // Verificar se usuário atingiu limite
 export const checkLimit = (userPlan, usage) => {
   const plan = plans[userPlan] || plans.basic;
+
+  // 0 = sem limite (planos ultra e dev)
+  if (plan.limits.messagesPerDay === 0 && plan.limits.messagesPerMonth === 0) {
+    return {
+      canSendMessage: true,
+      dailyRemaining: Infinity,
+      monthlyRemaining: Infinity,
+      dailyLimit: 0,
+      monthlyLimit: 0,
+      softLimitReached: false,
+    };
+  }
 
   const dailyRemaining = plan.limits.messagesPerDay - (usage.messagesToday || 0);
   const monthlyRemaining = plan.limits.messagesPerMonth - (usage.messagesThisMonth || 0);
