@@ -1,5 +1,37 @@
 # ✅ Checklist Projeto RKMMax (Atualizado — 23/10/2025)
 
+## 2026-03-15 — fix(usePlan): corrigir leitura do campo userPlan na resposta de /api/me-plan
+
+### O que foi feito
+- Corrigido `src/hooks/usePlan.js`: campo lido na resposta da API alterado de `j.plan` para `j.userPlan`
+- Mantido fallback `|| "basic"` como proteção legítima para respostas sem plano
+
+### Por quê
+- `handleMePlan()` em `api/admin.js` retorna `{ userPlan: "..." }` — não `{ plan: "..." }`
+- `j.plan` era sempre `undefined`, então `usePlan()` caía **sempre** no fallback `"basic"`, mascarando o plano real do usuário
+- Isso fazia o gating de especialistas (`Specialists.jsx`) e os limites de `fairUse.js` operarem sempre com `"basic"`, independentemente do plano real
+
+### Arquivo alterado
+
+| Arquivo | Mudança |
+|---|---|
+| `src/hooks/usePlan.js` | `j.plan` → `j.userPlan` (L37) |
+| `CHECKLIST.md` | Esta entrada |
+
+### Validação
+1. Campo lido antes: `j.plan` → sempre `undefined` → fallback `"basic"` ✅ identificado
+2. Campo lido agora: `j.userPlan` → valor real retornado pela API ✅
+3. `usePlan()` passa a receber o plano real da API ✅
+4. Fallback `"basic"` permanece apenas para respostas sem `userPlan` (usuário sem assinatura) ✅
+5. `api/admin.js` não tocado ✅
+6. `npm run build` → sem erros ✅
+
+### Rollback
+```bash
+git revert <commit-sha>
+# Restaura j.plan em src/hooks/usePlan.js
+```
+
 ## 2026-03-15 — fix(plans): add ultra pricing output and complete PRICE_IDS map
 
 ### O que foi feito
