@@ -1,5 +1,57 @@
 # ✅ Checklist Projeto RKMMax (Atualizado — 23/10/2025)
 
+## 2026-03-15 — fix(plans): add ultra pricing output and complete PRICE_IDS map
+
+### O que foi feito
+- Adicionado `ultra` ao array `tiers` e ao objeto `labels` (BR/US) em `handlePrices()` de `api/admin.js`
+- Adicionado `ultra` a `TIER_ALIASES` em `api/admin.js`
+- Completado `PRICE_IDS` em `api/_utils/plans.js` com `ultra_br: process.env.R_ULTRA`, `ultra_us: process.env.R_ULTRA_US`, `dev: process.env.R_DEV`
+- Corrigido `tierOf()` em `api/_utils/plans.js` para reconhecer `ultra` e `dev` explicitamente
+
+### Por quê
+- `handlePrices()` só listava 3 tiers (basic/intermediate/premium) — `ultra` existia no Stripe e no `plans.json` mas nunca era exposto pela API
+- `PRICE_IDS` não mapeava `R_ULTRA`, `R_ULTRA_US`, `R_DEV` — `getPlanByKey('ultra_br')` sempre retornava `price_id: null`
+- `tierOf()` classificava `ultra` como `"premium"` (fallback genérico) — incorreto para auditoria e billing
+
+### Arquivos alterados
+
+| Arquivo | Mudança |
+|---|---|
+| `api/admin.js` | `handlePrices()`: `ultra` em `TIER_ALIASES`, `tiers`, `labels` BR e US |
+| `api/_utils/plans.js` | `PRICE_IDS` + `tierOf()` cobrindo `ultra` e `dev` |
+| `CHECKLIST.md` | Esta entrada |
+
+### Validação
+1. `GET /api/admin?action=prices&region=BR` → resposta inclui `ultra` nos `planos` ✅
+2. `GET /api/admin?action=prices&region=US` → resposta inclui `ultra` nos `planos` ✅
+3. `getPlanByKey('ultra_br').price_id` → `process.env.R_ULTRA` (não null) ✅
+4. `getPlanByKey('ultra_us').price_id` → `process.env.R_ULTRA_US` (não null) ✅
+5. `tierOf('ultra_br')` → `'ultra'` ✅
+6. `tierOf('dev')` → `'dev'` ✅
+7. `handleMePlan()` não tocado ✅
+8. `handleSendEmail()` não tocado ✅
+9. `npm run build` → sem erros ✅
+
+### Variáveis de ambiente novas necessárias (Vercel)
+- `R_ULTRA` — Stripe Price ID do plano Ultra BR
+- `R_ULTRA_US` — Stripe Price ID do plano Ultra US
+- `R_DEV` — Stripe Price ID do plano Dev (ou string de controle interno)
+
+### O que NÃO entra neste PR
+- `handleMePlan()` para `ultra`/`dev` — PR futuro
+- `dev` em `handlePrices()` — produto interno, não exposto no pricing público
+- `plans.json` — não alterado; já contém `ultra_br`/`ultra_us`
+- Stripe webhook para `ultra`/`dev` — PR futuro
+
+### Rollback
+```bash
+git revert <commit-sha>
+# Restaura tiers=["basic","intermediate","premium"] em handlePrices()
+# Restaura PRICE_IDS sem R_ULTRA/R_ULTRA_US/R_DEV
+```
+
+---
+
 ## 2026-03-15 — fix(plans): align fairUse and Specialists gating with official paid plans
 
 ### O que foi feito

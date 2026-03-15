@@ -6,13 +6,24 @@ const PRICE_IDS = {
   basic_br: process.env.R_BASIC,
   intermediate_br: process.env.R_INTER,
   premium_br: process.env.R_PREMIUM,
+  ultra_br: process.env.R_ULTRA,
   basic_us: process.env.R_BASIC_US,
   intermediate_us: process.env.R_INTER_US,
   premium_us: process.env.R_PREMIUM_US,
+  ultra_us: process.env.R_ULTRA_US,
+  dev: process.env.R_DEV,
 };
 
 const tierOf = (k) =>
-  k.startsWith("basic") ? "basic" : k.startsWith("intermediate") ? "intermediate" : "premium";
+  k.startsWith("basic")
+    ? "basic"
+    : k.startsWith("intermediate")
+    ? "intermediate"
+    : k.startsWith("ultra")
+    ? "ultra"
+    : k.startsWith("dev")
+    ? "dev"
+    : "premium";
 const regionOf = (k) => (k.endsWith("_us") ? "US" : "BR");
 
 export function getPlanByKey(key) {
