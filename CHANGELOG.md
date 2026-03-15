@@ -7,6 +7,21 @@ e este projeto adere ao [Semantic Versioning](https://semver.org/lang/pt-BR/).
 
 ## [Unreleased] — v3.1.0-kizi
 
+### 📋 Governança — Absorção Funcional do Rkmmax-app
+
+**Fase funcional de absorção concluída em 2026-03-15.**
+
+Todos os fluxos críticos de plano foram migrados e estão em produção no `main`:
+
+- **`usePlan.js`** lê `j.userPlan` (campo real de `/api/me-plan`) — PR #195
+- **`handlePrices()` + `PRICE_IDS` + `tierOf()`** cobrem `ultra`/`dev` explicitamente — PR #194
+- **`Specialists.jsx`** usa gating real via `usePlan()` — fim do `'premium'` hardcoded — PR #193
+- **`handleMePlan()`** resolve plano real via `PLAN_TIERS`/`VALID_PLANS` — PR #191
+- **`fairUse.js`** alinhado: sem `free`, com `ultra`/`dev`, fallback → `basic` — PR #190
+- **`planCaps.js`** com os 5 planos oficiais (`basic`, `intermediate`, `premium`, `ultra`, `dev`) — PR #188
+
+Próxima fase: operação / infra / smoke test / descontinuação controlada do `Rkmmax-app`.
+
 ### ✨ Adicionado
 - **Serginho GitHub Execution Dependencies (N13)**: criado `api/lib/serginho/analysis/githubExecutionDependencies.js` com `isExecutionDependenciesFollowUp(message)` (detecta perguntas de dependências/bloqueios/pré-requisitos/paralelismo em PT-BR e EN: "o que depende do quê", "blockers", "pode rodar em paralelo", "pré-requisitos", "o que vem antes", "what depends on what", "prerequisites", "what's blocking", "can this run in parallel", "parallel work", etc.), `hasEnoughContextForExecutionDependencies(githubContext)` (verifica contexto incluindo campos anteriores), `buildExecutionDependenciesPrompt(message, githubContext)` (prompt estruturado com instruções para identificar dependências, bloqueios, pré-requisitos, paralelismo, ordem e risco de inversão de ordem), `formatExecutionDependenciesResponse(rawText, options)` (header `## Dependências de execução sugeridas`, footer, truncamento, sanitização de tokens), `getInsufficientExecutionDependenciesContextMessage()`; orchestrator minimamente modificado com bloco N13 ANTES de N12 e guarda `_skipExecutionDependenciesCheck`. Zero breaking changes. Rollback com `git revert`.
 - **Serginho GitHub Acceptance Criteria (N12)**: criado `api/lib/serginho/analysis/githubAcceptanceCriteria.js` com `isAcceptanceCriteriaFollowUp(message)` (detecta perguntas de validação/aceite/definição de pronto em PT-BR e EN por regex: "critérios de aceite", "como validar isso", "como saber se está pronto", "definição de pronto", "acceptance criteria", "definition of done", "how to validate", "how do I know this is done", etc.), `hasEnoughContextForAcceptanceCriteria(githubContext)` (verifica se há ao menos um campo de contexto — incluindo contexto anterior), `buildAcceptanceCriteriaPrompt(message, githubContext)` (monta prompt estruturado com contexto atual + contexto anterior se disponível + instruções para propor critérios com Condição de pronto / Evidência esperada / Risco se não validar + anti-alucinação + indicador de contexto parcial), `formatAcceptanceCriteriaResponse(rawText, options)` (pós-processa resposta LLM: adiciona cabeçalho `## Critérios de aceite sugeridos`, rodapé com fonte, truncamento seguro com `[resposta truncada]`, redação de tokens `sk-*`/`ghp_*`/`Bearer`), `getInsufficientAcceptanceCriteriaContextMessage()` (mensagem amigável orientando o usuário); orchestrator minimamente modificado com bloco acceptance criteria follow-up ANTES do bloco N11 (execution checklist), guarda `_skipAcceptanceCriteriaCheck` anti-loop, `_meta.acceptanceCriteriaFollowUp = true` e `_meta.acceptanceCriteriaFormatted = true`; testes cobrindo todos os cenários. Zero dependências novas. Zero breaking changes. Rollback com `git revert`.

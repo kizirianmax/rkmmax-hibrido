@@ -1,5 +1,63 @@
 # ✅ Checklist Projeto RKMMax (Atualizado — 23/10/2025)
 
+## 2026-03-15 — docs(absorption): encerramento formal da fase funcional de absorção do Rkmmax-app
+
+### O que foi feito
+- Registrado formalmente o encerramento da fase funcional de absorção do `Rkmmax-app` → `rkmmax-hibrido`
+- Documentado o estado consolidado dos 5 fluxos críticos de plano
+- Classificadas as pendências remanescentes como operacionais / infra / validação final (não são pendências de código)
+
+### Por quê
+A absorção funcional foi concluída com o merge do PR #195 (2026-03-15). Todos os elos da cadeia crítica de planos estão corrigidos e em produção no `main`. Este registro fecha formalmente a fase de migração de código e declara o início da fase de operação/validação.
+
+### Estado consolidado — fase funcional concluída ✅
+
+| Componente | PR | Estado |
+|---|---|---|
+| `src/lib/planCaps.js` — 5 planos oficiais, `mid` removido | #188 | ✅ merged 2026-03-12 |
+| `src/config/fairUse.js` — remove `free`, adiciona `ultra`/`dev`, fallback `basic` | #190 | ✅ merged 2026-03-13 |
+| `api/admin.js` `handleMePlan()` — plano real via `PLAN_TIERS` | #191 | ✅ merged 2026-03-14 |
+| `src/config/fairUse.js` + `src/pages/Specialists.jsx` — gating real via `usePlan()` | #193 | ✅ merged 2026-03-15 |
+| `api/_utils/plans.js` `PRICE_IDS` + `tierOf()` + `api/admin.js` `handlePrices()` com `ultra` | #194 | ✅ merged 2026-03-15 |
+| `src/hooks/usePlan.js` — lê `j.userPlan` (campo real) | #195 | ✅ merged 2026-03-15 |
+| `src/pages/SpecialistChat.jsx` — markdown, voz, UX | #186–#187 | ✅ merged 2026-03-12 |
+| `src/config/specialists.js` — avatars `law` e `home` | #185 | ✅ merged 2026-03-11 |
+| Serginho N5–N13 — GitHub context + análise incremental | #174–#184 | ✅ merged 2026-03-11 |
+
+### Declaração explícita
+**Não há pendência de código funcional para concluir a absorção do `Rkmmax-app`.**
+
+### Pendências remanescentes — classificadas como OPERACIONAL / INFRA / VALIDAÇÃO
+
+| Categoria | Item | Urgência |
+|---|---|---|
+| **Infra / Vercel** | Configurar env vars `R_ULTRA`, `R_ULTRA_US`, `R_DEV` | Alta se `ultra`/`dev` estiverem ativos |
+| **Infra / Supabase** | Confirmar existência da coluna `plan` na tabela `subscriptions` | Média |
+| **Smoke test** | Validar end-to-end: usuário `basic` → recebe `basic`; `ultra` → recebe `ultra` | Alta |
+| **Descontinuação** | Iniciar processo controlado de descontinuação do repositório `Rkmmax-app` | Baixa — planejamento |
+| **Webhook Stripe** | `ultra`/`dev` — feature nova, não pendência de absorção | Roadmap |
+
+### Arquivos alterados
+
+| Arquivo | Mudança |
+|---|---|
+| `CHECKLIST.md` | Esta entrada de encerramento |
+| `CHANGELOG.md` | Entrada de fechamento da fase de absorção funcional |
+
+### Validação
+1. `CHECKLIST.md` declara explicitamente que a fase funcional de absorção foi concluída ✅
+2. Pendências remanescentes estão classificadas como operacionais / infra / validação ✅
+3. Nenhum arquivo de código foi alterado ✅
+4. O registro segue o padrão de governança do projeto ✅
+
+### Rollback
+```bash
+git revert <commit-sha>
+# Remove apenas a entrada de encerramento do CHECKLIST.md e a entrada do CHANGELOG.md
+```
+
+---
+
 ## 2026-03-15 — fix(usePlan): corrigir leitura do campo userPlan na resposta de /api/me-plan
 
 ### O que foi feito
