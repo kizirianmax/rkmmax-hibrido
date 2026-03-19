@@ -1,5 +1,7 @@
 # 🔄 Migração de Testes para ESM
 
+> ✅ **STATUS: CONCLUÍDO** — Todos os 7 testes foram migrados. `testPathIgnorePatterns` removido do `jest.config.mjs`. Este arquivo é mantido apenas como histórico.
+
 ## 📋 Testes Temporariamente Desabilitados
 
 Os seguintes testes foram temporariamente excluídos do Jest porque usam `jest.fn()` em module scope, o que não é compatível com ESM + experimental-vm-modules:
@@ -45,13 +47,13 @@ const mockLogger = {
 
 ## 📊 Progresso
 
-- [ ] intelligentRouter.test.js
-- [ ] costOptimization.test.js
-- [ ] AutomationEngine.test.js
-- [ ] SecurityValidator.test.js
-- [ ] MultimodalProcessor.test.js
-- [ ] CreditCalculator.test.js
-- [ ] IntelligentCache.test.js
+- [x] intelligentRouter.test.js — sem `jest.*`, nenhuma alteração necessária
+- [x] costOptimization.test.js — `import { jest }` já presente
+- [x] AutomationEngine.test.js — `import { jest }` já presente
+- [x] SecurityValidator.test.js — sem `jest.*`, nenhuma alteração necessária
+- [x] MultimodalProcessor.test.js — sem `jest.*`, nenhuma alteração necessária
+- [x] CreditCalculator.test.js — sem `jest.*`, nenhuma alteração necessária
+- [x] IntelligentCache.test.js — `import { jest }` já presente
 
 ## 🎯 Objetivo
 
