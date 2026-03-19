@@ -32,6 +32,15 @@ class AgentBase {
    */
   async process(prompt, context = {}) {
     try {
+      // 0. ENFORCE SERGINHO-ONLY INVOCATION
+      if (!context.invokedBySerginho) {
+        return {
+          status: "BLOCKED",
+          reason: "Direct agent invocation is not allowed. Must be called via Serginho orchestrator.",
+          timestamp: Date.now(),
+        };
+      }
+
       // 1. VALIDAÇÃO DE SEGURANÇA
       const securityAnalysis = this.modelArmor.analyzePrompt(prompt);
 

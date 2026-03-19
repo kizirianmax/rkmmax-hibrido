@@ -36,7 +36,7 @@ export default async function handler(req, res) {
       result = await serginho.handleRequest({
         message,
         messages,
-        context: { specialistId: specialist.id },
+        context: { specialistId: specialist.id, invokedBySerginho: true },
         options: {
           systemPrompt: specialist.systemPrompt,
           sessionId: `specialist-${specialistId}-${sessionId || "default"}`,
