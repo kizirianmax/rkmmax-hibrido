@@ -53,14 +53,15 @@ export default function SpecialistChat() {
     }
   }, [specialist, navigate]);
 
-  // Scroll para o topo ao carregar a página
+  // Trava o scroll da página enquanto a tela está aberta
   useEffect(() => {
-    document.documentElement.classList.add('serginho-page');
-    window.scrollTo(0, 0);
-    document.body.scrollTop = 0;
-    document.documentElement.scrollTop = 0;
+    const prevBody = document.body.style.overflow;
+    const prevHtml = document.documentElement.style.overflow;
+    document.body.style.overflow = "hidden";
+    document.documentElement.style.overflow = "hidden";
     return () => {
-      document.documentElement.classList.remove('serginho-page');
+      document.body.style.overflow = prevBody;
+      document.documentElement.style.overflow = prevHtml;
     };
   }, []);
 
@@ -224,7 +225,7 @@ export default function SpecialistChat() {
   }
 
   return (
-    <div className="serginho-container">
+    <div className="specialist-chat-container" role="main" aria-label={`Chat com ${specialist.name}`}>
       {/* Header com info do especialista */}
       <div className="specialist-header">
         <button onClick={() => navigate("/specialists")} className="back-button">
@@ -285,68 +286,66 @@ export default function SpecialistChat() {
         </div>
       </div>
 
-      {/* Chat Container */}
-      <div className="chat-container">
-        <div className="messages-container">
-          {messages.map((msg, index) => (
-            <div key={index} className={`message ${msg.role}`}>
-              <div className="message-content">
-                {msg.role === "assistant" && (
-                  <span className="assistant-emoji">{specialist.emoji}</span>
-                )}
-                <div className="message-text">
-                  {msg.role === "assistant" ? (
-                    <SimpleMarkdown text={msg.content} />
-                  ) : (
-                    msg.content
-                  )}
-                </div>
-              </div>
-            </div>
-          ))}
-          {isLoading && (
-            <div className="message assistant">
-              <div className="message-content">
+      {/* Área de mensagens */}
+      <div className="specialist-messages-area">
+        {messages.map((msg, index) => (
+          <div key={index} className={`message ${msg.role}`}>
+            <div className="message-content">
+              {msg.role === "assistant" && (
                 <span className="assistant-emoji">{specialist.emoji}</span>
-                <div className="typing-indicator">
-                  <span></span>
-                  <span></span>
-                  <span></span>
-                </div>
+              )}
+              <div className="message-text">
+                {msg.role === "assistant" ? (
+                  <SimpleMarkdown text={msg.content} />
+                ) : (
+                  msg.content
+                )}
               </div>
             </div>
-          )}
-          <div ref={messagesEndRef} />
-        </div>
+          </div>
+        ))}
+        {isLoading && (
+          <div className="message assistant">
+            <div className="message-content">
+              <span className="assistant-emoji">{specialist.emoji}</span>
+              <div className="typing-indicator">
+                <span></span>
+                <span></span>
+                <span></span>
+              </div>
+            </div>
+          </div>
+        )}
+        <div ref={messagesEndRef} />
+      </div>
 
-        {/* Input Area */}
-        <div className="input-container">
-          <textarea
-            value={input}
-            onChange={(e) => setInput(e.target.value)}
-            onKeyPress={handleKeyPress}
-            placeholder={`Converse com ${specialist.name}...`}
-            disabled={isLoading}
-            rows={1}
-          />
-          <button
-            onClick={handleVoiceInput}
-            disabled={isLoading}
-            className={`mic-button ${isRecording ? 'recording' : ''}`}
-            title={isRecording ? 'Parar gravação' : 'Gravar mensagem de voz'}
-            type="button"
-          >
-            {isRecording ? '⏹' : '🎤'}
-          </button>
-          <button
-            onClick={handleSend}
-            disabled={!input.trim() || isLoading}
-            className="send-button"
-            title="Enviar mensagem"
-          >
-            {isLoading ? "⏳" : "➤"}
-          </button>
-        </div>
+      {/* Área de input */}
+      <div className="specialist-input-area">
+        <textarea
+          value={input}
+          onChange={(e) => setInput(e.target.value)}
+          onKeyPress={handleKeyPress}
+          placeholder={`Converse com ${specialist.name}...`}
+          disabled={isLoading}
+          rows={1}
+        />
+        <button
+          onClick={handleVoiceInput}
+          disabled={isLoading}
+          className={`mic-button ${isRecording ? 'recording' : ''}`}
+          title={isRecording ? 'Parar gravação' : 'Gravar mensagem de voz'}
+          type="button"
+        >
+          {isRecording ? '⏹' : '🎤'}
+        </button>
+        <button
+          onClick={handleSend}
+          disabled={!input.trim() || isLoading}
+          className="send-button"
+          title="Enviar mensagem"
+        >
+          {isLoading ? "⏳" : "➤"}
+        </button>
       </div>
     </div>
   );
