@@ -1009,7 +1009,7 @@ class SerginhoOrchestrator {
       throw new Error('GROQ_API_KEY environment variable is required');
     }
 
-    const formattedMessages = this.formatMessages(messages, message, 'openai');
+    const formattedMessages = this.formatMessages(messages, message, 'openai', context?.systemPrompt);
     
     const response = await fetch(config.endpoint, {
       method: 'POST',
@@ -1085,7 +1085,7 @@ class SerginhoOrchestrator {
    * Format messages for different API formats
    * @private
    */
-  formatMessages(messages, currentMessage, format) {
+  formatMessages(messages, currentMessage, format, systemPrompt) {
     const allMessages = [
       ...messages,
       { role: 'user', content: currentMessage }
@@ -1098,7 +1098,11 @@ class SerginhoOrchestrator {
       }));
     }
 
-    // OpenAI/Groq format
+    // Formato OpenAI/Groq — injeta mensagem de sistema quando fornecida
+    if (systemPrompt) {
+      const withoutSystem = allMessages.filter(msg => msg.role !== 'system');
+      return [{ role: 'system', content: systemPrompt }, ...withoutSystem];
+    }
     return allMessages;
   }
 
