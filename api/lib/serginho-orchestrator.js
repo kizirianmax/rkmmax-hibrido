@@ -291,6 +291,47 @@ class SerginhoOrchestrator {
     const signal = controller ? controller.signal : options.signal;
 
     try {
+    // Specialist bypass — skip GitHub analysis chain entirely (reversível: remover este bloco)
+    // Requisições de especialistas possuem systemPrompt próprio e não devem ser interceptadas
+    // pelos blocos de follow-up GitHub, que causam false-positive early-returns.
+    const isSpecialistRequest = Boolean(context.specialistId || context.source === 'specialist-api');
+    if (isSpecialistRequest) {
+      // Injeta systemPrompt do especialista via options se presente no contexto
+      const specialistOptions = context.specialistSystemPrompt
+        ? { ...options, systemPrompt: context.specialistSystemPrompt }
+        : options;
+
+      const analysis = analyzeComplexity(message);
+      const routing = routeToProvider(analysis);
+      const enabledProvidersList = getEnabledProviders();
+      let currentProvider = specialistOptions.forceProvider || routing.provider;
+      if (specialistOptions.forceProvider && !enabledProvidersList.includes(specialistOptions.forceProvider)) {
+        currentProvider = routing.provider;
+      }
+      const cacheKey = this.getCacheKey(message, currentProvider);
+      const cached = this.cache.get(cacheKey);
+      if (cached && !specialistOptions.bypassCache) {
+        const totalOrchestrationTime = Date.now() - orchestrationStartTime;
+        this.metrics.recordRequest(currentProvider, totalOrchestrationTime, true, true);
+        return this._buildCachedResponse(cached, currentProvider, traceId, totalOrchestrationTime, analysis, routing, specialistOptions);
+      }
+      const result = await this.executeWithProvider(currentProvider, {
+        message,
+        messages,
+        context,
+        analysis,
+        signal,
+      });
+      const modelExecutionTime = Date.now() - orchestrationStartTime;
+      const totalOrchestrationTime = modelExecutionTime;
+      this.metrics.recordRequest(currentProvider, totalOrchestrationTime, true, false);
+      const modelId = getProviderConfig(currentProvider)?.model || currentProvider;
+      this.modelRegistry.recordExecution(modelId, true, modelExecutionTime, false);
+      this.cache.set(cacheKey, { text: result.text, usage: result.usage });
+      return this._buildSuccessResponse(result, currentProvider, traceId, orchestrationStartTime, modelExecutionTime, totalOrchestrationTime, analysis, routing, [], [], 0, specialistOptions);
+    }
+    // Fim do specialist bypass
+
     // GitHub conversation context — per-request, in-memory (reversível: remover bloco abaixo)
     // Cópia rasa é suficiente: todos os campos do contexto são primitivos (strings/null).
     const githubCtx = context.githubContext
