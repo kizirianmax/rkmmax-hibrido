@@ -9,6 +9,7 @@
  */
 import serginho from "./lib/serginho-orchestrator.js";
 import { specialists } from "../src/config/specialists.js";
+import { trackSpecialistUsage } from "./lib/specialist-usage.js";
 
 export default async function handler(req, res) {
   if (req.method !== "POST") {
@@ -41,6 +42,13 @@ export default async function handler(req, res) {
           systemPrompt: specialist.systemPrompt,
           sessionId: `specialist-${specialistId}-${sessionId || "default"}`,
         },
+      });
+
+      trackSpecialistUsage(specialistId, {
+        model: result.model ?? null,
+        provider: result.provider ?? null,
+        cached: false,
+        source: "specialist-chat",
       });
 
       return res.status(200).json({
