@@ -294,52 +294,20 @@ class SerginhoOrchestrator {
     // Specialist bypass — skip GitHub analysis chain entirely (reversível: remover este bloco)
     // Requisições de especialistas possuem systemPrompt próprio e não devem ser interceptadas
     // pelos blocos de follow-up GitHub, que causam false-positive early-returns.
-    const isSpecialistRequest = Boolean(context.specialistId || context.source === 'specialist-api');
-    if (isSpecialistRequest) {
-      // Injeta systemPrompt do especialista via options se presente no contexto
-      const specialistOptions = context.specialistSystemPrompt
-        ? { ...options, systemPrompt: context.specialistSystemPrompt }
-        : options;
-
-      const analysis = analyzeComplexity(message);
-      const routing = routeToProvider(analysis);
-      const enabledProvidersList = getEnabledProviders();
-      let currentProvider = specialistOptions.forceProvider || routing.provider;
-      if (specialistOptions.forceProvider && !enabledProvidersList.includes(specialistOptions.forceProvider)) {
-        currentProvider = routing.provider;
-      }
-      const cacheKey = this.getCacheKey(message, currentProvider);
-      const cached = this.cache.get(cacheKey);
-      if (cached && !specialistOptions.bypassCache) {
-        const totalOrchestrationTime = Date.now() - orchestrationStartTime;
-        this.metrics.recordRequest(currentProvider, totalOrchestrationTime, true, true);
-        return this._buildCachedResponse(cached, currentProvider, traceId, totalOrchestrationTime, analysis, routing, specialistOptions);
-      }
-      const result = await this.executeWithProvider(currentProvider, {
-        message,
-        messages,
-        context,
-        analysis,
-        signal,
-      });
-      const modelExecutionTime = Date.now() - orchestrationStartTime;
-      const totalOrchestrationTime = modelExecutionTime;
-      this.metrics.recordRequest(currentProvider, totalOrchestrationTime, true, false);
-      const modelId = getProviderConfig(currentProvider)?.model || currentProvider;
-      this.modelRegistry.recordExecution(modelId, true, modelExecutionTime, false);
-      this.cache.set(cacheKey, { text: result.text, usage: result.usage });
-      return this._buildSuccessResponse(result, currentProvider, traceId, orchestrationStartTime, modelExecutionTime, totalOrchestrationTime, analysis, routing, [], [], 0, specialistOptions);
-    }
+    const isSpecialistRequest = !!(context.specialistId || context.source === 'specialist-api');
     // Fim do specialist bypass
 
     // GitHub conversation context — per-request, in-memory (reversível: remover bloco abaixo)
     // Cópia rasa é suficiente: todos os campos do contexto são primitivos (strings/null).
-    const githubCtx = context.githubContext
-      ? { ...context.githubContext }
-      : createGitHubContext();
+    // Para specialist requests githubCtx é null — todos os blocos abaixo são ignorados naturalmente.
+    const githubCtx = isSpecialistRequest
+      ? null
+      : context.githubContext
+        ? { ...context.githubContext }
+        : createGitHubContext();
 
     // GitHub execution dependencies — sem re-fetch (reversível: remover este bloco)
-    if (!context._skipExecutionDependenciesCheck && isExecutionDependenciesFollowUp(message)) {
+    if (githubCtx && !context._skipExecutionDependenciesCheck && isExecutionDependenciesFollowUp(message)) {
       if (hasEnoughContextForExecutionDependencies(githubCtx)) {
         const executionDepsPrompt = buildExecutionDependenciesPrompt(message, githubCtx);
         if (executionDepsPrompt) {
@@ -374,7 +342,7 @@ class SerginhoOrchestrator {
     // Fim do bloco execution dependencies
 
     // GitHub acceptance criteria — sem re-fetch (reversível: remover este bloco)
-    if (!context._skipAcceptanceCriteriaCheck && isAcceptanceCriteriaFollowUp(message)) {
+    if (githubCtx && !context._skipAcceptanceCriteriaCheck && isAcceptanceCriteriaFollowUp(message)) {
       if (hasEnoughContextForAcceptanceCriteria(githubCtx)) {
         const acceptanceCriteriaPrompt = buildAcceptanceCriteriaPrompt(message, githubCtx);
         if (acceptanceCriteriaPrompt) {
@@ -409,7 +377,7 @@ class SerginhoOrchestrator {
     // Fim do bloco acceptance criteria
 
     // GitHub execution checklist — sem re-fetch (reversível: remover este bloco)
-    if (!context._skipExecutionChecklistCheck && isExecutionChecklistFollowUp(message)) {
+    if (githubCtx && !context._skipExecutionChecklistCheck && isExecutionChecklistFollowUp(message)) {
       if (hasEnoughContextForChecklist(githubCtx)) {
         const checklistPrompt = buildChecklistPrompt(message, githubCtx);
         if (checklistPrompt) {
@@ -444,7 +412,7 @@ class SerginhoOrchestrator {
     // Fim do bloco execution checklist
 
     // GitHub action plan — sem re-fetch (reversível: remover este bloco)
-    if (!context._skipActionPlanCheck && isActionPlanFollowUp(message)) {
+    if (githubCtx && !context._skipActionPlanCheck && isActionPlanFollowUp(message)) {
       if (hasEnoughContextForActionPlan(githubCtx)) {
         const actionPlanPrompt = buildActionPlanPrompt(message, githubCtx);
         if (actionPlanPrompt) {
@@ -479,7 +447,7 @@ class SerginhoOrchestrator {
     // Fim do bloco action plan
 
     // GitHub action recommendations — sem re-fetch (reversível: remover este bloco)
-    if (!context._skipRecommendationCheck && isActionRecommendationFollowUp(message)) {
+    if (githubCtx && !context._skipRecommendationCheck && isActionRecommendationFollowUp(message)) {
       if (hasEnoughContextForRecommendations(githubCtx)) {
         const recommendationPrompt = buildRecommendationPrompt(message, githubCtx);
         if (recommendationPrompt) {
@@ -514,7 +482,7 @@ class SerginhoOrchestrator {
     // Fim do bloco action recommendations
 
     // GitHub comparative follow-up — sem re-fetch (reversível: remover este bloco)
-    if (!context._skipComparisonCheck && isComparativeFollowUp(message)) {
+    if (githubCtx && !context._skipComparisonCheck && isComparativeFollowUp(message)) {
       if (hasEnoughContextForComparison(githubCtx)) {
         const comparisonPrompt = buildComparisonPrompt(message, githubCtx);
         if (comparisonPrompt) {
@@ -550,7 +518,7 @@ class SerginhoOrchestrator {
     // Fim do bloco comparative follow-up
 
     // GitHub analytical follow-up — sem re-fetch (reversível: remover este bloco)
-    if (!context._skipAnalyticalCheck && isAnalyticalFollowUp(message)) {
+    if (githubCtx && !context._skipAnalyticalCheck && isAnalyticalFollowUp(message)) {
       if (hasEnoughContextForAnalysis(githubCtx)) {
         const analysisPrompt = buildAnalysisPrompt(message, githubCtx);
         if (analysisPrompt) {
@@ -586,7 +554,7 @@ class SerginhoOrchestrator {
     // Fim do bloco analytical follow-up
 
     // GitHub intent early-return — sem chamada LLM (reversível: remover este bloco)
-    const githubIntent = detectGitHubIntent(message);
+    const githubIntent = githubCtx ? detectGitHubIntent(message) : null;
     if (githubIntent) {
       const tool = getToolByName(githubIntent.tool);
       if (tool) {
@@ -631,7 +599,7 @@ class SerginhoOrchestrator {
     // Fim do bloco GitHub intent
 
     // Injeta resumo do contexto GitHub (se disponível) para perguntas de acompanhamento
-    const githubCtxSummary = getContextSummary(githubCtx);
+    const githubCtxSummary = githubCtx ? getContextSummary(githubCtx) : null;
     const effectiveMessage = githubCtxSummary
       ? `[Contexto GitHub]\n${githubCtxSummary}\n\n${message}`
       : message;
