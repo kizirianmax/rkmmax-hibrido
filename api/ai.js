@@ -82,9 +82,58 @@ export default async function handler(req, res) {
     console.log(`🤖 KIZI AI - Type: ${type}`);
 
     // ========================================
-    // TIPO: GENIUS (Serginho + Híbrido)
+    // TIPO: HYBRID (Construtor)
     // ========================================
-    if (type === "genius" || type === "chat" || type === "intelligent" || type === "hybrid") {
+    if (type === "hybrid") {
+      console.log("🏗️ KIZI AI - Híbrido/Construtor ativado");
+      const systemPrompt = buildGeniusPrompt("hybrid");
+      const optimized = optimizeRequest(messages, systemPrompt);
+
+      if (optimized.cached) {
+        console.log("💰 CACHE HIT!");
+        return res.status(200).json({
+          ...optimized.response,
+          cached: true,
+          type: "hybrid",
+        });
+      }
+
+      const result = await executeAITask(
+        optimized.messages,
+        optimized.systemPrompt,
+        { source: 'hybrid-api', type: 'hybrid' }
+      );
+
+      const response = {
+        response: result.text,
+        model: result.model,
+        provider: result.provider,
+        tier: result.tier,
+        complexity: result.complexity,
+        type: "hybrid",
+        metadata: {
+          provider: result.provider,
+          tier: result.tier,
+          complexity: result.complexity,
+        },
+        success: true,
+        usage: result.usage,
+      };
+
+      cacheResponse(messages, response);
+
+      return res.status(200).json({
+        ...response,
+        cached: false,
+        optimized: true,
+        stats: optimized.stats,
+      });
+    }
+
+    // ========================================
+    // TIPO: GENIUS (Serginho)
+    // ========================================
+    if (type === "genius" || type === "chat" || type === "intelligent") {
       const promptType = agentType || "serginho";
       const systemPrompt = buildGeniusPrompt(promptType);
       const optimized = optimizeRequest(messages, systemPrompt);
