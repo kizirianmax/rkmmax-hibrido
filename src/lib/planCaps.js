@@ -12,22 +12,22 @@ export const PLAN = {
   DEV:          "dev",
 };
 
-/** Modelo "principal" por plano (para o seu modelPicker) */
+/** Modelo Groq principal por plano (para o modelPicker) */
 export const MODEL_BY_PLAN = {
-  [PLAN.BASIC]:        { model: "gpt-5-nano" },
-  [PLAN.INTERMEDIATE]: { model: "gpt-4.1-mini" },
-  [PLAN.PREMIUM]:      { model: "gpt-4.1-mini" }, // Premium usa mini no dia a dia; booster sob demanda
-  [PLAN.ULTRA]:        { model: "gpt-4.1-mini" }, // Ultra usa o mesmo modelo mas sem hard limit
-  [PLAN.DEV]:          { model: "gpt-5-nano" },   // Dev: ambiente de desenvolvimento, sem limite
+  [PLAN.BASIC]:        { model: "llama-3.1-8b-instant" },
+  [PLAN.INTERMEDIATE]: { model: "llama-3.3-70b-versatile" },
+  [PLAN.PREMIUM]:      { model: "llama-3.3-70b-versatile" }, // Premium usa 70b no dia a dia; booster sob demanda
+  [PLAN.ULTRA]:        { model: "llama-3.3-70b-versatile" }, // Ultra usa o mesmo modelo mas sem hard limit
+  [PLAN.DEV]:          { model: "llama-3.1-8b-instant" },   // Dev: ambiente de desenvolvimento, sem limite
 };
 
 /** Limites de consumo */
 export const LIMITS = {
-  [PLAN.BASIC]:        { tokensDaily:   275_000, tokensMonthly5:       0 },
-  [PLAN.INTERMEDIATE]: { tokensDaily:   410_000, tokensMonthly5:       0 },
-  [PLAN.PREMIUM]:      { tokensDaily: 1_200_000, tokensMonthly5: 710_000 },
-  [PLAN.ULTRA]:        { tokensDaily:         0, tokensMonthly5:       0 }, // 0 = sem limite (hard_limit: false)
-  [PLAN.DEV]:          { tokensDaily:         0, tokensMonthly5:       0 }, // sem limite
+  [PLAN.BASIC]:        { tokensDaily:   275_000, tokensMonthlyBooster:       0 },
+  [PLAN.INTERMEDIATE]: { tokensDaily:   410_000, tokensMonthlyBooster:       0 },
+  [PLAN.PREMIUM]:      { tokensDaily: 1_200_000, tokensMonthlyBooster: 710_000 },
+  [PLAN.ULTRA]:        { tokensDaily:         0, tokensMonthlyBooster:       0 }, // 0 = sem limite (hard_limit: false)
+  [PLAN.DEV]:          { tokensDaily:         0, tokensMonthlyBooster:       0 }, // sem limite
 };
 
 /** Recursos por plano (para UI/flags) */
@@ -102,8 +102,8 @@ export const capsByPlan = {
   [PLAN.PREMIUM]: {
     limit_requests_per_day: 0,
     limit_tokens_per_day:   LIMITS[PLAN.PREMIUM].tokensDaily,
-    // Teto mensal de GPT-5 para plano Premium. Use 0 para remover o teto mensal.
-    limit_tokens_per_month: LIMITS[PLAN.PREMIUM].tokensMonthly5,
+    // Teto mensal de booster para plano Premium. Use 0 para remover o teto mensal.
+    limit_tokens_per_month: LIMITS[PLAN.PREMIUM].tokensMonthlyBooster,
   },
   [PLAN.ULTRA]: {
     limit_requests_per_day: 0,
