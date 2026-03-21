@@ -8,12 +8,11 @@
 /**
  * Provider configurations
  * Each provider has:
- * - type: Provider implementation type (groq, gemini, openai)
+ * - type: Provider implementation type (groq)
  * - model: Specific model identifier
  * - endpoint: API endpoint URL
- * - tier: Intelligence tier (complex, medium, simple, fallback, genius, optimized)
+ * - tier: Intelligence tier (complex, medium, simple, fallback)
  * - defaultParams: Default parameters for API calls
- * - generationConfig: Gemini-specific generation config
  */
 export const PROVIDERS = {
   // Tier 1: Complex tasks - GPT-OSS 120B (via Groq)
@@ -52,31 +51,6 @@ export const PROVIDERS = {
     },
   },
 
-  // Gemini 2.5 Pro (premium) - for high-complexity tasks
-  'gemini-exp-1206': {
-    type: 'gemini',
-    model: 'gemini-exp-1206',
-    endpoint: null, // Set dynamically with API key
-    tier: 'genius',
-    generationConfig: {
-      temperature: 1,
-      maxOutputTokens: 8192,
-      topP: 0.95,
-    },
-  },
-
-  // Gemini Flash (fast) - for speed-optimized tasks
-  'gemini-2.0-flash': {
-    type: 'gemini',
-    model: 'gemini-2.0-flash',
-    endpoint: null, // Set dynamically with API key
-    tier: 'optimized',
-    generationConfig: {
-      temperature: 0.8,
-      maxOutputTokens: 4096,
-    },
-  },
-
   // Groq fallback - Mixtral for high availability
   'groq-fallback': {
     type: 'groq',
@@ -105,15 +79,6 @@ export function getProviderConfig(providerName) {
   // Clone config to prevent mutations
   const clonedConfig = { ...config };
   
-  // Set Gemini endpoint dynamically with API key
-  if (config.type === 'gemini' && !config.endpoint) {
-    const apiKey = process.env.GOOGLE_API_KEY;
-    if (!apiKey && process.env.NODE_ENV !== 'test') {
-      throw new Error('GOOGLE_API_KEY environment variable is required for Gemini providers');
-    }
-    clonedConfig.endpoint = `https://generativelanguage.googleapis.com/v1beta/models/${config.model}:generateContent?key=${apiKey || 'test-key'}`;
-  }
-  
   return clonedConfig;
 }
 
@@ -139,17 +104,14 @@ export function getAllProviderNames() {
 /**
  * Get providers that have their required env vars configured.
  * Groq providers require GROQ_API_KEY.
- * Gemini providers require GOOGLE_API_KEY (or GEMINI_API_KEY / GERMINI_API_KEY).
  * @returns {Array<string>} Array of enabled provider names
  */
 export function getEnabledProviders() {
   const groqKey = process.env.GROQ_API_KEY;
-  const geminiKey = process.env.GOOGLE_API_KEY || process.env.GEMINI_API_KEY || process.env.GERMINI_API_KEY;
 
   return Object.entries(PROVIDERS)
     .filter(([_, config]) => {
       if (config.type === 'groq') return !!groqKey;
-      if (config.type === 'gemini') return !!geminiKey;
       return false;
     })
     .map(([name]) => name);
@@ -263,20 +225,6 @@ export const MODEL_METADATA = {
     description: 'Fallback de alta disponibilidade',
     icon: '🔄',
     logicalTier: 'fallback'
-  },
-  'gemini-exp-1206': {
-    infrastructure: 'gemini',
-    displayName: 'Gemini 2.5 Pro',
-    description: 'Inteligência de nível gênio',
-    icon: '✨',
-    logicalTier: 'genius'
-  },
-  'gemini-2.0-flash': {
-    infrastructure: 'gemini',
-    displayName: 'Gemini 2.0 Flash',
-    description: 'Velocidade otimizada',
-    icon: '🚀',
-    logicalTier: 'optimized'
   }
 };
 

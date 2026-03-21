@@ -10,7 +10,6 @@ import {
 } from '../lib/providers-config.js';
 
 // Mock environment variables
-process.env.GOOGLE_API_KEY = 'test-google-key';
 process.env.GROQ_API_KEY = 'test-groq-key';
 
 describe('providers-config', () => {
@@ -20,8 +19,6 @@ describe('providers-config', () => {
       expect(providerNames).toContain('llama-120b');
       expect(providerNames).toContain('llama-70b');
       expect(providerNames).toContain('llama-8b');
-      expect(providerNames).toContain('gemini-exp-1206');
-      expect(providerNames).toContain('gemini-2.0-flash');
       expect(providerNames).toContain('groq-fallback');
     });
 
@@ -30,13 +27,7 @@ describe('providers-config', () => {
         expect(config).toHaveProperty('type');
         expect(config).toHaveProperty('model');
         expect(config).toHaveProperty('tier');
-        
-        // Either endpoint or it should be Gemini (dynamically set)
-        // Fix: avoid conditional expect (jest/no-conditional-expect)
-        // Gemini endpoints are null (set dynamically); all others must be truthy
-        const endpointIsValid =
-          config.type === 'gemini' ? config.endpoint === null : Boolean(config.endpoint);
-        expect(endpointIsValid).toBe(true);
+        expect(config.endpoint).toBeTruthy();
       });
     });
 
@@ -53,24 +44,10 @@ describe('providers-config', () => {
       });
     });
 
-    test('Gemini providers have correct configuration', () => {
-      const geminiProviders = ['gemini-exp-1206', 'gemini-2.0-flash'];
-      
-      geminiProviders.forEach(provider => {
-        const config = PROVIDERS[provider];
-        expect(config.type).toBe('gemini');
-        expect(config.generationConfig).toBeDefined();
-        expect(config.generationConfig).toHaveProperty('temperature');
-        expect(config.generationConfig).toHaveProperty('maxOutputTokens');
-      });
-    });
-
     test('tiers are correctly assigned', () => {
       expect(PROVIDERS['llama-120b'].tier).toBe('complex');
       expect(PROVIDERS['llama-70b'].tier).toBe('medium');
       expect(PROVIDERS['llama-8b'].tier).toBe('simple');
-      expect(PROVIDERS['gemini-exp-1206'].tier).toBe('genius');
-      expect(PROVIDERS['gemini-2.0-flash'].tier).toBe('optimized');
       expect(PROVIDERS['groq-fallback'].tier).toBe('fallback');
     });
   });
@@ -94,45 +71,6 @@ describe('providers-config', () => {
       config1.customField = 'test';
       expect(config2.customField).toBeUndefined();
     });
-
-    test('sets Gemini endpoint dynamically with API key', () => {
-      const config = getProviderConfig('gemini-2.0-flash');
-      expect(config.endpoint).toBeTruthy();
-      expect(config.endpoint).toContain('generativelanguage.googleapis.com');
-      expect(config.endpoint).toContain('gemini-2.0-flash');
-      expect(config.endpoint).toContain(process.env.GOOGLE_API_KEY);
-    });
-
-    test('handles missing GOOGLE_API_KEY in test environment', () => {
-      const originalKey = process.env.GOOGLE_API_KEY;
-      const originalEnv = process.env.NODE_ENV;
-      
-      delete process.env.GOOGLE_API_KEY;
-      process.env.NODE_ENV = 'test';
-      
-      // Should use 'test-key' in test environment
-      const config = getProviderConfig('gemini-2.0-flash');
-      expect(config.endpoint).toContain('test-key');
-      
-      // Restore
-      process.env.GOOGLE_API_KEY = originalKey;
-      process.env.NODE_ENV = originalEnv;
-    });
-
-    test('throws error for missing GOOGLE_API_KEY in production', () => {
-      const originalKey = process.env.GOOGLE_API_KEY;
-      const originalEnv = process.env.NODE_ENV;
-      
-      delete process.env.GOOGLE_API_KEY;
-      process.env.NODE_ENV = 'production';
-      
-      expect(() => getProviderConfig('gemini-2.0-flash'))
-        .toThrow('GOOGLE_API_KEY environment variable is required');
-      
-      // Restore
-      process.env.GOOGLE_API_KEY = originalKey;
-      process.env.NODE_ENV = originalEnv;
-    });
   });
 
   describe('getProvidersByTier', () => {
@@ -150,16 +88,6 @@ describe('providers-config', () => {
     test('returns providers for simple tier', () => {
       const providers = getProvidersByTier('simple');
       expect(providers).toContain('llama-8b');
-    });
-
-    test('returns providers for genius tier', () => {
-      const providers = getProvidersByTier('genius');
-      expect(providers).toContain('gemini-exp-1206');
-    });
-
-    test('returns providers for optimized tier', () => {
-      const providers = getProvidersByTier('optimized');
-      expect(providers).toContain('gemini-2.0-flash');
     });
 
     test('returns providers for fallback tier', () => {
@@ -186,14 +114,12 @@ describe('providers-config', () => {
       expect(names).toContain('llama-120b');
       expect(names).toContain('llama-70b');
       expect(names).toContain('llama-8b');
-      expect(names).toContain('gemini-exp-1206');
-      expect(names).toContain('gemini-2.0-flash');
       expect(names).toContain('groq-fallback');
     });
 
     test('returns correct number of providers', () => {
       const names = getAllProviderNames();
-      expect(names.length).toBe(6);
+      expect(names.length).toBe(4);
     });
 
     test('returns only strings', () => {
@@ -224,14 +150,6 @@ describe('providers-config', () => {
       const config = getProviderConfig('groq-fallback');
       expect(config.model).toBe('mixtral-8x7b-32768');
     });
-
-    test('Gemini providers use correct models', () => {
-      const exp = getProviderConfig('gemini-exp-1206');
-      expect(exp.model).toBe('gemini-exp-1206');
-
-      const flash = getProviderConfig('gemini-2.0-flash');
-      expect(flash.model).toBe('gemini-2.0-flash');
-    });
   });
 
   describe('Default parameters', () => {
@@ -256,15 +174,6 @@ describe('providers-config', () => {
       const simple = getProviderConfig('llama-8b');
       expect(complex.defaultParams.max_tokens).toBeGreaterThan(simple.defaultParams.max_tokens);
     });
-
-    test('Gemini providers have generation config', () => {
-      ['gemini-exp-1206', 'gemini-2.0-flash'].forEach(provider => {
-        const config = getProviderConfig(provider);
-        expect(config.generationConfig).toBeDefined();
-        expect(config.generationConfig.temperature).toBeDefined();
-        expect(config.generationConfig.maxOutputTokens).toBeDefined();
-      });
-    });
   });
 
   describe('Endpoints', () => {
@@ -274,22 +183,11 @@ describe('providers-config', () => {
         expect(config.endpoint).toBe('https://api.groq.com/openai/v1/chat/completions');
       });
     });
-
-    test('Gemini providers have generativelanguage endpoint', () => {
-      ['gemini-exp-1206', 'gemini-2.0-flash'].forEach(provider => {
-        const config = getProviderConfig(provider);
-        expect(config.endpoint).toContain('generativelanguage.googleapis.com');
-        expect(config.endpoint).toContain(':generateContent');
-      });
-    });
   });
 });
 
 describe('getEnabledProviders', () => {
   const originalGroq = process.env.GROQ_API_KEY;
-  const originalGoogle = process.env.GOOGLE_API_KEY;
-  const originalGemini = process.env.GEMINI_API_KEY;
-  const originalGermini = process.env.GERMINI_API_KEY;
 
   afterEach(() => {
     if (originalGroq !== undefined) {
@@ -297,28 +195,10 @@ describe('getEnabledProviders', () => {
     } else {
       delete process.env.GROQ_API_KEY;
     }
-    if (originalGoogle !== undefined) {
-      process.env.GOOGLE_API_KEY = originalGoogle;
-    } else {
-      delete process.env.GOOGLE_API_KEY;
-    }
-    if (originalGemini !== undefined) {
-      process.env.GEMINI_API_KEY = originalGemini;
-    } else {
-      delete process.env.GEMINI_API_KEY;
-    }
-    if (originalGermini !== undefined) {
-      process.env.GERMINI_API_KEY = originalGermini;
-    } else {
-      delete process.env.GERMINI_API_KEY;
-    }
   });
 
   test('returns only groq providers when only GROQ_API_KEY is set', () => {
     process.env.GROQ_API_KEY = 'test-key';
-    delete process.env.GOOGLE_API_KEY;
-    delete process.env.GEMINI_API_KEY;
-    delete process.env.GERMINI_API_KEY;
     const enabled = getEnabledProviders();
     enabled.forEach(name => {
       expect(PROVIDERS[name].type).toBe('groq');
@@ -328,9 +208,6 @@ describe('getEnabledProviders', () => {
 
   test('returns empty array when no API keys are set', () => {
     delete process.env.GROQ_API_KEY;
-    delete process.env.GOOGLE_API_KEY;
-    delete process.env.GEMINI_API_KEY;
-    delete process.env.GERMINI_API_KEY;
     const enabled = getEnabledProviders();
     expect(enabled).toEqual([]);
   });
@@ -368,29 +245,17 @@ describe('parseProviderWeights', () => {
 
 describe('getWeightedProviders (Phase A5.4)', () => {
   const originalGroq = process.env.GROQ_API_KEY;
-  const originalGoogle = process.env.GOOGLE_API_KEY;
-  const originalGemini = process.env.GEMINI_API_KEY;
-  const originalGermini = process.env.GERMINI_API_KEY;
   const originalWeights = process.env.HYBRID_PROVIDER_WEIGHTS;
 
   afterEach(() => {
     if (originalGroq !== undefined) process.env.GROQ_API_KEY = originalGroq;
     else delete process.env.GROQ_API_KEY;
-    if (originalGoogle !== undefined) process.env.GOOGLE_API_KEY = originalGoogle;
-    else delete process.env.GOOGLE_API_KEY;
-    if (originalGemini !== undefined) process.env.GEMINI_API_KEY = originalGemini;
-    else delete process.env.GEMINI_API_KEY;
-    if (originalGermini !== undefined) process.env.GERMINI_API_KEY = originalGermini;
-    else delete process.env.GERMINI_API_KEY;
     if (originalWeights !== undefined) process.env.HYBRID_PROVIDER_WEIGHTS = originalWeights;
     else delete process.env.HYBRID_PROVIDER_WEIGHTS;
   });
 
   test('Groq-only + no weights → returns [llama-120b]', () => {
     process.env.GROQ_API_KEY = 'test-groq-key';
-    delete process.env.GOOGLE_API_KEY;
-    delete process.env.GEMINI_API_KEY;
-    delete process.env.GERMINI_API_KEY;
     delete process.env.HYBRID_PROVIDER_WEIGHTS;
     const result = getWeightedProviders();
     expect(result).toEqual(['llama-120b']);
@@ -398,9 +263,6 @@ describe('getWeightedProviders (Phase A5.4)', () => {
 
   test('valid weights sort correctly by weight descending', () => {
     process.env.GROQ_API_KEY = 'test-groq-key';
-    delete process.env.GOOGLE_API_KEY;
-    delete process.env.GEMINI_API_KEY;
-    delete process.env.GERMINI_API_KEY;
     process.env.HYBRID_PROVIDER_WEIGHTS = '{"llama-8b":90,"llama-120b":50,"llama-70b":70}';
     const result = getWeightedProviders();
     expect(result[0]).toBe('llama-8b');
@@ -408,22 +270,8 @@ describe('getWeightedProviders (Phase A5.4)', () => {
     expect(result[2]).toBe('llama-120b');
   });
 
-  test('weights with disabled providers (no Gemini key) → Gemini excluded', () => {
-    process.env.GROQ_API_KEY = 'test-groq-key';
-    delete process.env.GOOGLE_API_KEY;
-    delete process.env.GEMINI_API_KEY;
-    delete process.env.GERMINI_API_KEY;
-    process.env.HYBRID_PROVIDER_WEIGHTS = '{"gemini-exp-1206":100,"llama-120b":50}';
-    const result = getWeightedProviders();
-    expect(result).not.toContain('gemini-exp-1206');
-    expect(result).toContain('llama-120b');
-  });
-
   test('invalid weights JSON → safe fallback to [llama-120b]', () => {
     process.env.GROQ_API_KEY = 'test-groq-key';
-    delete process.env.GOOGLE_API_KEY;
-    delete process.env.GEMINI_API_KEY;
-    delete process.env.GERMINI_API_KEY;
     process.env.HYBRID_PROVIDER_WEIGHTS = 'not-valid-json';
     const result = getWeightedProviders();
     expect(result).toEqual(['llama-120b']);
@@ -431,19 +279,13 @@ describe('getWeightedProviders (Phase A5.4)', () => {
 
   test('no providers enabled → returns []', () => {
     delete process.env.GROQ_API_KEY;
-    delete process.env.GOOGLE_API_KEY;
-    delete process.env.GEMINI_API_KEY;
-    delete process.env.GERMINI_API_KEY;
     delete process.env.HYBRID_PROVIDER_WEIGHTS;
     const result = getWeightedProviders();
     expect(result).toEqual([]);
   });
 
-  test('Groq-only never includes Gemini providers', () => {
+  test('Groq-only never includes non-Groq providers', () => {
     process.env.GROQ_API_KEY = 'test-groq-key';
-    delete process.env.GOOGLE_API_KEY;
-    delete process.env.GEMINI_API_KEY;
-    delete process.env.GERMINI_API_KEY;
     delete process.env.HYBRID_PROVIDER_WEIGHTS;
     const result = getWeightedProviders();
     result.forEach((name) => {
