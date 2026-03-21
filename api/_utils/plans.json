@@ -10,7 +10,7 @@
       "3.500 tokens/dia"
     ],
     "limit_tokens_per_day": 3500,
-    "primary_model": "Gemini Flash",
+    "primary_model": "llama-3.1-8b-instant",
     "billing": "monthly",
     "lookup_key": "rkmmax_basic_br"
   },
@@ -22,12 +22,12 @@
     "features": [
       "55 especialistas em IA",
       "Alto Volume de Uso e Raciocínio",
-      "Gemini Pro",
+      "Groq llama-3.3-70b",
       "Subsidiado pelos planos Premium/ULTRA",
       "4.700 tokens/dia"
     ],
     "limit_tokens_per_day": 4700,
-    "primary_model": "Gemini Pro",
+    "primary_model": "llama-3.3-70b-versatile",
     "discount_coupon": "ESTUDANTE50",
     "billing": "monthly",
     "lookup_key": "rkmmax_intermediate_br"
@@ -39,12 +39,12 @@
     "features": [
       "55 especialistas em IA",
       "Hyper-Velocidade (Motor GROQ)",
-      "Raciocínio de Alto Nível (Gemini Premium)",
+      "Raciocínio de Alto Nível (openai/gpt-oss-120b)",
       "7.200 tokens/dia",
       "Voz e Imagem inclusos"
     ],
     "limit_tokens_per_day": 7200,
-    "primary_model": "GROQ + Gemini Premium",
+    "primary_model": "openai/gpt-oss-120b",
     "billing": "monthly",
     "lookup_key": "rkmmax_premium_br"
   },
@@ -62,7 +62,7 @@
     ],
     "limit_tokens_per_day": 9000,
     "hard_limit": false,
-    "primary_model": "GROQ + Gemini ULTRA",
+    "primary_model": "openai/gpt-oss-120b",
     "compliance": ["LGPD", "GDPR", "SLA"],
     "billing": "monthly",
     "lookup_key": "rkmmax_ultra_br"
@@ -79,7 +79,7 @@
       "3.500 tokens/day"
     ],
     "limit_tokens_per_day": 3500,
-    "primary_model": "Gemini Flash",
+    "primary_model": "llama-3.1-8b-instant",
     "billing": "monthly",
     "lookup_key": "rkmmax_basic_us"
   },
@@ -91,12 +91,12 @@
     "features": [
       "55 AI specialists",
       "High Volume Use and Reasoning",
-      "Gemini Pro",
+      "Groq llama-3.3-70b",
       "Subsidized by Premium/ULTRA plans",
       "4.700 tokens/day"
     ],
     "limit_tokens_per_day": 4700,
-    "primary_model": "Gemini Pro",
+    "primary_model": "llama-3.3-70b-versatile",
     "discount_coupon": "STUDENT50",
     "billing": "monthly",
     "lookup_key": "rkmmax_intermediate_us"
@@ -108,12 +108,12 @@
     "features": [
       "55 AI specialists",
       "Hyper-Speed (GROQ Engine)",
-      "Advanced Reasoning (Gemini Premium)",
+      "Advanced Reasoning (openai/gpt-oss-120b)",
       "7.200 tokens/day",
       "Voice and Image included"
     ],
     "limit_tokens_per_day": 7200,
-    "primary_model": "GROQ + Gemini Premium",
+    "primary_model": "openai/gpt-oss-120b",
     "billing": "monthly",
     "lookup_key": "rkmmax_premium_us"
   },
@@ -131,7 +131,7 @@
     ],
     "limit_tokens_per_day": 9000,
     "hard_limit": false,
-    "primary_model": "GROQ + Gemini ULTRA",
+    "primary_model": "openai/gpt-oss-120b",
     "compliance": ["LGPD", "GDPR", "SLA"],
     "billing": "monthly",
     "lookup_key": "rkmmax_ultra_us"
