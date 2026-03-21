@@ -1,6 +1,5 @@
 import { useState, useRef, useEffect } from "react";
 import "../styles/HybridAgent.css";
-import { specialists } from "../config/specialists.js";
 
 /**
  * Renders AI response text with basic markdown formatting.
@@ -49,7 +48,6 @@ function SimpleMarkdown({ text }) {
 export default function HybridAgentSimple() {
   const [mode, setMode] = useState("manual");
   const [input, setInput] = useState("");
-  const [selectedSpecialist, setSelectedSpecialist] = useState(null);
   // Versão do app para cache busting
   const APP_VERSION = "v3.1.0-kizi";
 
@@ -151,24 +149,16 @@ export default function HybridAgentSimple() {
           content: msg.content,
         }));
 
-      const body = selectedSpecialist
-        ? {
-            type: "specialist",
-            specialistId: selectedSpecialist,
-            messages: [
-              ...conversationMessages,
-              { role: "user", content: userInput },
-            ],
-          }
-        : {
-            type: "genius",
-            messages: [
-              ...conversationMessages,
-              { role: "user", content: userInput },
-            ],
-            agentType: "hybrid",
-            mode: mode.toUpperCase(),
-          };
+      // Construtor sempre usa o fluxo genius/hybrid — Serginho é o orquestrador soberano
+      const body = {
+        type: "genius",
+        messages: [
+          ...conversationMessages,
+          { role: "user", content: userInput },
+        ],
+        agentType: "hybrid",
+        mode: mode.toUpperCase(),
+      };
 
       const response = await fetch("/api/ai", {
         method: "POST",
@@ -189,9 +179,7 @@ export default function HybridAgentSimple() {
       const complexity = data.routing?.analyzedComplexity || data.complexity || 0;
 
 
-      const agentName = selectedSpecialist
-        ? specialists[selectedSpecialist]?.name || "Especialista"
-        : "Serginho";
+      const agentName = "Serginho";
 
       // Adicionar resposta do agente
       const agentMessage = {
@@ -366,21 +354,6 @@ export default function HybridAgentSimple() {
 
         {/* Controles */}
         <div className="header-controls">
-          <div className="specialist-selector">
-            <label>Especialista:</label>
-            <select
-              value={selectedSpecialist || ""}
-              onChange={(e) => setSelectedSpecialist(e.target.value || null)}
-            >
-              <option value="">🤖 Híbrido (padrão)</option>
-              {Object.values(specialists).map((s) => (
-                <option key={s.id} value={s.id}>
-                  {s.emoji} {s.name}
-                </option>
-              ))}
-            </select>
-          </div>
-
           <div className="mode-selector">
             <label>Modo:</label>
             <div className="mode-buttons">
