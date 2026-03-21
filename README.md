@@ -77,7 +77,7 @@ graph TB
     end
     
     subgraph "Layer 5: External Services"
-        GROQ[Groq API<br/>llama-3.3-70b / mixtral-8x7b]
+        GROQ[Groq API<br/>llama-3.3-70b / mixtral-8x7b-32768]
         SUPABASE[Supabase<br/>Database]
         GITHUB[GitHub API<br/>Automation]
     end
