@@ -27,8 +27,7 @@ npm install
 ```bash
 cp .env.example .env
 # Edit .env with your API keys:
-# - REACT_APP_OPENAI_API_KEY
-# - REACT_APP_GEMINI_API_KEY
+# - GROQ_API_KEY (obrigatória — provedor principal de IA)
 # - REACT_APP_SUPABASE_URL & REACT_APP_SUPABASE_ANON_KEY
 # - STRIPE_SECRET_KEY (for payments)
 ```
@@ -78,8 +77,7 @@ graph TB
     end
     
     subgraph "Layer 5: External Services"
-        OPENAI[OpenAI<br/>GPT-4]
-        GEMINI[Google Gemini<br/>2.5 Pro]
+        GROQ[Groq API<br/>llama-3.3-70b / mixtral-8x7b-32768]
         SUPABASE[Supabase<br/>Database]
         GITHUB[GitHub API<br/>Automation]
     end
@@ -96,8 +94,7 @@ graph TB
     API --> PAYMENT
     API --> AUTH
     API --> EMAIL
-    PAYMENT --> OPENAI
-    PAYMENT --> GEMINI
+    PAYMENT --> GROQ
     AUTH --> SUPABASE
     EMAIL --> GITHUB
 ```
@@ -121,7 +118,7 @@ Ver [docs/architecture.md](docs/architecture.md) para detalhes completos.
 import Serginho from './src/agents/serginho/Serginho.js';
 
 const serginho = new Serginho({
-  model: 'gemini-2.0-flash-exp',
+  model: 'llama-3.3-70b-versatile',  // via Groq API
   temperature: 0.7
 });
 
@@ -182,8 +179,9 @@ const result = await intelligentRouter.route({
 });
 
 // Automatically selects best provider:
-// - Simple tasks → Gemini Flash (fast & cheap)
-// - Complex tasks → GPT-4 or Gemini Pro (high quality)
+// - Simple tasks → Groq mixtral-8x7b-32768 (fast & cheap)
+// - Complex tasks → Groq llama-3.3-70b-versatile (high quality)
+// - Heavy tasks   → Groq openai/gpt-oss-120b (maximum quality)
 // - Fallback chain for reliability
 ```
 
@@ -222,7 +220,7 @@ curl -X POST https://your-domain.vercel.app/api/chat \
   -H "Content-Type: application/json" \
   -d '{
     "message": "Hello, explain quantum computing",
-    "model": "gemini-2.0-flash-exp"
+    "model": "llama-3.3-70b-versatile"
   }'
 ```
 
@@ -282,9 +280,7 @@ vercel deploy --prod
 
 ```bash
 # AI Services
-REACT_APP_OPENAI_API_KEY=sk-...
-REACT_APP_GEMINI_API_KEY=...
-REACT_APP_ANTHROPIC_API_KEY=...
+GROQ_API_KEY=gsk_...
 
 # Database
 REACT_APP_SUPABASE_URL=https://...
@@ -363,9 +359,7 @@ Para documentação completa do projeto, acesse o [Índice de Documentação](do
 - 📧 Resend for transactional emails
 
 **AI Services:**
-- 🤖 OpenAI GPT-4, GPT-4 Turbo
-- 🧠 Google Gemini 2.0 Flash & 2.5 Pro
-- 🔮 Anthropic Claude (optional)
+- 🤖 Groq API — cascata de modelos: `openai/gpt-oss-120b` → `llama-3.3-70b-versatile` → `mixtral-8x7b-32768`
 
 **DevOps:**
 - ✅ GitHub Actions CI/CD
@@ -404,8 +398,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## 🙏 Acknowledgments
 
-- OpenAI for GPT models
-- Google for Gemini models
+- Groq for blazing-fast LLM inference
 - Vercel for serverless hosting
 - Supabase for database infrastructure
 - Stripe for payment processing
