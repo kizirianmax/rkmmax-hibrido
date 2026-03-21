@@ -55,15 +55,15 @@ export default function HybridAgentSimple() {
     {
       id: 1,
       type: "system",
-      content: `🤖 Bem-vindo ao KIZI Primary - Sistema Inteligente (${APP_VERSION})`,
+      content: `⚙️ Construtor inicializado (${APP_VERSION})`,
       timestamp: new Date(),
     },
     {
       id: 2,
       type: "agent",
-      agent: "Serginho",
+      agent: "Construtor",
       content:
-        "Olá! Sou o KIZI Primary operando como Serginho. Posso ajudar com qualquer tarefa - desde programação até pesquisas complexas. Descreva o que precisa!",
+        "Construtor pronto. Descreva o artefato ou tarefa que deseja gerar.",
       provider: "kizi-primary",
       timestamp: new Date(),
     },
@@ -179,7 +179,7 @@ export default function HybridAgentSimple() {
       const complexity = data.routing?.analyzedComplexity || data.complexity || 0;
 
 
-      const agentName = "Serginho";
+      const agentName = "Construtor";
 
       // Adicionar resposta do agente
       const agentMessage = {
@@ -348,8 +348,8 @@ export default function HybridAgentSimple() {
       {/* Header */}
       <div className="hybrid-header">
         <div className="header-left">
-          <h1>🤖 RKMMAX Híbrido</h1>
-          <p>Sistema Inteligente de Agentes</p>
+          <h1>⚙️ Construtor</h1>
+          <p>Construção e entrega de artefatos</p>
         </div>
 
         {/* Controles */}
@@ -379,7 +379,7 @@ export default function HybridAgentSimple() {
               <p>
                 🚀 <strong>Versão 3.0.2</strong>
               </p>
-              <p>Serginho - Orquestrador de IA</p>
+              <p>Construtor — Sistema automatizado</p>
               <p>
                 🧠 <strong>KIZI 2.5 Pro</strong> | 🚀 <strong>Speed</strong> | ⚡{" "}
                 <strong>Flash</strong>
@@ -440,7 +440,7 @@ export default function HybridAgentSimple() {
                 <span></span>
                 <span></span>
               </div>
-              <p>Serginho está pensando...</p>
+              <p>Construtor processando...</p>
             </div>
           )}
 
