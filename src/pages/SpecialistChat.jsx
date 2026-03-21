@@ -68,7 +68,7 @@ export default function SpecialistChat() {
   const [messages, setMessages] = useState([
     {
       role: "assistant",
-      content: `Olá! Sou o KIZI 2.5 Pro operando como ${specialist?.name}. ${specialist?.description}. Como posso ajudar você hoje?`,
+      content: `${specialist?.name} pronto. Especialidade: ${specialist?.description}. Descreva sua dúvida ou necessidade dentro deste domínio.`,
     },
   ]);
   const [input, setInput] = useState("");
@@ -325,7 +325,7 @@ export default function SpecialistChat() {
           value={input}
           onChange={(e) => setInput(e.target.value)}
           onKeyPress={handleKeyPress}
-          placeholder={`Converse com ${specialist.name}...`}
+          placeholder={`Descreva sua dúvida para ${specialist.name}...`}
           disabled={isLoading}
           rows={1}
         />
