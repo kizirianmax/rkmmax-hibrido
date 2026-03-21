@@ -243,7 +243,7 @@ export function optimizeRequest(messages, systemPrompt) {
   const promptTokens = estimateTokens(compressedPrompt);
   const messagesTokens = limited.reduce((sum, msg) => sum + estimateTokens(msg.content), 0);
   const totalTokens = promptTokens + messagesTokens;
-  const estimatedCost = (totalTokens / 1000) * 0.00075; // Gemini Pro price
+  const estimatedCost = (totalTokens / 1000) * 0.00075; // Groq pricing reference
 
   console.log(`💰 Custo estimado: $${estimatedCost.toFixed(6)} (${totalTokens} tokens)`);
 

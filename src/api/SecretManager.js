@@ -23,6 +23,7 @@ class SecretManager {
     try {
       // 🔐 CARREGAR CREDENCIAIS DO AMBIENTE
       this.secrets = {
+        // Gemini — legado/opcional; o fluxo principal usa Groq
         // GEMINI API
         gemini: {
           apiKey: this._getEnvVar("REACT_APP_GEMINI_API_KEY", "VITE_GEMINI_API_KEY"),
@@ -88,16 +89,16 @@ class SecretManager {
       this.secrets.gemini.isConfigured = true;
       console.log("✅ Gemini API configurada");
     } else {
-      console.warn("⚠️ Gemini API não configurada - Vision e Especialista 54 desabilitados");
+      console.warn("ℹ️ Gemini API não configurada (opcional — não faz parte do fluxo principal Groq)");
       this.validationErrors.push("GEMINI_API_KEY");
     }
 
     // Validar GROQ
     if (this.secrets.groq.apiKey) {
       this.secrets.groq.isConfigured = true;
-      console.log("✅ GROQ API configurada");
+      console.log("✅ GROQ API configurada (provider principal)");
     } else {
-      console.warn("⚠️ GROQ API não configurada - Fallback desabilitado");
+      console.warn("⚠️ GROQ API não configurada — provider principal indisponível!");
       this.validationErrors.push("GROQ_API_KEY");
     }
 

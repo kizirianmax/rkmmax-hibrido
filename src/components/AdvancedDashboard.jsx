@@ -31,9 +31,6 @@ export default function AdvancedDashboard() {
     agents: { total: 55, active: 48, idle: 7 },
     cache: { hitRate: 0.75, size: 2048, maxSize: 5000 },
     apis: {
-      openai: { calls: 1250, cost: 12.5, status: "active" },
-      anthropic: { calls: 850, cost: 8.5, status: "active" },
-      google: { calls: 450, cost: 0.45, status: "active" },
       groq: { calls: 2100, cost: 0.21, status: "active" },
     },
     performance: {
@@ -64,9 +61,6 @@ export default function AdvancedDashboard() {
   ];
 
   const apiCallsData = [
-    { name: "OpenAI", calls: 1250, cost: 12.5 },
-    { name: "Anthropic", calls: 850, cost: 8.5 },
-    { name: "Google", calls: 450, cost: 0.45 },
     { name: "Groq", calls: 2100, cost: 0.21 },
   ];
 
