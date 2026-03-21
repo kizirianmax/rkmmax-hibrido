@@ -84,7 +84,7 @@ export default async function handler(req, res) {
     // ========================================
     // TIPO: HYBRID (Construtor)
     // ========================================
-    if (type === "hybrid") {
+    if (type === "hybrid" || (type === "genius" && agentType === "hybrid")) {
       console.log("🏗️ KIZI AI - Híbrido/Construtor ativado");
       const systemPrompt = buildGeniusPrompt("hybrid");
       const optimized = optimizeRequest(messages, systemPrompt);
