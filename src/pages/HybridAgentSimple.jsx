@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import "../styles/HybridAgent.css";
+import { specialists } from "../config/specialists.js";
 
 /**
  * Renders AI response text with basic markdown formatting.
@@ -48,6 +49,7 @@ function SimpleMarkdown({ text }) {
 export default function HybridAgentSimple() {
   const [mode, setMode] = useState("manual");
   const [input, setInput] = useState("");
+  const [selectedSpecialist, setSelectedSpecialist] = useState(null);
   // Versão do app para cache busting
   const APP_VERSION = "v3.1.0-kizi";
 
@@ -142,22 +144,38 @@ export default function HybridAgentSimple() {
 
     try {
 
-      // Chamar /api/hybrid (100% openai/gpt-oss-120b via betinhoParallel)
-      const response = await fetch("/api/hybrid", {
+      const conversationMessages = messages
+        .filter((msg) => msg.type !== "system")
+        .map((msg) => ({
+          role: msg.type === "user" ? "user" : "assistant",
+          content: msg.content,
+        }));
+
+      const body = selectedSpecialist
+        ? {
+            type: "specialist",
+            specialistId: selectedSpecialist,
+            messages: [
+              ...conversationMessages,
+              { role: "user", content: userInput },
+            ],
+          }
+        : {
+            type: "genius",
+            messages: [
+              ...conversationMessages,
+              { role: "user", content: userInput },
+            ],
+            agentType: "hybrid",
+            mode: mode.toUpperCase(),
+          };
+
+      const response = await fetch("/api/ai", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({
-          message: userInput,
-          messages: messages
-            .filter((msg) => msg.type !== "system")
-            .map((msg) => ({
-              role: msg.type === "user" ? "user" : "assistant",
-              content: msg.content,
-            })),
-          sessionId: "hybrid-session",
-        }),
+        body: JSON.stringify(body),
       });
 
       if (!response.ok) {
@@ -171,11 +189,15 @@ export default function HybridAgentSimple() {
       const complexity = data.routing?.analyzedComplexity || data.complexity || 0;
 
 
+      const agentName = selectedSpecialist
+        ? specialists[selectedSpecialist]?.name || "Especialista"
+        : "Serginho";
+
       // Adicionar resposta do agente
       const agentMessage = {
         id: messages.length + 2,
         type: "agent",
-        agent: "Serginho",
+        agent: agentName,
         content: aiResponse,
         provider: provider,
         tier: tier,
@@ -344,6 +366,21 @@ export default function HybridAgentSimple() {
 
         {/* Controles */}
         <div className="header-controls">
+          <div className="specialist-selector">
+            <label>Especialista:</label>
+            <select
+              value={selectedSpecialist || ""}
+              onChange={(e) => setSelectedSpecialist(e.target.value || null)}
+            >
+              <option value="">🤖 Híbrido (padrão)</option>
+              {Object.values(specialists).map((s) => (
+                <option key={s.id} value={s.id}>
+                  {s.emoji} {s.name}
+                </option>
+              ))}
+            </select>
+          </div>
+
           <div className="mode-selector">
             <label>Modo:</label>
             <div className="mode-buttons">
