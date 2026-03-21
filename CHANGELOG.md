@@ -56,6 +56,9 @@ Próxima fase: operação / infra / smoke test / descontinuação controlada do 
 - **GitHub backend hardening**: padronização de erros (`{ error: { code, message, details? } }`), endpoints `?route=branches` e `?route=file` (read-only), input validation (400), stub data, `githubErrors.js` com `formatErrorResponse`/`mapClientError`/`sanitizeMessage`, 50 novos testes de hardening em `github-hardening.test.js`, documentação em `docs/README.md` (PR #169)
 - **Serginho GitHub Gateway**: criado `api/lib/serginho/githubGateway.js` — gateway interno que torna o Serginho o único ponto de entrada para integração GitHub no backend. Funções `serginhoListRepos()`, `serginhoListBranches({ owner, repo })`, `serginhoGetFile({ owner, repo, path, ref })` com retorno padronizado `{ success, data|error }` e 42 testes cobrindo todos os cenários (flag off, stub, oauth sem/com token, validação, erros de API) (este PR)
 
+### 🧹 Removido
+- **`src/pages/HybridAgent.jsx`** (Fase 4): componente legado da v2.0.0, comprovadamente morto — não importado em `App.jsx` nem em nenhum arquivo ativo. Chamava endpoint hardcoded `https://kizirianmax.site/api/chat` e mantinha seleção direta de especialistas (padrão já removido na Fase 3). CSS compartilhado `HybridAgent.css` mantido intacto.
+
 ---
 
 ## [1.0.0] - 2025-10-15

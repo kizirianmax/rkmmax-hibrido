@@ -1713,6 +1713,21 @@ Ou remover manualmente: `api/github.js`, `api/lib/github/`, `api/__tests__/githu
 
 ---
 
+## 2026-03-21 — chore(legacy): Fase 4 — remover HybridAgent.jsx comprovadamente morto
+
+**PR:** este PR
+
+| Item | Detalhe |
+|------|---------|
+| **O quê** | Removido `src/pages/HybridAgent.jsx` — componente legado da versão v2.0.0 do sistema híbrido, comprovadamente morto: não importado em `App.jsx` (que usa exclusivamente `HybridAgentSimple`) nem referenciado em nenhum arquivo ativo. |
+| **Por quê** | Fase 4 da limpeza de legado: o arquivo mantinha código obsoleto (chamava `https://kizirianmax.site/api/chat` hardcoded, tinha seleção direta de especialistas — padrão já removido na Fase 3) e poderia confundir desenvolvedores sobre qual componente é o ativo em `/hybrid`. |
+| **Arquivos** | `src/pages/HybridAgent.jsx` (removido), `CHECKLIST.md`, `CHANGELOG.md` |
+| **Validação** | 1) `App.jsx` não importa nem referencia `HybridAgent` 2) Rota `/hybrid` e `/agent` continuam apontando para `HybridAgentSimple` sem alteração 3) `src/styles/HybridAgent.css` mantido (ainda usado por `HybridAgentSimple.jsx`) |
+| **Rollback** | `git revert <commit-sha>` — restaura `src/pages/HybridAgent.jsx`, reverte `CHECKLIST.md` e `CHANGELOG.md` |
+| **Impacto** | Zero breaking changes — componente não estava montado em nenhuma rota ativa. CSS compartilhado mantido intacto. |
+
+---
+
 ## 2026-03-10 — feat(serginho): GitHub read-only tools orchestration layer (backend only)
 
 **PR:** este PR
