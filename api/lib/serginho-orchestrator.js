@@ -209,12 +209,6 @@ class SerginhoOrchestrator {
     this.modelRegistry.registerModel('llama-3.1-70b-versatile', 'complex', 0.00);
     this.modelRegistry.registerModel('llama-3.1-8b-instant', 'simple', 0.00);
     this.modelRegistry.registerModel('mixtral-8x7b-32768', 'simple', 0.00);
-    
-    // Gemini models
-    this.modelRegistry.registerModel('gemini-2.0-flash-exp', 'complex', 0.0001);
-    
-    // OpenAI models
-    this.modelRegistry.registerModel('gpt-4o-mini', 'simple', 0.0002);
   }
 
   /**
@@ -950,12 +944,8 @@ class SerginhoOrchestrator {
 
     return breaker.execute(async () => {
       switch (config.type) {
-        case 'gemini':
-          return this.callGemini(config, message, messages, context, signal);
         case 'groq':
           return this.callGroq(config, message, messages, context, signal);
-        case 'openai':
-          return this.callOpenAI(config, message, messages, context, signal);
         default:
           throw new Error(`Unknown provider type: ${config.type}`);
       }
@@ -969,43 +959,6 @@ class SerginhoOrchestrator {
   getCacheKey(message, provider) {
     // Simple hash - in production, use better hashing
     return `${provider}:${message.substring(0, 100)}`;
-  }
-
-  /**
-   * Call Gemini API
-   * @private
-   */
-  async callGemini(config, message, messages, context, signal) {
-    const formattedMessages = this.formatMessages(messages, message, 'gemini');
-    
-    const response = await fetch(config.endpoint, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        contents: formattedMessages,
-        generationConfig: config.generationConfig,
-      }),
-      ...(signal ? { signal } : {}),
-    });
-
-    if (!response.ok) {
-      const errorText = await response.text().catch(() => '');
-      throw new Error(`Gemini API error: ${response.status} ${errorText}`);
-    }
-
-    const data = await response.json();
-    
-    if (!data.candidates || !data.candidates[0] || !data.candidates[0].content) {
-      throw new Error('Invalid Gemini response structure');
-    }
-
-    return {
-      text: data.candidates[0].content.parts[0].text,
-      model: config.model,
-      usage: data.usageMetadata || {},
-    };
   }
 
   /**
@@ -1053,44 +1006,6 @@ class SerginhoOrchestrator {
   }
 
   /**
-   * Call OpenAI API (future support)
-   * @private
-   */
-  async callOpenAI(config, message, messages, context, signal) {
-    const apiKey = process.env.OPENAI_API_KEY;
-    if (!apiKey) {
-      throw new Error('OPENAI_API_KEY environment variable is required');
-    }
-
-    const formattedMessages = this.formatMessages(messages, message, 'openai');
-    
-    const response = await fetch(config.endpoint, {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${apiKey}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        model: config.model,
-        messages: formattedMessages,
-        ...config.defaultParams,
-      }),
-      ...(signal ? { signal } : {}),
-    });
-
-    if (!response.ok) {
-      throw new Error(`OpenAI API error: ${response.status}`);
-    }
-
-    const data = await response.json();
-    return {
-      text: data.choices[0].message.content,
-      model: config.model,
-      usage: data.usage || {},
-    };
-  }
-
-  /**
    * Format messages for different API formats
    * @private
    */
@@ -1099,13 +1014,6 @@ class SerginhoOrchestrator {
       ...messages,
       { role: 'user', content: currentMessage }
     ];
-
-    if (format === 'gemini') {
-      return allMessages.map(msg => ({
-        role: msg.role === 'assistant' ? 'model' : 'user',
-        parts: [{ text: msg.content }]
-      }));
-    }
 
     // Formato OpenAI/Groq — injeta mensagem de sistema quando fornecida
     if (systemPrompt) {

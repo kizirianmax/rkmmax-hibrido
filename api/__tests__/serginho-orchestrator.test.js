@@ -1,11 +1,10 @@
 import { jest } from '@jest/globals';
 import serginho from '../lib/serginho-orchestrator.js';
 import { getProviderConfig } from '../lib/providers-config.js';
-import { createMockFetch, createGeminiMockFetch, createFailingMockFetch } from '../lib/test-helpers/mockFetch.js';
+import { createMockFetch, createFailingMockFetch } from '../lib/test-helpers/mockFetch.js';
 
 // Mock environment variables
 process.env.GROQ_API_KEY = 'test-groq-key';
-process.env.GOOGLE_API_KEY = 'test-google-key';
 
 describe('SerginhoOrchestrator', () => {
   let originalFetch;
@@ -253,29 +252,9 @@ describe('SerginhoOrchestrator', () => {
       expect(body.messages).toBeDefined();
     });
 
-    test('calls Gemini API correctly', async () => {
-      // Mock Gemini-specific response
-      global.fetch = createGeminiMockFetch();
-
-      const result = await serginho.handleRequest({
-        message: 'Test Gemini',
-        messages: [],
-        context: {},
-        options: { forceProvider: 'gemini-2.0-flash' }
-      });
-
-      expect(result.text).toBeTruthy();
-      expect(result.model.infrastructure).toBe('gemini');
-    });
   });
 
   describe('message formatting', () => {
-    test('formats messages for Gemini correctly', () => {
-      const config = getProviderConfig('gemini-2.0-flash');
-      expect(config.type).toBe('gemini');
-      expect(config.generationConfig).toBeDefined();
-    });
-
     test('formats messages for OpenAI/Groq correctly', () => {
       const config = getProviderConfig('llama-8b');
       expect(config.type).toBe('groq');
