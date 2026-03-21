@@ -6,10 +6,16 @@
  *
  * MIGRATED: from src/api/serginhoOrchestrator.js
  * NOW USES: api/lib/serginho-orchestrator.js (Multi-Orch v2.1.0)
+ *
+ * Fonte de verdade do prompt de especialista: `buildGeniusPrompt('specialist', {...})`
+ * de `src/prompts/geniusPrompts.js` — igual ao caminho de api/ai.js.
  */
 import serginho from "./lib/serginho-orchestrator.js";
 import { specialists } from "../src/config/specialists.js";
 import { trackSpecialistUsage } from "./lib/specialist-usage.js";
+import geniusPrompts from "../src/prompts/geniusPrompts.js";
+
+const { buildGeniusPrompt } = geniusPrompts;
 
 export default async function handler(req, res) {
   if (req.method !== "POST") {
@@ -34,12 +40,22 @@ export default async function handler(req, res) {
         return res.status(404).json({ error: "Specialist not found" });
       }
 
+      const specialistPrompt = buildGeniusPrompt("specialist", {
+        name: specialist.name,
+        description: specialist.description,
+        category: specialist.category,
+        systemPrompt: specialist.systemPrompt,
+      });
+
       result = await serginho.handleRequest({
         message,
         messages,
-        context: { specialistId: specialist.id, invokedBySerginho: true },
+        context: {
+          specialistId: specialist.id,
+          invokedBySerginho: true,
+          systemPrompt: specialistPrompt,
+        },
         options: {
-          systemPrompt: specialist.systemPrompt,
           sessionId: `specialist-${specialistId}-${sessionId || "default"}`,
         },
       });

@@ -39,13 +39,10 @@ const EXCLUDED_FROM_PROVIDER_SCAN = [
   path.join(API_DIR, 'lib', 'test-helpers'),
 ];
 
-// engine-orchestrator.js is deprecated (still contains direct calls) —
-// excluded from the provider-endpoint scan but NOT from the import scan.
 // health.js makes direct probe calls to check provider availability (not AI execution) —
-// also excluded from the provider-endpoint scan.
+// excluded from the provider-endpoint scan.
 const EXCLUDED_FROM_ENDPOINT_SCAN = [
   ...EXCLUDED_FROM_PROVIDER_SCAN,
-  path.join(API_DIR, 'lib', 'engine-orchestrator.js'),
   path.join(API_DIR, 'health.js'),
 ];
 
@@ -124,15 +121,6 @@ describe('Phase A4 — Gateway Sovereignty', () => {
       const { default: serginho } = await import('../lib/serginho-orchestrator.js');
       // Verify the function signature by inspecting its length (no required positional args beyond firstArg)
       expect(serginho.handleRequest.length).toBeGreaterThanOrEqual(1);
-    });
-  });
-
-  describe('Test 5: engine-orchestrator.orchestrateEngines() throws deprecation error (Phase A5.1)', () => {
-    it('throws immediately with the Phase A5 deprecation message', async () => {
-      const { orchestrateEngines } = await import('../lib/engine-orchestrator.js');
-      await expect(orchestrateEngines([], '', {})).rejects.toThrow(
-        'Deprecated: Use serginho-orchestrator.js as the single AI gateway (Phase A5).'
-      );
     });
   });
 
