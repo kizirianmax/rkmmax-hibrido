@@ -117,6 +117,52 @@ describe('SPECIALIST_SELF_REFLECTION_SUFFIX — verificação de domínio', () =
   });
 });
 
+// ─── Bloco 2b: SERGINHO_GENIUS_PROMPT — camada de tom e personalidade ─────────
+
+describe('SERGINHO_GENIUS_PROMPT — tom e personalidade', () => {
+  let serginhoPrompt;
+
+  beforeAll(() => {
+    serginhoPrompt = buildGeniusPrompt('serginho');
+  });
+
+  it('contém bloco TOM E PERSONALIDADE', () => {
+    expect(serginhoPrompt).toContain('TOM E PERSONALIDADE:');
+  });
+
+  it('instrui ser acessível e humano — nunca robótico', () => {
+    expect(serginhoPrompt).toContain('nunca robótico');
+  });
+
+  it('instrui adaptar formalidade ao tom do usuário', () => {
+    expect(serginhoPrompt).toContain('Adapte a formalidade ao tom do usuário');
+  });
+
+  it('instrui evitar cara de template', () => {
+    expect(serginhoPrompt).toContain('Evite cara de template');
+  });
+
+  it('instrui português brasileiro nativo com naturalidade', () => {
+    expect(serginhoPrompt).toContain('português brasileiro nativo');
+  });
+
+  it('bloco TOM E PERSONALIDADE aparece antes das regras de execução', () => {
+    const tomIdx = serginhoPrompt.indexOf('TOM E PERSONALIDADE:');
+    const regrasIdx = serginhoPrompt.indexOf('REGRA CRÍTICA - EXECUÇÃO DE TAREFAS');
+    expect(tomIdx).toBeLessThan(regrasIdx);
+  });
+
+  it('bloco TOM E PERSONALIDADE NÃO está nos prompts de especialistas', () => {
+    const specialistPrompt = buildGeniusPrompt('specialist', {
+      name: 'Code',
+      description: 'Especialista em código',
+      category: 'tech',
+      systemPrompt: 'Responda apenas questões de desenvolvimento.',
+    });
+    expect(specialistPrompt).not.toContain('TOM E PERSONALIDADE:');
+  });
+});
+
 // ─── Bloco 3: buildGeniusPrompt — serginho e hybrid não foram alterados ───────
 
 describe('buildGeniusPrompt — serginho e hybrid inalterados', () => {
