@@ -1,5 +1,40 @@
 # ✅ Checklist Projeto RKMMax (Atualizado — 23/10/2025)
 
+## 2026-03-22 — docs(governance): descontinuação formal do repositório kizi-agent
+
+### O que foi feito
+
+- Registrada formalmente a descontinuação do repositório legado `kizirianmax/kizi-agent`
+- Documentado que não há dependência estrutural real desse repositório no `rkmmax-hibrido`
+- Registrado que o núcleo ativo e soberano do projeto permanece no `rkmmax-hibrido`
+
+### Por quê
+
+A auditoria comparativa entre `kizi-agent` e `rkmmax-hibrido` concluiu que:
+
+- o `rkmmax-hibrido` já superou o `kizi-agent` em prompt-base, orquestração e comportamento do Serginho
+- não existe absorção estrutural relevante pendente a partir do `kizi-agent`
+- o que resta no legado foi classificado como regressão, cosmético ou fora de escopo
+
+### Declaração explícita
+
+**O repositório `kizirianmax/kizi-agent` está descontinuado e apto para exclusão. Não há dependência estrutural real dele no `rkmmax-hibrido`.**
+
+### Validação
+
+- CHECKLIST.md registra formalmente a descontinuação do `kizi-agent` ✅
+- A ausência de dependência estrutural real ficou explícita ✅
+- Nenhum arquivo de código foi alterado ✅
+- Escopo permaneceu administrativo e mínimo ✅
+
+### Rollback
+
+```bash
+git revert <commit-sha>
+```
+
+---
+
 ## 2026-03-22 — docs+prompt: auditoria e descontinuação do repositório kizirian-max-site
 
 ### O que foi feito
