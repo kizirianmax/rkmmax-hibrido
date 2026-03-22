@@ -48,6 +48,8 @@ import { isExecutionChecklistFollowUp, hasEnoughContextForChecklist, buildCheckl
 import { isAcceptanceCriteriaFollowUp, hasEnoughContextForAcceptanceCriteria, buildAcceptanceCriteriaPrompt, formatAcceptanceCriteriaResponse, getInsufficientAcceptanceCriteriaContextMessage } from './serginho/analysis/githubAcceptanceCriteria.js';
 // GitHub execution dependencies — dependency/blocker/prerequisite follow-up sem re-fetch (reversível: remover bloco abaixo)
 import { isExecutionDependenciesFollowUp, hasEnoughContextForExecutionDependencies, buildExecutionDependenciesPrompt, formatExecutionDependenciesResponse, getInsufficientExecutionDependenciesContextMessage } from './serginho/analysis/githubExecutionDependencies.js';
+// Prompt intent classifier — classifica a intenção antes do fluxo de follow-up GitHub (reversível: remover bloco abaixo)
+import { classifyPromptIntent } from './serginho/intent/promptIntentClassifier.js';
 
 // Versão do orquestrador (para versionamento de schema)
 const ORCHESTRATOR_VERSION = '2.1.0';
@@ -327,11 +329,14 @@ class SerginhoOrchestrator {
         ? { ...context.githubContext }
         : createGitHubContext();
 
-    // Conceptual prompt guard — skip GitHub follow-up chain for purely conceptual questions
+    // Prompt intent guard — classifica a intenção antes do fluxo de follow-up GitHub
+    // Intenções 'conceptual' e 'mixed' ignoram o follow-up chain; 'repo_analysis' continua normal.
     // (reversível: remover este bloco)
-    if (githubCtx && this._isConceptualPrompt(message)) {
+    const { intent: promptIntent } = githubCtx ? classifyPromptIntent(message) : { intent: null };
+    if (githubCtx && (promptIntent === 'conceptual' || promptIntent === 'mixed')) {
       context = {
         ...context,
+        _promptIntent: promptIntent,
         _skipExecutionDependenciesCheck: true,
         _skipAcceptanceCriteriaCheck: true,
         _skipExecutionChecklistCheck: true,
@@ -341,7 +346,7 @@ class SerginhoOrchestrator {
         _skipAnalyticalCheck: true,
       };
     }
-    // Fim do conceptual prompt guard
+    // Fim do prompt intent guard
 
     // GitHub execution dependencies — sem re-fetch (reversível: remover este bloco)
     if (githubCtx && !context._skipExecutionDependenciesCheck && isExecutionDependenciesFollowUp(message)) {
@@ -1338,6 +1343,22 @@ class SerginhoOrchestrator {
     if (trimmed.length > MIN_CONCEPTUAL_MESSAGE_LENGTH && !_hasGitHubReference(trimmed)) return true;
 
     return false;
+  }
+
+  /**
+   * Classifica a intenção de um prompt antes do fluxo de follow-up GitHub.
+   * Thin wrapper sobre o módulo `promptIntentClassifier` para uso externo/teste.
+   *
+   * Retorna uma das três intenções:
+   *   - 'conceptual'    → responde direto, sem pedir contexto GitHub
+   *   - 'repo_analysis' → pode exigir contexto de repo
+   *   - 'mixed'         → responde parte conceitual; sinaliza que parte factual depende de contexto
+   *
+   * @param {string} message
+   * @returns {{ intent: 'conceptual'|'repo_analysis'|'mixed', confidence: number }}
+   */
+  classifyPromptIntent(message) {
+    return classifyPromptIntent(message);
   }
 
   /**
