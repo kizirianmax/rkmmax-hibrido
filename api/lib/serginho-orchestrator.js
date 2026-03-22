@@ -53,6 +53,33 @@ import { isExecutionDependenciesFollowUp, hasEnoughContextForExecutionDependenci
 const ORCHESTRATOR_VERSION = '2.1.0';
 const METADATA_SCHEMA_VERSION = '1.0.0';
 
+// ---------------------------------------------------------------------------
+// Helpers de módulo — usados pelo conceptual prompt guard
+// ---------------------------------------------------------------------------
+
+/** Número mínimo de caracteres para classificar uma mensagem longa como conceitual. */
+const MIN_CONCEPTUAL_MESSAGE_LENGTH = 200;
+
+/**
+ * Detecta se uma mensagem contém referências GitHub explícitas:
+ * owner/repo patterns, caminhos de arquivo, nomes de branch, ou comandos GitHub.
+ *
+ * @param {string} message
+ * @returns {boolean}
+ */
+function _hasGitHubReference(message) {
+  // owner/repo pattern (e.g. "facebook/react", "de owner/repo")
+  if (/[\w.-]+\/[\w.-]+/.test(message)) return true;
+  // File path patterns (e.g. "package.json", ".js", ".ts", ".md", "/src/")
+  if (/\b\w+\.(json|js|ts|jsx|tsx|md|yaml|yml|txt|py|go|java|rb|rs)\b/i.test(message)) return true;
+  // Branch references
+  if (/\b(branch|branches|main|master|develop|feature\/|hotfix\/)\b/i.test(message)) return true;
+  // GitHub action verbs with file/repo objects
+  if (/\b(abra|abre|abrir|liste|listar|mostre|mostrar|open|list|show|fetch|busque|buscar)\b.{0,50}\b(repo|arquivo|file|branch|package)\b/i.test(message)) return true;
+  return false;
+}
+
+
 /**
  * Simple in-memory cache
  * In production, consider using Redis or similar
@@ -299,6 +326,22 @@ class SerginhoOrchestrator {
       : context.githubContext
         ? { ...context.githubContext }
         : createGitHubContext();
+
+    // Conceptual prompt guard — skip GitHub follow-up chain for purely conceptual questions
+    // (reversível: remover este bloco)
+    if (githubCtx && this._isConceptualPrompt(message)) {
+      context = {
+        ...context,
+        _skipExecutionDependenciesCheck: true,
+        _skipAcceptanceCriteriaCheck: true,
+        _skipExecutionChecklistCheck: true,
+        _skipActionPlanCheck: true,
+        _skipRecommendationCheck: true,
+        _skipComparisonCheck: true,
+        _skipAnalyticalCheck: true,
+      };
+    }
+    // Fim do conceptual prompt guard
 
     // GitHub execution dependencies — sem re-fetch (reversível: remover este bloco)
     if (githubCtx && !context._skipExecutionDependenciesCheck && isExecutionDependenciesFollowUp(message)) {
@@ -1241,6 +1284,60 @@ class SerginhoOrchestrator {
     this.circuitBreakers.forEach((breaker) => {
       breaker.reset();
     });
+  }
+
+  /**
+   * Detecta se a mensagem é uma pergunta puramente conceitual/estratégica que não depende
+   * de dados GitHub carregados. Quando retorna `true`, o fluxo ignora toda a cadeia de
+   * follow-up GitHub e a mensagem vai diretamente para o LLM.
+   *
+   * Padrões detectados (PT-BR e EN):
+   *   - Palavras-chave explícitas de abstração: "conceitualmente", "teoricamente", etc.
+   *   - Instruções explícitas de ignorar GitHub: "sem usar github", "sem pedir arquivos"
+   *   - Perguntas "o que é / what is" sobre termos conceituais (sem referência a repo/arquivo)
+   *   - Mensagens longas (>MIN_CONCEPTUAL_MESSAGE_LENGTH chars) sem nenhuma referência GitHub detectável
+   *
+   * (reversível: remover este método e o bloco de guarda acima)
+   *
+   * @param {string} message
+   * @returns {boolean}
+   */
+  _isConceptualPrompt(message) {
+    if (!message || typeof message !== 'string') return false;
+
+    const trimmed = message.trim();
+    if (!trimmed) return false;
+
+    // Explicit conceptual/abstract language markers (PT-BR)
+    if (/\b(conceitualmente|conceptualmente|teoricamente|em teoria|de forma abstrata|abstratamente)\b/i.test(trimmed)) return true;
+
+    // Explicit conceptual/abstract language markers (EN)
+    if (/\b(conceptually|theoretically|in theory|abstractly|in abstract terms)\b/i.test(trimmed)) return true;
+
+    // Explicit instruction to skip GitHub context (PT-BR)
+    if (/sem\s+usar\s+github/i.test(trimmed)) return true;
+    if (/sem\s+pedir\s+arquivos?/i.test(trimmed)) return true;
+    if (/sem\s+depender\s+de\s+contexto/i.test(trimmed)) return true;
+    if (/sem\s+contexto\s+(carregado|github)/i.test(trimmed)) return true;
+
+    // Explicit instruction to skip GitHub context (EN)
+    if (/without\s+(using\s+)?github/i.test(trimmed)) return true;
+    if (/without\s+loading\s+(files?|repos?|context)/i.test(trimmed)) return true;
+    if (/no\s+github\s+context/i.test(trimmed)) return true;
+
+    // Conceptual explanation requests (PT-BR): "explique a diferença entre X e Y"
+    if (/\bexplique\b.{0,150}\bdiferença\b/i.test(trimmed)) return true;
+
+    // Conceptual "what is" questions (PT-BR) — only when no GitHub-specific terms present
+    if (/^o que (é|são|representa[m]?)/i.test(trimmed) && !_hasGitHubReference(trimmed)) return true;
+
+    // Conceptual "what is" questions (EN) — only when no GitHub-specific terms present
+    if (/^what (is|are|does)\b/i.test(trimmed) && !_hasGitHubReference(trimmed)) return true;
+
+    // Long messages (>MIN_CONCEPTUAL_MESSAGE_LENGTH chars) with no detectable GitHub references are likely conceptual
+    if (trimmed.length > MIN_CONCEPTUAL_MESSAGE_LENGTH && !_hasGitHubReference(trimmed)) return true;
+
+    return false;
   }
 
   /**
