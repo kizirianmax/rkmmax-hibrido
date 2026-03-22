@@ -1,5 +1,104 @@
 # ✅ Checklist Projeto RKMMax (Atualizado — 23/10/2025)
 
+## 2026-03-21 — docs(governance): encerramento formal da fase estrutural dos especialistas + descontinuação do Rkmmax-app
+
+### O que foi feito
+- Registrado formalmente o encerramento da fase estrutural dos especialistas no `rkmmax-hibrido`
+- Documentada a conclusão das limpezas estruturais, de domínio e residuais
+- Registrada a conclusão da verificação de descontinuação do repositório `Rkmmax-app`
+
+### Por quê
+A fase estrutural dos especialistas foi concluída com os PRs #202–#231 (2026-03-20 a 2026-03-21). O trabalho incluiu:
+- Eliminação de sobreposição de domínio entre especialistas (#202)
+- Elevação comportamental e calibração de systemPrompts (#207, #208, #209)
+- Ancoragem de prompts por domínio (#217)
+- Remoção de código legado morto (HybridAgent.jsx — #216, engine-orchestrator legacy — #225)
+- Consolidação do fluxo de execução dos especialistas (#225)
+- Contenção de domínio e redirecionamento de escopo (#226)
+- Remoção de resíduos Gemini/OpenAI do backend (#227) e frontend (#229)
+- Limpeza de documentação e alinhamento Groq-only (#228, #230, #231)
+
+### Estado consolidado — fase estrutural concluída ✅
+
+| Componente | PR(s) | Estado |
+|---|---|---|
+| Eliminação de sobreposição de domínio entre especialistas | #202 | ✅ merged 2026-03-20 |
+| Logging mínimo de uso de especialistas | #203 | ✅ merged 2026-03-20 |
+| Elevação comportamental de 10 especialistas sub-especificados | #207 | ✅ merged 2026-03-20 |
+| Calibração de systemPrompts — Fase 3A (synth, sec, data, orac, focus) | #208 | ✅ merged 2026-03-20 |
+| Calibração de 23 especialistas sub-especificados — Fase 3B | #209 | ✅ merged 2026-03-20 |
+| Consolidação do fluxo de execução + remoção engine-orchestrator legacy | #225 | ✅ merged 2026-03-21 |
+| Contenção de domínio + redirecionamento de escopo | #226 | ✅ merged 2026-03-21 |
+| Remoção resíduos Gemini/OpenAI do backend | #227 | ✅ merged 2026-03-21 |
+| Remoção resíduos non-Groq do frontend | #229 | ✅ merged 2026-03-21 |
+| Limpeza de docs + alinhamento Groq-only | #228, #230, #231 | ✅ merged 2026-03-21 |
+| Remoção HybridAgent.jsx legado | #216 | ✅ merged 2026-03-21 |
+| Ancoragem de SPECIALIST_GENIUS_PROMPT por domínio | #217 | ✅ merged 2026-03-21 |
+
+### Declaração explícita
+**Não há pendência estrutural real para concluir a fase dos especialistas no `rkmmax-hibrido`.**
+
+---
+
+### Verificação de descontinuação do repositório Rkmmax-app
+
+**Conclusão: O repositório `Rkmmax-app` pode ser oficialmente considerado descontinuado e apto para exclusão.**
+
+**Justificativa:**
+1. **Absorção funcional concluída** — Registrada formalmente em 2026-03-15 (PR #195). Todos os fluxos críticos de planos migrados.
+2. **Absorção estrutural dos especialistas concluída** — Registrada nesta entrada (PRs #202–#231). Todos os systemPrompts calibrados, domínios contidos, código legado removido.
+3. **Não há dependência de código real** — O `rkmmax-hibrido` é 100% autossuficiente. Nenhum `import`, `require`, ou chamada de API depende do `Rkmmax-app`.
+4. **Referências residuais identificadas** — Existem referências cosméticas ao nome `Rkmmax-app` ou `rkmmax-app.vercel.app` em:
+   - `src/services/emailService.js` (URLs de template de email)
+   - `src/pages/Help.jsx` (link para GitHub Issues)
+   - `api/stripe-webhook.js` (URLs de template de email)
+   - Documentação legada: `DEPLOY.md`, `HYBRID_SYSTEM_DEPLOYMENT.md`, `ALERTS_SETUP.md`, `CONFIGURAR_EMAIL_RESEND.md`, `ANALISE_REPOSITORIO_FINAL.md`, `VALIDACAO_FINAL.md`, `VARIAVEIS_VERCEL_FINAIS.md`
+
+   **Estas são referências de texto/URL, não dependências de código. Podem ser atualizadas em um PR cosmético futuro independente, sem urgência e sem impacto funcional.**
+
+5. **Produção apontada para `rkmmax-hibrido`** — O domínio `kizirianmax.site` já aponta para `rkmmax-hibrido` desde 2026-03-04.
+
+> A absorção estrutural do `Rkmmax-app` → `rkmmax-hibrido` foi concluída. Não há pendência estrutural real restante. O repositório `Rkmmax-app` pode ser tratado como **descontinuado / apto para exclusão**. Referências cosméticas residuais (URLs em templates de email e docs legados) podem ser limpas em um PR cosmético futuro, sem urgência.
+
+### Pendências remanescentes — classificadas como COSMÉTICO / BAIXA PRIORIDADE
+
+| Categoria | Item | Urgência |
+|---|---|---|
+| Cosmético / URLs | Atualizar URLs `rkmmax-app.vercel.app` em templates de email (`emailService.js`, `stripe-webhook.js`) | Baixa |
+| Cosmético / Links | Atualizar link GitHub Issues em `Help.jsx` de `Rkmmax-app` para `rkmmax-hibrido` | Baixa |
+| Cosmético / Docs | Atualizar referências ao `Rkmmax-app` em docs legados (DEPLOY.md, etc.) | Baixa — podem ser deletados |
+
+---
+
+### Verificação de descontinuação do repositório antigo dos especialistas
+
+> **Nota:** Este item é distinto do `Rkmmax-app`. O repositório antigo dos especialistas refere-se a qualquer repositório ou conjunto de arquivos de especialistas que existia antes da consolidação estrutural no `rkmmax-hibrido`.
+
+**Conclusão: Não há repositório separado de especialistas com dependência real. O `rkmmax-hibrido` é a única fonte de verdade.**
+
+**Justificativa:**
+1. **Não há dependência de código externo** — Todos os especialistas estão definidos em `src/config/specialists.js` e `src/config/specialistPrompts.js` dentro do próprio `rkmmax-hibrido`. Nenhum `import`, `require`, ou chamada de API aponta para repositório externo.
+2. **Absorção estrutural concluída** — Os systemPrompts, domínios e fluxos de execução dos especialistas foram consolidados neste repositório nos PRs #202–#231. Não há absorção pendente.
+3. **Não há repositório separado ativo** — A fase estrutural dos especialistas foi executada inteiramente dentro do `rkmmax-hibrido`. Não existe um "repositório antigo dos especialistas" autônomo com dependência funcional.
+
+> O repositório antigo dos especialistas **não representa uma dependência real** e pode ser tratado como **descontinuado / apto para exclusão**, caso exista. Toda a lógica estrutural dos especialistas está consolidada no `rkmmax-hibrido`.
+
+### Validação
+1. `CHECKLIST.md` registra explicitamente o encerramento da fase estrutural dos especialistas ✅
+2. `CHECKLIST.md` registra a conclusão da verificação de descontinuação do `Rkmmax-app` ✅
+3. `CHECKLIST.md` registra separadamente o status do repositório antigo dos especialistas ✅
+4. Pendências residuais classificadas como cosméticas / baixa prioridade ✅
+5. Nenhum arquivo de código foi alterado ✅
+6. O registro segue o padrão de governança do projeto ✅
+
+### Rollback
+```bash
+git revert <commit-sha>
+# Remove apenas a entrada de encerramento do CHECKLIST.md
+```
+
+---
+
 ## 2026-03-15 — docs(absorption): encerramento formal da fase funcional de absorção do Rkmmax-app
 
 ### O que foi feito
