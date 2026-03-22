@@ -68,12 +68,28 @@ A fase estrutural dos especialistas foi concluída com os PRs #202–#231 (2026-
 | Cosmético / Links | Atualizar link GitHub Issues em `Help.jsx` de `Rkmmax-app` para `rkmmax-hibrido` | Baixa |
 | Cosmético / Docs | Atualizar referências ao `Rkmmax-app` em docs legados (DEPLOY.md, etc.) | Baixa — podem ser deletados |
 
+---
+
+### Verificação de descontinuação do repositório antigo dos especialistas
+
+> **Nota:** Este item é distinto do `Rkmmax-app`. O repositório antigo dos especialistas refere-se a qualquer repositório ou conjunto de arquivos de especialistas que existia antes da consolidação estrutural no `rkmmax-hibrido`.
+
+**Conclusão: Não há repositório separado de especialistas com dependência real. O `rkmmax-hibrido` é a única fonte de verdade.**
+
+**Justificativa:**
+1. **Não há dependência de código externo** — Todos os especialistas estão definidos em `src/config/specialists.js` e `src/config/specialistPrompts.js` dentro do próprio `rkmmax-hibrido`. Nenhum `import`, `require`, ou chamada de API aponta para repositório externo.
+2. **Absorção estrutural concluída** — Os systemPrompts, domínios e fluxos de execução dos especialistas foram consolidados neste repositório nos PRs #202–#231. Não há absorção pendente.
+3. **Não há repositório separado ativo** — A fase estrutural dos especialistas foi executada inteiramente dentro do `rkmmax-hibrido`. Não existe um "repositório antigo dos especialistas" autônomo com dependência funcional.
+
+> O repositório antigo dos especialistas **não representa uma dependência real** e pode ser tratado como **descontinuado / apto para exclusão**, caso exista. Toda a lógica estrutural dos especialistas está consolidada no `rkmmax-hibrido`.
+
 ### Validação
 1. `CHECKLIST.md` registra explicitamente o encerramento da fase estrutural dos especialistas ✅
 2. `CHECKLIST.md` registra a conclusão da verificação de descontinuação do `Rkmmax-app` ✅
-3. Pendências residuais classificadas como cosméticas / baixa prioridade ✅
-4. Nenhum arquivo de código foi alterado ✅
-5. O registro segue o padrão de governança do projeto ✅
+3. `CHECKLIST.md` registra separadamente o status do repositório antigo dos especialistas ✅
+4. Pendências residuais classificadas como cosméticas / baixa prioridade ✅
+5. Nenhum arquivo de código foi alterado ✅
+6. O registro segue o padrão de governança do projeto ✅
 
 ### Rollback
 ```bash
