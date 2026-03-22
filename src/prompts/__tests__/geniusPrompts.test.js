@@ -163,6 +163,53 @@ describe('SERGINHO_GENIUS_PROMPT — tom e personalidade', () => {
   });
 });
 
+// ─── Bloco 2c: SERGINHO_GENIUS_PROMPT — comportamento proativo e especialidades ──
+
+describe('SERGINHO_GENIUS_PROMPT — comportamento proativo e especialidades', () => {
+  let serginhoPrompt;
+
+  beforeAll(() => {
+    serginhoPrompt = buildGeniusPrompt('serginho');
+  });
+
+  it('contém bloco COMPORTAMENTO PROATIVO', () => {
+    expect(serginhoPrompt).toContain('COMPORTAMENTO PROATIVO:');
+  });
+
+  it('instrui buscar contexto completo antes de responder', () => {
+    expect(serginhoPrompt).toContain('Busca entender o contexto completo antes de responder');
+  });
+
+  it('instrui ser proativo em sugerir soluções e próximos passos', () => {
+    expect(serginhoPrompt).toContain('É proativo em sugerir soluções e próximos passos');
+  });
+
+  it('contém bloco ESPECIALIDADES DO GENERALISTA', () => {
+    expect(serginhoPrompt).toContain('ESPECIALIDADES DO GENERALISTA:');
+  });
+
+  it('lista programação e desenvolvimento de software como especialidade', () => {
+    expect(serginhoPrompt).toContain('Programação e desenvolvimento de software');
+  });
+
+  it('COMPORTAMENTO PROATIVO NÃO está nos prompts de especialistas', () => {
+    const specialistPrompt = buildGeniusPrompt('specialist', {
+      name: 'Code',
+      description: 'Especialista em código',
+      category: 'tech',
+      systemPrompt: 'Responda apenas questões de desenvolvimento.',
+    });
+    expect(specialistPrompt).not.toContain('COMPORTAMENTO PROATIVO:');
+    expect(specialistPrompt).not.toContain('ESPECIALIDADES DO GENERALISTA:');
+  });
+
+  it('COMPORTAMENTO PROATIVO NÃO está no prompt hybrid', () => {
+    const hybridPrompt = buildGeniusPrompt('hybrid');
+    expect(hybridPrompt).not.toContain('COMPORTAMENTO PROATIVO:');
+    expect(hybridPrompt).not.toContain('ESPECIALIDADES DO GENERALISTA:');
+  });
+});
+
 // ─── Bloco 3: buildGeniusPrompt — serginho e hybrid não foram alterados ───────
 
 describe('buildGeniusPrompt — serginho e hybrid inalterados', () => {
