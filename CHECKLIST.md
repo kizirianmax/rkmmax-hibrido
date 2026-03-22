@@ -1,5 +1,47 @@
 # ✅ Checklist Projeto RKMMax (Atualizado — 23/10/2025)
 
+## 2026-03-22 — docs+prompt: auditoria e descontinuação do repositório kizirian-max-site
+
+### O que foi feito
+- Auditoria comparativa entre `kizirianmax/kizirian-max-site` (legado) e `kizirianmax/rkmmax-hibrido` (destino)
+- Absorção pontual de ativadores de profundidade no prompt do Serginho (`src/prompts/geniusPrompts.js`)
+- Registro formal da descontinuação do repositório `kizirian-max-site`
+
+### Conclusão da auditoria
+O `rkmmax-hibrido` superou o `kizirian-max-site` em prompt-base, arquitetura e comportamento do Serginho. O repositório legado não possui dependência estrutural real no sistema atual.
+
+**Classificação do conteúdo legado:**
+- A maior parte do conteúdo foi classificada como **regressão**, **cosmético** ou **fora de escopo**
+- O único valor absorvível identificado foi um conjunto de **ativadores de profundidade** (hardSignals), integrados como micro-refinamento no prompt do Serginho
+- Nenhum código, função, roteamento ou provider do legado foi trazido
+
+### Declaração explícita
+**O repositório `kizirian-max-site` está descontinuado e apto para exclusão. Não há dependência estrutural real dele no `rkmmax-hibrido`.**
+
+### Arquivos alterados
+
+| Arquivo | Mudança |
+|---|---|
+| `src/prompts/geniusPrompts.js` | Adicionado bloco "ATIVADORES DE PROFUNDIDADE" no `SERGINHO_GENIUS_PROMPT` |
+| `CHECKLIST.md` | Esta entrada de descontinuação |
+| `README.md` | Nota curta de governança sobre repositórios legados |
+
+### Validação
+1. Prompt do Serginho recebeu ativadores de profundidade ✅
+2. CHECKLIST registra descontinuação do `kizirian-max-site` ✅
+3. README atualizado com nota de governança mínima ✅
+4. Especialistas (`SPECIALIST_GENIUS_PROMPT`) não foram afetados ✅
+5. Híbrido (`HYBRID_GENIUS_PROMPT`) não foi afetado ✅
+6. Nenhum roteamento, provider ou código legado trazido ✅
+7. Escopo permaneceu pequeno (3 arquivos) ✅
+
+### Rollback
+```bash
+git revert <commit-sha>
+```
+
+---
+
 ## 2026-03-21 — docs(governance): encerramento formal da fase estrutural dos especialistas + descontinuação do Rkmmax-app
 
 ### O que foi feito
