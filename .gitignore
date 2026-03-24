@@ -15,9 +15,10 @@ test-results/
 /dist
 
 # Environment variables
-# .env is tracked intentionally (build config only, no secrets)
-!.env
+# Use .env.example as reference — never commit real env files
+.env
 .env.local
+.env.production
 .env.development.local
 .env.test.local
 .env.production.local
@@ -47,4 +48,3 @@ lerna-debug.log*
 
 # Auto-generated files
 src/config/plans.json
-
