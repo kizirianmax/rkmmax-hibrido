@@ -27,7 +27,7 @@
     "@sentry/react": "^10.45.0",
     "@stripe/stripe-js": "^2.4.0",
     "@supabase/supabase-js": "^2.99.1",
-    "@vitejs/plugin-react": "^5.1.4",
+    "@vitejs/plugin-react": "^6.0.1",
     "busboy": "^1.6.0",
     "form-data": "^4.0.5",
     "openai": "^4.104.0",
