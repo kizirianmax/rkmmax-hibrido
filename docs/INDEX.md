@@ -30,17 +30,17 @@
 
 ## 🛠️ Operação
 
-→ [DEPLOY.md](../DEPLOY.md) — Como fazer deploy  
+→ [DEPLOY.md](DEPLOY.md) — Como fazer deploy  
 → [docs/deployment.md](deployment.md) — Guia de deployment detalhado  
-→ [DEVELOPMENT_GUIDELINES.md](../DEVELOPMENT_GUIDELINES.md) — Diretrizes de desenvolvimento
+→ [DEVELOPMENT_GUIDELINES.md](DEVELOPMENT_GUIDELINES.md) — Diretrizes de desenvolvimento
 
 ---
 
 ## 🏗️ Produto / Construtor
 
 → [docs/PAYMENT_LINKS.md](PAYMENT_LINKS.md) — Links de pagamento Stripe  
-→ [AUTOMATION_SYSTEM_PLAN.md](../AUTOMATION_SYSTEM_PLAN.md) — Plano de automação  
-→ [SISTEMA_HIBRIDO_TODO.md](../SISTEMA_HIBRIDO_TODO.md) — Roadmap do sistema
+→ [AUTOMATION_SYSTEM_PLAN.md](AUTOMATION_SYSTEM_PLAN.md) — Plano de automação  
+→ [SISTEMA_HIBRIDO_TODO.md](SISTEMA_HIBRIDO_TODO.md) — Roadmap do sistema
 
 ---
 
