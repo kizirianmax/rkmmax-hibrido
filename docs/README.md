@@ -35,9 +35,9 @@ Este arquivo é o índice central de toda a documentação do projeto. Use-o par
 | Documento | Descrição |
 |-----------|-----------|
 | [README.md](../README.md) | Quick start, arquitetura geral, features, stack |
-| [HYBRID_SYSTEM_README.md](../HYBRID_SYSTEM_README.md) | Detalhes do sistema híbrido |
-| [SISTEMA_COMPLETO_RESUMO.md](../SISTEMA_COMPLETO_RESUMO.md) | Resumo completo do sistema |
-| [auditoria_tecnica_rkmmax_hibrido.md](../auditoria_tecnica_rkmmax_hibrido.md) | Auditoria técnica completa |
+| [HYBRID_SYSTEM_README.md](HYBRID_SYSTEM_README.md) | Detalhes do sistema híbrido |
+| [SISTEMA_COMPLETO_RESUMO.md](SISTEMA_COMPLETO_RESUMO.md) | Resumo completo do sistema |
+| [auditoria_tecnica_rkmmax_hibrido.md](auditoria_tecnica_rkmmax_hibrido.md) | Auditoria técnica completa |
 
 ---
 
@@ -81,9 +81,9 @@ O sistema utiliza uma arquitetura de 5 camadas com orquestração multi-agente. 
 | [CODE_OF_CONDUCT.md](../CODE_OF_CONDUCT.md) | Código de conduta (Contributor Covenant) |
 | [CHECKLIST.md](../CHECKLIST.md) | Protocolo de operações, histórico de PRs, validação e rollback |
 | [CHANGELOG.md](../CHANGELOG.md) | Histórico de mudanças (Keep a Changelog) |
-| [DEVELOPMENT_GUIDELINES.md](../DEVELOPMENT_GUIDELINES.md) | Diretrizes de desenvolvimento e CI |
-| [BRANCH_PROTECTION_GUIDE.md](../BRANCH_PROTECTION_GUIDE.md) | Proteção de branches e regras de merge |
-| [MAINTENANCE.md](../MAINTENANCE.md) | Plano de manutenção e dependências |
+| [DEVELOPMENT_GUIDELINES.md](DEVELOPMENT_GUIDELINES.md) | Diretrizes de desenvolvimento e CI |
+| [BRANCH_PROTECTION_GUIDE.md](BRANCH_PROTECTION_GUIDE.md) | Proteção de branches e regras de merge |
+| [MAINTENANCE.md](MAINTENANCE.md) | Plano de manutenção e dependências |
 | [LICENSE](../LICENSE) | Licença MIT |
 
 ### Templates GitHub
@@ -136,16 +136,16 @@ Consulte [.env.example](../.env.example) para a lista completa.
 
 | Documento | Descrição |
 |-----------|-----------|
-| [DEPLOY.md](../DEPLOY.md) | Guia de deploy geral |
-| [DEPLOY_VERCEL_FINAL.md](../DEPLOY_VERCEL_FINAL.md) | Deploy final na Vercel (passo a passo) |
+| [DEPLOY.md](DEPLOY.md) | Guia de deploy geral |
+| [DEPLOY_VERCEL_FINAL.md](DEPLOY_VERCEL_FINAL.md) | Deploy final na Vercel (passo a passo) |
 | [docs/deployment.md](deployment.md) | Guia de deployment detalhado |
-| [VARIAVEIS_VERCEL_FINAIS.md](../VARIAVEIS_VERCEL_FINAIS.md) | Variáveis de ambiente na Vercel |
-| [EXTERNAL_APIS_SETUP.md](../EXTERNAL_APIS_SETUP.md) | Configuração de APIs externas |
-| [CONFIGURAR_EMAIL_RESEND.md](../CONFIGURAR_EMAIL_RESEND.md) | Configuração de e-mail via Resend |
-| [CI_CD_SETUP.md](../CI_CD_SETUP.md) | Setup de CI/CD |
-| [CI_CD_ANALYSIS.md](../CI_CD_ANALYSIS.md) | Análise do pipeline CI/CD |
-| [TEST_SCRIPTS.md](../TEST_SCRIPTS.md) | Scripts de teste e validação |
-| [ALERTS_SETUP.md](../ALERTS_SETUP.md) | Configuração de alertas |
+| [VARIAVEIS_VERCEL_FINAIS.md](VARIAVEIS_VERCEL_FINAIS.md) | Variáveis de ambiente na Vercel |
+| [EXTERNAL_APIS_SETUP.md](EXTERNAL_APIS_SETUP.md) | Configuração de APIs externas |
+| [CONFIGURAR_EMAIL_RESEND.md](CONFIGURAR_EMAIL_RESEND.md) | Configuração de e-mail via Resend |
+| [CI_CD_SETUP.md](CI_CD_SETUP.md) | Setup de CI/CD |
+| [CI_CD_ANALYSIS.md](CI_CD_ANALYSIS.md) | Análise do pipeline CI/CD |
+| [TEST_SCRIPTS.md](TEST_SCRIPTS.md) | Scripts de teste e validação |
+| [ALERTS_SETUP.md](ALERTS_SETUP.md) | Configuração de alertas |
 
 ---
 
@@ -238,12 +238,12 @@ Todos os erros seguem o formato: `{ "error": { "code": "...", "message": "...", 
 | Documento | Descrição |
 |-----------|-----------|
 | [docs/PAYMENT_LINKS.md](PAYMENT_LINKS.md) | Links de pagamento Stripe |
-| [SISTEMA_HIBRIDO_TODO.md](../SISTEMA_HIBRIDO_TODO.md) | Roadmap e tarefas do sistema híbrido |
-| [AUTOMATION_SYSTEM_PLAN.md](../AUTOMATION_SYSTEM_PLAN.md) | Plano do sistema de automação |
-| [HYBRID_SYSTEM_DEPLOYMENT.md](../HYBRID_SYSTEM_DEPLOYMENT.md) | Deploy do sistema híbrido |
-| [IMPLEMENTATION_COMPLETE.md](../IMPLEMENTATION_COMPLETE.md) | Implementação completa do sistema |
-| [IMPLEMENTATION_SUMMARY.md](../IMPLEMENTATION_SUMMARY.md) | Resumo das implementações |
-| [UPGRADE_GEMINI_2.5_PRO.md](../UPGRADE_GEMINI_2.5_PRO.md) | Upgrade do modelo Gemini 2.5 Pro |
+| [SISTEMA_HIBRIDO_TODO.md](SISTEMA_HIBRIDO_TODO.md) | Roadmap e tarefas do sistema híbrido |
+| [AUTOMATION_SYSTEM_PLAN.md](AUTOMATION_SYSTEM_PLAN.md) | Plano do sistema de automação |
+| [HYBRID_SYSTEM_DEPLOYMENT.md](HYBRID_SYSTEM_DEPLOYMENT.md) | Deploy do sistema híbrido |
+| [IMPLEMENTATION_COMPLETE.md](IMPLEMENTATION_COMPLETE.md) | Implementação completa do sistema |
+| [IMPLEMENTATION_SUMMARY.md](IMPLEMENTATION_SUMMARY.md) | Resumo das implementações |
+| [UPGRADE_GEMINI_2.5_PRO.md](UPGRADE_GEMINI_2.5_PRO.md) | Upgrade do modelo Gemini 2.5 Pro |
 
 ---
 
@@ -253,9 +253,9 @@ Todos os erros seguem o formato: `{ "error": { "code": "...", "message": "...", 
 |-----------|-----------|
 | [CHANGELOG.md](../CHANGELOG.md) | Histórico completo de mudanças por versão |
 | [CHECKLIST.md](../CHECKLIST.md) | Histórico de operações/PRs com validação e rollback |
-| [ANALISE_REPOSITORIO_FINAL.md](../ANALISE_REPOSITORIO_FINAL.md) | Análise final do repositório |
-| [CHANGELOG_CONSOLIDACAO.md](../CHANGELOG_CONSOLIDACAO.md) | Consolidação do changelog legado |
-| [VALIDACAO_FINAL.md](../VALIDACAO_FINAL.md) | Validação final do sistema |
+| [ANALISE_REPOSITORIO_FINAL.md](ANALISE_REPOSITORIO_FINAL.md) | Análise final do repositório |
+| [CHANGELOG_CONSOLIDACAO.md](CHANGELOG_CONSOLIDACAO.md) | Consolidação do changelog legado |
+| [VALIDACAO_FINAL.md](VALIDACAO_FINAL.md) | Validação final do sistema |
 
 ---
 
@@ -293,34 +293,34 @@ Todos os arquivos `.md` na raiz do repositório:
 | [CODE_OF_CONDUCT.md](../CODE_OF_CONDUCT.md) | Código de conduta |
 | [CHANGELOG.md](../CHANGELOG.md) | Changelog |
 | [CHECKLIST.md](../CHECKLIST.md) | Checklist de operações |
-| [DEVELOPMENT_GUIDELINES.md](../DEVELOPMENT_GUIDELINES.md) | Diretrizes de desenvolvimento |
-| [BRANCH_PROTECTION_GUIDE.md](../BRANCH_PROTECTION_GUIDE.md) | Proteção de branches |
-| [MAINTENANCE.md](../MAINTENANCE.md) | Manutenção |
-| [DEPLOY.md](../DEPLOY.md) | Deploy geral |
-| [DEPLOY_VERCEL_FINAL.md](../DEPLOY_VERCEL_FINAL.md) | Deploy Vercel (final) |
-| [HYBRID_SYSTEM_README.md](../HYBRID_SYSTEM_README.md) | Sistema híbrido readme |
-| [HYBRID_SYSTEM_DEPLOYMENT.md](../HYBRID_SYSTEM_DEPLOYMENT.md) | Deployment do sistema híbrido |
-| [SISTEMA_COMPLETO_RESUMO.md](../SISTEMA_COMPLETO_RESUMO.md) | Resumo do sistema |
-| [SISTEMA_HIBRIDO_TODO.md](../SISTEMA_HIBRIDO_TODO.md) | TODO do sistema híbrido |
-| [AUTOMATION_SYSTEM_PLAN.md](../AUTOMATION_SYSTEM_PLAN.md) | Plano de automação |
-| [IMPLEMENTATION_COMPLETE.md](../IMPLEMENTATION_COMPLETE.md) | Implementação completa |
-| [IMPLEMENTATION_SUMMARY.md](../IMPLEMENTATION_SUMMARY.md) | Resumo de implementação |
-| [EXTERNAL_APIS_SETUP.md](../EXTERNAL_APIS_SETUP.md) | Setup de APIs externas |
-| [CONFIGURAR_EMAIL_RESEND.md](../CONFIGURAR_EMAIL_RESEND.md) | Configurar e-mail Resend |
-| [CI_CD_SETUP.md](../CI_CD_SETUP.md) | Setup CI/CD |
-| [CI_CD_ANALYSIS.md](../CI_CD_ANALYSIS.md) | Análise CI/CD |
-| [TEST_SCRIPTS.md](../TEST_SCRIPTS.md) | Scripts de teste |
-| [ALERTS_SETUP.md](../ALERTS_SETUP.md) | Setup de alertas |
-| [VARIAVEIS_VERCEL_FINAIS.md](../VARIAVEIS_VERCEL_FINAIS.md) | Variáveis Vercel finais |
-| [ANALISE_REPOSITORIO_FINAL.md](../ANALISE_REPOSITORIO_FINAL.md) | Análise final do repositório |
-| [CHANGELOG_CONSOLIDACAO.md](../CHANGELOG_CONSOLIDACAO.md) | Consolidação do changelog |
-| [VALIDACAO_FINAL.md](../VALIDACAO_FINAL.md) | Validação final |
-| [UPGRADE_GEMINI_2.5_PRO.md](../UPGRADE_GEMINI_2.5_PRO.md) | Upgrade Gemini 2.5 Pro |
-| [REACT_NATIVE_SETUP.md](../REACT_NATIVE_SETUP.md) | Setup React Native |
-| [RELATORIO_GEMINI_ERRO.md](../RELATORIO_GEMINI_ERRO.md) | Relatório de erro do Gemini |
-| [auditoria_tecnica_rkmmax_hibrido.md](../auditoria_tecnica_rkmmax_hibrido.md) | Auditoria técnica |
-| [TODO_MIGRATE_TESTS.md](../TODO_MIGRATE_TESTS.md) | TODO migração de testes |
-| [PR_72_SUMMARY.md](../PR_72_SUMMARY.md) | Resumo do PR #72 |
+| [DEVELOPMENT_GUIDELINES.md](DEVELOPMENT_GUIDELINES.md) | Diretrizes de desenvolvimento |
+| [BRANCH_PROTECTION_GUIDE.md](BRANCH_PROTECTION_GUIDE.md) | Proteção de branches |
+| [MAINTENANCE.md](MAINTENANCE.md) | Manutenção |
+| [DEPLOY.md](DEPLOY.md) | Deploy geral |
+| [DEPLOY_VERCEL_FINAL.md](DEPLOY_VERCEL_FINAL.md) | Deploy Vercel (final) |
+| [HYBRID_SYSTEM_README.md](HYBRID_SYSTEM_README.md) | Sistema híbrido readme |
+| [HYBRID_SYSTEM_DEPLOYMENT.md](HYBRID_SYSTEM_DEPLOYMENT.md) | Deployment do sistema híbrido |
+| [SISTEMA_COMPLETO_RESUMO.md](SISTEMA_COMPLETO_RESUMO.md) | Resumo do sistema |
+| [SISTEMA_HIBRIDO_TODO.md](SISTEMA_HIBRIDO_TODO.md) | TODO do sistema híbrido |
+| [AUTOMATION_SYSTEM_PLAN.md](AUTOMATION_SYSTEM_PLAN.md) | Plano de automação |
+| [IMPLEMENTATION_COMPLETE.md](IMPLEMENTATION_COMPLETE.md) | Implementação completa |
+| [IMPLEMENTATION_SUMMARY.md](IMPLEMENTATION_SUMMARY.md) | Resumo de implementação |
+| [EXTERNAL_APIS_SETUP.md](EXTERNAL_APIS_SETUP.md) | Setup de APIs externas |
+| [CONFIGURAR_EMAIL_RESEND.md](CONFIGURAR_EMAIL_RESEND.md) | Configurar e-mail Resend |
+| [CI_CD_SETUP.md](CI_CD_SETUP.md) | Setup CI/CD |
+| [CI_CD_ANALYSIS.md](CI_CD_ANALYSIS.md) | Análise CI/CD |
+| [TEST_SCRIPTS.md](TEST_SCRIPTS.md) | Scripts de teste |
+| [ALERTS_SETUP.md](ALERTS_SETUP.md) | Setup de alertas |
+| [VARIAVEIS_VERCEL_FINAIS.md](VARIAVEIS_VERCEL_FINAIS.md) | Variáveis Vercel finais |
+| [ANALISE_REPOSITORIO_FINAL.md](ANALISE_REPOSITORIO_FINAL.md) | Análise final do repositório |
+| [CHANGELOG_CONSOLIDACAO.md](CHANGELOG_CONSOLIDACAO.md) | Consolidação do changelog |
+| [VALIDACAO_FINAL.md](VALIDACAO_FINAL.md) | Validação final |
+| [UPGRADE_GEMINI_2.5_PRO.md](UPGRADE_GEMINI_2.5_PRO.md) | Upgrade Gemini 2.5 Pro |
+| [REACT_NATIVE_SETUP.md](REACT_NATIVE_SETUP.md) | Setup React Native |
+| [RELATORIO_GEMINI_ERRO.md](RELATORIO_GEMINI_ERRO.md) | Relatório de erro do Gemini |
+| [auditoria_tecnica_rkmmax_hibrido.md](auditoria_tecnica_rkmmax_hibrido.md) | Auditoria técnica |
+| [TODO_MIGRATE_TESTS.md](TODO_MIGRATE_TESTS.md) | TODO migração de testes |
+| [PR_72_SUMMARY.md](PR_72_SUMMARY.md) | Resumo do PR #72 |
 
 ---
 
