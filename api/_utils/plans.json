@@ -4,7 +4,7 @@
     "price": "R$ 50,00",
     "currency": "BRL",
     "features": [
-      "55 especialistas em IA",
+      "47 especialistas em IA",
       "UX Completa (Voz/Imagem)",
       "Turbo Gratuito (Cache/Flash)",
       "3.500 tokens/dia"
@@ -20,7 +20,7 @@
     "original_price": "R$ 100,00",
     "currency": "BRL",
     "features": [
-      "55 especialistas em IA",
+      "47 especialistas em IA",
       "Alto Volume de Uso e Raciocínio",
       "Groq llama-3.3-70b",
       "Subsidiado pelos planos Premium/ULTRA",
@@ -37,7 +37,7 @@
     "price": "R$ 120,00",
     "currency": "BRL",
     "features": [
-      "55 especialistas em IA",
+      "47 especialistas em IA",
       "Hyper-Velocidade (Motor GROQ)",
       "Raciocínio de Alto Nível (openai/gpt-oss-120b)",
       "7.200 tokens/dia",
@@ -53,7 +53,7 @@
     "price": "R$ 150,00",
     "currency": "BRL",
     "features": [
-      "55 especialistas em IA",
+      "47 especialistas em IA",
       "Blindagem de Conformidade Global (LGPD/GDPR/SLA)",
       "GROQ Ilimitado",
       "9.000 tokens/dia (Não Bloqueia)",
@@ -73,7 +73,7 @@
     "price": "$20.00",
     "currency": "USD",
     "features": [
-      "55 AI specialists",
+      "47 AI specialists",
       "Complete UX (Voice/Image)",
       "Free Turbo (Cache/Flash)",
       "3.500 tokens/day"
@@ -89,7 +89,7 @@
     "original_price": "$40.00",
     "currency": "USD",
     "features": [
-      "55 AI specialists",
+      "47 AI specialists",
       "High Volume Use and Reasoning",
       "Groq llama-3.3-70b",
       "Subsidized by Premium/ULTRA plans",
@@ -106,7 +106,7 @@
     "price": "$48.00",
     "currency": "USD",
     "features": [
-      "55 AI specialists",
+      "47 AI specialists",
       "Hyper-Speed (GROQ Engine)",
       "Advanced Reasoning (openai/gpt-oss-120b)",
       "7.200 tokens/day",
@@ -122,7 +122,7 @@
     "price": "$60.00",
     "currency": "USD",
     "features": [
-      "55 AI specialists",
+      "47 AI specialists",
       "Global Compliance Shield (LGPD/GDPR/SLA)",
       "Unlimited GROQ",
       "9.000 tokens/day (No Blocking)",

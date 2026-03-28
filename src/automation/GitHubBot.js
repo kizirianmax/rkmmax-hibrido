@@ -322,7 +322,7 @@ class GitHubBot {
       `✅ **RKMMAX Bot está online!**\n\n` +
       `Status: Operacional\n` +
       `Versão: 1.0.0\n` +
-      `Especialistas disponíveis: 54\n\n` +
+      `Especialistas disponíveis: 47\n\n` +
       `Digite \`@rkmmax help\` para ver os comandos disponíveis.`
     );
   }

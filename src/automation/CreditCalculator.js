@@ -108,7 +108,7 @@ class CreditCalculator {
           totalCredits: 500, // 500 créditos por dia
         },
         features: {
-          specialists: 54, // Todos os especialistas
+          specialists: 47, // Todos os especialistas
           modes: ["MANUAL", "HYBRID", "OPTIMIZED"],
           maxFilesPerAutomation: 100,
           maxLinesOfCode: 50000,
@@ -128,7 +128,7 @@ class CreditCalculator {
           totalCredits: -1, // Sem limite
         },
         features: {
-          specialists: 54, // Todos os especialistas
+          specialists: 47, // Todos os especialistas
           modes: ["MANUAL", "HYBRID", "OPTIMIZED"],
           maxFilesPerAutomation: -1,
           maxLinesOfCode: -1,

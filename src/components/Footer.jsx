@@ -7,7 +7,7 @@ export default function Footer() {
       <div className="footer-content">
         <div className="footer-section">
           <h3>RKMMAX</h3>
-          <p>Plataforma de IA especializada com 54 especialistas</p>
+          <p>Plataforma de IA especializada com 47 especialistas</p>
         </div>
 
         <div className="footer-section">

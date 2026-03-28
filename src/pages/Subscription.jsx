@@ -137,7 +137,7 @@ export default function Subscription() {
             <div className="feature-item">
               <span className="feature-icon">🤖</span>
               <div>
-                <strong>54 Especialistas em IA</strong>
+                <strong>47 Especialistas em IA</strong>
                 <p>Acesso ilimitado a todos os agentes</p>
               </div>
             </div>

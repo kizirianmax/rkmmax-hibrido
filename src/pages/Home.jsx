@@ -108,7 +108,7 @@ export default function Home() {
         </div>
 
         <p style={sx.infoText}>
-          Plataforma completa com <strong>54 especialistas de IA</strong> orquestrados pelo Serginho. 
+          Plataforma completa com <strong>47 especialistas de IA</strong> orquestrados pelo Serginho. 
           Pagamento seguro via <strong>Stripe</strong>, acesso imediato e suporte dedicado para 
           transformar suas ideias em realidade.
         </p>
@@ -128,7 +128,7 @@ export default function Home() {
           </div>
           <div style={sx.benefitItem}>
             <span style={sx.benefitIcon}>✅</span>
-            <span>54 Especialistas + Serginho</span>
+            <span>47 Especialistas + Serginho</span>
           </div>
         </div>
 

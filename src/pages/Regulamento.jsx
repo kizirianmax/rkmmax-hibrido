@@ -187,7 +187,7 @@ export default function Regulamento() {
           <div style={styles.footerSection}>
             <h3 style={styles.footerSectionTitle}>RKMMAX</h3>
             <p style={styles.footerSectionText}>
-              Plataforma de IA especializada com 54 especialistas
+              Plataforma de IA especializada com 47 especialistas
             </p>
           </div>
 

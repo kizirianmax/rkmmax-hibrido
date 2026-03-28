@@ -209,13 +209,13 @@ describe("CreditCalculator", () => {
 
   describe("canUseSpecialist", () => {
     test("deve permitir especialista no plano Premium", () => {
-      const can = calculator.canUseSpecialist("premium", 54);
+      const can = calculator.canUseSpecialist("premium", 47); // total real de especialistas
 
       expect(can).toBe(true);
     });
 
     test("deve bloquear especialista no plano Básico", () => {
-      const can = calculator.canUseSpecialist("basic", 54);
+      const can = calculator.canUseSpecialist("basic", 47); // acima do limite do plano Básico (10)
 
       expect(can).toBe(false);
     });
