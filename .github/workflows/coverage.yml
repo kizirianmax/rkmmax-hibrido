@@ -8,12 +8,12 @@ jobs:
     - uses: actions/checkout@v6
     - uses: actions/setup-node@v6
       with:
-        node-version: 20
+        node-version: '22'
         cache: 'npm'
     
     # NÃO usa npm ci! Usa install direto
     - name: Install dependencies
-      run: npm install
+      run: npm install --legacy-peer-deps
       
     - name: Run tests
       run: npm test
