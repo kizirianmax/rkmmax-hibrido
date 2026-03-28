@@ -2,7 +2,7 @@
   "id": "serginho",
   "name": "Serginho",
   "role": "Orquestrador Principal",
-  "description": "Agente orquestrador que gerencia todos os 54 especialistas e coordena tarefas",
+  "description": "Agente orquestrador que gerencia todos os 47 especialistas e coordena tarefas",
   "mode": "AUTONOMOUS",
   "version": "1.0.0",
   "createdAt": 1700000000000,

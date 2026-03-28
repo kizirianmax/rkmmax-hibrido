@@ -6,8 +6,16 @@
       "title": "Especialista em Didática e Métodos de Ensino",
       "description": "Especialista em pedagogia, metodologias de ensino e estratégias educacionais",
       "category": "Educação",
-      "capabilities": ["teaching", "learning", "pedagogy", "curriculum"],
-      "languages": ["pt-BR", "en"],
+      "capabilities": [
+        "teaching",
+        "learning",
+        "pedagogy",
+        "curriculum"
+      ],
+      "languages": [
+        "pt-BR",
+        "en"
+      ],
       "expertise": 95,
       "responseTime": 500,
       "costPerCall": 0.01
@@ -18,8 +26,16 @@
       "title": "Especialista em Desenvolvimento de Software",
       "description": "Especialista em programação, arquitetura de software e best practices",
       "category": "Tecnologia",
-      "capabilities": ["coding", "architecture", "debugging", "optimization"],
-      "languages": ["pt-BR", "en"],
+      "capabilities": [
+        "coding",
+        "architecture",
+        "debugging",
+        "optimization"
+      ],
+      "languages": [
+        "pt-BR",
+        "en"
+      ],
       "expertise": 98,
       "responseTime": 400,
       "costPerCall": 0.02
@@ -30,8 +46,16 @@
       "title": "Especialista em Ciência de Dados",
       "description": "Especialista em análise de dados, machine learning e estatística",
       "category": "Dados",
-      "capabilities": ["data-analysis", "ml", "statistics", "visualization"],
-      "languages": ["pt-BR", "en"],
+      "capabilities": [
+        "data-analysis",
+        "ml",
+        "statistics",
+        "visualization"
+      ],
+      "languages": [
+        "pt-BR",
+        "en"
+      ],
       "expertise": 96,
       "responseTime": 600,
       "costPerCall": 0.025
@@ -42,8 +66,16 @@
       "title": "Especialista em Análise de Negócios",
       "description": "Especialista em análise de negócios, estratégia e planejamento",
       "category": "Negócios",
-      "capabilities": ["analysis", "strategy", "planning", "reporting"],
-      "languages": ["pt-BR", "en"],
+      "capabilities": [
+        "analysis",
+        "strategy",
+        "planning",
+        "reporting"
+      ],
+      "languages": [
+        "pt-BR",
+        "en"
+      ],
       "expertise": 92,
       "responseTime": 550,
       "costPerCall": 0.015
@@ -54,8 +86,16 @@
       "title": "Especialista em Design de Experiência do Usuário",
       "description": "Especialista em UX/UI design, usabilidade e design thinking",
       "category": "Design",
-      "capabilities": ["ux", "ui", "design-thinking", "usability"],
-      "languages": ["pt-BR", "en"],
+      "capabilities": [
+        "ux",
+        "ui",
+        "design-thinking",
+        "usability"
+      ],
+      "languages": [
+        "pt-BR",
+        "en"
+      ],
       "expertise": 94,
       "responseTime": 480,
       "costPerCall": 0.012
@@ -66,8 +106,16 @@
       "title": "Especialista em DevOps e Infraestrutura",
       "description": "Especialista em CI/CD, containerização e infraestrutura em nuvem",
       "category": "Infraestrutura",
-      "capabilities": ["devops", "ci-cd", "docker", "kubernetes"],
-      "languages": ["pt-BR", "en"],
+      "capabilities": [
+        "devops",
+        "ci-cd",
+        "docker",
+        "kubernetes"
+      ],
+      "languages": [
+        "pt-BR",
+        "en"
+      ],
       "expertise": 97,
       "responseTime": 420,
       "costPerCall": 0.018
@@ -78,8 +126,16 @@
       "title": "Especialista em Segurança da Informação",
       "description": "Especialista em segurança, criptografia e conformidade",
       "category": "Segurança",
-      "capabilities": ["security", "encryption", "compliance", "penetration-testing"],
-      "languages": ["pt-BR", "en"],
+      "capabilities": [
+        "security",
+        "encryption",
+        "compliance",
+        "penetration-testing"
+      ],
+      "languages": [
+        "pt-BR",
+        "en"
+      ],
       "expertise": 99,
       "responseTime": 500,
       "costPerCall": 0.03
@@ -90,8 +146,16 @@
       "title": "Especialista em Marketing Digital",
       "description": "Especialista em marketing digital, SEO e estratégia de conteúdo",
       "category": "Marketing",
-      "capabilities": ["marketing", "seo", "content-strategy", "analytics"],
-      "languages": ["pt-BR", "en"],
+      "capabilities": [
+        "marketing",
+        "seo",
+        "content-strategy",
+        "analytics"
+      ],
+      "languages": [
+        "pt-BR",
+        "en"
+      ],
       "expertise": 93,
       "responseTime": 520,
       "costPerCall": 0.014
@@ -102,8 +166,16 @@
       "title": "Especialista em Finanças e Contabilidade",
       "description": "Especialista em finanças, contabilidade e análise financeira",
       "category": "Finanças",
-      "capabilities": ["finance", "accounting", "analysis", "reporting"],
-      "languages": ["pt-BR", "en"],
+      "capabilities": [
+        "finance",
+        "accounting",
+        "analysis",
+        "reporting"
+      ],
+      "languages": [
+        "pt-BR",
+        "en"
+      ],
       "expertise": 95,
       "responseTime": 540,
       "costPerCall": 0.016
@@ -114,8 +186,16 @@
       "title": "Especialista em Recursos Humanos",
       "description": "Especialista em RH, recrutamento e desenvolvimento de pessoas",
       "category": "Recursos Humanos",
-      "capabilities": ["recruitment", "training", "management", "development"],
-      "languages": ["pt-BR", "en"],
+      "capabilities": [
+        "recruitment",
+        "training",
+        "management",
+        "development"
+      ],
+      "languages": [
+        "pt-BR",
+        "en"
+      ],
       "expertise": 91,
       "responseTime": 480,
       "costPerCall": 0.011
@@ -126,8 +206,16 @@
       "title": "Especialista em Direito e Conformidade",
       "description": "Especialista em direito, conformidade legal e regulamentações",
       "category": "Legal",
-      "capabilities": ["law", "compliance", "contracts", "regulations"],
-      "languages": ["pt-BR", "en"],
+      "capabilities": [
+        "law",
+        "compliance",
+        "contracts",
+        "regulations"
+      ],
+      "languages": [
+        "pt-BR",
+        "en"
+      ],
       "expertise": 96,
       "responseTime": 600,
       "costPerCall": 0.028
@@ -138,8 +226,16 @@
       "title": "Especialista em Garantia de Qualidade",
       "description": "Especialista em testes, QA e automação de testes",
       "category": "Qualidade",
-      "capabilities": ["testing", "qa", "automation", "performance-testing"],
-      "languages": ["pt-BR", "en"],
+      "capabilities": [
+        "testing",
+        "qa",
+        "automation",
+        "performance-testing"
+      ],
+      "languages": [
+        "pt-BR",
+        "en"
+      ],
       "expertise": 94,
       "responseTime": 450,
       "costPerCall": 0.013
@@ -150,8 +246,16 @@
       "title": "Especialista em Inteligência Artificial",
       "description": "Especialista em IA, deep learning e processamento de linguagem natural",
       "category": "IA",
-      "capabilities": ["ai", "deep-learning", "nlp", "computer-vision"],
-      "languages": ["pt-BR", "en"],
+      "capabilities": [
+        "ai",
+        "deep-learning",
+        "nlp",
+        "computer-vision"
+      ],
+      "languages": [
+        "pt-BR",
+        "en"
+      ],
       "expertise": 98,
       "responseTime": 700,
       "costPerCall": 0.035
@@ -162,8 +266,16 @@
       "title": "Especialista em Arquitetura em Nuvem",
       "description": "Especialista em AWS, Azure, GCP e arquitetura de nuvem",
       "category": "Nuvem",
-      "capabilities": ["aws", "azure", "gcp", "architecture"],
-      "languages": ["pt-BR", "en"],
+      "capabilities": [
+        "aws",
+        "azure",
+        "gcp",
+        "architecture"
+      ],
+      "languages": [
+        "pt-BR",
+        "en"
+      ],
       "expertise": 97,
       "responseTime": 550,
       "costPerCall": 0.022
@@ -174,8 +286,16 @@
       "title": "Especialista em Desenvolvimento Mobile",
       "description": "Especialista em iOS, Android e desenvolvimento mobile",
       "category": "Mobile",
-      "capabilities": ["ios", "android", "react-native", "flutter"],
-      "languages": ["pt-BR", "en"],
+      "capabilities": [
+        "ios",
+        "android",
+        "react-native",
+        "flutter"
+      ],
+      "languages": [
+        "pt-BR",
+        "en"
+      ],
       "expertise": 95,
       "responseTime": 480,
       "costPerCall": 0.017
@@ -186,8 +306,16 @@
       "title": "Especialista em Desenvolvimento Frontend",
       "description": "Especialista em React, Vue, Angular e desenvolvimento frontend",
       "category": "Frontend",
-      "capabilities": ["react", "vue", "angular", "css"],
-      "languages": ["pt-BR", "en"],
+      "capabilities": [
+        "react",
+        "vue",
+        "angular",
+        "css"
+      ],
+      "languages": [
+        "pt-BR",
+        "en"
+      ],
       "expertise": 96,
       "responseTime": 420,
       "costPerCall": 0.015
@@ -198,8 +326,16 @@
       "title": "Especialista em Desenvolvimento Backend",
       "description": "Especialista em Node.js, Python, Java e desenvolvimento backend",
       "category": "Backend",
-      "capabilities": ["nodejs", "python", "java", "databases"],
-      "languages": ["pt-BR", "en"],
+      "capabilities": [
+        "nodejs",
+        "python",
+        "java",
+        "databases"
+      ],
+      "languages": [
+        "pt-BR",
+        "en"
+      ],
       "expertise": 97,
       "responseTime": 500,
       "costPerCall": 0.019
@@ -210,8 +346,16 @@
       "title": "Especialista em Bancos de Dados",
       "description": "Especialista em SQL, NoSQL, otimização e design de banco de dados",
       "category": "Dados",
-      "capabilities": ["sql", "nosql", "optimization", "design"],
-      "languages": ["pt-BR", "en"],
+      "capabilities": [
+        "sql",
+        "nosql",
+        "optimization",
+        "design"
+      ],
+      "languages": [
+        "pt-BR",
+        "en"
+      ],
       "expertise": 98,
       "responseTime": 480,
       "costPerCall": 0.021
@@ -222,8 +366,16 @@
       "title": "Especialista em Design de APIs",
       "description": "Especialista em REST, GraphQL e design de APIs",
       "category": "API",
-      "capabilities": ["rest", "graphql", "design", "documentation"],
-      "languages": ["pt-BR", "en"],
+      "capabilities": [
+        "rest",
+        "graphql",
+        "design",
+        "documentation"
+      ],
+      "languages": [
+        "pt-BR",
+        "en"
+      ],
       "expertise": 95,
       "responseTime": 450,
       "costPerCall": 0.014
@@ -234,8 +386,16 @@
       "title": "Especialista em Performance e Otimização",
       "description": "Especialista em otimização de performance e escalabilidade",
       "category": "Performance",
-      "capabilities": ["optimization", "profiling", "caching", "scalability"],
-      "languages": ["pt-BR", "en"],
+      "capabilities": [
+        "optimization",
+        "profiling",
+        "caching",
+        "scalability"
+      ],
+      "languages": [
+        "pt-BR",
+        "en"
+      ],
       "expertise": 96,
       "responseTime": 520,
       "costPerCall": 0.018
@@ -246,8 +406,16 @@
       "title": "Especialista em Developer Relations",
       "description": "Especialista em comunidade de desenvolvedores e documentação",
       "category": "Comunidade",
-      "capabilities": ["documentation", "community", "advocacy", "education"],
-      "languages": ["pt-BR", "en"],
+      "capabilities": [
+        "documentation",
+        "community",
+        "advocacy",
+        "education"
+      ],
+      "languages": [
+        "pt-BR",
+        "en"
+      ],
       "expertise": 92,
       "responseTime": 500,
       "costPerCall": 0.012
@@ -258,8 +426,16 @@
       "title": "Especialista em Gerenciamento de Produto",
       "description": "Especialista em product management, roadmap e estratégia de produto",
       "category": "Produto",
-      "capabilities": ["product-strategy", "roadmap", "user-research", "metrics"],
-      "languages": ["pt-BR", "en"],
+      "capabilities": [
+        "product-strategy",
+        "roadmap",
+        "user-research",
+        "metrics"
+      ],
+      "languages": [
+        "pt-BR",
+        "en"
+      ],
       "expertise": 93,
       "responseTime": 540,
       "costPerCall": 0.016
@@ -270,8 +446,16 @@
       "title": "Especialista em Agile e Scrum",
       "description": "Especialista em Agile, Scrum e metodologias ágeis",
       "category": "Gestão",
-      "capabilities": ["scrum", "agile", "kanban", "coaching"],
-      "languages": ["pt-BR", "en"],
+      "capabilities": [
+        "scrum",
+        "agile",
+        "kanban",
+        "coaching"
+      ],
+      "languages": [
+        "pt-BR",
+        "en"
+      ],
       "expertise": 91,
       "responseTime": 480,
       "costPerCall": 0.011
@@ -282,8 +466,16 @@
       "title": "Especialista em Site Reliability Engineering",
       "description": "Especialista em SRE, observabilidade e confiabilidade",
       "category": "Infraestrutura",
-      "capabilities": ["sre", "observability", "monitoring", "incident-response"],
-      "languages": ["pt-BR", "en"],
+      "capabilities": [
+        "sre",
+        "observability",
+        "monitoring",
+        "incident-response"
+      ],
+      "languages": [
+        "pt-BR",
+        "en"
+      ],
       "expertise": 97,
       "responseTime": 500,
       "costPerCall": 0.024
@@ -294,8 +486,16 @@
       "title": "Especialista em Machine Learning",
       "description": "Especialista em machine learning, modelos e deployment",
       "category": "IA",
-      "capabilities": ["ml", "tensorflow", "pytorch", "deployment"],
-      "languages": ["pt-BR", "en"],
+      "capabilities": [
+        "ml",
+        "tensorflow",
+        "pytorch",
+        "deployment"
+      ],
+      "languages": [
+        "pt-BR",
+        "en"
+      ],
       "expertise": 97,
       "responseTime": 650,
       "costPerCall": 0.032
@@ -306,8 +506,16 @@
       "title": "Especialista em Processamento de Linguagem Natural",
       "description": "Especialista em NLP, transformers e análise de texto",
       "category": "IA",
-      "capabilities": ["nlp", "transformers", "text-analysis", "sentiment-analysis"],
-      "languages": ["pt-BR", "en"],
+      "capabilities": [
+        "nlp",
+        "transformers",
+        "text-analysis",
+        "sentiment-analysis"
+      ],
+      "languages": [
+        "pt-BR",
+        "en"
+      ],
       "expertise": 96,
       "responseTime": 700,
       "costPerCall": 0.033
@@ -318,8 +526,16 @@
       "title": "Especialista em Visão Computacional",
       "description": "Especialista em computer vision, detecção de objetos e reconhecimento",
       "category": "IA",
-      "capabilities": ["computer-vision", "object-detection", "image-processing", "recognition"],
-      "languages": ["pt-BR", "en"],
+      "capabilities": [
+        "computer-vision",
+        "object-detection",
+        "image-processing",
+        "recognition"
+      ],
+      "languages": [
+        "pt-BR",
+        "en"
+      ],
       "expertise": 95,
       "responseTime": 750,
       "costPerCall": 0.034
@@ -330,8 +546,16 @@
       "title": "Especialista em Blockchain e Web3",
       "description": "Especialista em blockchain, smart contracts e Web3",
       "category": "Blockchain",
-      "capabilities": ["blockchain", "smart-contracts", "web3", "defi"],
-      "languages": ["pt-BR", "en"],
+      "capabilities": [
+        "blockchain",
+        "smart-contracts",
+        "web3",
+        "defi"
+      ],
+      "languages": [
+        "pt-BR",
+        "en"
+      ],
       "expertise": 94,
       "responseTime": 600,
       "costPerCall": 0.029
@@ -342,8 +566,16 @@
       "title": "Especialista em Internet das Coisas",
       "description": "Especialista em IoT, embedded systems e dispositivos conectados",
       "category": "IoT",
-      "capabilities": ["iot", "embedded", "sensors", "connectivity"],
-      "languages": ["pt-BR", "en"],
+      "capabilities": [
+        "iot",
+        "embedded",
+        "sensors",
+        "connectivity"
+      ],
+      "languages": [
+        "pt-BR",
+        "en"
+      ],
       "expertise": 93,
       "responseTime": 580,
       "costPerCall": 0.02
@@ -354,8 +586,16 @@
       "title": "Especialista em Realidade Aumentada e Virtual",
       "description": "Especialista em AR, VR e experiências imersivas",
       "category": "Experiência",
-      "capabilities": ["ar", "vr", "3d", "immersive-experiences"],
-      "languages": ["pt-BR", "en"],
+      "capabilities": [
+        "ar",
+        "vr",
+        "3d",
+        "immersive-experiences"
+      ],
+      "languages": [
+        "pt-BR",
+        "en"
+      ],
       "expertise": 92,
       "responseTime": 620,
       "costPerCall": 0.026
@@ -366,8 +606,16 @@
       "title": "Especialista em Desenvolvimento de Jogos",
       "description": "Especialista em game development, Unity e Unreal Engine",
       "category": "Jogos",
-      "capabilities": ["game-development", "unity", "unreal", "game-design"],
-      "languages": ["pt-BR", "en"],
+      "capabilities": [
+        "game-development",
+        "unity",
+        "unreal",
+        "game-design"
+      ],
+      "languages": [
+        "pt-BR",
+        "en"
+      ],
       "expertise": 94,
       "responseTime": 600,
       "costPerCall": 0.023
@@ -378,8 +626,16 @@
       "title": "Especialista em Estratégia de Conteúdo",
       "description": "Especialista em estratégia de conteúdo, copywriting e storytelling",
       "category": "Conteúdo",
-      "capabilities": ["content-strategy", "copywriting", "storytelling", "seo-writing"],
-      "languages": ["pt-BR", "en"],
+      "capabilities": [
+        "content-strategy",
+        "copywriting",
+        "storytelling",
+        "seo-writing"
+      ],
+      "languages": [
+        "pt-BR",
+        "en"
+      ],
       "expertise": 91,
       "responseTime": 500,
       "costPerCall": 0.01
@@ -390,8 +646,16 @@
       "title": "Especialista em Produção de Vídeo",
       "description": "Especialista em produção de vídeo, edição e animação",
       "category": "Mídia",
-      "capabilities": ["video-production", "editing", "animation", "motion-graphics"],
-      "languages": ["pt-BR", "en"],
+      "capabilities": [
+        "video-production",
+        "editing",
+        "animation",
+        "motion-graphics"
+      ],
+      "languages": [
+        "pt-BR",
+        "en"
+      ],
       "expertise": 90,
       "responseTime": 800,
       "costPerCall": 0.025
@@ -402,8 +666,16 @@
       "title": "Especialista em Engenharia de Áudio",
       "description": "Especialista em áudio, produção musical e sound design",
       "category": "Áudio",
-      "capabilities": ["audio-production", "music-production", "sound-design", "mixing"],
-      "languages": ["pt-BR", "en"],
+      "capabilities": [
+        "audio-production",
+        "music-production",
+        "sound-design",
+        "mixing"
+      ],
+      "languages": [
+        "pt-BR",
+        "en"
+      ],
       "expertise": 92,
       "responseTime": 700,
       "costPerCall": 0.022
@@ -414,8 +686,21 @@
       "title": "Especialista em Tradução",
       "description": "Especialista em tradução, localização e multilíngue",
       "category": "Idiomas",
-      "capabilities": ["translation", "localization", "multilingual", "interpretation"],
-      "languages": ["pt-BR", "en", "es", "fr", "de", "ja", "zh"],
+      "capabilities": [
+        "translation",
+        "localization",
+        "multilingual",
+        "interpretation"
+      ],
+      "languages": [
+        "pt-BR",
+        "en",
+        "es",
+        "fr",
+        "de",
+        "ja",
+        "zh"
+      ],
       "expertise": 93,
       "responseTime": 550,
       "costPerCall": 0.013
@@ -426,8 +711,16 @@
       "title": "Especialista em Pesquisa",
       "description": "Especialista em pesquisa, análise e investigação",
       "category": "Pesquisa",
-      "capabilities": ["research", "analysis", "investigation", "documentation"],
-      "languages": ["pt-BR", "en"],
+      "capabilities": [
+        "research",
+        "analysis",
+        "investigation",
+        "documentation"
+      ],
+      "languages": [
+        "pt-BR",
+        "en"
+      ],
       "expertise": 94,
       "responseTime": 650,
       "costPerCall": 0.017
@@ -438,8 +731,16 @@
       "title": "Especialista em Escrita Técnica",
       "description": "Especialista em escrita técnica, documentação e redação",
       "category": "Escrita",
-      "capabilities": ["technical-writing", "documentation", "editing", "proofreading"],
-      "languages": ["pt-BR", "en"],
+      "capabilities": [
+        "technical-writing",
+        "documentation",
+        "editing",
+        "proofreading"
+      ],
+      "languages": [
+        "pt-BR",
+        "en"
+      ],
       "expertise": 92,
       "responseTime": 520,
       "costPerCall": 0.012
@@ -450,8 +751,16 @@
       "title": "Especialista em Consultoria",
       "description": "Especialista em consultoria, estratégia e transformação",
       "category": "Consultoria",
-      "capabilities": ["strategy", "transformation", "consulting", "advising"],
-      "languages": ["pt-BR", "en"],
+      "capabilities": [
+        "strategy",
+        "transformation",
+        "consulting",
+        "advising"
+      ],
+      "languages": [
+        "pt-BR",
+        "en"
+      ],
       "expertise": 95,
       "responseTime": 600,
       "costPerCall": 0.027
@@ -462,8 +771,16 @@
       "title": "Especialista em Treinamento",
       "description": "Especialista em treinamento, educação e desenvolvimento",
       "category": "Educação",
-      "capabilities": ["training", "education", "coaching", "mentoring"],
-      "languages": ["pt-BR", "en"],
+      "capabilities": [
+        "training",
+        "education",
+        "coaching",
+        "mentoring"
+      ],
+      "languages": [
+        "pt-BR",
+        "en"
+      ],
       "expertise": 91,
       "responseTime": 500,
       "costPerCall": 0.011
@@ -474,8 +791,16 @@
       "title": "Especialista em Mentoria",
       "description": "Especialista em mentoria, orientação e desenvolvimento profissional",
       "category": "Desenvolvimento",
-      "capabilities": ["mentoring", "guidance", "career-development", "coaching"],
-      "languages": ["pt-BR", "en"],
+      "capabilities": [
+        "mentoring",
+        "guidance",
+        "career-development",
+        "coaching"
+      ],
+      "languages": [
+        "pt-BR",
+        "en"
+      ],
       "expertise": 90,
       "responseTime": 480,
       "costPerCall": 0.01
@@ -486,8 +811,16 @@
       "title": "Especialista em Aconselhamento",
       "description": "Especialista em aconselhamento, orientação e suporte",
       "category": "Suporte",
-      "capabilities": ["advising", "guidance", "support", "problem-solving"],
-      "languages": ["pt-BR", "en"],
+      "capabilities": [
+        "advising",
+        "guidance",
+        "support",
+        "problem-solving"
+      ],
+      "languages": [
+        "pt-BR",
+        "en"
+      ],
       "expertise": 89,
       "responseTime": 450,
       "costPerCall": 0.009
@@ -498,8 +831,16 @@
       "title": "Especialista em Moderação",
       "description": "Especialista em moderação, facilitação e mediação",
       "category": "Comunidade",
-      "capabilities": ["moderation", "facilitation", "mediation", "community-management"],
-      "languages": ["pt-BR", "en"],
+      "capabilities": [
+        "moderation",
+        "facilitation",
+        "mediation",
+        "community-management"
+      ],
+      "languages": [
+        "pt-BR",
+        "en"
+      ],
       "expertise": 88,
       "responseTime": 400,
       "costPerCall": 0.008
@@ -510,8 +851,16 @@
       "title": "Especialista em Curadoria de Conteúdo",
       "description": "Especialista em curadoria, seleção e organização de conteúdo",
       "category": "Conteúdo",
-      "capabilities": ["curation", "selection", "organization", "knowledge-management"],
-      "languages": ["pt-BR", "en"],
+      "capabilities": [
+        "curation",
+        "selection",
+        "organization",
+        "knowledge-management"
+      ],
+      "languages": [
+        "pt-BR",
+        "en"
+      ],
       "expertise": 90,
       "responseTime": 480,
       "costPerCall": 0.01
@@ -522,8 +871,16 @@
       "title": "Especialista em Agregação de Dados",
       "description": "Especialista em agregação, compilação e síntese de informações",
       "category": "Dados",
-      "capabilities": ["aggregation", "compilation", "synthesis", "data-gathering"],
-      "languages": ["pt-BR", "en"],
+      "capabilities": [
+        "aggregation",
+        "compilation",
+        "synthesis",
+        "data-gathering"
+      ],
+      "languages": [
+        "pt-BR",
+        "en"
+      ],
       "expertise": 91,
       "responseTime": 500,
       "costPerCall": 0.011
@@ -534,8 +891,16 @@
       "title": "Especialista em Validação",
       "description": "Especialista em validação, verificação e controle de qualidade",
       "category": "Qualidade",
-      "capabilities": ["validation", "verification", "quality-control", "testing"],
-      "languages": ["pt-BR", "en"],
+      "capabilities": [
+        "validation",
+        "verification",
+        "quality-control",
+        "testing"
+      ],
+      "languages": [
+        "pt-BR",
+        "en"
+      ],
       "expertise": 92,
       "responseTime": 450,
       "costPerCall": 0.012
@@ -546,8 +911,16 @@
       "title": "Especialista em Otimização",
       "description": "Especialista em otimização, eficiência e melhorias",
       "category": "Performance",
-      "capabilities": ["optimization", "efficiency", "improvement", "automation"],
-      "languages": ["pt-BR", "en"],
+      "capabilities": [
+        "optimization",
+        "efficiency",
+        "improvement",
+        "automation"
+      ],
+      "languages": [
+        "pt-BR",
+        "en"
+      ],
       "expertise": 94,
       "responseTime": 520,
       "costPerCall": 0.015
@@ -558,8 +931,16 @@
       "title": "Especialista em Integração",
       "description": "Especialista em integração de sistemas, APIs e ferramentas",
       "category": "Integração",
-      "capabilities": ["integration", "apis", "systems", "tools"],
-      "languages": ["pt-BR", "en"],
+      "capabilities": [
+        "integration",
+        "apis",
+        "systems",
+        "tools"
+      ],
+      "languages": [
+        "pt-BR",
+        "en"
+      ],
       "expertise": 93,
       "responseTime": 550,
       "costPerCall": 0.016
@@ -570,8 +951,16 @@
       "title": "Especialista em Automação",
       "description": "Especialista em automação, scripts e workflows",
       "category": "Automação",
-      "capabilities": ["automation", "scripting", "workflows", "rpa"],
-      "languages": ["pt-BR", "en"],
+      "capabilities": [
+        "automation",
+        "scripting",
+        "workflows",
+        "rpa"
+      ],
+      "languages": [
+        "pt-BR",
+        "en"
+      ],
       "expertise": 95,
       "responseTime": 480,
       "costPerCall": 0.014
@@ -582,8 +971,16 @@
       "title": "Especialista em Monitoramento",
       "description": "Especialista em monitoramento, observabilidade e alertas",
       "category": "Infraestrutura",
-      "capabilities": ["monitoring", "observability", "alerting", "analytics"],
-      "languages": ["pt-BR", "en"],
+      "capabilities": [
+        "monitoring",
+        "observability",
+        "alerting",
+        "analytics"
+      ],
+      "languages": [
+        "pt-BR",
+        "en"
+      ],
       "expertise": 94,
       "responseTime": 500,
       "costPerCall": 0.013
@@ -594,8 +991,16 @@
       "title": "Especialista em Debug e Troubleshooting",
       "description": "Especialista em debugging, troubleshooting e resolução de problemas",
       "category": "Desenvolvimento",
-      "capabilities": ["debugging", "troubleshooting", "problem-solving", "analysis"],
-      "languages": ["pt-BR", "en"],
+      "capabilities": [
+        "debugging",
+        "troubleshooting",
+        "problem-solving",
+        "analysis"
+      ],
+      "languages": [
+        "pt-BR",
+        "en"
+      ],
       "expertise": 96,
       "responseTime": 450,
       "costPerCall": 0.015
@@ -606,8 +1011,16 @@
       "title": "Especialista em Refatoração de Código",
       "description": "Especialista em refatoração, limpeza de código e manutenção",
       "category": "Desenvolvimento",
-      "capabilities": ["refactoring", "code-cleanup", "maintenance", "improvement"],
-      "languages": ["pt-BR", "en"],
+      "capabilities": [
+        "refactoring",
+        "code-cleanup",
+        "maintenance",
+        "improvement"
+      ],
+      "languages": [
+        "pt-BR",
+        "en"
+      ],
       "expertise": 95,
       "responseTime": 500,
       "costPerCall": 0.014
@@ -618,8 +1031,16 @@
       "title": "Especialista em Documentação",
       "description": "Especialista em documentação, wikis e knowledge bases",
       "category": "Documentação",
-      "capabilities": ["documentation", "wikis", "knowledge-bases", "technical-writing"],
-      "languages": ["pt-BR", "en"],
+      "capabilities": [
+        "documentation",
+        "wikis",
+        "knowledge-bases",
+        "technical-writing"
+      ],
+      "languages": [
+        "pt-BR",
+        "en"
+      ],
       "expertise": 91,
       "responseTime": 480,
       "costPerCall": 0.011
@@ -630,8 +1051,16 @@
       "title": "Especialista em Code Review",
       "description": "Especialista em code review, análise de código e feedback",
       "category": "Qualidade",
-      "capabilities": ["code-review", "analysis", "feedback", "best-practices"],
-      "languages": ["pt-BR", "en"],
+      "capabilities": [
+        "code-review",
+        "analysis",
+        "feedback",
+        "best-practices"
+      ],
+      "languages": [
+        "pt-BR",
+        "en"
+      ],
       "expertise": 94,
       "responseTime": 500,
       "costPerCall": 0.013
@@ -642,8 +1071,16 @@
       "title": "Especialista em Arquitetura de Software",
       "description": "Especialista em arquitetura, design patterns e estrutura de sistemas",
       "category": "Arquitetura",
-      "capabilities": ["architecture", "design-patterns", "systems-design", "scalability"],
-      "languages": ["pt-BR", "en"],
+      "capabilities": [
+        "architecture",
+        "design-patterns",
+        "systems-design",
+        "scalability"
+      ],
+      "languages": [
+        "pt-BR",
+        "en"
+      ],
       "expertise": 97,
       "responseTime": 550,
       "costPerCall": 0.02
@@ -654,8 +1091,16 @@
       "title": "Especialista em Estratégia",
       "description": "Especialista em estratégia, planejamento e visão de longo prazo",
       "category": "Estratégia",
-      "capabilities": ["strategy", "planning", "vision", "roadmapping"],
-      "languages": ["pt-BR", "en"],
+      "capabilities": [
+        "strategy",
+        "planning",
+        "vision",
+        "roadmapping"
+      ],
+      "languages": [
+        "pt-BR",
+        "en"
+      ],
       "expertise": 93,
       "responseTime": 600,
       "costPerCall": 0.019
@@ -666,15 +1111,23 @@
       "title": "Especialista em Inovação",
       "description": "Especialista em inovação, criatividade e novas soluções",
       "category": "Inovação",
-      "capabilities": ["innovation", "creativity", "ideation", "experimentation"],
-      "languages": ["pt-BR", "en"],
+      "capabilities": [
+        "innovation",
+        "creativity",
+        "ideation",
+        "experimentation"
+      ],
+      "languages": [
+        "pt-BR",
+        "en"
+      ],
       "expertise": 92,
       "responseTime": 580,
       "costPerCall": 0.018
     }
   ],
   "metadata": {
-    "totalSpecialists": 54,
+    "totalSpecialists": 47,
     "categories": [
       "Educação",
       "Tecnologia",

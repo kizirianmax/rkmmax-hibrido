@@ -36,7 +36,7 @@ export default function HybridSystemDashboard() {
             requestsProcessed: Math.floor(Math.random() * 1000),
           },
           registry: {
-            totalSpecialists: 55,
+            totalSpecialists: 47,
             loadedSpecialists: Math.floor(Math.random() * 20) + 1,
             memoryUsage: (Math.random() * 40).toFixed(2) + " MB",
           },

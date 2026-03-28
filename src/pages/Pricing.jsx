@@ -28,7 +28,7 @@ const PLANS = [
     price: "R$ 0,00/mês",
     description: "Acesso completo durante a fase de testes beta.",
     features: [
-      "✅ Todos os 54 especialistas",
+      "✅ Todos os 47 especialistas",
       "✅ Chat com Serginho ilimitado",
       "✅ Study Lab completo",
       "✅ Sem limite de uso",

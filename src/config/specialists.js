@@ -1,5 +1,8 @@
-// Configuração de 50+ Especialistas RKMMAX
+// SOURCE OF TRUTH — 47 Especialistas RKMMAX
 // Arquitetura otimizada: Serginho orquestra todos via 1 chamada grande
+// ATENÇÃO: Este é o único arquivo que define os especialistas do sistema.
+// Backend (api/ai.js) e frontend (Specialists.jsx, SpecialistChat.jsx) leem daqui.
+// Qualquer adição/remoção deve ser feita APENAS aqui.
 
 export const specialists = {
   // GRUPO 1: Educação (já existentes)

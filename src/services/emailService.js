@@ -165,7 +165,7 @@ function generateWelcomeEmailHTML({ name, plan }) {
       <div class="benefit-item">
         <span class="benefit-icon">🤖</span>
         <div class="benefit-text">
-          <strong>54 Especialistas em IA</strong>
+          <strong>47 Especialistas em IA</strong>
           <p>Acesso ilimitado a todos os agentes especializados para qualquer tarefa</p>
         </div>
       </div>
@@ -222,7 +222,7 @@ function generateWelcomeEmailHTML({ name, plan }) {
     <div style="background: #f8fafc; border-radius: 12px; padding: 20px; margin-bottom: 24px;">
       <h3 style="font-size: 18px; font-weight: 700; margin-bottom: 12px;">📋 Próximos Passos:</h3>
       <ol style="margin: 0; padding-left: 20px;">
-        <li style="margin-bottom: 8px;">Explore os 54 especialistas e descubra qual se encaixa melhor nas suas necessidades</li>
+        <li style="margin-bottom: 8px;">Explore os 47 especialistas e descubra qual se encaixa melhor nas suas necessidades</li>
         <li style="margin-bottom: 8px;">Converse com Serginho para conhecer todos os recursos disponíveis</li>
         <li style="margin-bottom: 8px;">Configure suas preferências em <a href="https://rkmmax-app.vercel.app/settings">Configurações</a></li>
         <li style="margin-bottom: 8px;">Gerencie sua assinatura em <a href="https://rkmmax-app.vercel.app/subscription">Minha Assinatura</a></li>
@@ -259,7 +259,7 @@ ${name ? `Olá ${name}! ` : ""}Sua assinatura foi ativada com sucesso e você ag
 
 O QUE VOCÊ GANHOU:
 
-🤖 54 Especialistas em IA
+🤖 47 Especialistas em IA
 Acesso ilimitado a todos os agentes especializados para qualquer tarefa
 
 💬 Serginho - Seu Assistente Pessoal
@@ -282,7 +282,7 @@ COMECE AGORA MESMO:
 
 PRÓXIMOS PASSOS:
 
-1. Explore os 54 especialistas e descubra qual se encaixa melhor nas suas necessidades
+1. Explore os 47 especialistas e descubra qual se encaixa melhor nas suas necessidades
 2. Converse com Serginho para conhecer todos os recursos disponíveis
 3. Configure suas preferências em: https://rkmmax-app.vercel.app/settings
 4. Gerencie sua assinatura em: https://rkmmax-app.vercel.app/subscription

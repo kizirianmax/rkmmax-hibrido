@@ -61,7 +61,7 @@ export default function Success() {
         <div className="benefits-grid">
           <div className="benefit-card">
             <div className="benefit-icon">🤖</div>
-            <h3>54 Especialistas em IA</h3>
+            <h3>47 Especialistas em IA</h3>
             <p>Acesso ilimitado a todos os agentes especializados</p>
           </div>
 

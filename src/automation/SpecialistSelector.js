@@ -1,7 +1,7 @@
 /**
  * SPECIALIST SELECTOR
  * Seleção inteligente de especialista baseada no tipo de tarefa
- * Mapeia tarefas para os 54+ especialistas do RKMMAX
+ * Mapeia tarefas para os 47 especialistas do RKMMAX
  */
 
 class SpecialistSelector {

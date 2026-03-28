@@ -217,7 +217,7 @@ async function sendWelcomeEmail({ email, session }) {
     <div style="background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%); border-radius: 12px; padding: 24px; margin-bottom: 32px;">
       <h2 style="font-size: 20px; font-weight: 700; margin-bottom: 16px;">O que você ganhou:</h2>
       <ul style="list-style: none; padding: 0; margin: 0;">
-        <li style="margin-bottom: 12px;">🤖 <strong>54 Especialistas em IA</strong></li>
+        <li style="margin-bottom: 12px;">🤖 <strong>47 Especialistas em IA</strong></li>
         <li style="margin-bottom: 12px;">💬 <strong>KIZI - Assistente Pessoal 24/7</strong></li>
         <li style="margin-bottom: 12px;">📚 <strong>Study Lab Premium</strong></li>
         <li style="margin-bottom: 12px;">⚡ <strong>Processamento Prioritário</strong></li>

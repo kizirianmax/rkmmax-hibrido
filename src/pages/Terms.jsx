@@ -11,7 +11,7 @@ export default function Terms() {
       </p>
 
       <h2>2. Descrição do Serviço</h2>
-      <p>RKMMAX é uma plataforma de inteligência artificial com 54 especialistas para ajudar em:</p>
+      <p>RKMMAX é uma plataforma de inteligência artificial com 47 especialistas para ajudar em:</p>
       <ul>
         <li>Produtividade e automação</li>
         <li>Criatividade e brainstorming</li>

@@ -17,7 +17,7 @@ export default function Onboarding({ onComplete }) {
   const steps = [
     {
       title: "Bem-vindo ao RKMMAX! 🎉",
-      description: "Sua plataforma completa de IA com 54 especialistas e assistente pessoal.",
+      description: "Sua plataforma completa de IA com 47 especialistas e assistente pessoal.",
       icon: "🚀",
       image: null,
       action: "Começar Tour",
@@ -35,7 +35,7 @@ export default function Onboarding({ onComplete }) {
       action: "Próximo",
     },
     {
-      title: "54 Especialistas em IA 🎯",
+      title: "47 Especialistas em IA 🎯",
       description: "Acesso a agentes especializados para qualquer tarefa específica.",
       icon: "👥",
       features: [

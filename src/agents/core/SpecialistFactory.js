@@ -131,7 +131,7 @@ Always provide accurate, helpful, and safe responses.`;
   }
 
   /**
-   * Criar Especialistas Padrão (54 especialistas iniciais)
+   * Criar Especialistas Padrão (47 especialistas)
    */
   static createDefaultSpecialists() {
     const defaultConfigs = [
