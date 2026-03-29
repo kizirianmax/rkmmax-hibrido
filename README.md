@@ -262,6 +262,7 @@ rkmmax-hibrido/
 - **Single-owner governance:** This is an individual project. External contributions are welcome but must pass all tests and comply with [DEVELOPMENT_GUIDELINES.md](DEVELOPMENT_GUIDELINES.md).
 - **Serverless-first resilience:** The circuit breaker pattern is the primary mechanism for handling downstream failures within Vercel's timeout constraints.
 - **Legacy repo consolidation:** The architecture is fully consolidated in `rkmmax-hibrido`. Legacy repositories (`kizirian-max-site`, `Rkmmax-app`, `kizi-agent`, `rkmmax-specialists`) have been audited and are no longer active structural sources. `kizi-agent` was an original prototype; `rkmmax-specialists` was a standalone dataset snapshot (49 specialists, superseded by the 47-specialist canonical set in `src/config/specialists.js`). Both are formally classified as discontinued, with no structural dependency in the current system.
+- **Active parallel deployment — ABNT layer:** The repository `formatador-abnt` (deployed at `abnt.kizirianmax.site`) is **not** classified as discontinued. It is an independent, actively deployed standalone version of the ABNT conformance layer, running its own stack (Express + Vite + TypeScript). It retains two features not yet fully ported to `rkmmax-hibrido`: (1) a reference validator with ABNT compliance scoring, and (2) project-based organisation of the reference library. It should be preserved until those features are either absorbed into the main codebase or explicitly deprecated.
 
 ---
 
