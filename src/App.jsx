@@ -35,6 +35,9 @@ import MapasMentais from "./pages/MapasMentais.jsx";
 import SourceProof from "./pages/SourceProof.jsx";
 import HybridAgentSimple from "./pages/HybridAgentSimple.jsx";
 import GitHubCallback from "./pages/GitHubCallback.jsx";
+import Auth from "./pages/Auth.jsx";
+import Logout from "./pages/Logout.jsx";
+import ResetPassword from "./pages/ResetPassword.jsx";
 
 export default function App() {
   const [showOnboarding, setShowOnboarding] = React.useState(false);
@@ -106,6 +109,11 @@ export default function App() {
         <Route path="/hybrid" element={<HybridAgentSimple />} />
         <Route path="/agent" element={<HybridAgentSimple />} />
         <Route path="/github-callback" element={<GitHubCallback />} />
+
+        {/* Auth */}
+        <Route path="/login" element={<Auth />} />
+        <Route path="/logout" element={<Logout />} />
+        <Route path="/reset-password" element={<ResetPassword />} />
 
         {/* Políticas */}
         <Route path="/privacy" element={<Privacy />} />
