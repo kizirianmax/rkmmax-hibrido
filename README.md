@@ -18,7 +18,7 @@ The system is structured in three layers:
 | Layer | Component | Role |
 |-------|-----------|------|
 | **Orchestration** | Serginho | Sovereign orchestrator — routes requests, maintains context, delegates to specialists |
-| **Domain expertise** | Specialist Agents | Ten domain specialists, each with a focused capability set |
+| **Domain expertise** | Specialist Agents | 47 domain specialists across 9 categories, each with a focused capability set |
 | **Artifact generation** | Híbrido / Construtor | Handles artifact construction, hybrid chat, and multi-step generation tasks |
 
 **AI provider:** Groq API is the sole active AI runtime. The orchestrator uses a model cascade within Groq:
@@ -55,20 +55,21 @@ For a detailed architectural breakdown, see [docs/architecture.md](docs/architec
 
 ## Specialist Agents
 
-Ten domain specialists are registered in `src/agents/specialists/specialists-config.json`:
+The system registers **47 domain specialists** across 9 categories. The canonical source of truth is `src/config/specialists.js`, which is the only file read by both the backend (`api/ai.js`) and the frontend at runtime.
 
-| ID | Name | Domain |
-|----|------|--------|
-| `didak` | Didak | Teaching, curriculum design, pedagogy |
-| `code` | Code Master | Software development, debugging, architecture |
-| `design` | Design Pro | UI/UX, visual design, prototyping |
-| `marketing` | Marketing Guru | Marketing strategy, branding, positioning |
-| `data` | Data Analyst | Data analysis, visualization, SQL |
-| `security` | Security Expert | Information security, encryption, compliance |
-| `performance` | Performance Tuner | Optimization, benchmarking, profiling |
-| `accessibility` | A11y Specialist | WCAG, inclusive design, accessibility testing |
-| `writing` | Tech Writer | Technical documentation, content editing |
-| `business` | Business Analyst | Business analysis, strategy, planning |
+| Category | Specialists |
+|----------|-------------|
+| `business` | Biz, Cash, Sales, Mark, Law, PM, HR |
+| `creative` | Orac, Zen, Vox, Art, Beat, Film, Lens, Write, Game |
+| `education` | Didak, Edu, Mentor |
+| `engineering` | Mech, Elec, Civil |
+| `languages` | Poly, Eng, Span |
+| `lifestyle` | Trip, Home, Style, Eco, Med |
+| `science` | Bio, Chem, Phys, Math, Astro |
+| `tech` | Code, Nexus, Synth, Sec, Data, UX, Mobile |
+| `wellness` | Emo, Focus, Fit, Chef, Coach |
+
+> **Note:** `src/agents/specialists/specialists-config.json` is a legacy stub kept for historical reference and is not imported by any active code path.
 
 ---
 
@@ -258,7 +259,7 @@ rkmmax-hibrido/
 ## Architecture Principles
 
 - **Groq-only runtime:** Groq is the sole active AI provider. No other LLM provider is called at runtime. Legacy packages in `package.json` (`@google/generative-ai`, `openai`) are not part of the active call path.
-- **CI-green merges only:** No PR is merged to `main` without a passing CI run. This is a hard rule enforced by branch protection.
+- **CI-green merges only:** No PR is merged to `main` without a passing CI run. This is a hard rule enforced by convention; branch protection rules require GitHub Pro or a public repository and are not currently active on this private repository.
 - **Single-owner governance:** This is an individual project. External contributions are welcome but must pass all tests and comply with [DEVELOPMENT_GUIDELINES.md](DEVELOPMENT_GUIDELINES.md).
 - **Serverless-first resilience:** The circuit breaker pattern is the primary mechanism for handling downstream failures within Vercel's timeout constraints.
 - **Legacy repo consolidation:** The architecture is fully consolidated in `rkmmax-hibrido`. Legacy repositories (`kizirian-max-site`, `Rkmmax-app`, `kizi-agent`) have been audited and are no longer active structural sources. `kizi-agent` was an original prototype and is now formally classified as discontinued, with no structural dependency in the current system.
