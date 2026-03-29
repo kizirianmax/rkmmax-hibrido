@@ -38,18 +38,17 @@ function SimpleMarkdown({ text }) {
 }
 
 /**
- * RKMMAX HYBRID - VERSÃO KIZI INTELIGENTE
- * Sistema 100% Groq com 3 modelos em cascata:
- * - KIZI Primary (openai/gpt-oss-120b) - Modelo principal
- * - KIZI Speed (llama-3.3-70b-versatile) - Fallback rápido
- * - KIZI Long (mixtral-8x7b-32768) - Contextos longos
+ * RKMMAX HYBRID - CONSTRUTOR (KIZI)
+ * Agente Construtor: geração e entrega de artefatos via orquestrador KIZI.
+ * Roteamento adaptativo multi-provedor (KIZI 2.5 Pro, Speed, Flash).
  * Modos: Manual (1 crédito) | Otimizado (0.5 crédito)
+ * Sem seleção direta de especialista — orquestração é responsabilidade do Serginho.
  */
 export default function HybridAgentSimple() {
   const [mode, setMode] = useState("manual");
   const [input, setInput] = useState("");
   // Versão do app para cache busting
-  const APP_VERSION = "v3.1.0-kizi";
+  const APP_VERSION = "v3.1.0";
 
   const [messages, setMessages] = useState([
     {
@@ -377,7 +376,7 @@ export default function HybridAgentSimple() {
             <div className="info-box">
               <h3>SISTEMA</h3>
               <p>
-                🚀 <strong>Versão 3.0.2</strong>
+                🚀 <strong>Versão 3.1.0</strong>
               </p>
               <p>Construtor — Sistema automatizado</p>
               <p>
