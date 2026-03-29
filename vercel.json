@@ -96,5 +96,5 @@
       ]
     }
   ],
-  "installCommand": "npm install"
+  "installCommand": "npm install --legacy-peer-deps"
 }
