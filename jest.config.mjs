@@ -17,10 +17,14 @@ export default {
   ],
   coverageThreshold: {
     global: {
-      statements: 5,
-      branches: 5,
-      functions: 5,
-      lines: 5
+      // Threshold progressivo: aumentado de 5% -> 40% apos auditoria de cobertura real.
+      // Cobertura real medida (Mar 2026): ~44% stmts, ~42% branches, ~40% funcs.
+      // Margem de seguranca de ~4pp para evitar falsos negativos em CI.
+      // Proxima meta sugerida: 50% (quando modulos de src/pages forem cobertos).
+      statements: 40,
+      branches: 35,
+      functions: 35,
+      lines: 40
     }
   },
   setupFilesAfterEnv: ['./jest.setup.mjs'],
