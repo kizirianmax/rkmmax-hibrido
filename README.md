@@ -151,8 +151,7 @@ All endpoints are Vercel serverless functions under `/api/`.
 |----------|--------|---------|
 | `/api/health` | GET | System health check |
 | `/api/chat` | POST | Main chat interface |
-| `/api/hybrid` | POST | Híbrido agent orchestration |
-| `/api/ai` | POST | AI abstraction layer |
+| `/api/ai` | POST | AI abstraction layer (Construtor: `agentType: "hybrid"`, Serginho: `type: "genius"`, Specialists: `type: "specialist"`) |
 | `/api/transcribe` | POST | Audio transcription |
 | `/api/abnt-extract-url` | POST | ABNT document extraction |
 | `/api/study-lab` | POST | Study lab features |
