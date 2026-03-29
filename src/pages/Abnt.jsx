@@ -9,6 +9,7 @@ import CitationGenerator from "../components/abnt/CitationGenerator.jsx";
 import URLImporter from "../components/abnt/URLImporter.jsx";
 import DocumentExporter from "../components/abnt/DocumentExporter.jsx";
 import ReferenceLibrary, { useReferenceLibrary } from "../components/abnt/ReferenceLibrary.jsx";
+import ReferenceValidator from "../components/abnt/ReferenceValidator.jsx";
 
 const TABS = [
   { id: "capa", label: "📋 Capa" },
@@ -21,6 +22,7 @@ const SIDEBAR_TABS = [
   { id: "citation", label: "✍️ Citações" },
   { id: "url", label: "🌐 URL" },
   { id: "library", label: "📚 Biblioteca" },
+  { id: "validate", label: "✅ Validar" },
   { id: "export", label: "📤 Exportar" },
 ];
 
@@ -359,6 +361,9 @@ export default function Abnt() {
               )}
               {sidebarTab === "library" && (
                 <ReferenceLibrary onSelectReference={handleSelectFromLibrary} />
+              )}
+              {sidebarTab === "validate" && (
+                <ReferenceValidator />
               )}
               {sidebarTab === "export" && (
                 <DocumentExporter workData={work} />
