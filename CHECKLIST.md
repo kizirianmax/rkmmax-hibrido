@@ -1364,6 +1364,7 @@ Legendas: ✅ feito | ⚠️ pendente | ⏭️ próximo
 
 
 ## Phase A5.2 — Hybrid Endpoint Stability Fix
+> **Note (PASSO 4):** `api/hybrid.js` was removed in PASSO 4 (PR #254). The Construtor now routes exclusively through `/api/ai` with `agentType: "hybrid"`. Entries below are historical record only.
 - ✅ `api/hybrid.js` — Added env var guard (GEMINI_API_KEY / GROQ_API_KEY check) before calling betinhoParallel
 - ✅ `api/hybrid.js` — Fixed error message matching: Portuguese "todos os providers falharam" from betinhoParallel now correctly maps to 503 (was falling through to generic 500)
 - ✅ Root cause: missing env guard + error message language mismatch
@@ -1371,7 +1372,7 @@ Legendas: ✅ feito | ⚠️ pendente | ⏭️ próximo
 - ✅ Validation: POST /api/hybrid → returns 503 with helpful message when providers are down (not 500)
 
 
-## Phase A5.3 — Hybrid Groq-only Safe Mode
+## Phase A5.3 — Hybrid Groq-only Safe Mode *(historical — api/hybrid.js removed in PASSO 4)*
 - ✅ `api/lib/providers-config.js` — Added `getEnabledProviders()`: filters providers by available env vars at runtime
 - ✅ `api/lib/providers-config.js` — Added `parseProviderWeights()`: scaffolding for future weighted routing (reads HYBRID_PROVIDER_WEIGHTS env var)
 - ✅ `api/lib/serginho-orchestrator.js` — `betinhoParallel()` now uses `getEnabledProviders()` instead of `Object.keys(PROVIDERS)`
@@ -1383,7 +1384,7 @@ Legendas: ✅ feito | ⚠️ pendente | ⏭️ próximo
 - ✅ Validation: POST /api/hybrid with only GROQ_API_KEY → works without Gemini errors
 
 
-## Phase A5.4 — Hybrid Weights Routing + 120B Default
+## Phase A5.4 — Hybrid Weights Routing + 120B Default *(historical — api/hybrid.js removed in PASSO 4)*
 - ✅ `api/lib/providers-config.js` — Added `getWeightedProviders()`: deterministic provider selection using HYBRID_PROVIDER_WEIGHTS or defaulting to llama-120b
 - ✅ `api/lib/providers-config.js` — `parseProviderWeights()` (from A5.3) now actively consumed by `getWeightedProviders()`
 - ✅ `api/lib/serginho-orchestrator.js` — `betinhoParallel()` now uses `getWeightedProviders()` instead of `getEnabledProviders()` directly
@@ -1595,7 +1596,7 @@ Ou restaurar os arquivos antigos do commit anterior.
 
 ---
 
-## 16. Fix: Hybrid endpoint enforces openai/gpt-oss-120b (Groq-only, no fallback)
+## 16. Fix: Hybrid endpoint enforces openai/gpt-oss-120b (Groq-only, no fallback) *(historical — api/hybrid.js removed in PASSO 4)*
 
 | Item | Detalhe |
 |------|---------|
