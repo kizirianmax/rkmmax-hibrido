@@ -5,22 +5,7 @@ import AGENTS from "../data/agents.js";
 
 // ===== Configurações =====
 const SHOW_HUMAN_SUPPORT = true; // torne false para ocultar
-const WHATSAPP_NUMBER = "55SEUNUMEROAQUI"; // DDI+DDD+número
-
-function openWhatsAppEmergency(agent) {
-  const text =
-    agent?.id === "serginho"
-      ? "Suporte crítico: preciso de ajuda com meu projeto (Serginho)."
-      : `Suporte crítico sobre o especialista ${agent?.name} (orquestrado pelo Serginho).`;
-
-  const appDeepLink = `whatsapp://send?phone=${WHATSAPP_NUMBER}&text=${encodeURIComponent(text)}`;
-  const webFallback = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(text)}`;
-
-  window.location.href = appDeepLink;
-  setTimeout(() => {
-    window.open(webFallback, "_blank", "noopener,noreferrer");
-  }, 600);
-}
+const SUPPORT_EMAIL = "roberto@kizirianmax.site";
 
 export default function AgentDetail() {
   const { id } = useParams();
@@ -36,6 +21,11 @@ export default function AgentDetail() {
       </div>
     );
   }
+
+  const supportSubject =
+    agent?.id === "serginho"
+      ? "Suporte crítico: preciso de ajuda com meu projeto (Serginho)."
+      : `Suporte crítico sobre o especialista ${agent?.name} (orquestrado pelo Serginho).`;
 
   return (
     <div style={{ padding: "1.5rem", color: "#e6eef5" }}>
@@ -98,21 +88,18 @@ export default function AgentDetail() {
       {/* Suporte humano discreto */}
       {SHOW_HUMAN_SUPPORT && (
         <div style={{ marginTop: 8, textAlign: "right" }}>
-          <button
-            onClick={() => openWhatsAppEmergency(agent)}
+          <a
+            href={`mailto:${SUPPORT_EMAIL}?subject=${encodeURIComponent(supportSubject)}`}
             style={{
-              background: "transparent",
-              border: "none",
               color: "#9fe5b5",
               fontSize: 12,
               opacity: 0.8,
               textDecoration: "underline",
-              cursor: "pointer",
             }}
             title="Use apenas se o chat falhar ou for crítico"
           >
-            ⚠ Suporte humano (WhatsApp)
-          </button>
+            ⚠ Suporte humano (e-mail)
+          </a>
         </div>
       )}
     </div>
