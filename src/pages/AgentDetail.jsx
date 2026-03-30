@@ -1,7 +1,7 @@
 // src/pages/AgentDetail.jsx
 import React from "react";
 import { useParams, Link } from "react-router-dom";
-import AGENTS from "../data/agents.js";
+import { AGENTS } from "../data/agents.js";
 
 // ===== Configurações =====
 const SHOW_HUMAN_SUPPORT = true; // torne false para ocultar
