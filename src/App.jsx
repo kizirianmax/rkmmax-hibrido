@@ -38,6 +38,12 @@ import GitHubCallback from "./pages/GitHubCallback.jsx";
 import Auth from "./pages/Auth.jsx";
 import Logout from "./pages/Logout.jsx";
 import ResetPassword from "./pages/ResetPassword.jsx";
+import Account from "./pages/Account.jsx";
+import Info from "./pages/Info.jsx";
+import Subscribe from "./pages/Subscribe.jsx";
+import PlansScreen from "./pages/PlansScreen.jsx";
+import AgentDetail from "./pages/AgentDetail.jsx";
+import Chat from "./pages/Chat.jsx";
 
 export default function App() {
   const [showOnboarding, setShowOnboarding] = React.useState(false);
@@ -90,6 +96,8 @@ export default function App() {
         {/* Planos */}
         <Route path="/pricing" element={<Pricing />} />
         <Route path="/plans" element={<Navigate to="/pricing" replace />} />
+        <Route path="/subscribe" element={<Subscribe />} />
+        <Route path="/plans-screen" element={<PlansScreen />} />
 
         {/* Sucesso do Stripe */}
         <Route path="/success" element={<Success />} />
@@ -97,6 +105,7 @@ export default function App() {
         {/* Help & Status */}
         <Route path="/help" element={<Help />} />
         <Route path="/status" element={<Help />} />
+        <Route path="/info" element={<Info />} />
 
         {/* Settings */}
         <Route path="/settings" element={<Settings />} />
@@ -108,12 +117,15 @@ export default function App() {
         {/* Sistema Híbrido */}
         <Route path="/hybrid" element={<HybridAgentSimple />} />
         <Route path="/agent" element={<HybridAgentSimple />} />
+        <Route path="/agent-detail/:id" element={<AgentDetail />} />
+        <Route path="/chat" element={<Chat />} />
         <Route path="/github-callback" element={<GitHubCallback />} />
 
         {/* Auth */}
         <Route path="/login" element={<Auth />} />
         <Route path="/logout" element={<Logout />} />
         <Route path="/reset-password" element={<ResetPassword />} />
+        <Route path="/account" element={<Account />} />
 
         {/* Políticas */}
         <Route path="/privacy" element={<Privacy />} />
