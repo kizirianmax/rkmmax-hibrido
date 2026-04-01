@@ -690,7 +690,7 @@ export function buildGeniusPrompt(type, options = {}) {
       break;
 
     case "hybrid":
-      basePrompt = HYBRID_GENIUS_PROMPT + '\n\n' + FEW_SHOT_EXAMPLES.webArtifact + '\n\n' + getWebPresetBlock();
+      basePrompt = HYBRID_GENIUS_PROMPT;
       break;
 
     default:
