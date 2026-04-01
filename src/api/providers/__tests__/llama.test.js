@@ -127,7 +127,7 @@ describe('LlamaProvider', () => {
       expect(result).toEqual(mockData);
     });
 
-    test('Throws error when API returns error', async () => {
+    test('Throws error when API returns error after retries', async () => {
       const mockResponse = {
         ok: false,
         status: 500,
@@ -137,10 +137,17 @@ describe('LlamaProvider', () => {
       };
       global.fetch.mockResolvedValue(mockResponse);
 
-      await expect(provider.generate('Test prompt')).rejects.toThrow('Llama 70b API error: API Error');
+      jest.useFakeTimers();
+      const promise = provider.generate('Test prompt');
+      const assertion = expect(promise).rejects.toThrow('Llama 70b API error: API Error');
+      await jest.runAllTimersAsync();
+      await assertion;
+      jest.useRealTimers();
+
+      expect(global.fetch).toHaveBeenCalledTimes(3);
     });
 
-    test('Handles JSON parse error gracefully', async () => {
+    test('Handles JSON parse error gracefully after retries', async () => {
       const mockResponse = {
         ok: false,
         status: 503,
@@ -148,7 +155,97 @@ describe('LlamaProvider', () => {
       };
       global.fetch.mockResolvedValue(mockResponse);
 
-      await expect(provider.generate('Test prompt')).rejects.toThrow('Llama 70b API error: 503');
+      jest.useFakeTimers();
+      const promise = provider.generate('Test prompt');
+      const assertion = expect(promise).rejects.toThrow('Llama 70b API error: 503');
+      await jest.runAllTimersAsync();
+      await assertion;
+      jest.useRealTimers();
+
+      expect(global.fetch).toHaveBeenCalledTimes(3);
+    });
+
+    test('Does not retry on non-retryable 400 error', async () => {
+      const mockResponse = {
+        ok: false,
+        status: 400,
+        json: jest.fn().mockResolvedValue({
+          error: { message: 'Bad Request' }
+        })
+      };
+      global.fetch.mockResolvedValue(mockResponse);
+
+      await expect(provider.generate('Test prompt')).rejects.toThrow('Llama 70b API error: Bad Request');
+      expect(global.fetch).toHaveBeenCalledTimes(1);
+    });
+
+    test('Does not retry on non-retryable 401 error', async () => {
+      const mockResponse = {
+        ok: false,
+        status: 401,
+        json: jest.fn().mockResolvedValue({
+          error: { message: 'Unauthorized' }
+        })
+      };
+      global.fetch.mockResolvedValue(mockResponse);
+
+      await expect(provider.generate('Test prompt')).rejects.toThrow('Llama 70b API error: Unauthorized');
+      expect(global.fetch).toHaveBeenCalledTimes(1);
+    });
+
+    test('Retries on 429 and succeeds on second attempt', async () => {
+      const errorResponse = {
+        ok: false,
+        status: 429,
+        json: jest.fn().mockResolvedValue({ error: { message: 'Rate limit exceeded' } })
+      };
+      const successData = {
+        choices: [{ message: { content: 'Retry success' } }]
+      };
+      const successResponse = {
+        ok: true,
+        json: jest.fn().mockResolvedValue(successData)
+      };
+      global.fetch
+        .mockResolvedValueOnce(errorResponse)
+        .mockResolvedValueOnce(successResponse);
+
+      jest.useFakeTimers();
+      const promise = provider.generate('Test prompt');
+      await jest.runAllTimersAsync();
+      const result = await promise;
+      jest.useRealTimers();
+
+      expect(global.fetch).toHaveBeenCalledTimes(2);
+      expect(result).toEqual(successData);
+    });
+
+    test('Retries on 503 and succeeds on third attempt', async () => {
+      const errorResponse = {
+        ok: false,
+        status: 503,
+        json: jest.fn().mockResolvedValue({ error: { message: 'Service Unavailable' } })
+      };
+      const successData = {
+        choices: [{ message: { content: 'Third attempt success' } }]
+      };
+      const successResponse = {
+        ok: true,
+        json: jest.fn().mockResolvedValue(successData)
+      };
+      global.fetch
+        .mockResolvedValueOnce(errorResponse)
+        .mockResolvedValueOnce(errorResponse)
+        .mockResolvedValueOnce(successResponse);
+
+      jest.useFakeTimers();
+      const promise = provider.generate('Test prompt');
+      await jest.runAllTimersAsync();
+      const result = await promise;
+      jest.useRealTimers();
+
+      expect(global.fetch).toHaveBeenCalledTimes(3);
+      expect(result).toEqual(successData);
     });
   });
 
