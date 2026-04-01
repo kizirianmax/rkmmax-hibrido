@@ -2,7 +2,7 @@
 import * as Sentry from "@sentry/react";
 
 export function initSentry() {
-  const dsn = process.env.REACT_APP_SENTRY_DSN;
+  const dsn = import.meta.env.VITE_SENTRY_DSN;
 
   if (!dsn) {
     console.warn("⚠️ Sentry DSN not configured. Error tracking disabled.");
@@ -11,7 +11,7 @@ export function initSentry() {
 
   Sentry.init({
     dsn,
-    environment: process.env.NODE_ENV || "development",
+    environment: import.meta.env.MODE || "development",
     integrations: [
       Sentry.browserTracingIntegration(),
       Sentry.replayIntegration({
@@ -25,14 +25,14 @@ export function initSentry() {
     ],
 
     // Performance Monitoring - Amostragem econômica: 5% em produção
-    tracesSampleRate: process.env.NODE_ENV === "production" ? 0.05 : 1.0,
+    tracesSampleRate: import.meta.env.MODE === "production" ? 0.05 : 1.0,
 
     // Session Replay - Amostragem econômica
     replaysSessionSampleRate: 0.05, // 5% das sessões normais
     replaysOnErrorSampleRate: 1.0, // 100% dos erros (crítico)
 
     // Release tracking
-    release: process.env.REACT_APP_VERSION || "1.0.0",
+    release: import.meta.env.VITE_APP_VERSION || "1.0.0",
 
     // Ignore common errors
     ignoreErrors: [

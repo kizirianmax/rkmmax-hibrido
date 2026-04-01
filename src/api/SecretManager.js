@@ -23,25 +23,16 @@ class SecretManager {
     try {
       // 🔐 CARREGAR CREDENCIAIS DO AMBIENTE
       this.secrets = {
-        // Gemini — legado/opcional; o fluxo principal usa Groq
-        // GEMINI API
-        gemini: {
-          apiKey: this._getEnvVar("REACT_APP_GEMINI_API_KEY", "VITE_GEMINI_API_KEY"),
-          isConfigured: false,
-        },
-        // GROQ API
+        // GROQ API — provider principal
         groq: {
-          apiKey: this._getEnvVar("REACT_APP_GROQ_API_KEY", "VITE_GROQ_API_KEY"),
+          apiKey: this._getEnvVar("VITE_GROQ_API_KEY"),
           isConfigured: false,
         },
         // GITHUB OAUTH
         github: {
-          clientId: this._getEnvVar("REACT_APP_GITHUB_CLIENT_ID", "VITE_GITHUB_CLIENT_ID"),
-          clientSecret: this._getEnvVar(
-            "REACT_APP_GITHUB_CLIENT_SECRET",
-            "VITE_GITHUB_CLIENT_SECRET"
-          ),
-          redirectUri: this._getEnvVar("REACT_APP_GITHUB_REDIRECT_URI", "VITE_GITHUB_REDIRECT_URI"),
+          clientId: this._getEnvVar("VITE_GITHUB_CLIENT_ID"),
+          clientSecret: this._getEnvVar("VITE_GITHUB_CLIENT_SECRET"),
+          redirectUri: this._getEnvVar("VITE_GITHUB_REDIRECT_URI"),
           isConfigured: false,
         },
       };
@@ -51,7 +42,6 @@ class SecretManager {
 
       // 📊 LOG SEGURO (sem expor chaves)
       console.log("🔐 Secret Manager inicializado:", {
-        gemini: this.secrets.gemini.isConfigured ? "✅ Configurado" : "❌ Não configurado",
         groq: this.secrets.groq.isConfigured ? "✅ Configurado" : "❌ Não configurado",
         github: this.secrets.github.isConfigured ? "✅ Configurado" : "❌ Não configurado",
       });
@@ -71,7 +61,7 @@ class SecretManager {
    */
   _getEnvVar(...names) {
     for (const name of names) {
-      const value = process.env[name] || window?.[name];
+      const value = import.meta.env[name] || window?.[name];
       if (value) return value;
     }
     return null;
@@ -83,15 +73,6 @@ class SecretManager {
    */
   _validateSecrets() {
     this.validationErrors = [];
-
-    // Validar Gemini
-    if (this.secrets.gemini.apiKey) {
-      this.secrets.gemini.isConfigured = true;
-      console.log("✅ Gemini API configurada");
-    } else {
-      console.warn("ℹ️ Gemini API não configurada (opcional — não faz parte do fluxo principal Groq)");
-      this.validationErrors.push("GEMINI_API_KEY");
-    }
 
     // Validar GROQ
     if (this.secrets.groq.apiKey) {
@@ -158,7 +139,6 @@ class SecretManager {
     return {
       initialized: this.initialized,
       services: {
-        gemini: this.secrets.gemini.isConfigured,
         groq: this.secrets.groq.isConfigured,
         github: this.secrets.github.isConfigured,
       },

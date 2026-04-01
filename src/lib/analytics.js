@@ -2,8 +2,8 @@
 import posthog from "posthog-js";
 
 export function initAnalytics() {
-  const apiKey = process.env.REACT_APP_POSTHOG_KEY;
-  const host = process.env.REACT_APP_POSTHOG_HOST || "https://app.posthog.com";
+  const apiKey = import.meta.env.VITE_POSTHOG_KEY;
+  const host = import.meta.env.VITE_POSTHOG_HOST || "https://app.posthog.com";
 
   if (!apiKey) {
     console.warn("⚠️ PostHog API key not configured. Analytics disabled.");
@@ -31,12 +31,12 @@ export function initAnalytics() {
         tel: true,
       },
       // Gravar apenas 5% das sessões
-      sampleRate: process.env.NODE_ENV === "production" ? 0.05 : 1.0,
+      sampleRate: import.meta.env.MODE === "production" ? 0.05 : 1.0,
     },
 
     // Disable in development
     loaded: (ph) => {
-      if (process.env.NODE_ENV === "development") {
+      if (import.meta.env.MODE === "development") {
         ph.opt_out_capturing();
       }
     },
