@@ -19,6 +19,8 @@ import {
   buildGeniusPrompt,
 } from '../geniusPrompts.js';
 
+import { getWebPresetBlock } from '../premiumWebPresets.js';
+
 // ─── Fixtures ────────────────────────────────────────────────────────────────
 
 const CODE_SPECIALIST = {
@@ -392,9 +394,135 @@ describe('FEW_SHOT_EXAMPLES — exemplo de artefato web (webArtifact)', () => {
   });
 });
 
-// ─── Bloco 8: buildGeniusPrompt("hybrid") — few-shot injetado ────────────────
+// ─── Bloco 8: buildGeniusPrompt("hybrid") — few-shot injetado e presets injetados ──
 
-describe('buildGeniusPrompt("hybrid") — few-shot webArtifact injetado', () => {
+describe("buildGeniusPrompt('hybrid') — few-shot + presets premium injetados", () => {
+  let hybridPrompt;
+
+  beforeAll(() => {
+    hybridPrompt = buildGeniusPrompt('hybrid');
+  });
+
+  it('inclui bloco de presets premium (PRESETS PREMIUM PARA ARTEFATOS WEB)', () => {
+    expect(hybridPrompt).toContain('PRESETS PREMIUM PARA ARTEFATOS WEB');
+  });
+
+  it('inclui instrução de seleção de paleta baseada no contexto', () => {
+    expect(hybridPrompt).toContain('Analise o pedido e selecione a paleta');
+  });
+
+  it('inclui todas as 4 paletas de design por nome', () => {
+    expect(hybridPrompt).toContain('Midnight Pro');
+    expect(hybridPrompt).toContain('Sunrise Warm');
+    expect(hybridPrompt).toContain('Ocean Corporate');
+    expect(hybridPrompt).toContain('Nature Fresh');
+  });
+
+  it('inclui instrução para não usar sempre a mesma paleta roxa', () => {
+    expect(hybridPrompt).toContain('NÃO use sempre a mesma paleta roxa');
+  });
+
+  it('inclui estruturas por tipo de página (landing, institucional, startup)', () => {
+    expect(hybridPrompt).toContain('Landing Page Premium');
+    expect(hybridPrompt).toContain('Página Institucional de Produto');
+    expect(hybridPrompt).toContain('Apresentação de Startup');
+  });
+
+  it('inclui blocos CSS com backdrop-filter (glass morphism)', () => {
+    expect(hybridPrompt).toContain('backdrop-filter');
+  });
+
+  it('inclui blocos JS com IntersectionObserver', () => {
+    expect(hybridPrompt).toContain('IntersectionObserver');
+  });
+
+  it('inclui blocos JS com smooth scroll', () => {
+    expect(hybridPrompt).toContain("behavior: 'smooth'");
+  });
+
+  it('inclui few-shot original de webArtifact (landing page produtividade)', () => {
+    expect(hybridPrompt).toContain('FocusFlow');
+    expect(hybridPrompt).toContain('Pare de gerenciar');
+  });
+
+  it('inclui few-shot adicional de página institucional', () => {
+    expect(hybridPrompt).toContain('FEW-SHOT: PÁGINA INSTITUCIONAL DE PRODUTO');
+    expect(hybridPrompt).toContain('DataStream');
+  });
+
+  it('inclui few-shot adicional de apresentação de startup', () => {
+    expect(hybridPrompt).toContain('FEW-SHOT: APRESENTAÇÃO DE STARTUP');
+    expect(hybridPrompt).toContain('GreenRoute');
+  });
+
+  it('ainda inclui HYBRID_SELF_REFLECTION_SUFFIX com "Agregou valor real"', () => {
+    expect(hybridPrompt).toContain('Agregou valor real');
+  });
+
+  it('ainda inclui HYBRID_GENIUS_PROMPT com PADRÃO PREMIUM PARA ARTEFATOS WEB', () => {
+    expect(hybridPrompt).toContain('PADRÃO PREMIUM PARA ARTEFATOS WEB');
+  });
+
+  it('NÃO contém POLÍTICA DE CONTENÇÃO DE DOMÍNIO (exclusivo de especialistas)', () => {
+    expect(hybridPrompt).not.toContain('POLÍTICA DE CONTENÇÃO DE DOMÍNIO');
+  });
+});
+
+// ─── Bloco 9: buildGeniusPrompt('serginho') e ('specialist') NÃO foram alterados ──
+
+describe("buildGeniusPrompt('serginho') — NÃO alterado pelos presets", () => {
+  let serginhoPrompt;
+
+  beforeAll(() => {
+    serginhoPrompt = buildGeniusPrompt('serginho');
+  });
+
+  it('NÃO contém bloco de presets premium', () => {
+    expect(serginhoPrompt).not.toContain('PRESETS PREMIUM PARA ARTEFATOS WEB');
+  });
+
+  it('NÃO contém few-shot de DataStream (página institucional)', () => {
+    expect(serginhoPrompt).not.toContain('DataStream');
+  });
+
+  it('NÃO contém few-shot de GreenRoute (startup)', () => {
+    expect(serginhoPrompt).not.toContain('GreenRoute');
+  });
+
+  it('ainda contém SERGINHO e SELF_REFLECTION_SUFFIX inalterados', () => {
+    expect(serginhoPrompt).toContain('SERGINHO');
+    expect(serginhoPrompt).toContain('Agregou valor real');
+  });
+});
+
+describe("buildGeniusPrompt('specialist') — NÃO alterado pelos presets", () => {
+  let specialistPrompt;
+
+  beforeAll(() => {
+    specialistPrompt = buildGeniusPrompt('specialist', {
+      name: 'Code',
+      description: 'Especialista em programação',
+      category: 'tech',
+      systemPrompt: 'Responda apenas questões de desenvolvimento.',
+    });
+  });
+
+  it('NÃO contém bloco de presets premium', () => {
+    expect(specialistPrompt).not.toContain('PRESETS PREMIUM PARA ARTEFATOS WEB');
+  });
+
+  it('NÃO contém few-shot de DataStream', () => {
+    expect(specialistPrompt).not.toContain('DataStream');
+  });
+
+  it('ainda contém POLÍTICA DE CONTENÇÃO DE DOMÍNIO', () => {
+    expect(specialistPrompt).toContain('POLÍTICA DE CONTENÇÃO DE DOMÍNIO — INVIOLÁVEL');
+  });
+});
+
+// ─── Bloco 10: webArtifact aparece em posição correta no hybrid ───────────────
+
+describe('buildGeniusPrompt("hybrid") — posição do few-shot no prompt', () => {
   let hybridPrompt;
 
   beforeAll(() => {

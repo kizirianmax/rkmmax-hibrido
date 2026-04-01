@@ -15,6 +15,8 @@
  * - Cache de respostas similares
  */
 
+import { getWebPresetBlock } from './premiumWebPresets.js';
+
 /**
  * SERGINHO - Orquestrador Master (Nível ChatGPT-5)
  */
@@ -688,7 +690,7 @@ export function buildGeniusPrompt(type, options = {}) {
       break;
 
     case "hybrid":
-      basePrompt = HYBRID_GENIUS_PROMPT;
+      basePrompt = HYBRID_GENIUS_PROMPT + '\n\n' + FEW_SHOT_EXAMPLES.webArtifact + '\n\n' + getWebPresetBlock();
       break;
 
     default:
@@ -700,7 +702,7 @@ export function buildGeniusPrompt(type, options = {}) {
     return basePrompt + SPECIALIST_SELF_REFLECTION_SUFFIX;
   }
   if (type === "hybrid") {
-    return basePrompt + "\n\n" + FEW_SHOT_EXAMPLES.webArtifact + HYBRID_SELF_REFLECTION_SUFFIX;
+    return basePrompt + HYBRID_SELF_REFLECTION_SUFFIX;
   }
   return basePrompt + SELF_REFLECTION_SUFFIX;
 }
@@ -717,4 +719,5 @@ export default {
   SPECIALIST_SELF_REFLECTION_SUFFIX,
   HYBRID_SELF_REFLECTION_SUFFIX,
   buildGeniusPrompt,
+  getWebPresetBlock,
 };
