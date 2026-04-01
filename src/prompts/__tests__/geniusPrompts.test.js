@@ -13,6 +13,9 @@ import {
   SPECIALIST_GENIUS_PROMPT,
   SPECIALIST_SELF_REFLECTION_SUFFIX,
   SELF_REFLECTION_SUFFIX,
+  HYBRID_SELF_REFLECTION_SUFFIX,
+  HYBRID_GENIUS_PROMPT,
+  FEW_SHOT_EXAMPLES,
   buildGeniusPrompt,
 } from '../geniusPrompts.js';
 
@@ -219,7 +222,7 @@ describe('buildGeniusPrompt — serginho e hybrid inalterados', () => {
     expect(serginhoPrompt).not.toContain('POLÍTICA DE CONTENÇÃO DE DOMÍNIO');
   });
 
-  it('hybrid usa SELF_REFLECTION_SUFFIX genérico (com "Agregou valor real")', () => {
+  it('hybrid usa HYBRID_SELF_REFLECTION_SUFFIX dedicado (com "Agregou valor real")', () => {
     const hybridPrompt = buildGeniusPrompt('hybrid');
     expect(hybridPrompt).toContain('Agregou valor real');
     expect(hybridPrompt).not.toContain('POLÍTICA DE CONTENÇÃO DE DOMÍNIO');
@@ -262,5 +265,129 @@ describe('Prompt final do especialista Code — tendência de recusa para propos
     // Nova versão usa a descrição completa + nome do especialista
     expect(codePromptFull).toContain('Code'); // nome do especialista como âncora
     expect(codePromptFull).toContain(CODE_SPECIALIST.description); // descrição no bloco de identidade
+  });
+});
+
+// ─── Bloco 5: HYBRID_GENIUS_PROMPT — padrão premium para artefatos web ────────
+
+describe('HYBRID_GENIUS_PROMPT — padrão premium para artefatos web', () => {
+  it('contém bloco PADRÃO PREMIUM PARA ARTEFATOS WEB', () => {
+    expect(HYBRID_GENIUS_PROMPT).toContain('PADRÃO PREMIUM PARA ARTEFATOS WEB');
+  });
+
+  it('instrui uso de HTML5 semântico (<header>, <main>, <section>, <footer>)', () => {
+    expect(HYBRID_GENIUS_PROMPT).toContain('<header>');
+    expect(HYBRID_GENIUS_PROMPT).toContain('<main>');
+    expect(HYBRID_GENIUS_PROMPT).toContain('<section>');
+    expect(HYBRID_GENIUS_PROMPT).toContain('<footer>');
+  });
+
+  it('instrui CSS custom properties (variáveis de design system)', () => {
+    expect(HYBRID_GENIUS_PROMPT).toContain('--color-primary');
+    expect(HYBRID_GENIUS_PROMPT).toContain('CSS custom properties');
+  });
+
+  it('instrui responsividade mobile-first com @media breakpoints', () => {
+    expect(HYBRID_GENIUS_PROMPT).toContain('mobile-first');
+    expect(HYBRID_GENIUS_PROMPT).toContain('@media');
+  });
+
+  it('instrui JavaScript útil (smooth scroll e Intersection Observer)', () => {
+    expect(HYBRID_GENIUS_PROMPT).toContain('Smooth scroll');
+    expect(HYBRID_GENIUS_PROMPT).toContain('Intersection Observer');
+  });
+
+  it('instrui copy premium com headline magnética e CTA com verbo de ação', () => {
+    expect(HYBRID_GENIUS_PROMPT).toContain('Headline magnética');
+    expect(HYBRID_GENIUS_PROMPT).toContain('Começar agora');
+  });
+
+  it('define estrutura obrigatória de 6 seções para landing pages', () => {
+    expect(HYBRID_GENIUS_PROMPT).toContain('ESTRUTURA OBRIGATÓRIA PARA LANDING PAGES');
+    expect(HYBRID_GENIUS_PROMPT).toContain('Hero');
+    expect(HYBRID_GENIUS_PROMPT).toContain('CTA final');
+    expect(HYBRID_GENIUS_PROMPT).toContain('Footer');
+  });
+
+  it('contém heurística de detecção de tipo de artefato', () => {
+    expect(HYBRID_GENIUS_PROMPT).toContain('HEURÍSTICA DE TIPO DE ARTEFATO');
+    expect(HYBRID_GENIUS_PROMPT).toContain('landing');
+    expect(HYBRID_GENIUS_PROMPT).toContain('código');
+    expect(HYBRID_GENIUS_PROMPT).toContain('documento');
+  });
+
+  it('preserva a seção FACTUALIDADE intacta', () => {
+    expect(HYBRID_GENIUS_PROMPT).toContain('FACTUALIDADE:');
+    expect(HYBRID_GENIUS_PROMPT).toContain('O Construtor NUNCA pode inventar:');
+  });
+
+  it('preserva a seção PROIBIÇÕES intacta', () => {
+    expect(HYBRID_GENIUS_PROMPT).toContain('PROIBIÇÕES:');
+  });
+});
+
+// ─── Bloco 6: HYBRID_SELF_REFLECTION_SUFFIX — verificações de qualidade web ──
+
+describe('HYBRID_SELF_REFLECTION_SUFFIX — verificações de qualidade web', () => {
+  it('verifica uso de tags semânticas no HTML', () => {
+    expect(HYBRID_SELF_REFLECTION_SUFFIX).toContain('<header>');
+    expect(HYBRID_SELF_REFLECTION_SUFFIX).toContain('<section>');
+  });
+
+  it('verifica CSS custom properties (design system)', () => {
+    expect(HYBRID_SELF_REFLECTION_SUFFIX).toContain('CSS custom properties');
+  });
+
+  it('verifica responsividade com @media breakpoints', () => {
+    expect(HYBRID_SELF_REFLECTION_SUFFIX).toContain('mobile-first');
+  });
+
+  it('verifica headline magnética e CTAs com verbos de ação', () => {
+    expect(HYBRID_SELF_REFLECTION_SUFFIX).toContain('headline');
+    expect(HYBRID_SELF_REFLECTION_SUFFIX).toContain('Começar agora');
+  });
+
+  it('verifica estrutura mínima de 5 seções para landing page', () => {
+    expect(HYBRID_SELF_REFLECTION_SUFFIX).toContain('5 seções');
+  });
+
+  it('verifica interatividade real com JS (smooth scroll, Intersection Observer)', () => {
+    expect(HYBRID_SELF_REFLECTION_SUFFIX).toContain('smooth scroll');
+    expect(HYBRID_SELF_REFLECTION_SUFFIX).toContain('Intersection Observer');
+  });
+
+  it('verifica se resultado parece profissional (não rascunho)', () => {
+    expect(HYBRID_SELF_REFLECTION_SUFFIX).toContain('projeto profissional');
+  });
+
+  it('mantém verificação de valor real (Agregou valor real)', () => {
+    expect(HYBRID_SELF_REFLECTION_SUFFIX).toContain('Agregou valor real');
+  });
+
+  it('NÃO contém "POLÍTICA DE CONTENÇÃO DE DOMÍNIO" (é exclusivo de especialistas)', () => {
+    expect(HYBRID_SELF_REFLECTION_SUFFIX).not.toContain('POLÍTICA DE CONTENÇÃO DE DOMÍNIO');
+  });
+});
+
+// ─── Bloco 7: FEW_SHOT_EXAMPLES — exemplo de artefato web ────────────────────
+
+describe('FEW_SHOT_EXAMPLES — exemplo de artefato web (webArtifact)', () => {
+  it('contém chave webArtifact', () => {
+    expect(FEW_SHOT_EXAMPLES).toHaveProperty('webArtifact');
+  });
+
+  it('webArtifact contém exemplo de resposta FRACA com divs genéricas', () => {
+    expect(FEW_SHOT_EXAMPLES.webArtifact).toContain('FRACA');
+    expect(FEW_SHOT_EXAMPLES.webArtifact).toContain('Bem-vindo');
+  });
+
+  it('webArtifact contém exemplo de resposta FORTE com HTML semântico e design system', () => {
+    expect(FEW_SHOT_EXAMPLES.webArtifact).toContain('FORTE');
+    expect(FEW_SHOT_EXAMPLES.webArtifact).toContain('--color-primary');
+    expect(FEW_SHOT_EXAMPLES.webArtifact).toContain('Intersection Observer');
+  });
+
+  it('webArtifact demonstra copy magnética no exemplo forte', () => {
+    expect(FEW_SHOT_EXAMPLES.webArtifact).toContain('Pare de gerenciar');
   });
 });

@@ -232,6 +232,60 @@ PADRÃO DE SAÍDA:
 - Para código: entregue código funcional e completo, não pseudocódigo
 - Para plano/proposta: detalhe cada etapa com ações concretas, não esqueleto vazio
 
+HEURÍSTICA DE TIPO DE ARTEFATO:
+Antes de construir, identifique o tipo pelo pedido do usuário:
+- "landing", "página", "site", "homepage", "interface" → aplicar PADRÃO WEB COMPLETO abaixo
+- "código", "função", "api", "script", "componente", "módulo" → aplicar padrão de código funcional e completo
+- "documento", "plano", "proposta", "briefing", "relatório", "especificação" → aplicar padrão de documento estruturado com seções desenvolvidas
+
+PADRÃO PREMIUM PARA ARTEFATOS WEB:
+Quando o artefato for web (landing page, site, página, homepage, interface), aplique OBRIGATORIAMENTE:
+
+A. HTML5 SEMÂNTICO
+- Use <header>, <main>, <section>, <article>, <footer>, <nav> — nunca apenas <div> genérica
+- Meta tags completas no <head>: charset, viewport, description, og:title, og:description, favicon
+- Estrutura de heading hierárquica e correta: h1 → h2 → h3 (nunca pular nível)
+- Atributos alt em todas as imagens; aria-label em elementos interativos sem texto visível
+
+B. CSS DESIGN SYSTEM COM VARIÁVEIS
+- Declare CSS custom properties no :root cobrindo ao menos:
+  --color-primary, --color-secondary, --color-accent, --color-bg, --color-text
+  --font-heading, --font-body, --radius, --shadow, --transition
+- Tipografia com Google Fonts (preferencialmente) ou system font stack profissional
+- Espaçamento generoso e consistente usando rem (seções com padding de 4rem–8rem)
+- Container com max-width (1200px) e padding horizontal lateral
+- Botões com :hover, :focus, :active claramente diferenciados e visualmente chamativos
+- Sombras suaves (box-shadow), gradientes sutis e transitions (0.25s–0.4s ease)
+- Responsividade mobile-first com @media breakpoints (máx. 768px e 1024px)
+- Seções alternando backgrounds (clara/escura) para ritmo visual
+
+C. JAVASCRIPT ÚTIL E INTEGRADO
+- Smooth scroll para todas as âncoras internas (#secao)
+- Efeitos de entrada ao scroll usando Intersection Observer (fade-in, slide-up)
+- Navbar com efeito ao scrollar (adicionar classe com sombra e background sólido)
+- Animação de contador para números/métricas (se existirem na página)
+- Toggle de menu mobile (hamburguer) se aplicável
+
+D. COPY PREMIUM
+- Headline magnética com proposta de valor clara, específica e diferenciada (não "Bem-vindo")
+- Subheadline que complementa e expande o valor da headline
+- Benefícios orientados ao resultado do usuário (não descrição de features técnicas)
+- CTA com verbo de ação forte e urgência sutil: "Começar agora", "Ver demonstração", "Acelerar resultados", "Quero acesso"
+- Narrativa progressiva: problema → solução → resultado → credibilidade → ação
+- Microcopy em botões secundários e links também deve ser específico e direto
+- Tom confiante, direto e humano — nunca genérico, frio ou corporativo demais
+
+E. ESTRUTURA OBRIGATÓRIA PARA LANDING PAGES
+Toda landing page DEVE conter, completamente desenvolvida, ao menos:
+1. Hero: headline principal (h1) + subheadline + CTA primário + elemento visual ou contexto
+2. Benefícios ou Problemas: 3–4 cartões com ícone/emoji + título (h3) + parágrafo desenvolvido
+3. Como funciona: 3 passos numerados com descrição real de cada etapa
+4. Credibilidade / Posicionamento: seção qualitativa sem dados inventados (pode ser aspiracional)
+5. CTA final: seção de conversão com headline de urgência, descrição e botão de ação forte
+6. Footer: links de navegação + copyright
+
+CADA SEÇÃO deve ter conteúdo real e denso — nunca apenas o título com parágrafo de uma linha.
+
 FACTUALIDADE:
 O Construtor NUNCA pode inventar:
 - Números, percentuais, métricas ou estatísticas
@@ -411,7 +465,181 @@ Resposta GÊNIO ✅:
 
 **ROI Esperado:** +300% em 30 dias! 💰"
 `,
+  webArtifact: `
+EXEMPLO DE ARTEFATO WEB:
+
+Pedido: "Crie uma landing page para um produto de produtividade"
+
+Resposta FRACA ❌:
+\`\`\`html
+<div class="container">
+  <h1>Bem-vindo ao nosso produto</h1>
+  <p>Somos uma empresa inovadora.</p>
+  <button style="background:blue;color:white">Clique aqui</button>
+  <div class="features">
+    <div>Feature 1</div>
+    <div>Feature 2</div>
+  </div>
+</div>
+\`\`\`
+Problemas: div genérica, sem CSS design system, sem JS, copy vaga, sem estrutura de seções, sem responsividade.
+
+Resposta FORTE ✅:
+\`\`\`html
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Transforme sua rotina com foco real e entregas que importam.">
+  <title>FocusFlow — Produtividade que funciona de verdade</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --color-primary: #6C47FF;
+      --color-secondary: #F0ECFF;
+      --color-accent: #FF6B35;
+      --color-bg: #FAFAFA;
+      --color-text: #1A1A2E;
+      --font-heading: 'Inter', sans-serif;
+      --font-body: 'Inter', sans-serif;
+      --radius: 12px;
+      --shadow: 0 4px 24px rgba(108,71,255,0.12);
+      --transition: 0.3s ease;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: var(--font-body); background: var(--color-bg); color: var(--color-text); }
+    .container { max-width: 1200px; margin: 0 auto; padding: 0 1.5rem; }
+    /* Hero */
+    .hero { min-height: 90vh; display: flex; align-items: center; background: linear-gradient(135deg, var(--color-secondary) 0%, #fff 100%); padding: 6rem 0; }
+    .hero h1 { font-size: clamp(2rem, 5vw, 3.5rem); font-weight: 800; line-height: 1.15; margin-bottom: 1.25rem; }
+    .hero p { font-size: 1.2rem; color: #555; max-width: 540px; margin-bottom: 2rem; }
+    .btn-primary { background: var(--color-primary); color: #fff; padding: 1rem 2.5rem; border-radius: var(--radius); font-size: 1.1rem; font-weight: 700; border: none; cursor: pointer; transition: var(--transition); box-shadow: var(--shadow); }
+    .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 32px rgba(108,71,255,0.25); }
+    .btn-primary:active { transform: translateY(0); }
+    /* Benefícios */
+    .benefits { padding: 6rem 0; background: #fff; }
+    .benefits h2 { text-align: center; font-size: 2.2rem; font-weight: 800; margin-bottom: 3rem; }
+    .benefits-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 2rem; }
+    .benefit-card { background: var(--color-secondary); border-radius: var(--radius); padding: 2rem; transition: var(--transition); }
+    .benefit-card:hover { transform: translateY(-4px); box-shadow: var(--shadow); }
+    .benefit-card .icon { font-size: 2.5rem; margin-bottom: 1rem; }
+    .benefit-card h3 { font-size: 1.2rem; font-weight: 700; margin-bottom: 0.75rem; }
+    .benefit-card p { color: #555; line-height: 1.6; }
+    @media (max-width: 768px) {
+      .hero { padding: 4rem 0; text-align: center; }
+      .hero p { margin: 0 auto 2rem; }
+      .benefits-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <header id="navbar" style="position:sticky;top:0;z-index:100;padding:1rem 0;transition:var(--transition);">
+    <nav class="container" style="display:flex;justify-content:space-between;align-items:center;">
+      <span style="font-weight:800;font-size:1.2rem;color:var(--color-primary);">FocusFlow</span>
+      <ul style="list-style:none;display:flex;gap:2rem;">
+        <li><a href="#beneficios" style="color:var(--color-text);text-decoration:none;font-weight:600;">Benefícios</a></li>
+        <li><a href="#como-funciona" style="color:var(--color-text);text-decoration:none;font-weight:600;">Como funciona</a></li>
+        <li><a href="#cta-final" style="color:#fff;background:var(--color-primary);padding:0.5rem 1.25rem;border-radius:var(--radius);font-weight:700;text-decoration:none;">Começar agora</a></li>
+      </ul>
+    </nav>
+  </header>
+  <main>
+    <section class="hero" id="inicio">
+      <div class="container">
+        <h1>Pare de gerenciar tarefas.<br>Comece a entregar resultados.</h1>
+        <p>FocusFlow organiza seu dia em blocos de foco inteligentes para que você saia do modo reativo e entre no modo de execução real.</p>
+        <button class="btn-primary" onclick="document.querySelector('#como-funciona').scrollIntoView({behavior:'smooth'})">Quero produzir mais agora</button>
+      </div>
+    </section>
+    <section class="benefits" id="beneficios">
+      <div class="container">
+        <h2>Por que profissionais de alta performance escolhem o FocusFlow</h2>
+        <div class="benefits-grid">
+          <div class="benefit-card"><div class="icon">⚡</div><h3>Foco sem esforço</h3><p>Blocos de trabalho profundo configurados automaticamente para eliminar a fadiga de decisão e manter sua energia nas entregas que realmente movem o ponteiro.</p></div>
+          <div class="benefit-card"><div class="icon">📊</div><h3>Clareza sobre prioridades</h3><p>Visualize o que importa hoje e amanhã. Sem listas infinitas, sem ansiedade por tarefas esquecidas. Só o que deve ser feito agora, organizado para você.</p></div>
+          <div class="benefit-card"><div class="icon">🔁</div><h3>Consistência diária</h3><p>Rotinas de alta performance não dependem de força de vontade. O FocusFlow cria ritmo, hábito e cadência — para que seu dia mais produtivo seja também o mais previsível.</p></div>
+        </div>
+      </div>
+    </section>
+    <section id="como-funciona" style="padding:6rem 0;background:var(--color-secondary);">
+      <div class="container">
+        <h2 style="text-align:center;font-size:2.2rem;font-weight:800;margin-bottom:3rem;">Três passos para sair do caos e entrar no fluxo</h2>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:2rem;">
+          <div style="text-align:center;padding:2rem;"><div style="font-size:3rem;font-weight:800;color:var(--color-primary);">01</div><h3 style="margin:1rem 0 0.75rem;">Configure seu ritmo</h3><p style="color:#555;line-height:1.6;">Informe seus objetivos e horários disponíveis. O sistema monta sua semana em blocos de foco baseados em como você funciona melhor.</p></div>
+          <div style="text-align:center;padding:2rem;"><div style="font-size:3rem;font-weight:800;color:var(--color-primary);">02</div><h3 style="margin:1rem 0 0.75rem;">Execute com clareza</h3><p style="color:#555;line-height:1.6;">A cada dia você recebe uma lista enxuta com apenas o que deve ser feito. Sem sobrecarga, sem decisão paralela — só execução limpa.</p></div>
+          <div style="text-align:center;padding:2rem;"><div style="font-size:3rem;font-weight:800;color:var(--color-primary);">03</div><h3 style="margin:1rem 0 0.75rem;">Veja o progresso real</h3><p style="color:#555;line-height:1.6;">Ao final da semana, visualize o que foi entregue e ajuste o próximo ciclo. Produtividade que se adapta e melhora com você.</p></div>
+        </div>
+      </div>
+    </section>
+    <section id="cta-final" style="padding:8rem 0;background:var(--color-primary);text-align:center;">
+      <div class="container">
+        <h2 style="font-size:2.5rem;font-weight:800;color:#fff;margin-bottom:1.25rem;">Seu próximo nível de produtividade começa hoje.</h2>
+        <p style="font-size:1.2rem;color:rgba(255,255,255,0.85);max-width:540px;margin:0 auto 2.5rem;">Junte-se a profissionais que param de gerenciar listas e passam a entregar resultados consistentes — semana após semana.</p>
+        <button class="btn-primary" style="background:#fff;color:var(--color-primary);font-size:1.15rem;" onclick="alert('Ação de conversão')">Quero começar agora</button>
+      </div>
+    </section>
+  </main>
+  <footer style="background:var(--color-text);color:rgba(255,255,255,0.7);padding:2.5rem 0;text-align:center;">
+    <div class="container">
+      <nav style="margin-bottom:1rem;display:flex;justify-content:center;gap:2rem;flex-wrap:wrap;">
+        <a href="#inicio" style="color:rgba(255,255,255,0.7);text-decoration:none;">Início</a>
+        <a href="#beneficios" style="color:rgba(255,255,255,0.7);text-decoration:none;">Benefícios</a>
+        <a href="#como-funciona" style="color:rgba(255,255,255,0.7);text-decoration:none;">Como funciona</a>
+      </nav>
+      <p style="font-size:0.9rem;">© 2025 FocusFlow. Todos os direitos reservados.</p>
+    </div>
+  </footer>
+  <script>
+    // Smooth scroll
+    document.querySelectorAll('a[href^="#"]').forEach(a => {
+      a.addEventListener('click', e => { e.preventDefault(); document.querySelector(a.getAttribute('href'))?.scrollIntoView({behavior:'smooth'}); });
+    });
+    // Navbar scroll effect
+    const navbar = document.getElementById('navbar');
+    window.addEventListener('scroll', () => navbar.classList.toggle('scrolled', window.scrollY > 60));
+    // Fade-in on scroll
+    const observer = new IntersectionObserver(entries => entries.forEach(e => { if(e.isIntersecting) e.target.classList.add('visible'); }), {threshold:0.15});
+    document.querySelectorAll('.benefit-card, section').forEach(el => observer.observe(el));
+  </script>
+</body>
+</html>
+\`\`\`
+Diferenciais: HTML semântico, CSS custom properties (design system), responsividade mobile, botões com hover/active, copy magnética com proposta de valor específica, JS com smooth scroll + Intersection Observer + navbar effect.
+`,
 };
+
+/**
+ * SELF-REFLECTION dedicado ao Hybrid/Construtor — verifica qualidade do artefato
+ */
+export const HYBRID_SELF_REFLECTION_SUFFIX = `
+
+Antes de entregar, verifique internamente:
+
+QUALIDADE TÉCNICA (artefatos web):
+- O HTML usa tags semânticas (<header>, <main>, <section>, <footer>, <nav>)? Se não, corrija.
+- O CSS declara CSS custom properties (--color-primary etc.) como design system? Se não, adicione.
+- Há responsividade com @media breakpoints (mobile-first)? Se não, adicione.
+- Os botões têm :hover, :focus, :active diferenciados? Se não, corrija.
+- O JS entrega interatividade real (smooth scroll, Intersection Observer, navbar effect)? Se não, adicione.
+
+QUALIDADE DE COPY:
+- A headline é magnética e específica — não genérica como "Bem-vindo ao nosso produto"? Se não, reescreva.
+- Os CTAs usam verbos de ação fortes ("Começar agora", "Ver demonstração")? Se não, corrija.
+- O texto de cada seção é denso e convincente — não apenas títulos com linha única? Se não, expanda.
+
+QUALIDADE ESTRUTURAL:
+- Para landing page: há ao menos 5 seções completamente desenvolvidas? Se não, adicione.
+- Cada seção tem conteúdo real e aproveitável — não esqueleto vazio? Se não, desenvolva.
+- O resultado parece projeto profissional, não rascunho ou template genérico? Se não, revise.
+
+QUALIDADE GERAL:
+- Resposta completa e proporcional ao pedido?
+- Entregou o artefato diretamente — sem introdução ou preâmbulo?
+- Agregou valor real?
+
+NUNCA mostre tags como <thinking>, <self-check> ou qualquer processo interno. Entregue diretamente.`;
 
 /**
  * SELF-REFLECTION - Auto-avaliação (Serginho e Hybrid)
@@ -467,9 +695,12 @@ export function buildGeniusPrompt(type, options = {}) {
       basePrompt = SERGINHO_GENIUS_PROMPT;
   }
 
-  // Especialistas usam suffix de verificação de domínio; demais usam o suffix genérico
+  // Especialistas usam suffix de verificação de domínio; hybrid usa suffix dedicado; serginho usa o genérico
   if (type === "specialist") {
     return basePrompt + SPECIALIST_SELF_REFLECTION_SUFFIX;
+  }
+  if (type === "hybrid") {
+    return basePrompt + HYBRID_SELF_REFLECTION_SUFFIX;
   }
   return basePrompt + SELF_REFLECTION_SUFFIX;
 }
@@ -484,5 +715,6 @@ export default {
   FEW_SHOT_EXAMPLES,
   SELF_REFLECTION_SUFFIX,
   SPECIALIST_SELF_REFLECTION_SUFFIX,
+  HYBRID_SELF_REFLECTION_SUFFIX,
   buildGeniusPrompt,
 };
