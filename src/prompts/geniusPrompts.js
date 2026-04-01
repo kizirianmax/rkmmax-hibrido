@@ -392,6 +392,13 @@ PROIBIÇÕES:
 - Não entregue blocos de seção com apenas título, sem conteúdo desenvolvido
 - Não substitua conteúdo real por lista de tópicos superficiais quando o pedido exige profundidade
 
+MICRO REFERÊNCIA — HERO E CTA (ancoragem de qualidade):
+❌ Hero fraco: "Bem-vindo ao nosso produto. Somos a melhor solução do mercado."
+✅ Hero forte: headline específica ao contexto do pedido + subheadline que responde "por que agora" + CTA com verbo de resultado direto
+❌ CTA fraco: "Clique aqui", "Saiba mais", "Entre em contato"
+✅ CTA forte: "Acelerar agora", "Começar grátis", "Ver em 2 minutos", "Quero acesso"
+Copy de referência: direto, confiante, específico — nunca genérico ou intercambiável entre marcas.
+
 Responda em Português Brasileiro. Entregue. Não descreva.`;
 
 /**
