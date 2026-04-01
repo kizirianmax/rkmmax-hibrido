@@ -96,18 +96,18 @@ export { ResponseCache };
 
 /**
  * COMPRESSÃO DE PROMPTS
- * Reduz tamanho de prompts sem perder qualidade
+ * Reduz tamanho de prompts sem perder qualidade.
+ * Usa compressão leve que preserva quebras de linha e estrutura hierárquica
+ * (headers, seções, listas) — essencial para que o LLM siga instruções formatadas.
  */
 export function compressPrompt(prompt) {
-  return (
-    prompt
-      // Remover múltiplos espaços
-      .replace(/\s+/g, " ")
-      // Remover quebras de linha desnecessárias
-      .replace(/\n\s*\n\s*\n/g, "\n\n")
-      // Trim
-      .trim()
-  );
+  return prompt
+    // Remover espaços/tabs no final de cada linha (trailing whitespace)
+    .replace(/[ \t]+$/gm, "")
+    // Colapsar 3+ quebras de linha consecutivas em 2 (preserva separação de seções)
+    .replace(/\n{3,}/g, "\n\n")
+    // Trim
+    .trim();
 }
 
 /**
