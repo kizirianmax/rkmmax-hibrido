@@ -105,11 +105,13 @@ describe("Cost Optimization Utils", () => {
   });
 
   describe("Utility Functions", () => {
-    test("should compress prompts by removing extra whitespace", () => {
+    test("should compress prompts with light compression preserving line structure", () => {
       const prompt = "  Hello    world  \n\n\n  How are you?  ";
       const compressed = compressPrompt(prompt);
 
-      expect(compressed).toBe("Hello world How are you?");
+      // Trailing whitespace per line is removed and 3+ newlines are collapsed to 2,
+      // but internal spacing and line breaks are preserved (light compression).
+      expect(compressed).toBe("Hello    world\n\n  How are you?");
       expect(compressed.length).toBeLessThan(prompt.length);
     });
 
@@ -363,7 +365,8 @@ describe("Cost Optimization Utils", () => {
       const result = optimizeRequest(messages, systemPrompt);
 
       expect(result.cached).toBe(false);
-      expect(result.systemPrompt).toBe("System prompt");
+      // Light compression removes trailing whitespace but preserves internal spacing.
+      expect(result.systemPrompt).toBe("System    prompt");
       expect(result.messages.length).toBeLessThan(messages.length);
     });
 

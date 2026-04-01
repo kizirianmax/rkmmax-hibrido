@@ -700,7 +700,7 @@ export function buildGeniusPrompt(type, options = {}) {
     return basePrompt + SPECIALIST_SELF_REFLECTION_SUFFIX;
   }
   if (type === "hybrid") {
-    return basePrompt + HYBRID_SELF_REFLECTION_SUFFIX;
+    return basePrompt + "\n\n" + FEW_SHOT_EXAMPLES.webArtifact + HYBRID_SELF_REFLECTION_SUFFIX;
   }
   return basePrompt + SELF_REFLECTION_SUFFIX;
 }
