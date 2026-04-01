@@ -4,10 +4,9 @@
  * 
  * Now supports GENIUS PROMPTS for world-class responses with robust fallback
  * 
- * Note: Currently, both '120b' and '70b' map to 'llama-3.3-70b-versatile'
- * because Groq doesn't yet have a 120B model available. This allows the
- * orchestrator to maintain separate tier configurations while using the
- * same underlying model, enabling future upgrades when 120B becomes available.
+ * Note: '120b' maps to 'openai/gpt-oss-120b' and '70b' maps to 'llama-3.3-70b-versatile'.
+ * This allows the orchestrator to maintain separate tier configurations with
+ * each tier using its own distinct physical model.
  */
 
 // ✅ GENIUS PROMPTS with robust fallback
@@ -51,15 +50,14 @@ FORMATO DE RESPOSTA:
   };
 }
 
-// TODO: Update to actual Llama 3.3 120B model when available on Groq
-const TEMPORARY_120B_MODEL = 'llama-3.3-70b-versatile';
+const MODEL_120B = 'openai/gpt-oss-120b';
 
 export class LlamaProvider {
   constructor(apiKey, size = '70b') {
     this.apiKey = apiKey;
     this.size = size;
     this.modelMap = {
-      '120b': TEMPORARY_120B_MODEL,
+      '120b': MODEL_120B,
       '70b': 'llama-3.3-70b-versatile',
       '8b': 'llama-3.1-8b-instant'
     };

@@ -15,12 +15,10 @@
  * - defaultParams: Default parameters for API calls
  */
 export const PROVIDERS = {
-  // Tier 1: Complex tasks - Llama 3.3 70B (via Groq)
-  // NOTE: openai/gpt-oss-120b is not yet available on Groq. Using llama-3.3-70b-versatile
-  // as a stand-in until the 120B model is released. Update this when available.
+  // Tier 1: Complex tasks - GPT-OSS 120B (via Groq)
   'llama-120b': {
     type: 'groq',
-    model: 'llama-3.3-70b-versatile',
+    model: 'openai/gpt-oss-120b',
     endpoint: 'https://api.groq.com/openai/v1/chat/completions',
     tier: 'complex',
     defaultParams: {
@@ -202,8 +200,8 @@ export function getWeightedProviders() {
 export const MODEL_METADATA = {
   'llama-120b': {
     infrastructure: 'groq',
-    displayName: 'Llama 3.3 70B (Complex)',
-    description: 'Raciocínio profundo e análise complexa (stand-in até 120B disponível)',
+    displayName: 'GPT-OSS 120B (Complex)',
+    description: 'Raciocínio profundo e análise complexa de alto nível',
     icon: '🧠',
     logicalTier: 'complex'
   },

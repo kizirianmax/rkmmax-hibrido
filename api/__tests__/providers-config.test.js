@@ -133,7 +133,7 @@ describe('providers-config', () => {
   describe('Provider models', () => {
     test('Llama 120B uses correct model', () => {
       const config = getProviderConfig('llama-120b');
-      expect(config.model).toBe('llama-3.3-70b-versatile');
+      expect(config.model).toBe('openai/gpt-oss-120b');
     });
 
     test('Llama 70B uses correct model', () => {
