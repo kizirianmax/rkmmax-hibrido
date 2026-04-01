@@ -394,65 +394,65 @@ describe('FEW_SHOT_EXAMPLES — exemplo de artefato web (webArtifact)', () => {
   });
 });
 
-// ─── Bloco 8: buildGeniusPrompt("hybrid") — few-shot injetado e presets injetados ──
+// ─── Bloco 8: buildGeniusPrompt("hybrid") — few-shot e presets removidos por performance ──
 
-describe("buildGeniusPrompt('hybrid') — few-shot + presets premium injetados", () => {
+describe("buildGeniusPrompt('hybrid') — few-shot e presets premium NÃO injetados (removidos para reduzir tamanho do prompt)", () => {
   let hybridPrompt;
 
   beforeAll(() => {
     hybridPrompt = buildGeniusPrompt('hybrid');
   });
 
-  it('inclui bloco de presets premium (PRESETS PREMIUM PARA ARTEFATOS WEB)', () => {
-    expect(hybridPrompt).toContain('PRESETS PREMIUM PARA ARTEFATOS WEB');
+  it('NÃO inclui bloco de presets premium (PRESETS PREMIUM PARA ARTEFATOS WEB)', () => {
+    expect(hybridPrompt).not.toContain('PRESETS PREMIUM PARA ARTEFATOS WEB');
   });
 
-  it('inclui instrução de seleção de paleta baseada no contexto', () => {
-    expect(hybridPrompt).toContain('Analise o pedido e selecione a paleta');
+  it('NÃO inclui instrução de seleção de paleta baseada no contexto', () => {
+    expect(hybridPrompt).not.toContain('Analise o pedido e selecione a paleta');
   });
 
-  it('inclui todas as 4 paletas de design por nome', () => {
-    expect(hybridPrompt).toContain('Midnight Pro');
-    expect(hybridPrompt).toContain('Sunrise Warm');
-    expect(hybridPrompt).toContain('Ocean Corporate');
-    expect(hybridPrompt).toContain('Nature Fresh');
+  it('NÃO inclui as 4 paletas de design por nome', () => {
+    expect(hybridPrompt).not.toContain('Midnight Pro');
+    expect(hybridPrompt).not.toContain('Sunrise Warm');
+    expect(hybridPrompt).not.toContain('Ocean Corporate');
+    expect(hybridPrompt).not.toContain('Nature Fresh');
   });
 
-  it('inclui instrução para não usar sempre a mesma paleta roxa', () => {
-    expect(hybridPrompt).toContain('NÃO use sempre a mesma paleta roxa');
+  it('NÃO inclui instrução sobre paleta roxa', () => {
+    expect(hybridPrompt).not.toContain('NÃO use sempre a mesma paleta roxa');
   });
 
-  it('inclui estruturas por tipo de página (landing, institucional, startup)', () => {
-    expect(hybridPrompt).toContain('Landing Page Premium');
-    expect(hybridPrompt).toContain('Página Institucional de Produto');
-    expect(hybridPrompt).toContain('Apresentação de Startup');
+  it('NÃO inclui estruturas por tipo de página do bloco premium (landing, institucional, startup)', () => {
+    expect(hybridPrompt).not.toContain('Landing Page Premium');
+    expect(hybridPrompt).not.toContain('Página Institucional de Produto');
+    expect(hybridPrompt).not.toContain('Apresentação de Startup');
   });
 
-  it('inclui blocos CSS com backdrop-filter (glass morphism)', () => {
-    expect(hybridPrompt).toContain('backdrop-filter');
+  it('NÃO inclui blocos CSS com backdrop-filter (glass morphism)', () => {
+    expect(hybridPrompt).not.toContain('backdrop-filter');
   });
 
-  it('inclui blocos JS com IntersectionObserver', () => {
-    expect(hybridPrompt).toContain('IntersectionObserver');
+  it('NÃO inclui blocos JS com IntersectionObserver do preset', () => {
+    expect(hybridPrompt).not.toContain('IntersectionObserver');
   });
 
-  it('inclui blocos JS com smooth scroll', () => {
-    expect(hybridPrompt).toContain("behavior: 'smooth'");
+  it('NÃO inclui blocos JS com smooth scroll do preset', () => {
+    expect(hybridPrompt).not.toContain("behavior: 'smooth'");
   });
 
-  it('inclui few-shot original de webArtifact (landing page produtividade)', () => {
-    expect(hybridPrompt).toContain('FocusFlow');
-    expect(hybridPrompt).toContain('Pare de gerenciar');
+  it('NÃO inclui few-shot original de webArtifact (landing page produtividade)', () => {
+    expect(hybridPrompt).not.toContain('FocusFlow');
+    expect(hybridPrompt).not.toContain('Pare de gerenciar');
   });
 
-  it('inclui few-shot adicional de página institucional', () => {
-    expect(hybridPrompt).toContain('FEW-SHOT: PÁGINA INSTITUCIONAL DE PRODUTO');
-    expect(hybridPrompt).toContain('DataStream');
+  it('NÃO inclui few-shot adicional de página institucional', () => {
+    expect(hybridPrompt).not.toContain('FEW-SHOT: PÁGINA INSTITUCIONAL DE PRODUTO');
+    expect(hybridPrompt).not.toContain('DataStream');
   });
 
-  it('inclui few-shot adicional de apresentação de startup', () => {
-    expect(hybridPrompt).toContain('FEW-SHOT: APRESENTAÇÃO DE STARTUP');
-    expect(hybridPrompt).toContain('GreenRoute');
+  it('NÃO inclui few-shot adicional de apresentação de startup', () => {
+    expect(hybridPrompt).not.toContain('FEW-SHOT: APRESENTAÇÃO DE STARTUP');
+    expect(hybridPrompt).not.toContain('GreenRoute');
   });
 
   it('ainda inclui HYBRID_SELF_REFLECTION_SUFFIX com "Agregou valor real"', () => {
@@ -520,38 +520,30 @@ describe("buildGeniusPrompt('specialist') — NÃO alterado pelos presets", () =
   });
 });
 
-// ─── Bloco 10: webArtifact aparece em posição correta no hybrid ───────────────
+// ─── Bloco 10: webArtifact NÃO aparece no hybrid (removido por performance) ────
 
-describe('buildGeniusPrompt("hybrid") — posição do few-shot no prompt', () => {
+describe('buildGeniusPrompt("hybrid") — few-shot webArtifact removido do prompt fixo', () => {
   let hybridPrompt;
 
   beforeAll(() => {
     hybridPrompt = buildGeniusPrompt('hybrid');
   });
 
-  it('inclui o few-shot webArtifact no prompt híbrido gerado', () => {
-    expect(hybridPrompt).toContain(FEW_SHOT_EXAMPLES.webArtifact);
+  it('NÃO inclui o few-shot webArtifact no prompt híbrido gerado', () => {
+    expect(hybridPrompt).not.toContain(FEW_SHOT_EXAMPLES.webArtifact);
   });
 
-  it('few-shot aparece depois do HYBRID_GENIUS_PROMPT e antes do HYBRID_SELF_REFLECTION_SUFFIX', () => {
-    const fewShotIdx = hybridPrompt.indexOf(FEW_SHOT_EXAMPLES.webArtifact.trim());
-    const hybridBaseIdx = hybridPrompt.indexOf('CONSTRUTOR');
-    const suffixIdx = hybridPrompt.indexOf('Antes de entregar, verifique internamente');
-    expect(hybridBaseIdx).toBeLessThan(fewShotIdx);
-    expect(fewShotIdx).toBeLessThan(suffixIdx);
+  it('FEW_SHOT_EXAMPLES.webArtifact ainda existe como objeto exportado (disponível para uso sob demanda)', () => {
+    expect(FEW_SHOT_EXAMPLES.webArtifact).toBeTruthy();
+    expect(typeof FEW_SHOT_EXAMPLES.webArtifact).toBe('string');
   });
 
-  it('exemplo FRACO está presente no prompt híbrido final', () => {
-    expect(hybridPrompt).toContain('FRACA');
-    expect(hybridPrompt).toContain('Bem-vindo');
-  });
-
-  it('exemplo FORTE está presente no prompt híbrido final (HTML semântico + design system)', () => {
+  it('exemplo FORTE do HYBRID_GENIUS_PROMPT ainda presente (HTML semântico + design system)', () => {
     expect(hybridPrompt).toContain('--color-primary');
     expect(hybridPrompt).toContain('Intersection Observer');
   });
 
-  it('copy magnética do exemplo forte está no prompt híbrido', () => {
-    expect(hybridPrompt).toContain('Pare de gerenciar');
+  it('HYBRID_GENIUS_PROMPT base contém referência a Bem-vindo no contexto de exemplo', () => {
+    expect(hybridPrompt).toContain('Bem-vindo');
   });
 });
