@@ -613,3 +613,259 @@ textarea:disabled {
     font-size: 0.65rem;
   }
 }
+
+/* ===== ARTIFACT PREVIEW PANEL (Fase 2D) ===== */
+
+.artifact-preview-panel {
+  background: rgba(15, 23, 42, 0.85);
+  border: 1px solid rgba(168, 85, 247, 0.3);
+  border-radius: 8px;
+  padding: 1rem;
+  margin-top: 0.75rem;
+  font-size: 0.8rem;
+  color: #e2e8f0;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.artifact-preview-loading,
+.artifact-preview-unavailable {
+  color: #94a3b8;
+  padding: 0.5rem;
+}
+
+.artifact-preview-header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.artifact-preview-title {
+  font-weight: 700;
+  font-size: 0.875rem;
+  color: #c084fc;
+}
+
+.artifact-preview-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  margin-bottom: 0.75rem;
+}
+
+.artifact-preview-row {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.artifact-label {
+  color: #94a3b8;
+  flex-shrink: 0;
+}
+
+.artifact-value {
+  color: #e2e8f0;
+  word-break: break-all;
+}
+
+.artifact-id {
+  font-family: monospace;
+  font-size: 0.7rem;
+  color: #a78bfa;
+}
+
+.artifact-preview-status {
+  display: flex;
+  gap: 0.4rem;
+  flex-wrap: wrap;
+  margin-bottom: 0.75rem;
+}
+
+.artifact-badge {
+  padding: 2px 7px;
+  border-radius: 4px;
+  font-size: 0.7rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.artifact-badge-ok {
+  background: rgba(107, 207, 127, 0.2);
+  color: #6bcf7f;
+  border: 1px solid rgba(107, 207, 127, 0.3);
+}
+
+.artifact-badge-error {
+  background: rgba(255, 107, 107, 0.2);
+  color: #ff6b6b;
+  border: 1px solid rgba(255, 107, 107, 0.3);
+}
+
+.artifact-badge-warn {
+  background: rgba(255, 217, 61, 0.2);
+  color: #ffd93d;
+  border: 1px solid rgba(255, 217, 61, 0.3);
+}
+
+.artifact-badge-info {
+  background: rgba(100, 116, 139, 0.2);
+  color: #94a3b8;
+  border: 1px solid rgba(100, 116, 139, 0.3);
+}
+
+.artifact-badge-pending {
+  background: rgba(255, 217, 61, 0.2);
+  color: #ffd93d;
+  border: 1px solid rgba(255, 217, 61, 0.3);
+}
+
+.artifact-preview-files {
+  margin-bottom: 0.75rem;
+}
+
+.artifact-file-list {
+  list-style: none;
+  margin: 0.25rem 0 0 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.artifact-file-item {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.5rem;
+  background: rgba(255, 255, 255, 0.03);
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+.artifact-file-path {
+  font-family: monospace;
+  font-size: 0.7rem;
+  color: #a78bfa;
+}
+
+.artifact-file-size {
+  color: #64748b;
+  font-size: 0.7rem;
+  flex-shrink: 0;
+}
+
+.artifact-preview-content {
+  margin-bottom: 0.75rem;
+}
+
+.artifact-content-preview {
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(168, 85, 247, 0.15);
+  border-radius: 4px;
+  padding: 0.5rem;
+  font-size: 0.7rem;
+  color: #cbd5e1;
+  max-height: 120px;
+  overflow-y: auto;
+  white-space: pre-wrap;
+  word-break: break-word;
+  margin: 0.25rem 0 0 0;
+  font-family: monospace;
+}
+
+.artifact-preview-decision-info {
+  margin-bottom: 0.75rem;
+  color: #94a3b8;
+}
+
+.artifact-preview-feedback {
+  margin-top: 0.25rem;
+}
+
+.artifact-preview-actions {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  margin-top: 0.25rem;
+}
+
+.artifact-btn {
+  padding: 0.4rem 0.9rem;
+  border: none;
+  border-radius: 6px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.15s;
+}
+
+.artifact-btn:hover {
+  opacity: 0.85;
+}
+
+.artifact-btn-approve {
+  background: rgba(107, 207, 127, 0.25);
+  color: #6bcf7f;
+  border: 1px solid rgba(107, 207, 127, 0.4);
+}
+
+.artifact-btn-reject {
+  background: rgba(255, 107, 107, 0.2);
+  color: #ff6b6b;
+  border: 1px solid rgba(255, 107, 107, 0.3);
+}
+
+.artifact-btn-cancel {
+  background: rgba(100, 116, 139, 0.2);
+  color: #94a3b8;
+  border: 1px solid rgba(100, 116, 139, 0.3);
+}
+
+.artifact-rejection-form {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.artifact-rejection-textarea {
+  width: 100%;
+  background: rgba(15, 23, 42, 0.9);
+  border: 1px solid rgba(168, 85, 247, 0.3);
+  border-radius: 6px;
+  color: #e2e8f0;
+  padding: 0.4rem 0.6rem;
+  font-size: 0.8rem;
+  resize: vertical;
+  box-sizing: border-box;
+  font-family: inherit;
+}
+
+.artifact-rejection-buttons {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.artifact-preview-trigger-btn {
+  background: rgba(168, 85, 247, 0.15);
+  border: 1px solid rgba(168, 85, 247, 0.3);
+  border-radius: 5px;
+  color: #c084fc;
+  font-size: 0.72rem;
+  padding: 3px 8px;
+  cursor: pointer;
+  margin-top: 0.4rem;
+  transition: background 0.15s;
+}
+
+.artifact-preview-trigger-btn:hover {
+  background: rgba(168, 85, 247, 0.25);
+}
+
+.artifact-preview-trigger-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
