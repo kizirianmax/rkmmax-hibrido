@@ -370,6 +370,130 @@ describe('SerginhoOrchestrator', () => {
     });
   });
 
+  describe('callGroq retry mechanism', () => {
+    function createRetryMockFetch({ failStatus, failTimes }) {
+      let callCount = 0;
+      return jest.fn().mockImplementation(() => {
+        callCount++;
+        if (callCount <= failTimes) {
+          return Promise.resolve({
+            ok: false,
+            status: failStatus,
+            text: jest.fn().mockResolvedValue(`Error ${failStatus}`),
+            json: jest.fn().mockResolvedValue({}),
+          });
+        }
+        return Promise.resolve({
+          ok: true,
+          status: 200,
+          json: jest.fn().mockResolvedValue({
+            choices: [{ message: { content: 'Retry success' } }],
+            usage: {},
+          }),
+          text: jest.fn().mockResolvedValue('OK'),
+        });
+      });
+    }
+
+    beforeEach(() => {
+      jest.useFakeTimers();
+      serginho.resetMetrics();
+      serginho.clearCache();
+      serginho.resetCircuitBreakers();
+    });
+
+    afterEach(() => {
+      jest.useRealTimers();
+    });
+
+    test('retries on 503 and succeeds on second attempt', async () => {
+      global.fetch = createRetryMockFetch({ failStatus: 503, failTimes: 1 });
+
+      const config = getProviderConfig('llama-8b');
+      const promise = serginho.callGroq(config, 'Test retry 503', [], {}, undefined);
+
+      // Advance timers for the 1000ms backoff on attempt 1
+      await jest.advanceTimersByTimeAsync(1000);
+
+      const result = await promise;
+      expect(result.text).toBe('Retry success');
+      expect(global.fetch).toHaveBeenCalledTimes(2);
+    });
+
+    test('retries on 429 and succeeds on third attempt', async () => {
+      global.fetch = createRetryMockFetch({ failStatus: 429, failTimes: 2 });
+
+      const config = getProviderConfig('llama-8b');
+      const promise = serginho.callGroq(config, 'Test retry 429', [], {}, undefined);
+
+      // Advance timers for 1000ms + 2000ms backoffs
+      await jest.advanceTimersByTimeAsync(3000);
+
+      const result = await promise;
+      expect(result.text).toBe('Retry success');
+      expect(global.fetch).toHaveBeenCalledTimes(3);
+    });
+
+    test('throws after exhausting all 3 attempts on persistent 503', async () => {
+      // Always return 503 to exhaust all retries
+      global.fetch = jest.fn().mockResolvedValue({
+        ok: false,
+        status: 503,
+        text: jest.fn().mockResolvedValue('Service Unavailable'),
+        json: jest.fn().mockResolvedValue({}),
+      });
+
+      const config = getProviderConfig('llama-8b');
+
+      // Call callGroq() directly so no orchestrator fallback interferes
+      const promise = serginho.callGroq(config, 'Test exhausted', [], {}, undefined);
+
+      // Attach rejection expectation BEFORE advancing timers to avoid unhandled rejection
+      const expectation = expect(promise).rejects.toThrow('Groq API error: 503');
+
+      // Advance timers for 1000ms + 2000ms backoffs
+      await jest.advanceTimersByTimeAsync(3000);
+
+      await expectation;
+      expect(global.fetch).toHaveBeenCalledTimes(3);
+    });
+
+    test('does not retry non-retryable 400 error', async () => {
+      global.fetch = jest.fn().mockResolvedValue({
+        ok: false,
+        status: 400,
+        text: jest.fn().mockResolvedValue('Bad Request'),
+        json: jest.fn().mockResolvedValue({}),
+      });
+
+      const config = getProviderConfig('llama-8b');
+
+      // Call callGroq() directly to isolate retry behavior
+      await expect(
+        serginho.callGroq(config, 'Test 400', [], {}, undefined)
+      ).rejects.toThrow('Groq API error: 400');
+
+      // 400 is not retryable: exactly one fetch call, no timer advancement needed
+      expect(global.fetch).toHaveBeenCalledTimes(1);
+    });
+
+    test('does not retry when signal is already aborted', async () => {
+      const controller = new AbortController();
+      controller.abort();
+
+      global.fetch = createRetryMockFetch({ failStatus: 503, failTimes: 1 });
+
+      const config = getProviderConfig('llama-8b');
+
+      await expect(
+        serginho.callGroq(config, 'Test aborted', [], {}, controller.signal)
+      ).rejects.toMatchObject({ name: 'AbortError' });
+
+      // fetch should not have been called at all because signal was already aborted
+      expect(global.fetch).not.toHaveBeenCalled();
+    });
+  });
+
   describe('deadline / timeoutMs', () => {
     // Signal-aware slow fetch: respects AbortSignal, resolves after 5000ms otherwise
     function createSlowFetch() {

@@ -1020,37 +1020,64 @@ class SerginhoOrchestrator {
     }
 
     const formattedMessages = this.formatMessages(messages, message, 'openai', context?.systemPrompt);
-    
-    const response = await fetch(config.endpoint, {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${apiKey}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
+
+    const RETRYABLE_STATUSES = new Set([429, 503]);
+    const MAX_ATTEMPTS = 3;
+
+    let lastError;
+    for (let attempt = 1; attempt <= MAX_ATTEMPTS; attempt++) {
+      if (signal?.aborted) {
+        throw new DOMException('The operation was aborted.', 'AbortError');
+      }
+
+      let response;
+      try {
+        response = await fetch(config.endpoint, {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${apiKey}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            model: config.model,
+            messages: formattedMessages,
+            ...config.defaultParams,
+          }),
+          ...(signal ? { signal } : {}),
+        });
+      } catch (fetchError) {
+        // Network-level errors (including AbortError) are not retried
+        throw fetchError;
+      }
+
+      if (!response.ok) {
+        if (RETRYABLE_STATUSES.has(response.status) && attempt < MAX_ATTEMPTS) {
+          // Linear backoff: 1000ms on first retry, 2000ms on second retry
+          const delayMs = attempt * 1000;
+          const errorBody = await response.text().catch(() => '');
+          lastError = new Error(`Groq API error: ${response.status} ${errorBody}`);
+          await new Promise((resolve) => setTimeout(resolve, delayMs));
+          continue;
+        }
+        const errorText = await response.text().catch(() => '');
+        throw new Error(`Groq API error: ${response.status} ${errorText}`);
+      }
+
+      const data = await response.json();
+
+      if (!data.choices || !data.choices[0] || !data.choices[0].message) {
+        throw new Error('Invalid Groq response structure');
+      }
+
+      return {
+        text: data.choices[0].message.content,
         model: config.model,
-        messages: formattedMessages,
-        ...config.defaultParams,
-      }),
-      ...(signal ? { signal } : {}),
-    });
-
-    if (!response.ok) {
-      const errorText = await response.text().catch(() => '');
-      throw new Error(`Groq API error: ${response.status} ${errorText}`);
+        usage: data.usage || {},
+      };
     }
 
-    const data = await response.json();
-    
-    if (!data.choices || !data.choices[0] || !data.choices[0].message) {
-      throw new Error('Invalid Groq response structure');
-    }
-
-    return {
-      text: data.choices[0].message.content,
-      model: config.model,
-      usage: data.usage || {},
-    };
+    // All attempts exhausted on retryable errors
+    throw lastError;
   }
 
   /**
