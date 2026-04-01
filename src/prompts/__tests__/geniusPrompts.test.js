@@ -454,13 +454,21 @@ describe('FEW_SHOT_EXAMPLES — exemplo de artefato web (webArtifact)', () => {
   });
 });
 
-// ─── Bloco 8: buildGeniusPrompt("hybrid") — few-shot e presets removidos por performance ──
+// ─── Bloco 8: buildGeniusPrompt("hybrid") — micro few-shot de qualidade; presets grandes removidos ──
 
-describe("buildGeniusPrompt('hybrid') — few-shot e presets premium NÃO injetados (removidos para reduzir tamanho do prompt)", () => {
+describe("buildGeniusPrompt('hybrid') — micro few-shot de ancoragem presente; presets premium grandes NÃO injetados", () => {
   let hybridPrompt;
 
   beforeAll(() => {
     hybridPrompt = buildGeniusPrompt('hybrid');
+  });
+
+  it('inclui micro few-shot de ancoragem de qualidade (MICRO REFERÊNCIA — HERO E CTA)', () => {
+    expect(hybridPrompt).toContain('MICRO REFERÊNCIA — HERO E CTA');
+    expect(hybridPrompt).toContain('Hero fraco');
+    expect(hybridPrompt).toContain('Hero forte');
+    expect(hybridPrompt).toContain('CTA fraco');
+    expect(hybridPrompt).toContain('CTA forte');
   });
 
   it('NÃO inclui bloco de presets premium (PRESETS PREMIUM PARA ARTEFATOS WEB)', () => {
