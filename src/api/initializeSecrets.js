@@ -27,7 +27,6 @@ export function initializeSecrets() {
 
   // Log seguro do status
   console.log("🔐 Status de credenciais:", {
-    "gemini (opcional)": status.services.gemini ? "✅" : "❌",
     "groq (principal)": status.services.groq ? "✅" : "❌",
     github: status.services.github ? "✅" : "❌",
   });
