@@ -1,5 +1,41 @@
 # ✅ Checklist Projeto RKMMax (Atualizado — 23/10/2025)
 
+## 2026-04-01 — fix(boot): causa residual #3 da tela branca — supabaseClient.js crasha com env vars ausentes
+
+### O que foi feito
+- Adicionado guard em `src/lib/supabaseClient.js`: `createClient()` só executa se `VITE_SUPABASE_URL` e `VITE_SUPABASE_ANON_KEY` estiverem presentes; caso contrário, exporta stub seguro
+
+### Causa raiz residual
+`@supabase/supabase-js` `createClient(undefined, undefined)` lança `Error` síncrono durante avaliação do módulo. Como `supabaseClient.js` é importado transitivamente por múltiplas páginas estaticamente carregadas em `App.jsx`, o crash acontece antes de `ReactDOM.createRoot()` montar → `#root` vazio → tela branca total.
+
+### Por que os PRs #269 e #270 não foram suficientes
+- PR #269 corrigiu `process.env` → `import.meta.env` em SecretManager, sentry e analytics — não inspecionou `supabaseClient.js`
+- PR #270 corrigiu `PlanGate.jsx` com conteúdo trocado — não inspecionou `supabaseClient.js`
+- Os três crashes eram independentes; cada um fatal por si só
+
+### Por que `supabaseClient.js` quebrava o render
+`createClient(undefined, undefined)` lança imediatamente → erro na avaliação do módulo ES → todos os imports transitivos falham → módulo `App.jsx` falha ao importar → `main.jsx` não consegue importar `App` → React nunca monta → tela branca.
+
+### Arquivos alterados
+
+| Arquivo | Mudança |
+|---|---|
+| `src/lib/supabaseClient.js` | Guard `if (url && key)` antes de `createClient()`; stub seguro no else |
+| `CHECKLIST.md` | Esta entrada |
+
+### Por que a correção resolve
+`createClient()` só roda com variáveis válidas. Sem elas, o stub retorna a mesma interface (auth methods, `.from()` chainable) mas com dados vazios — auth fica degradada, app monta normalmente. Mesmo padrão de `initSentry()` e `initAnalytics()`: missing config → silently disabled.
+
+### Risco de regressão
+Mínimo. O stub é usado APENAS quando as variáveis de ambiente estão ausentes — cenário que antes já crashava completamente. Com variáveis presentes, o código segue o caminho original inalterado.
+
+### Rollback
+```bash
+git revert <commit-sha>
+```
+
+---
+
 ## 2026-04-01 — fix(boot): causa residual da tela branca — PlanGate.jsx continha conteúdo trocado
 
 ### O que foi feito
