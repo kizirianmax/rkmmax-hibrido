@@ -394,9 +394,9 @@ describe('FEW_SHOT_EXAMPLES — exemplo de artefato web (webArtifact)', () => {
   });
 });
 
-// ─── Bloco 8: buildGeniusPrompt('hybrid') agora inclui presets premium ────────
+// ─── Bloco 8: buildGeniusPrompt("hybrid") — few-shot injetado e presets injetados ──
 
-describe("buildGeniusPrompt('hybrid') — presets premium injetados", () => {
+describe("buildGeniusPrompt('hybrid') — few-shot + presets premium injetados", () => {
   let hybridPrompt;
 
   beforeAll(() => {
@@ -517,5 +517,41 @@ describe("buildGeniusPrompt('specialist') — NÃO alterado pelos presets", () =
 
   it('ainda contém POLÍTICA DE CONTENÇÃO DE DOMÍNIO', () => {
     expect(specialistPrompt).toContain('POLÍTICA DE CONTENÇÃO DE DOMÍNIO — INVIOLÁVEL');
+  });
+});
+
+// ─── Bloco 10: webArtifact aparece em posição correta no hybrid ───────────────
+
+describe('buildGeniusPrompt("hybrid") — posição do few-shot no prompt', () => {
+  let hybridPrompt;
+
+  beforeAll(() => {
+    hybridPrompt = buildGeniusPrompt('hybrid');
+  });
+
+  it('inclui o few-shot webArtifact no prompt híbrido gerado', () => {
+    expect(hybridPrompt).toContain(FEW_SHOT_EXAMPLES.webArtifact);
+  });
+
+  it('few-shot aparece depois do HYBRID_GENIUS_PROMPT e antes do HYBRID_SELF_REFLECTION_SUFFIX', () => {
+    const fewShotIdx = hybridPrompt.indexOf(FEW_SHOT_EXAMPLES.webArtifact.trim());
+    const hybridBaseIdx = hybridPrompt.indexOf('CONSTRUTOR');
+    const suffixIdx = hybridPrompt.indexOf('Antes de entregar, verifique internamente');
+    expect(hybridBaseIdx).toBeLessThan(fewShotIdx);
+    expect(fewShotIdx).toBeLessThan(suffixIdx);
+  });
+
+  it('exemplo FRACO está presente no prompt híbrido final', () => {
+    expect(hybridPrompt).toContain('FRACA');
+    expect(hybridPrompt).toContain('Bem-vindo');
+  });
+
+  it('exemplo FORTE está presente no prompt híbrido final (HTML semântico + design system)', () => {
+    expect(hybridPrompt).toContain('--color-primary');
+    expect(hybridPrompt).toContain('Intersection Observer');
+  });
+
+  it('copy magnética do exemplo forte está no prompt híbrido', () => {
+    expect(hybridPrompt).toContain('Pare de gerenciar');
   });
 });
