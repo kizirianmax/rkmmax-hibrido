@@ -1,5 +1,62 @@
 # ✅ Checklist Projeto RKMMax (Atualizado — 23/10/2025)
 
+## 2026-04-01 — fix(boot): tela branca — process.env → import.meta.env + remoção de resíduos Gemini/Google
+
+### O que foi feito
+- Corrigido `src/api/SecretManager.js`: `process.env[name]` → `import.meta.env[name]` em `_getEnvVar()`
+- Removido bloco `gemini` completo de `SecretManager.js` (chave, isConfigured, logs, validação, getStatus) — Gemini/Google não existem mais no projeto
+- Removidas vars `REACT_APP_GEMINI_API_KEY` / `VITE_GEMINI_API_KEY` — não há mais suporte nem fallback para Gemini/Google
+- Corrigido `src/lib/sentry.js`: 4 ocorrências de `process.env.*` → `import.meta.env.*`
+- Corrigido `src/lib/analytics.js`: 4 ocorrências de `process.env.*` → `import.meta.env.*`
+
+### Por que quebrou
+`process.env` é `undefined` no browser com Vite (sem polyfill). `SecretManager._getEnvVar()` acessava `process.env[name]` → `TypeError` lançado na fase de inicialização do módulo, antes do React montar → tela branca total.
+
+### Causa raiz
+`src/api/SecretManager.js` linha 74: `process.env[name]` em contexto de browser Vite.
+
+### Arquivos alterados
+
+| Arquivo | Mudança |
+|---|---|
+| `src/api/SecretManager.js` | `process.env[name]` → `import.meta.env[name]`; remoção completa de resíduos Gemini/Google |
+| `src/lib/sentry.js` | 4× `process.env.*` → `import.meta.env.*` |
+| `src/lib/analytics.js` | 4× `process.env.*` → `import.meta.env.*` |
+| `CHECKLIST.md` | Esta entrada |
+
+### Declaração explícita
+**Não há mais suporte, fallback, chave, log, validação nem referência a Gemini/Google nos arquivos `src/api/SecretManager.js`, `src/lib/sentry.js` e `src/lib/analytics.js`.**
+
+### Variáveis de ambiente após a correção
+
+| Var antes | Var depois | Arquivo |
+|---|---|---|
+| `REACT_APP_SENTRY_DSN` | `VITE_SENTRY_DSN` | `sentry.js` |
+| `REACT_APP_VERSION` | `VITE_APP_VERSION` | `sentry.js` |
+| `REACT_APP_POSTHOG_KEY` | `VITE_POSTHOG_KEY` | `analytics.js` |
+| `REACT_APP_POSTHOG_HOST` | `VITE_POSTHOG_HOST` | `analytics.js` |
+| `process.env.NODE_ENV` | `import.meta.env.MODE` | `sentry.js`, `analytics.js` |
+| `REACT_APP_GEMINI_API_KEY` / `VITE_GEMINI_API_KEY` | **removidas** | `SecretManager.js` |
+
+### Validação
+1. App abre normalmente — sem tela branca ✅
+2. SecretManager inicializa sem crash ✅
+3. Home, Serginho, Híbrido, Especialistas, Projetos, Study sem regressão ✅
+4. Nenhuma referência a Gemini/Google nos 3 arquivos permitidos ✅
+5. Sentry e PostHog continuam desabilitados silenciosamente se vars não configuradas ✅
+6. Arquitetura, prompts, roteamento, identidade das camadas, backend intocados ✅
+
+### Risco de regressão
+Mínimo. As vars `REACT_APP_*` e `process.env.NODE_ENV` nunca funcionaram no browser com Vite — não há regressão funcional real. Sentry e PostHog continuam com comportamento idêntico (desabilitados se var ausente).
+
+### Rollback
+```bash
+git revert <commit-sha>
+# Restaura process.env nos 3 arquivos e o bloco gemini em SecretManager.js
+```
+
+---
+
 ## 2026-03-22 — docs+prompt: auditoria e descontinuação do repositório kizirian-max-site
 
 ### O que foi feito
