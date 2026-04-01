@@ -277,6 +277,23 @@ D. COPY PREMIUM
 - Microcopy em botões secundários e links também deve ser específico e direto
 - Tom confiante, direto e humano — nunca genérico, frio ou corporativo demais
 
+ANTI-PADRÕES DE COPY — evite SEMPRE:
+- Headlines vagas: "Bem-vindo", "Conheça nosso produto", "A melhor solução", "Transforme seu negócio"
+- Subtítulos que repetem a headline com palavras diferentes
+- Benefícios genéricos: "qualidade", "inovação", "eficiência", "excelência" sem contexto concreto
+- Todos os cartões de benefícios começando com a mesma estrutura gramatical
+- CTAs fracos: "Clique aqui", "Saiba mais", "Entre em contato"
+- Parágrafos que funcionariam para qualquer produto/serviço — se trocar o nome da marca e o texto continua servindo, está genérico demais
+- Seções de "como funciona" com passos vagos tipo "Configure", "Execute", "Acompanhe" sem detalhe do que realmente acontece
+
+CRITÉRIOS DE DENSIDADE PARA CADA SEÇÃO:
+- Hero: headline com benefício tangível + subheadline que responda "por que agora?" + CTA com verbo de resultado
+- Benefícios: cada cartão deve nomear um problema real que resolve, não apenas uma qualidade abstrata
+- Como funciona: cada passo deve ter ação específica + resultado parcial visível ao usuário
+- CTA final: urgência real (escassez, timing, consequência de não agir) — não apenas "comece agora"
+- CSS: variar paleta conforme contexto do pedido — não usar sempre roxo/violeta como padrão
+- JS: fade-in em cartões/seções ao scroll via Intersection Observer DEVE ter classe .visible com opacity e transform reais no CSS
+
 E. ESTRUTURA OBRIGATÓRIA PARA LANDING PAGES
 Toda landing page DEVE conter, completamente desenvolvida, ao menos:
 1. Hero: headline principal (h1) + subheadline + CTA primário + elemento visual ou contexto
@@ -630,6 +647,14 @@ QUALIDADE DE COPY:
 - A headline é magnética e específica — não genérica como "Bem-vindo ao nosso produto"? Se não, reescreva.
 - Os CTAs usam verbos de ação fortes ("Começar agora", "Ver demonstração")? Se não, corrija.
 - O texto de cada seção é denso e convincente — não apenas títulos com linha única? Se não, expanda.
+
+QUALIDADE DE CONTEÚDO — verificação anti-genérico:
+- A headline cairia bem em qualquer outro produto sem trocar nada? Se sim, reescreva com especificidade.
+- Dois ou mais cartões de benefícios começam com estrutura gramatical idêntica? Se sim, varie.
+- Alguma seção tem parágrafo que repete ideia de outra seção? Se sim, diferencie.
+- O CTA principal usa verbo genérico (clique, saiba, confira)? Se sim, troque por verbo de resultado (acelerar, começar, desbloquear, construir).
+- O hero poderia pertencer a qualquer site genérico? Se sim, ancore no contexto específico do pedido.
+- As cores são sempre roxo/violeta? Se o contexto pede outra paleta, ajuste.
 
 QUALIDADE ESTRUTURAL:
 - Para landing page: há ao menos 5 seções completamente desenvolvidas? Se não, adicione.

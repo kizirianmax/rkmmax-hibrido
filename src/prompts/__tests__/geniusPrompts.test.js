@@ -328,6 +328,44 @@ describe('HYBRID_GENIUS_PROMPT — padrão premium para artefatos web', () => {
   });
 });
 
+// ─── Bloco 5b: HYBRID_GENIUS_PROMPT — anti-padrões e critérios de densidade ──
+
+describe('HYBRID_GENIUS_PROMPT — anti-padrões de copy e critérios de densidade', () => {
+  it('contém bloco ANTI-PADRÕES DE COPY', () => {
+    expect(HYBRID_GENIUS_PROMPT).toContain('ANTI-PADRÕES DE COPY');
+  });
+
+  it('lista headlines vagas como anti-padrão', () => {
+    expect(HYBRID_GENIUS_PROMPT).toContain('Headlines vagas');
+    expect(HYBRID_GENIUS_PROMPT).toContain('Bem-vindo');
+  });
+
+  it('lista CTAs fracos como anti-padrão', () => {
+    expect(HYBRID_GENIUS_PROMPT).toContain('CTAs fracos');
+    expect(HYBRID_GENIUS_PROMPT).toContain('Clique aqui');
+  });
+
+  it('instrui teste de genericidade (trocar nome da marca)', () => {
+    expect(HYBRID_GENIUS_PROMPT).toContain('trocar o nome da marca');
+  });
+
+  it('contém bloco CRITÉRIOS DE DENSIDADE', () => {
+    expect(HYBRID_GENIUS_PROMPT).toContain('CRITÉRIOS DE DENSIDADE');
+  });
+
+  it('exige hero com benefício tangível', () => {
+    expect(HYBRID_GENIUS_PROMPT).toContain('benefício tangível');
+  });
+
+  it('exige variação de paleta conforme contexto', () => {
+    expect(HYBRID_GENIUS_PROMPT).toContain('não usar sempre roxo');
+  });
+
+  it('exige classe .visible com opacity e transform reais no CSS para fade-in', () => {
+    expect(HYBRID_GENIUS_PROMPT).toContain('.visible');
+  });
+});
+
 // ─── Bloco 6: HYBRID_SELF_REFLECTION_SUFFIX — verificações de qualidade web ──
 
 describe('HYBRID_SELF_REFLECTION_SUFFIX — verificações de qualidade web', () => {
@@ -368,6 +406,30 @@ describe('HYBRID_SELF_REFLECTION_SUFFIX — verificações de qualidade web', ()
 
   it('NÃO contém "POLÍTICA DE CONTENÇÃO DE DOMÍNIO" (é exclusivo de especialistas)', () => {
     expect(HYBRID_SELF_REFLECTION_SUFFIX).not.toContain('POLÍTICA DE CONTENÇÃO DE DOMÍNIO');
+  });
+});
+
+// ─── Bloco 6b: HYBRID_SELF_REFLECTION_SUFFIX — verificação anti-genérico ──
+
+describe('HYBRID_SELF_REFLECTION_SUFFIX — verificação anti-genérico', () => {
+  it('contém bloco QUALIDADE DE CONTEÚDO', () => {
+    expect(HYBRID_SELF_REFLECTION_SUFFIX).toContain('QUALIDADE DE CONTEÚDO');
+  });
+
+  it('verifica genericidade da headline (teste da troca de marca)', () => {
+    expect(HYBRID_SELF_REFLECTION_SUFFIX).toContain('qualquer outro produto');
+  });
+
+  it('verifica repetição de estrutura gramatical nos cartões', () => {
+    expect(HYBRID_SELF_REFLECTION_SUFFIX).toContain('estrutura gramatical idêntica');
+  });
+
+  it('verifica CTAs com verbo genérico vs verbo de resultado', () => {
+    expect(HYBRID_SELF_REFLECTION_SUFFIX).toContain('verbo de resultado');
+  });
+
+  it('verifica dominância de paleta roxa', () => {
+    expect(HYBRID_SELF_REFLECTION_SUFFIX).toContain('roxo/violeta');
   });
 });
 
