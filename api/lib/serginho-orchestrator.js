@@ -234,6 +234,7 @@ class SerginhoOrchestrator {
    */
   _registerModels() {
     // Groq models (complex tier)
+    this.modelRegistry.registerModel('openai/gpt-oss-120b', 'complex', 0.00);
     this.modelRegistry.registerModel('llama-3.3-70b-versatile', 'complex', 0.00);
     this.modelRegistry.registerModel('llama-3.1-70b-versatile', 'complex', 0.00);
     this.modelRegistry.registerModel('llama-3.1-8b-instant', 'simple', 0.00);

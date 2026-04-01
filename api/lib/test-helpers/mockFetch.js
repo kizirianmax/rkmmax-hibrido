@@ -23,7 +23,8 @@ export function createMockFetch(options = {}) {
 
     // Map model to provider name
     const providerMap = {
-      'llama-3.3-70b-versatile': 'llama-120b',
+      'openai/gpt-oss-120b': 'llama-120b',
+      'llama-3.3-70b-versatile': 'llama-70b',
       'llama-3.1-70b-versatile': 'llama-70b',
       'llama-3.1-8b-instant': 'llama-8b',
       'mixtral-8x7b-32768': 'groq-fallback',
