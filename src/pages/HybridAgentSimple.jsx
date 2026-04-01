@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import "../styles/HybridAgent.css";
+import ArtifactPreviewPanel from "../components/construtor/ArtifactPreviewPanel";
 
 /**
  * Renders AI response text with basic markdown formatting.
@@ -70,6 +71,9 @@ export default function HybridAgentSimple() {
   const [loading, setLoading] = useState(false);
   const [isRecording, setIsRecording] = useState(false);
   const [githubToken, setGithubToken] = useState(localStorage.getItem("github_token") || null);
+  // Fase 2D — estado de preview por mensagem
+  const [previews, setPreviews] = useState({});
+  const [previewLoading, setPreviewLoading] = useState({});
   const messagesEndRef = useRef(null);
   const mediaRecorderRef = useRef(null);
 
@@ -122,6 +126,59 @@ export default function HybridAgentSimple() {
       window.history.replaceState({}, document.title, window.location.pathname);
     }
   }, []);
+
+  // Fase 2D — gerar preview de um artefato (mensagem do agente)
+  const handleGeneratePreview = async (msg) => {
+    const msgId = msg.id;
+    setPreviewLoading((prev) => ({ ...prev, [msgId]: true }));
+    try {
+      const response = await fetch("/api/artifact-preview", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          content: msg.content,
+          metadata: {
+            model: msg.provider,
+            tier: msg.tier,
+            complexity: msg.complexity,
+          },
+        }),
+      });
+      if (!response.ok) {
+        throw new Error(`Preview API error: ${response.status}`);
+      }
+      const data = await response.json();
+      if (data.success && data.preview) {
+        setPreviews((prev) => ({ ...prev, [msgId]: data.preview }));
+      }
+    } catch (err) {
+      console.error("❌ Erro ao gerar preview:", err);
+    } finally {
+      setPreviewLoading((prev) => ({ ...prev, [msgId]: false }));
+    }
+  };
+
+  // Fase 2D — aplicar decisão (aprovação/rejeição) ao preview
+  const handlePreviewDecision = async (msgId, decision, feedback) => {
+    const currentPreview = previews[msgId];
+    if (!currentPreview) return;
+    try {
+      const response = await fetch("/api/artifact-preview", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ preview: currentPreview, decision, feedback }),
+      });
+      if (!response.ok) {
+        throw new Error(`Preview API error: ${response.status}`);
+      }
+      const data = await response.json();
+      if (data.success && data.preview) {
+        setPreviews((prev) => ({ ...prev, [msgId]: data.preview }));
+      }
+    } catch (err) {
+      console.error("❌ Erro ao aplicar decisão:", err);
+    }
+  };
 
   const handleSendMessage = async () => {
     if (!input.trim()) return;
@@ -429,6 +486,29 @@ export default function HybridAgentSimple() {
                   msg.content
                 )}
               </div>
+              {/* Fase 2D — botão de preview e painel */}
+              {msg.type === "agent" && (
+                <div>
+                  {!previews[msg.id] && (
+                    <button
+                      className="artifact-preview-trigger-btn"
+                      onClick={() => handleGeneratePreview(msg)}
+                      disabled={previewLoading[msg.id]}
+                    >
+                      {previewLoading[msg.id] ? "⏳ Gerando preview..." : "📋 Preview do Artefato"}
+                    </button>
+                  )}
+                  {previews[msg.id] && (
+                    <ArtifactPreviewPanel
+                      preview={previews[msg.id]}
+                      loading={previewLoading[msg.id]}
+                      onDecision={(decision, feedback) =>
+                        handlePreviewDecision(msg.id, decision, feedback)
+                      }
+                    />
+                  )}
+                </div>
+              )}
             </div>
           ))}
 
