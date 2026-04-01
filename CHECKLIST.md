@@ -1,5 +1,51 @@
 # ✅ Checklist Projeto RKMMax (Atualizado — 23/10/2025)
 
+## 2026-04-01 — fix(boot): causa residual da tela branca — PlanGate.jsx continha conteúdo trocado
+
+### O que foi feito
+- Restaurado `src/components/PlanGate.jsx` como componente React válido (conteúdo estava trocado pelo código de `src/specialist-prompts.js`)
+- Removida linha residual `"gemini (opcional)"` de `src/api/initializeSecrets.js` (referência a `status.services.gemini` que deixou de existir após o PR #269)
+
+### Causa raiz residual
+`src/components/PlanGate.jsx` continha o conteúdo de `src/specialist-prompts.js` — um array exportado como default, não um componente React. `src/App.jsx` importa e usa `<PlanGate requirePlan="premium">` na rota `/agents`. Quando React tentava renderizar `<PlanGate>`, recebia um array → `TypeError: Element type is invalid` → toda a árvore derrubada → tela branca total.
+
+### Por que o PR #269 não foi suficiente
+O PR #269 corrigiu `process.env` → `import.meta.env` em `SecretManager.js`, `sentry.js` e `analytics.js`. Esses eram crashes reais, mas `PlanGate.jsx` continha conteúdo trocado preexistente que não foi inspecionado — segundo crash independente, igualmente fatal.
+
+### Por que `PlanGate.jsx` quebrava o render
+`React.createElement(PlanGate, { requirePlan: "premium" }, ...)` recebe um array como tipo de elemento. React não consegue renderizar um array como componente → invariant violation → React ErrorBoundary não existe no App.jsx → árvore inteira cai → `#root` fica vazio → tela branca.
+
+### Arquivos alterados
+
+| Arquivo | Mudança |
+|---|---|
+| `src/components/PlanGate.jsx` | Substituído conteúdo trocado (specialist-prompts array) por componente React válido com lógica de gating por plano |
+| `src/api/initializeSecrets.js` | Removida linha 30: `"gemini (opcional)": status.services.gemini ? "✅" : "❌"` |
+| `CHECKLIST.md` | Esta entrada |
+
+### Por que a correção resolve
+`PlanGate` passa a ser uma função React válida. `React.createElement` recebe uma função → renderiza normalmente → redireciona para `/pricing` se plano insuficiente, ou renderiza `children` se suficiente. Nenhum crash de invariant. Árvore monta corretamente.
+
+### Validação
+1. App abre na rota `/` sem tela branca ✅
+2. Rota `/agents` com plano `basic` → redireciona para `/pricing` ✅
+3. Rota `/agents` com plano `premium` → renderiza `AgentsPage` ✅
+4. `localStorage.userPlan` não definido → fallback `"basic"` (sem crash) ✅
+5. Nenhum outro arquivo tocado ✅
+6. Arquitetura, prompts, Serginho, backend, billing intocados ✅
+
+### Risco de regressão
+Mínimo. `PlanGate.jsx` nunca funcionou com o conteúdo trocado — nenhum comportamento anterior válido a preservar. Fallback via `localStorage.userPlan` é seguro e conservador.
+
+### Rollback
+```bash
+git revert <commit-sha>
+# Restaura PlanGate.jsx com conteúdo errado (specialist-prompts array)
+# e a linha gemini em initializeSecrets.js
+```
+
+---
+
 ## 2026-04-01 — fix(boot): tela branca — process.env → import.meta.env + remoção de resíduos Gemini/Google
 
 ### O que foi feito

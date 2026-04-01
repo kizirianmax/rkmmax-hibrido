@@ -1,29 +1,40 @@
-// src/specialist-prompts.js
-// Exemplo de prompt para um especialista chamado "Planx"
-// Adapte o objeto para os outros especialistas (Emo, Didak, Finna, etc.)
+// src/components/PlanGate.jsx
+import React from "react";
+import { Navigate } from "react-router-dom";
 
-const specialists = [
-  {
-    id: "planx",
-    name: "Planx",
-    title: "Planejamento de vida e carreira",
-    description: "Mentor prático para metas de carreira, planejamento e roadmap pessoal.",
-    systemPrompt: `
-Você é Planx, um mentor experiente em planejamento de vida e carreira. Seja conciso, empático e prático.
-Peça ao usuário que descreva em até 3 frases: ocupação atual, objetivo principal e prazo desejado.
-Em seguida entregue:
-1) Diagnóstico curto: até 4 pontos prioritários.
-2) Plano imediato (3 ações para os próximos 7 dias).
-3) Plano estratégico (3 etapas para 3-6 meses).
-4) Dois riscos a monitorar e dois recursos recomendados (site/livro/curso).
-Finalize com uma sugestão de mensagem curta que o usuário possa usar para pedir ajuda a um mentor.
-Regras: linguagem simples, não invente dados; se faltar informação peça-a; respostas <= 300 palavras.
-    `.trim(),
-    exampleUser:
-      "Quero mudar de área para tecnologia em 6 meses, atualmente trabalho com vendas e tenho pouco tempo livre.",
-    exampleAssistant:
-      "Diagnóstico: 1) Falta de conhecimento técnico formal; 2) Disponibilidade limitada; 3) Rede profissional pequena; 4) Necessidade de plano financeiro. Plano 7 dias: 1) Escolher 1 trilha de estudo (ex.: JavaScript básico); 2) Agendar 4 sessões de 30 min/semana; 3) Criar perfil LinkedIn com objetivo. Plano 3-6 meses: 1) Completar curso introdutório e projeto simples; 2) Participar de meetups e aplicar para vagas juniores; 3) Buscar mentor/mentoria. Riscos: burnout e expectativas irreais. Recursos: freeCodeCamp, Coursera. Mensagem rápida para mentor: 'Preciso de 30 min para revisar meu plano de transição para tech em 6 meses.'",
-  },
-];
+/**
+ * PlanGate — guarda de rota por nível de plano.
+ *
+ * Props:
+ *   requirePlan  {string}  Plano mínimo exigido para acessar a rota
+ *                          ("basic" | "intermediate" | "premium" | "ultra" | "dev")
+ *   children     {node}    Conteúdo a renderizar se o plano for suficiente
+ *
+ * Comportamento:
+ *   - Lê o plano do usuário de localStorage.userPlan
+ *   - Se o plano for suficiente → renderiza children
+ *   - Se não for suficiente → redireciona para /pricing
+ *   - Se o plano não estiver definido → fallback para "basic" (não bloqueia boot)
+ */
 
-export default specialists;
+const PLAN_RANK = {
+  basic: 1,
+  intermediate: 2,
+  premium: 3,
+  ultra: 4,
+  dev: 99,
+};
+
+export default function PlanGate({ requirePlan, children }) {
+  const rawPlan = localStorage.getItem("userPlan") || "basic";
+  const userPlan = PLAN_RANK[rawPlan] !== undefined ? rawPlan : "basic";
+
+  const userRank = PLAN_RANK[userPlan] ?? 1;
+  const requiredRank = PLAN_RANK[requirePlan] ?? 1;
+
+  if (userRank < requiredRank) {
+    return <Navigate to="/pricing" replace />;
+  }
+
+  return <>{children}</>;
+}
