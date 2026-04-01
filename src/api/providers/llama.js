@@ -66,28 +66,47 @@ export class LlamaProvider {
   }
 
   async generate(prompt, options = {}) {
-    const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${this.apiKey}`,
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        model: this.modelMap[this.size],
-        messages: [
-          { role: 'system', content: options.systemPrompt || buildGeniusPrompt('serginho') },
-          { role: 'user', content: prompt }
-        ],
-        temperature: options.temperature || 0.7,
-        max_tokens: options.maxTokens || 2000
-      })
-    });
+    const MAX_RETRIES = 3;
+    const BACKOFF_BASE_MS = 1000;
+    let lastError;
 
-    if (!response.ok) {
+    for (let attempt = 0; attempt < MAX_RETRIES; attempt++) {
+      if (attempt > 0) {
+        await new Promise(resolve => setTimeout(resolve, BACKOFF_BASE_MS * attempt));
+      }
+
+      const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${this.apiKey}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          model: this.modelMap[this.size],
+          messages: [
+            { role: 'system', content: options.systemPrompt || buildGeniusPrompt('serginho') },
+            { role: 'user', content: prompt }
+          ],
+          temperature: options.temperature || 0.7,
+          max_tokens: options.maxTokens || 2000
+        })
+      });
+
+      if (response.ok) {
+        return await response.json();
+      }
+
       const error = await response.json().catch(() => ({}));
-      throw new Error(`Llama ${this.size} API error: ${error.error?.message || response.status}`);
+      const thrownError = new Error(`Llama ${this.size} API error: ${error.error?.message || response.status}`);
+
+      if (response.status === 429 || response.status >= 500) {
+        lastError = thrownError;
+        continue;
+      }
+
+      throw thrownError;
     }
 
-    return response.json();
+    throw lastError;
   }
 }
