@@ -3,18 +3,21 @@ import { useState } from 'react';
 /**
  * ArtifactPreviewPanel — Fase 2D
  *
- * Painel mínimo de inspeção humana do artefato gerado pelo Construtor.
+ * Painel de decisão humana sobre o artefato gerado pelo Construtor.
  * Exibe summary, status de validação/execução, lista de arquivos,
- * preview do conteúdo e permite aprovar ou rejeitar com feedback.
+ * preview do conteúdo e permite: aprovar, solicitar ajuste ou rejeitar.
  *
  * Props:
  *   preview     {object}   — objeto retornado por generatePreview() / /api/artifact-preview
  *   onDecision  {function} — callback(decision, feedback) chamado ao aprovar/rejeitar
+ *   onRevision  {function} — callback(feedback) chamado ao solicitar ajuste ou revisão
  *   loading     {boolean}  — exibir estado de carregamento
  */
 export default function ArtifactPreviewPanel({ preview, onDecision, onRevision, loading = false }) {
   const [rejectionFeedback, setRejectionFeedback] = useState('');
   const [showRejectionInput, setShowRejectionInput] = useState(false);
+  const [adjustmentFeedback, setAdjustmentFeedback] = useState('');
+  const [showAdjustInput, setShowAdjustInput] = useState(false);
 
   if (loading) {
     return (
@@ -52,10 +55,12 @@ export default function ArtifactPreviewPanel({ preview, onDecision, onRevision, 
 
   const handleApprove = () => {
     setShowRejectionInput(false);
+    setShowAdjustInput(false);
     onDecision?.('approved', null);
   };
 
   const handleRejectClick = () => {
+    setShowAdjustInput(false);
     setShowRejectionInput(true);
   };
 
@@ -64,15 +69,29 @@ export default function ArtifactPreviewPanel({ preview, onDecision, onRevision, 
     setShowRejectionInput(false);
   };
 
+  const handleAdjustClick = () => {
+    setShowRejectionInput(false);
+    setShowAdjustInput(true);
+  };
+
+  const handleAdjustConfirm = () => {
+    onRevision?.(adjustmentFeedback || null);
+    setAdjustmentFeedback('');
+    setShowAdjustInput(false);
+  };
+
   const isPending = decision === 'pending';
 
   return (
     <div className="artifact-preview-panel">
       {/* Cabeçalho */}
       <div className="artifact-preview-header">
-        <span className="artifact-preview-title">📋 Preview do Artefato</span>
+        <span className="artifact-preview-title">🔍 Revisão do Artefato</span>
         {decisionBadge}
       </div>
+      {isPending && (
+        <p className="artifact-preview-hint">Revise o artefato e escolha uma ação abaixo.</p>
+      )}
 
       {/* Metadados */}
       <div className="artifact-preview-meta">
@@ -153,7 +172,7 @@ export default function ArtifactPreviewPanel({ preview, onDecision, onRevision, 
       {/* Ações */}
       {isPending && (
         <div className="artifact-preview-actions">
-          {!showRejectionInput ? (
+          {!showRejectionInput && !showAdjustInput ? (
             <>
               <button
                 className="artifact-btn artifact-btn-approve"
@@ -162,12 +181,43 @@ export default function ArtifactPreviewPanel({ preview, onDecision, onRevision, 
                 ✅ Aprovar
               </button>
               <button
+                className="artifact-btn artifact-btn-adjust"
+                onClick={handleAdjustClick}
+              >
+                🔄 Solicitar ajuste
+              </button>
+              <button
                 className="artifact-btn artifact-btn-reject"
                 onClick={handleRejectClick}
               >
                 ❌ Rejeitar
               </button>
             </>
+          ) : showAdjustInput ? (
+            <div className="artifact-rejection-form">
+              <textarea
+                className="artifact-rejection-textarea"
+                placeholder="O que deve ser ajustado? (opcional)"
+                value={adjustmentFeedback}
+                onChange={(e) => setAdjustmentFeedback(e.target.value)}
+                rows={3}
+                aria-label="Notas de ajuste"
+              />
+              <div className="artifact-rejection-buttons">
+                <button
+                  className="artifact-btn artifact-btn-adjust"
+                  onClick={handleAdjustConfirm}
+                >
+                  🔄 Confirmar ajuste
+                </button>
+                <button
+                  className="artifact-btn artifact-btn-cancel"
+                  onClick={() => setShowAdjustInput(false)}
+                >
+                  Cancelar
+                </button>
+              </div>
+            </div>
           ) : (
             <div className="artifact-rejection-form">
               <textarea
