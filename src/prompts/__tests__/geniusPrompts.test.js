@@ -635,9 +635,9 @@ describe('HYBRID_GENIUS_PROMPT — structured output format', () => {
     expect(HYBRID_GENIUS_PROMPT).toContain('**RESUMO**');
   });
 
-  it('define seção OBSERVAÇÕES como opcional com condições explícitas e blacklist', () => {
+  it('define seção OBSERVAÇÕES como excepcional — NÃO faz parte do formato padrão', () => {
     expect(HYBRID_GENIUS_PROMPT).toContain('**OBSERVAÇÕES**');
-    expect(HYBRID_GENIUS_PROMPT).toContain('OMITIR se não houver motivo real');
+    expect(HYBRID_GENIUS_PROMPT).toContain('OBSERVAÇÕES NÃO é uma seção do formato padrão');
     expect(HYBRID_GENIUS_PROMPT).toContain('TOTALMENTE OMITIDA');
     expect(HYBRID_GENIUS_PROMPT).toContain('Nenhuma observação necessária');
   });
@@ -699,8 +699,8 @@ describe('HYBRID_SELF_REFLECTION_SUFFIX — verificação de structured output',
 // ─── Bloco 13: HYBRID_GENIUS_PROMPT — desvios de qualidade (OBSERVAÇÕES, dark mode, anti-genérico) ──
 
 describe('HYBRID_GENIUS_PROMPT — OBSERVAÇÕES: blacklist de frases burocráticas', () => {
-  it('instrui OMITIR OBSERVAÇÕES quando não houver motivo real', () => {
-    expect(HYBRID_GENIUS_PROMPT).toContain('OMITIR se não houver motivo real');
+  it('instrui que OBSERVAÇÕES sem motivo real é ERRO DE RESPOSTA', () => {
+    expect(HYBRID_GENIUS_PROMPT).toContain('ERRO DE RESPOSTA');
     expect(HYBRID_GENIUS_PROMPT).toContain('TOTALMENTE OMITIDA');
   });
 
@@ -807,8 +807,8 @@ describe('HYBRID_SELF_REFLECTION_SUFFIX — verificação dos 3 desvios de quali
 // ─── Bloco 15: HYBRID_GENIUS_PROMPT — ajuste fino de obediência v2 ──────────
 
 describe('HYBRID_GENIUS_PROMPT — OBSERVAÇÕES: regra de default ausente e blacklist expandida', () => {
-  it('instrui que o DEFAULT de OBSERVAÇÕES é NÃO EXISTIR', () => {
-    expect(HYBRID_GENIUS_PROMPT).toContain('DEFAULT da seção OBSERVAÇÕES é NÃO EXISTIR');
+  it('instrui que OBSERVAÇÕES NÃO é seção do formato padrão (default ausente)', () => {
+    expect(HYBRID_GENIUS_PROMPT).toContain('OBSERVAÇÕES NÃO é uma seção do formato padrão');
   });
 
   it('inclui blacklist expandida com variantes adicionais', () => {
@@ -858,5 +858,31 @@ describe('HYBRID_SELF_REFLECTION_SUFFIX — verificação reforçada dos 3 desvi
 
   it('verifica se headline incorpora elemento concreto do pedido', () => {
     expect(HYBRID_SELF_REFLECTION_SUFFIX).toContain('tipo de artefato, diferencial, resultado, público');
+  });
+});
+
+// ─── Bloco 15: HYBRID_GENIUS_PROMPT — OBSERVAÇÕES: seção excepcional v3 ──────
+
+describe('HYBRID_GENIUS_PROMPT — OBSERVAÇÕES: seção excepcional v3', () => {
+  it('declara que o formato padrão tem APENAS 3 seções', () => {
+    expect(HYBRID_GENIUS_PROMPT).toContain('APENAS 3 seções: ENTENDIMENTO, ARTEFATO, RESUMO');
+  });
+
+  it('declara que OBSERVAÇÕES NÃO é seção do formato padrão', () => {
+    expect(HYBRID_GENIUS_PROMPT).toContain('OBSERVAÇÕES NÃO é uma seção do formato padrão');
+  });
+
+  it('marca presença sem motivo real como ERRO DE RESPOSTA', () => {
+    expect(HYBRID_GENIUS_PROMPT).toContain('ERRO DE RESPOSTA');
+  });
+
+  it('regras do formato declaram presença sem justificativa como DEFEITO', () => {
+    expect(HYBRID_GENIUS_PROMPT).toContain('presença sem justificativa concreta é um DEFEITO');
+  });
+});
+
+describe('HYBRID_SELF_REFLECTION_SUFFIX — remoção imperativa de OBSERVAÇÕES v3', () => {
+  it('instrui REMOVER seção INTEIRA da resposta AGORA se não houver justificativa concreta', () => {
+    expect(HYBRID_SELF_REFLECTION_SUFFIX).toContain('REMOVA a seção INTEIRA da resposta AGORA');
   });
 });
