@@ -1,91 +1,53 @@
 /**
  * HYBRID SYSTEM DASHBOARD
- * Monitoramento em tempo real do sistema de agentes
+ * Monitoramento em tempo real do sistema de agentes — dados reais do /api/health
  */
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import {
-  LineChart,
-  Line,
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  Legend,
-  ResponsiveContainer,
-} from "recharts";
+
+const REFRESH_INTERVAL_MS = 30000;
+
+function StatusBadge({ ok, label }) {
+  return (
+    <span
+      className={`px-3 py-1 rounded-full text-sm font-medium ${
+        ok ? "bg-green-900 text-green-300" : "bg-red-900 text-red-300"
+      }`}
+    >
+      {ok ? "✅" : "❌"} {label}
+    </span>
+  );
+}
 
 export default function HybridSystemDashboard() {
-  const [stats, setStats] = useState(null);
-  const [history, setHistory] = useState([]);
+  const [health, setHealth] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [lastFetched, setLastFetched] = useState(null);
+
+  const fetchHealth = useCallback(async () => {
+    try {
+      const res = await fetch("/api/health");
+      if (!res.ok) {
+        throw new Error(`Health endpoint returned HTTP ${res.status}`);
+      }
+      const data = await res.json();
+      setHealth(data);
+      setLastFetched(new Date());
+      setError(null);
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
 
   useEffect(() => {
-    // Simular carregamento de estatísticas
-    const loadStats = async () => {
-      try {
-        // Em produção, isso viria de uma API real
-        const mockStats = {
-          serginho: {
-            uptime: Math.floor(Math.random() * 86400000),
-            mode: "AUTONOMOUS",
-            requestsProcessed: Math.floor(Math.random() * 1000),
-          },
-          registry: {
-            totalSpecialists: 47,
-            loadedSpecialists: Math.floor(Math.random() * 20) + 1,
-            memoryUsage: (Math.random() * 40).toFixed(2) + " MB",
-          },
-          cache: {
-            hits: Math.floor(Math.random() * 500),
-            misses: Math.floor(Math.random() * 200),
-            hitRate: (Math.random() * 100).toFixed(2) + "%",
-            estimatedSavings: "$" + Math.floor(Math.random() * 5000),
-          },
-          security: {
-            blockedPrompts: Math.floor(Math.random() * 50),
-            redactedInstances: Math.floor(Math.random() * 100),
-            modelArmorStatus: "ACTIVE",
-          },
-          performance: {
-            avgResponseTime: Math.floor(Math.random() * 100) + "ms",
-            p95ResponseTime: Math.floor(Math.random() * 200) + "ms",
-            p99ResponseTime: Math.floor(Math.random() * 300) + "ms",
-          },
-        };
-
-        setStats(mockStats);
-
-        // Adicionar ao histórico
-        setHistory((prev) =>
-          [
-            ...prev,
-            {
-              timestamp: new Date().toLocaleTimeString(),
-              hitRate: parseFloat(mockStats.cache.hitRate),
-              responseTime: parseInt(mockStats.performance.avgResponseTime),
-              loadedSpecialists: mockStats.registry.loadedSpecialists,
-            },
-          ].slice(-20)
-        ); // Manter últimos 20
-
-        setLoading(false);
-      } catch (err) {
-        setError(err.message);
-        setLoading(false);
-      }
-    };
-
-    loadStats();
-
-    // Atualizar a cada 5 segundos
-    const interval = setInterval(loadStats, 5000);
+    fetchHealth();
+    const interval = setInterval(fetchHealth, REFRESH_INTERVAL_MS);
     return () => clearInterval(interval);
-  }, []);
+  }, [fetchHealth]);
 
   if (loading) {
     return (
@@ -98,7 +60,7 @@ export default function HybridSystemDashboard() {
     );
   }
 
-  if (error) {
+  if (error && !health) {
     return (
       <div className="flex items-center justify-center h-screen">
         <Card className="w-full max-w-md">
@@ -113,281 +75,191 @@ export default function HybridSystemDashboard() {
     );
   }
 
+  const isOnline = health?.status === "ok";
+  const groqOk = health?.providers?.groq === true;
+  const geminiOk = health?.providers?.gemini === true;
+  const models = health?.models || [];
+  const primaryProvider = health?.primaryProvider;
+  const primaryModel = models.find((m) => m.id === primaryProvider);
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 to-slate-800 p-8">
-      <div className="max-w-7xl mx-auto">
+      <div className="max-w-5xl mx-auto">
         {/* Header */}
         <div className="mb-8">
           <h1 className="text-4xl font-bold text-white mb-2">🤖 Hybrid System Dashboard</h1>
           <p className="text-gray-400">
-            Monitoramento em tempo real do Sistema Híbrido Inteligente
+            Status real do Sistema Híbrido — atualizado a cada 30 segundos
           </p>
         </div>
 
-        {/* Status Principal */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
-          {/* Serginho Status */}
-          <Card className="bg-slate-800 border-slate-700">
-            <CardHeader>
-              <CardTitle className="text-sm text-gray-400">Serginho Status</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-2">
-                <div className="flex items-center justify-between">
-                  <span className="text-gray-400">Modo:</span>
-                  <span className="text-green-400 font-bold">{stats?.serginho.mode}</span>
-                </div>
-                <div className="flex items-center justify-between">
-                  <span className="text-gray-400">Uptime:</span>
-                  <span className="text-blue-400">
-                    {(stats?.serginho.uptime / 3600000).toFixed(2)}h
-                  </span>
-                </div>
-                <div className="flex items-center justify-between">
-                  <span className="text-gray-400">Requisições:</span>
-                  <span className="text-purple-400">{stats?.serginho.requestsProcessed}</span>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Registry Status */}
-          <Card className="bg-slate-800 border-slate-700">
-            <CardHeader>
-              <CardTitle className="text-sm text-gray-400">Registry</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-2">
-                <div className="flex items-center justify-between">
-                  <span className="text-gray-400">Total:</span>
-                  <span className="text-blue-400 font-bold">
-                    {stats?.registry.totalSpecialists}
-                  </span>
-                </div>
-                <div className="flex items-center justify-between">
-                  <span className="text-gray-400">Carregados:</span>
-                  <span className="text-green-400">{stats?.registry.loadedSpecialists}/20</span>
-                </div>
-                <div className="flex items-center justify-between">
-                  <span className="text-gray-400">Memória:</span>
-                  <span className="text-yellow-400">{stats?.registry.memoryUsage}</span>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Cache Status */}
-          <Card className="bg-slate-800 border-slate-700">
-            <CardHeader>
-              <CardTitle className="text-sm text-gray-400">Cache Performance</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-2">
-                <div className="flex items-center justify-between">
-                  <span className="text-gray-400">Hit Rate:</span>
-                  <span className="text-green-400 font-bold">{stats?.cache.hitRate}</span>
-                </div>
-                <div className="flex items-center justify-between">
-                  <span className="text-gray-400">Hits/Misses:</span>
-                  <span className="text-blue-400">
-                    {stats?.cache.hits}/{stats?.cache.misses}
-                  </span>
-                </div>
-                <div className="flex items-center justify-between">
-                  <span className="text-gray-400">Economia:</span>
-                  <span className="text-purple-400">{stats?.cache.estimatedSavings}</span>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Security Status */}
-          <Card className="bg-slate-800 border-slate-700">
-            <CardHeader>
-              <CardTitle className="text-sm text-gray-400">Security</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-2">
-                <div className="flex items-center justify-between">
-                  <span className="text-gray-400">Model Armor:</span>
-                  <span className="text-green-400 font-bold">ACTIVE</span>
-                </div>
-                <div className="flex items-center justify-between">
-                  <span className="text-gray-400">Bloqueados:</span>
-                  <span className="text-red-400">{stats?.security.blockedPrompts}</span>
-                </div>
-                <div className="flex items-center justify-between">
-                  <span className="text-gray-400">Redacionados:</span>
-                  <span className="text-yellow-400">{stats?.security.redactedInstances}</span>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-
-        {/* Performance Metrics */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
-          {/* Response Time Chart */}
-          <Card className="bg-slate-800 border-slate-700">
-            <CardHeader>
-              <CardTitle className="text-white">Response Time Trend</CardTitle>
-            </CardHeader>
-            <CardContent>
-              {history.length > 0 ? (
-                <ResponsiveContainer width="100%" height={300}>
-                  <LineChart data={history}>
-                    <CartesianGrid strokeDasharray="3 3" stroke="#404040" />
-                    <XAxis dataKey="timestamp" stroke="#888" />
-                    <YAxis stroke="#888" />
-                    <Tooltip
-                      contentStyle={{ backgroundColor: "#1e293b", border: "1px solid #404040" }}
-                      labelStyle={{ color: "#fff" }}
-                    />
-                    <Legend />
-                    <Line
-                      type="monotone"
-                      dataKey="responseTime"
-                      stroke="#3b82f6"
-                      dot={false}
-                      name="Avg Response Time (ms)"
-                    />
-                  </LineChart>
-                </ResponsiveContainer>
-              ) : (
-                <p className="text-gray-400 text-center py-8">Carregando dados...</p>
-              )}
-            </CardContent>
-          </Card>
-
-          {/* Cache Hit Rate Chart */}
-          <Card className="bg-slate-800 border-slate-700">
-            <CardHeader>
-              <CardTitle className="text-white">Cache Hit Rate Trend</CardTitle>
-            </CardHeader>
-            <CardContent>
-              {history.length > 0 ? (
-                <ResponsiveContainer width="100%" height={300}>
-                  <LineChart data={history}>
-                    <CartesianGrid strokeDasharray="3 3" stroke="#404040" />
-                    <XAxis dataKey="timestamp" stroke="#888" />
-                    <YAxis stroke="#888" />
-                    <Tooltip
-                      contentStyle={{ backgroundColor: "#1e293b", border: "1px solid #404040" }}
-                      labelStyle={{ color: "#fff" }}
-                    />
-                    <Legend />
-                    <Line
-                      type="monotone"
-                      dataKey="hitRate"
-                      stroke="#10b981"
-                      dot={false}
-                      name="Hit Rate (%)"
-                    />
-                  </LineChart>
-                </ResponsiveContainer>
-              ) : (
-                <p className="text-gray-400 text-center py-8">Carregando dados...</p>
-              )}
-            </CardContent>
-          </Card>
-        </div>
-
-        {/* Performance Details */}
+        {/* Status Geral */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
           <Card className="bg-slate-800 border-slate-700">
             <CardHeader>
-              <CardTitle className="text-sm text-gray-400">Avg Response Time</CardTitle>
+              <CardTitle className="text-sm text-gray-400">Status do Sistema</CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-3xl font-bold text-blue-400">
-                {stats?.performance.avgResponseTime}
-              </p>
+              <div className="space-y-2">
+                <div className="flex items-center justify-between">
+                  <span className="text-gray-400">Estado:</span>
+                  <span className={`font-bold ${isOnline ? "text-green-400" : "text-red-400"}`}>
+                    {isOnline ? "● Online" : "● Offline"}
+                  </span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-gray-400">Serviço:</span>
+                  <span className="text-blue-400">{health?.service || "—"}</span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-gray-400">Ambiente:</span>
+                  <span className="text-purple-400">{health?.environment || "—"}</span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-gray-400">Versão:</span>
+                  <span className="text-gray-300">{health?.version || "—"}</span>
+                </div>
+              </div>
             </CardContent>
           </Card>
 
+          {/* Providers */}
           <Card className="bg-slate-800 border-slate-700">
             <CardHeader>
-              <CardTitle className="text-sm text-gray-400">P95 Response Time</CardTitle>
+              <CardTitle className="text-sm text-gray-400">Providers Configurados</CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-3xl font-bold text-yellow-400">
-                {stats?.performance.p95ResponseTime}
-              </p>
+              <div className="space-y-2">
+                <div className="flex items-center justify-between">
+                  <span className="text-gray-400">Groq:</span>
+                  <span className={`font-bold ${groqOk ? "text-green-400" : "text-red-400"}`}>
+                    {groqOk ? "✅ Ativo" : "❌ Não configurado"}
+                  </span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-gray-400">Gemini:</span>
+                  <span className={`font-bold ${geminiOk ? "text-green-400" : "text-yellow-400"}`}>
+                    {geminiOk ? "✅ Ativo" : "— Não configurado"}
+                  </span>
+                </div>
+                {health?.providers?.groqOnly && (
+                  <p className="text-xs text-yellow-400 mt-2">
+                    ⚠️ Modo Groq-only ativo
+                  </p>
+                )}
+              </div>
             </CardContent>
           </Card>
 
+          {/* Provider Principal */}
           <Card className="bg-slate-800 border-slate-700">
             <CardHeader>
-              <CardTitle className="text-sm text-gray-400">P99 Response Time</CardTitle>
+              <CardTitle className="text-sm text-gray-400">Provider Principal Ativo</CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-3xl font-bold text-red-400">
-                {stats?.performance.p99ResponseTime}
-              </p>
+              {primaryModel ? (
+                <div className="space-y-2">
+                  <div className="flex items-center gap-2">
+                    <span className="text-2xl">{primaryModel.icon}</span>
+                    <span className="text-white font-bold">{primaryModel.displayName}</span>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-gray-400">Modelo:</span>
+                    <span className="text-blue-300 text-xs font-mono">{primaryModel.model}</span>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-gray-400">Tier:</span>
+                    <span className="text-purple-400">{primaryModel.tier}</span>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-gray-400">Infraestrutura:</span>
+                    <span className="text-gray-300">{primaryModel.infrastructure}</span>
+                  </div>
+                </div>
+              ) : (
+                <p className="text-yellow-400 text-sm">Nenhum provider ativo</p>
+              )}
             </CardContent>
           </Card>
         </div>
 
-        {/* System Health */}
-        <Card className="bg-slate-800 border-slate-700">
+        {/* Modelos Disponíveis */}
+        {models.length > 0 && (
+          <Card className="bg-slate-800 border-slate-700 mb-8">
+            <CardHeader>
+              <CardTitle className="text-white">Modelos Habilitados</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
+                {models.map((m) => (
+                  <div
+                    key={m.id}
+                    className={`p-3 rounded-lg border ${
+                      m.id === primaryProvider
+                        ? "border-green-600 bg-green-900/20"
+                        : "border-slate-600 bg-slate-700/40"
+                    }`}
+                  >
+                    <div className="flex items-center gap-2 mb-1">
+                      <span className="text-xl">{m.icon}</span>
+                      <span className="text-white text-sm font-semibold">{m.displayName}</span>
+                      {m.id === primaryProvider && (
+                        <span className="ml-auto text-xs text-green-400 font-bold">ATIVO</span>
+                      )}
+                    </div>
+                    <p className="text-xs text-gray-400 font-mono truncate">{m.model}</p>
+                    <p className="text-xs text-purple-400 mt-1">tier: {m.tier}</p>
+                  </div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+        )}
+
+        {/* Deployment Info */}
+        <Card className="bg-slate-800 border-slate-700 mb-8">
           <CardHeader>
-            <CardTitle className="text-white">System Health</CardTitle>
+            <CardTitle className="text-white">Informações de Deploy</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="space-y-4">
-              {/* Health Indicators */}
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div>
-                  <div className="flex items-center justify-between mb-2">
-                    <span className="text-gray-400">CPU Usage</span>
-                    <span className="text-green-400">35%</span>
-                  </div>
-                  <div className="w-full bg-slate-700 rounded-full h-2">
-                    <div className="bg-green-400 h-2 rounded-full" style={{ width: "35%" }}></div>
-                  </div>
-                </div>
-
-                <div>
-                  <div className="flex items-center justify-between mb-2">
-                    <span className="text-gray-400">Memory Usage</span>
-                    <span className="text-yellow-400">70%</span>
-                  </div>
-                  <div className="w-full bg-slate-700 rounded-full h-2">
-                    <div className="bg-yellow-400 h-2 rounded-full" style={{ width: "70%" }}></div>
-                  </div>
-                </div>
-
-                <div>
-                  <div className="flex items-center justify-between mb-2">
-                    <span className="text-gray-400">Disk Usage</span>
-                    <span className="text-blue-400">45%</span>
-                  </div>
-                  <div className="w-full bg-slate-700 rounded-full h-2">
-                    <div className="bg-blue-400 h-2 rounded-full" style={{ width: "45%" }}></div>
-                  </div>
-                </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="flex items-center justify-between">
+                <span className="text-gray-400">Commit:</span>
+                <span className="text-blue-300 font-mono text-sm">
+                  {health?.commit && health.commit !== "unknown"
+                    ? health.commit.slice(0, 10)
+                    : "não disponível"}
+                </span>
               </div>
-
-              {/* Status Badges */}
-              <div className="flex flex-wrap gap-2 mt-6">
-                <div className="px-3 py-1 bg-green-900 text-green-300 rounded-full text-sm">
-                  ✅ All Systems Operational
-                </div>
-                <div className="px-3 py-1 bg-blue-900 text-blue-300 rounded-full text-sm">
-                  🔒 Security: Active
-                </div>
-                <div className="px-3 py-1 bg-purple-900 text-purple-300 rounded-full text-sm">
-                  ⚡ Performance: Optimal
-                </div>
+              <div className="flex items-center justify-between">
+                <span className="text-gray-400">Timestamp servidor:</span>
+                <span className="text-gray-300 text-sm">
+                  {health?.timestamp
+                    ? new Date(health.timestamp).toLocaleString("pt-BR")
+                    : "—"}
+                </span>
               </div>
             </div>
           </CardContent>
         </Card>
 
+        {/* Status Badges */}
+        <div className="flex flex-wrap gap-2 mb-8">
+          <StatusBadge ok={isOnline} label="Sistema Online" />
+          <StatusBadge ok={groqOk} label="Groq API" />
+          {geminiOk && <StatusBadge ok={true} label="Gemini API" />}
+        </div>
+
         {/* Footer */}
-        <div className="mt-8 text-center text-gray-500 text-sm">
-          <p>Last updated: {new Date().toLocaleString()}</p>
-          <p>RKMMAX Hybrid System © 2025</p>
+        <div className="text-center text-gray-500 text-sm">
+          <p>
+            Última atualização:{" "}
+            {lastFetched ? lastFetched.toLocaleString("pt-BR") : "—"}
+            {error && (
+              <span className="ml-2 text-yellow-500">(última busca com erro: {error})</span>
+            )}
+          </p>
+          <p className="mt-1">RKMMAX Hybrid System © 2025</p>
         </div>
       </div>
     </div>
