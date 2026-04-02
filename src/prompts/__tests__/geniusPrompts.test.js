@@ -803,3 +803,60 @@ describe('HYBRID_SELF_REFLECTION_SUFFIX — verificação dos 3 desvios de quali
     expect(HYBRID_SELF_REFLECTION_SUFFIX).toContain('especificidade do pedido antes de entregar');
   });
 });
+
+// ─── Bloco 15: HYBRID_GENIUS_PROMPT — ajuste fino de obediência v2 ──────────
+
+describe('HYBRID_GENIUS_PROMPT — OBSERVAÇÕES: regra de default ausente e blacklist expandida', () => {
+  it('instrui que o DEFAULT de OBSERVAÇÕES é NÃO EXISTIR', () => {
+    expect(HYBRID_GENIUS_PROMPT).toContain('DEFAULT da seção OBSERVAÇÕES é NÃO EXISTIR');
+  });
+
+  it('inclui blacklist expandida com variantes adicionais', () => {
+    expect(HYBRID_GENIUS_PROMPT).toContain('Não há observações adicionais');
+    expect(HYBRID_GENIUS_PROMPT).toContain('Nada a observar');
+    expect(HYBRID_GENIUS_PROMPT).toContain('O resultado atende ao solicitado');
+  });
+
+  it('instrui ELIMINAR seção se contiver frase de confirmação vazia', () => {
+    expect(HYBRID_GENIUS_PROMPT).toContain('ELIMINE a seção INTEIRA');
+  });
+});
+
+describe('HYBRID_GENIUS_PROMPT — CTA do hero: blacklist explícita aplicada ao hero', () => {
+  it('proíbe explicitamente CTAs genéricos NO HERO', () => {
+    expect(HYBRID_GENIUS_PROMPT).toContain('CTA do hero');
+    expect(HYBRID_GENIUS_PROMPT).toContain('Veja mais');
+  });
+
+  it('instrui que proibição de CTAs se aplica a TODOS os CTAs incluindo hero', () => {
+    expect(HYBRID_GENIUS_PROMPT).toContain('TODOS os CTAs da página');
+  });
+});
+
+describe('HYBRID_GENIUS_PROMPT — headline: regra prescritiva de incorporação de contexto', () => {
+  it('exige incorporar elemento concreto do pedido na headline', () => {
+    expect(HYBRID_GENIUS_PROMPT).toContain('tipo de artefato solicitado');
+    expect(HYBRID_GENIUS_PROMPT).toContain('diferencial mencionado');
+    expect(HYBRID_GENIUS_PROMPT).toContain('resultado esperado');
+    expect(HYBRID_GENIUS_PROMPT).toContain('público-alvo');
+  });
+
+  it('proíbe "nome do produto + descrição genérica" como headline', () => {
+    expect(HYBRID_GENIUS_PROMPT).toContain('Nome do produto + descrição genérica');
+  });
+});
+
+describe('HYBRID_SELF_REFLECTION_SUFFIX — verificação reforçada dos 3 desvios v2', () => {
+  it('instrui ELIMINAR OBSERVAÇÕES se contiver frase de confirmação vazia', () => {
+    expect(HYBRID_SELF_REFLECTION_SUFFIX).toContain('ELIMINE a seção inteira AGORA');
+  });
+
+  it('verifica CTA do hero contra blacklist explícita', () => {
+    expect(HYBRID_SELF_REFLECTION_SUFFIX).toContain('CTA do hero');
+    expect(HYBRID_SELF_REFLECTION_SUFFIX).toContain('Veja mais');
+  });
+
+  it('verifica se headline incorpora elemento concreto do pedido', () => {
+    expect(HYBRID_SELF_REFLECTION_SUFFIX).toContain('tipo de artefato, diferencial, resultado, público');
+  });
+});
