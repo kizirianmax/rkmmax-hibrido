@@ -615,3 +615,81 @@ describe('buildGeniusPrompt("hybrid") — few-shot webArtifact removido do promp
     expect(hybridPrompt).toContain('Bem-vindo');
   });
 });
+
+// ─── Bloco 11: HYBRID_GENIUS_PROMPT — structured output format ─────────────────
+
+describe('HYBRID_GENIUS_PROMPT — structured output format', () => {
+  it('contém bloco FORMATO DE RESPOSTA OBRIGATÓRIO', () => {
+    expect(HYBRID_GENIUS_PROMPT).toContain('FORMATO DE RESPOSTA OBRIGATÓRIO');
+  });
+
+  it('define seção ENTENDIMENTO como primeiro bloco', () => {
+    expect(HYBRID_GENIUS_PROMPT).toContain('**ENTENDIMENTO**');
+  });
+
+  it('define seção ARTEFATO como bloco principal', () => {
+    expect(HYBRID_GENIUS_PROMPT).toContain('**ARTEFATO**');
+  });
+
+  it('define seção RESUMO', () => {
+    expect(HYBRID_GENIUS_PROMPT).toContain('**RESUMO**');
+  });
+
+  it('define seção OBSERVAÇÕES como opcional', () => {
+    expect(HYBRID_GENIUS_PROMPT).toContain('**OBSERVAÇÕES**');
+    expect(HYBRID_GENIUS_PROMPT).toContain('somente quando necessário');
+  });
+
+  it('instrui que artefato deve ocupar 80%+ da resposta', () => {
+    expect(HYBRID_GENIUS_PROMPT).toContain('80%+');
+  });
+
+  it('instrui que formato não deve virar burocracia', () => {
+    expect(HYBRID_GENIUS_PROMPT).toContain('burocracia');
+  });
+
+  it('FORMATO DE RESPOSTA aparece ANTES de PROIBIÇÕES', () => {
+    const formatIdx = HYBRID_GENIUS_PROMPT.indexOf('FORMATO DE RESPOSTA OBRIGATÓRIO');
+    const proibIdx = HYBRID_GENIUS_PROMPT.indexOf('PROIBIÇÕES:');
+    expect(formatIdx).toBeGreaterThan(-1);
+    expect(proibIdx).toBeGreaterThan(-1);
+    expect(formatIdx).toBeLessThan(proibIdx);
+  });
+
+  it('FORMATO DE RESPOSTA aparece DEPOIS de COMPORTAMENTO', () => {
+    const compIdx = HYBRID_GENIUS_PROMPT.indexOf('COMPORTAMENTO:');
+    const formatIdx = HYBRID_GENIUS_PROMPT.indexOf('FORMATO DE RESPOSTA OBRIGATÓRIO');
+    expect(compIdx).toBeGreaterThan(-1);
+    expect(formatIdx).toBeGreaterThan(compIdx);
+  });
+
+  it('structured output NÃO aparece no prompt do Serginho', () => {
+    const serginhoPrompt = buildGeniusPrompt('serginho');
+    expect(serginhoPrompt).not.toContain('FORMATO DE RESPOSTA OBRIGATÓRIO');
+  });
+
+  it('structured output NÃO aparece no prompt de especialistas', () => {
+    const specialistPrompt = buildGeniusPrompt('specialist', {
+      name: 'Code',
+      description: 'Especialista em programação',
+      category: 'tech',
+      systemPrompt: 'Responda apenas questões de desenvolvimento.',
+    });
+    expect(specialistPrompt).not.toContain('FORMATO DE RESPOSTA OBRIGATÓRIO');
+  });
+});
+
+// ─── Bloco 12: HYBRID_SELF_REFLECTION_SUFFIX — verificação de structured output ──
+
+describe('HYBRID_SELF_REFLECTION_SUFFIX — verificação de structured output', () => {
+  it('verifica se a resposta segue o formato obrigatório', () => {
+    expect(HYBRID_SELF_REFLECTION_SUFFIX).toContain('formato obrigatório');
+  });
+
+  it('menciona as seções do formato (ENTENDIMENTO, ARTEFATO, RESUMO, OBSERVAÇÕES)', () => {
+    expect(HYBRID_SELF_REFLECTION_SUFFIX).toContain('ENTENDIMENTO');
+    expect(HYBRID_SELF_REFLECTION_SUFFIX).toContain('ARTEFATO');
+    expect(HYBRID_SELF_REFLECTION_SUFFIX).toContain('RESUMO');
+    expect(HYBRID_SELF_REFLECTION_SUFFIX).toContain('OBSERVAÇÕES');
+  });
+});
