@@ -23,8 +23,12 @@ const { optimizeRequest, cacheResponse } = costOptimization;
 
 /**
  * Execute AI task via Serginho Orchestrator
+ * @param {Array} messages - Full messages array (last entry is the user message)
+ * @param {string} systemPrompt - System prompt for this request
+ * @param {object} [context={}] - Additional context (source, type, etc.)
+ * @param {object} [options={}] - Orchestrator options (e.g. forceProvider)
  */
-async function executeAITask(messages, systemPrompt, context = {}) {
+async function executeAITask(messages, systemPrompt, context = {}, options = {}) {
   // Extract the user's message from the last message
   const userMessage = messages[messages.length - 1]?.content || "";
   
@@ -41,7 +45,7 @@ async function executeAITask(messages, systemPrompt, context = {}) {
     message: userMessage,
     messages: conversationHistory,
     context,
-    options: {},
+    options,
   });
   
   return result;
@@ -101,7 +105,8 @@ export default async function handler(req, res) {
       const result = await executeAITask(
         optimized.messages,
         optimized.systemPrompt,
-        { source: 'hybrid-api', type: 'hybrid' }
+        { source: 'hybrid-api', type: 'hybrid' },
+        { forceProvider: 'llama-120b' } // Híbrido: 120B primário, fallback automático 70B, nunca 8B
       );
 
       const response = {
@@ -110,6 +115,8 @@ export default async function handler(req, res) {
         provider: result.provider,
         tier: result.tier,
         complexity: result.complexity,
+        routing: result.routing,
+        execution: result.execution,
         type: "hybrid",
         metadata: {
           provider: result.provider,
@@ -161,6 +168,8 @@ export default async function handler(req, res) {
         provider: result.provider,
         tier: result.tier,
         complexity: result.complexity,
+        routing: result.routing,
+        execution: result.execution,
         type: promptType,
         metadata: {
           provider: result.provider,
