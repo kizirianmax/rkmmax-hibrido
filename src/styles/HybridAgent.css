@@ -869,3 +869,9 @@ textarea:disabled {
   opacity: 0.5;
   cursor: not-allowed;
 }
+
+.artifact-preview-error {
+  color: #ff6b6b;
+  font-size: 0.72rem;
+  margin: 0.25rem 0 0 0;
+}

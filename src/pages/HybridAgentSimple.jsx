@@ -74,6 +74,7 @@ export default function HybridAgentSimple() {
   // Fase 2D — estado de preview por mensagem
   const [previews, setPreviews] = useState({});
   const [previewLoading, setPreviewLoading] = useState({});
+  const [previewErrors, setPreviewErrors] = useState({});
   const messagesEndRef = useRef(null);
   const mediaRecorderRef = useRef(null);
 
@@ -131,6 +132,7 @@ export default function HybridAgentSimple() {
   const handleGeneratePreview = async (msg) => {
     const msgId = msg.id;
     setPreviewLoading((prev) => ({ ...prev, [msgId]: true }));
+    setPreviewErrors((prev) => { const updated = { ...prev }; delete updated[msgId]; return updated; });
     try {
       const response = await fetch("/api/artifact-preview", {
         method: "POST",
@@ -153,6 +155,7 @@ export default function HybridAgentSimple() {
       }
     } catch (err) {
       console.error("❌ Erro ao gerar preview:", err);
+      setPreviewErrors((prev) => ({ ...prev, [msgId]: "⚠️ Não foi possível gerar o preview. Tente novamente." }));
     } finally {
       setPreviewLoading((prev) => ({ ...prev, [msgId]: false }));
     }
@@ -177,7 +180,20 @@ export default function HybridAgentSimple() {
       }
     } catch (err) {
       console.error("❌ Erro ao aplicar decisão:", err);
+      setPreviewErrors((prev) => ({ ...prev, [msgId]: "⚠️ Erro ao registrar decisão. Tente novamente." }));
     }
+  };
+
+  // Fase 2D — solicitar revisão após rejeição
+  const handleRequestRevision = (msgId, feedbackFromPanel) => {
+    const currentPreview = previews[msgId];
+    const feedback = feedbackFromPanel ?? currentPreview?.feedback;
+    const revisionText = feedback
+      ? `[Revisão solicitada] Feedback: ${feedback}. Por favor, revise e gere uma nova versão do artefato.`
+      : "[Revisão solicitada] Por favor, revise e gere uma nova versão do artefato.";
+    setPreviews((prev) => { const updated = { ...prev }; delete updated[msgId]; return updated; });
+    setPreviewErrors((prev) => { const updated = { ...prev }; delete updated[msgId]; return updated; });
+    setInput(revisionText);
   };
 
   const handleSendMessage = async () => {
@@ -506,6 +522,9 @@ export default function HybridAgentSimple() {
                       {previewLoading[msg.id] ? "⏳ Gerando preview..." : "📋 Preview do Artefato"}
                     </button>
                   )}
+                  {previewErrors[msg.id] && !previews[msg.id] && (
+                    <p className="artifact-preview-error">{previewErrors[msg.id]}</p>
+                  )}
                   {previews[msg.id] && (
                     <ArtifactPreviewPanel
                       preview={previews[msg.id]}
@@ -513,7 +532,11 @@ export default function HybridAgentSimple() {
                       onDecision={(decision, feedback) =>
                         handlePreviewDecision(msg.id, decision, feedback)
                       }
+                      onRevision={(fb) => handleRequestRevision(msg.id, fb)}
                     />
+                  )}
+                  {previewErrors[msg.id] && previews[msg.id] && (
+                    <p className="artifact-preview-error">{previewErrors[msg.id]}</p>
                   )}
                 </div>
               )}

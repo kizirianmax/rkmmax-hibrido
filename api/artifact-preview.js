@@ -61,13 +61,9 @@ export default async function handler(req, res) {
       // Fase 2B — validar
       const validationResult = validateArtifact(artifact);
 
-      // Fase 2C — executar apenas se for JS (não bloquear fluxo em caso de falha)
+      // Fase 2C — tentar executar (executor detecta e pula conteúdo não executável)
       let executionResult = null;
-      const hasExecutableContent =
-        artifact.manifest?.origin !== undefined &&
-        artifact.zipBuffer instanceof Buffer;
-
-      if (hasExecutableContent) {
+      if (artifact.zipBuffer instanceof Buffer) {
         try {
           executionResult = await executeArtifact(artifact);
         } catch {

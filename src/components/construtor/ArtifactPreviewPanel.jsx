@@ -12,7 +12,7 @@ import { useState } from 'react';
  *   onDecision  {function} — callback(decision, feedback) chamado ao aprovar/rejeitar
  *   loading     {boolean}  — exibir estado de carregamento
  */
-export default function ArtifactPreviewPanel({ preview, onDecision, loading = false }) {
+export default function ArtifactPreviewPanel({ preview, onDecision, onRevision, loading = false }) {
   const [rejectionFeedback, setRejectionFeedback] = useState('');
   const [showRejectionInput, setShowRejectionInput] = useState(false);
 
@@ -194,6 +194,18 @@ export default function ArtifactPreviewPanel({ preview, onDecision, loading = fa
               </div>
             </div>
           )}
+        </div>
+      )}
+
+      {/* Revisão após rejeição */}
+      {decision === 'rejected' && onRevision && (
+        <div className="artifact-preview-actions">
+          <button
+            className="artifact-btn artifact-btn-cancel"
+            onClick={() => onRevision(feedback)}
+          >
+            🔄 Solicitar Revisão
+          </button>
         </div>
       )}
     </div>
