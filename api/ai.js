@@ -102,12 +102,31 @@ export default async function handler(req, res) {
         });
       }
 
-      const result = await executeAITask(
-        optimized.messages,
-        optimized.systemPrompt,
-        { source: 'hybrid-api', type: 'hybrid' },
-        { forceProvider: 'llama-120b' } // Híbrido: 120B primário, fallback automático 70B, nunca 8B
-      );
+      // Híbrido: fluxo estrito 120B → 70B apenas. Nenhum outro fallback permitido.
+      let result;
+      let hybridFallbackUsed = false;
+      try {
+        result = await executeAITask(
+          optimized.messages,
+          optimized.systemPrompt,
+          { source: 'hybrid-api', type: 'hybrid' },
+          { forceProvider: 'llama-120b', noFallback: true }
+        );
+      } catch (err120b) {
+        // 120B indisponível — tentativa única com 70B (proibido qualquer outro fallback)
+        hybridFallbackUsed = true;
+        console.log('🏗️ HYBRID: 120B falhou → tentando 70B (único fallback permitido)', err120b.message);
+        try {
+          result = await executeAITask(
+            optimized.messages,
+            optimized.systemPrompt,
+            { source: 'hybrid-api', type: 'hybrid' },
+            { forceProvider: 'llama-70b', noFallback: true }
+          );
+        } catch (err70b) {
+          throw new Error(`All providers failed. Tried: llama-120b, llama-70b. ${err70b.message}`);
+        }
+      }
 
       const response = {
         response: result.text,
@@ -116,7 +135,12 @@ export default async function handler(req, res) {
         tier: result.tier,
         complexity: result.complexity,
         routing: result.routing,
-        execution: result.execution,
+        execution: {
+          ...(result.execution || {}),
+          // Sobrescreve fallbackLevel para refletir o fallback explícito do Híbrido
+          fallbackLevel: (hybridFallbackUsed ? 1 : 0) + (result.execution?.fallbackLevel || 0),
+          status: hybridFallbackUsed ? 'fallback' : (result.execution?.status || 'success'),
+        },
         type: "hybrid",
         metadata: {
           provider: result.provider,
