@@ -514,13 +514,18 @@ export default function HybridAgentSimple() {
               {msg.type === "agent" && (
                 <div>
                   {!previews[msg.id] && (
-                    <button
-                      className="artifact-preview-trigger-btn"
-                      onClick={() => handleGeneratePreview(msg)}
-                      disabled={previewLoading[msg.id]}
-                    >
-                      {previewLoading[msg.id] ? "⏳ Gerando preview..." : "📋 Preview do Artefato"}
-                    </button>
+                    <div className="artifact-preview-entry">
+                      <button
+                        className="artifact-preview-trigger-btn"
+                        onClick={() => handleGeneratePreview(msg)}
+                        disabled={previewLoading[msg.id]}
+                      >
+                        {previewLoading[msg.id] ? "⏳ Gerando preview..." : "🔍 Revisar artefato"}
+                      </button>
+                      {!previewLoading[msg.id] && (
+                        <span className="artifact-preview-entry-hint">Revisar · Aprovar · Solicitar ajuste</span>
+                      )}
+                    </div>
                   )}
                   {previewErrors[msg.id] && !previews[msg.id] && (
                     <p className="artifact-preview-error">{previewErrors[msg.id]}</p>

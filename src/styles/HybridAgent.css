@@ -864,20 +864,36 @@ textarea:disabled {
   flex-wrap: wrap;
 }
 
+.artifact-preview-entry {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.artifact-preview-entry-hint {
+  font-size: 0.75rem;
+  color: rgba(192, 132, 252, 0.75);
+  letter-spacing: 0.01em;
+}
+
 .artifact-preview-trigger-btn {
-  background: rgba(168, 85, 247, 0.15);
-  border: 1px solid rgba(168, 85, 247, 0.3);
-  border-radius: 5px;
-  color: #c084fc;
-  font-size: 0.72rem;
-  padding: 3px 8px;
+  background: rgba(168, 85, 247, 0.2);
+  border: 1px solid rgba(168, 85, 247, 0.55);
+  border-radius: 6px;
+  color: #d8b4fe;
+  font-size: 0.78rem;
+  font-weight: 600;
+  padding: 5px 12px;
   cursor: pointer;
-  margin-top: 0.4rem;
-  transition: background 0.15s;
+  transition: background 0.15s, border-color 0.15s;
+  letter-spacing: 0.01em;
 }
 
 .artifact-preview-trigger-btn:hover {
-  background: rgba(168, 85, 247, 0.25);
+  background: rgba(168, 85, 247, 0.35);
+  border-color: rgba(168, 85, 247, 0.8);
 }
 
 .artifact-preview-trigger-btn:disabled {
