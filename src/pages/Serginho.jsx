@@ -109,12 +109,19 @@ export default function Serginho() {
         throw new Error("Resposta vazia da IA");
       }
 
+      // Extrair informação do motor ativo para visibilidade no Generalista
+      const modelInfo = data.model || {};
+      const motorLabel = modelInfo.icon && modelInfo.displayName
+        ? `${modelInfo.icon} ${modelInfo.displayName}`
+        : modelInfo.displayName || modelInfo.modelId || null;
+
       // Adicionar resposta da IA
       setMessages((prev) => [
         ...prev,
         {
           role: "assistant",
           content: aiResponse,
+          motorLabel: motorLabel,
         },
       ]);
     } catch (error) {
@@ -448,6 +455,20 @@ export default function Serginho() {
                 <SimpleMarkdown text={msg.content} />
               ) : (
                 msg.content
+              )}
+              {msg.role === "assistant" && msg.motorLabel && (
+                <div
+                  style={{
+                    marginTop: "6px",
+                    paddingTop: "4px",
+                    borderTop: "1px solid rgba(255,255,255,0.1)",
+                    fontSize: "0.65rem",
+                    opacity: 0.7,
+                    color: "#a5d8ff",
+                  }}
+                >
+                  {msg.motorLabel}
+                </div>
               )}
             </div>
           </div>

@@ -23,8 +23,12 @@ const { optimizeRequest, cacheResponse } = costOptimization;
 
 /**
  * Execute AI task via Serginho Orchestrator
+ * @param {Array} messages - Full messages array (last entry is the user message)
+ * @param {string} systemPrompt - System prompt for this request
+ * @param {object} [context={}] - Additional context (source, type, etc.)
+ * @param {object} [options={}] - Orchestrator options (e.g. forceProvider)
  */
-async function executeAITask(messages, systemPrompt, context = {}) {
+async function executeAITask(messages, systemPrompt, context = {}, options = {}) {
   // Extract the user's message from the last message
   const userMessage = messages[messages.length - 1]?.content || "";
   
@@ -41,7 +45,7 @@ async function executeAITask(messages, systemPrompt, context = {}) {
     message: userMessage,
     messages: conversationHistory,
     context,
-    options: {},
+    options,
   });
   
   return result;
@@ -98,11 +102,31 @@ export default async function handler(req, res) {
         });
       }
 
-      const result = await executeAITask(
-        optimized.messages,
-        optimized.systemPrompt,
-        { source: 'hybrid-api', type: 'hybrid' }
-      );
+      // Híbrido: fluxo estrito 120B → 70B apenas. Nenhum outro fallback permitido.
+      let result;
+      let hybridFallbackUsed = false;
+      try {
+        result = await executeAITask(
+          optimized.messages,
+          optimized.systemPrompt,
+          { source: 'hybrid-api', type: 'hybrid' },
+          { forceProvider: 'llama-120b', noFallback: true }
+        );
+      } catch (err120b) {
+        // 120B indisponível — tentativa única com 70B (proibido qualquer outro fallback)
+        hybridFallbackUsed = true;
+        console.log('🏗️ HYBRID: 120B falhou → tentando 70B (único fallback permitido)', err120b.message);
+        try {
+          result = await executeAITask(
+            optimized.messages,
+            optimized.systemPrompt,
+            { source: 'hybrid-api', type: 'hybrid' },
+            { forceProvider: 'llama-70b', noFallback: true }
+          );
+        } catch (err70b) {
+          throw new Error(`All providers failed. Tried: llama-120b, llama-70b. ${err70b.message}`);
+        }
+      }
 
       const response = {
         response: result.text,
@@ -110,6 +134,13 @@ export default async function handler(req, res) {
         provider: result.provider,
         tier: result.tier,
         complexity: result.complexity,
+        routing: result.routing,
+        execution: {
+          ...(result.execution || {}),
+          // Sobrescreve fallbackLevel para refletir o fallback explícito do Híbrido
+          fallbackLevel: (hybridFallbackUsed ? 1 : 0) + (result.execution?.fallbackLevel || 0),
+          status: hybridFallbackUsed ? 'fallback' : (result.execution?.status || 'success'),
+        },
         type: "hybrid",
         metadata: {
           provider: result.provider,
@@ -161,6 +192,8 @@ export default async function handler(req, res) {
         provider: result.provider,
         tier: result.tier,
         complexity: result.complexity,
+        routing: result.routing,
+        execution: result.execution,
         type: promptType,
         metadata: {
           provider: result.provider,

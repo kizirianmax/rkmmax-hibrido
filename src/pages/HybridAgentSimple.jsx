@@ -230,10 +230,16 @@ export default function HybridAgentSimple() {
 
       const data = await response.json();
       const aiResponse = data.text || data.response || data.message || "Sem resposta";
-      const provider = data.model?.displayName || data.model?.modelId || data.provider || "unknown";
-      const tier = data.routing?.selectedTier || data.tier || "standard";
-      const complexity = data.routing?.analyzedComplexity || data.complexity || 0;
 
+      // Extrair informação do motor ativo (120B vs 70B) e status de fallback
+      const modelInfo = data.model || {};
+      const execution = data.execution || {};
+      const isFallback = (execution.fallbackLevel || 0) > 0;
+      const motorLabel = modelInfo.icon && modelInfo.displayName
+        ? `${modelInfo.icon} ${modelInfo.displayName}`
+        : modelInfo.displayName || modelInfo.modelId || data.provider || "Construtor";
+      const tier = data.routing?.selectedTier || modelInfo.logicalTier || data.tier || "standard";
+      const complexity = data.routing?.analyzedComplexity || data.complexity || 0;
 
       const agentName = "Construtor";
 
@@ -243,8 +249,9 @@ export default function HybridAgentSimple() {
         type: "agent",
         agent: agentName,
         content: aiResponse,
-        provider: provider,
+        provider: motorLabel,
         tier: tier,
+        isFallback: isFallback,
         complexity: complexity,
         timestamp: new Date(),
       };
@@ -458,7 +465,7 @@ export default function HybridAgentSimple() {
                     <span 
                       className="provider-badge"
                       style={{
-                        background: getTierColor(msg.tier || 'unknown'),
+                        background: msg.isFallback ? '#e67e22' : getTierColor(msg.tier || 'unknown'),
                         padding: '2px 8px',
                         borderRadius: '4px',
                         fontSize: '10px',
@@ -466,8 +473,9 @@ export default function HybridAgentSimple() {
                         fontWeight: 'bold',
                         marginLeft: '8px',
                       }}
+                      title={msg.isFallback ? 'Motor fallback ativo (120B indisponível)' : 'Motor principal ativo'}
                     >
-                      {msg.provider}{msg.tier ? ` (${msg.tier})` : ''}
+                      {msg.provider}{msg.isFallback ? ' ⚠️ fallback' : ''}
                     </span>
                   )}
                   <span className="timestamp">{msg.timestamp.toLocaleTimeString()}</span>

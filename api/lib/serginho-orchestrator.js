@@ -773,6 +773,11 @@ class SerginhoOrchestrator {
         this.modelRegistry.recordExecution(modelId, false, 0, isTimeout);
         
         this.metrics.recordRequest(currentProvider, modelExecutionTime, false, false);
+
+        // noFallback mode: caller manages its own fallback chain without automatic cascade
+        if (options.noFallback) {
+          throw error;
+        }
         
         // Get next fallback — use provider names for correct deduplication, skip disabled providers
         const enabledProviders = getEnabledProviders();
