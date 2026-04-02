@@ -617,8 +617,9 @@ textarea:disabled {
 /* ===== ARTIFACT PREVIEW PANEL (Fase 2D) ===== */
 
 .artifact-preview-panel {
-  background: rgba(15, 23, 42, 0.85);
-  border: 1px solid rgba(168, 85, 247, 0.3);
+  background: rgba(15, 23, 42, 0.9);
+  border: 1px solid rgba(168, 85, 247, 0.45);
+  border-left: 3px solid rgba(168, 85, 247, 0.7);
   border-radius: 8px;
   padding: 1rem;
   margin-top: 0.75rem;
@@ -644,8 +645,14 @@ textarea:disabled {
 
 .artifact-preview-title {
   font-weight: 700;
-  font-size: 0.875rem;
-  color: #c084fc;
+  font-size: 0.9rem;
+  color: #d4a8ff;
+}
+
+.artifact-preview-hint {
+  font-size: 0.75rem;
+  color: #94a3b8;
+  margin: 0 0 0.75rem 0;
 }
 
 .artifact-preview-meta {
@@ -788,7 +795,9 @@ textarea:disabled {
   display: flex;
   gap: 0.5rem;
   flex-wrap: wrap;
-  margin-top: 0.25rem;
+  margin-top: 0.75rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid rgba(168, 85, 247, 0.2);
 }
 
 .artifact-btn {
@@ -815,6 +824,12 @@ textarea:disabled {
   background: rgba(255, 107, 107, 0.2);
   color: #ff6b6b;
   border: 1px solid rgba(255, 107, 107, 0.3);
+}
+
+.artifact-btn-adjust {
+  background: rgba(255, 193, 7, 0.18);
+  color: #ffc107;
+  border: 1px solid rgba(255, 193, 7, 0.35);
 }
 
 .artifact-btn-cancel {
