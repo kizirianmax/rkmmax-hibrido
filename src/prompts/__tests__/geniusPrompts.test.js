@@ -635,9 +635,11 @@ describe('HYBRID_GENIUS_PROMPT — structured output format', () => {
     expect(HYBRID_GENIUS_PROMPT).toContain('**RESUMO**');
   });
 
-  it('define seção OBSERVAÇÕES como opcional', () => {
+  it('define seção OBSERVAÇÕES como opcional com condições explícitas e blacklist', () => {
     expect(HYBRID_GENIUS_PROMPT).toContain('**OBSERVAÇÕES**');
-    expect(HYBRID_GENIUS_PROMPT).toContain('somente quando necessário');
+    expect(HYBRID_GENIUS_PROMPT).toContain('OMITIR se não houver motivo real');
+    expect(HYBRID_GENIUS_PROMPT).toContain('TOTALMENTE OMITIDA');
+    expect(HYBRID_GENIUS_PROMPT).toContain('Nenhuma observação necessária');
   });
 
   it('instrui que artefato deve ocupar 80%+ da resposta', () => {
@@ -691,5 +693,113 @@ describe('HYBRID_SELF_REFLECTION_SUFFIX — verificação de structured output',
     expect(HYBRID_SELF_REFLECTION_SUFFIX).toContain('ARTEFATO');
     expect(HYBRID_SELF_REFLECTION_SUFFIX).toContain('RESUMO');
     expect(HYBRID_SELF_REFLECTION_SUFFIX).toContain('OBSERVAÇÕES');
+  });
+});
+
+// ─── Bloco 13: HYBRID_GENIUS_PROMPT — desvios de qualidade (OBSERVAÇÕES, dark mode, anti-genérico) ──
+
+describe('HYBRID_GENIUS_PROMPT — OBSERVAÇÕES: blacklist de frases burocráticas', () => {
+  it('instrui OMITIR OBSERVAÇÕES quando não houver motivo real', () => {
+    expect(HYBRID_GENIUS_PROMPT).toContain('OMITIR se não houver motivo real');
+    expect(HYBRID_GENIUS_PROMPT).toContain('TOTALMENTE OMITIDA');
+  });
+
+  it('lista condições REAIS para uso de OBSERVAÇÕES', () => {
+    expect(HYBRID_GENIUS_PROMPT).toContain('Assunção real feita que o usuário precisa validar');
+    expect(HYBRID_GENIUS_PROMPT).toContain('Limitação técnica real do artefato entregue');
+    expect(HYBRID_GENIUS_PROMPT).toContain('Dependência externa real que afeta o resultado');
+    expect(HYBRID_GENIUS_PROMPT).toContain('Alerta real sobre risco, compatibilidade ou trade-off');
+  });
+
+  it('inclui blacklist de frases burocráticas proibidas', () => {
+    expect(HYBRID_GENIUS_PROMPT).toContain('Nenhuma observação necessária');
+    expect(HYBRID_GENIUS_PROMPT).toContain('Sem observações');
+    expect(HYBRID_GENIUS_PROMPT).toContain('Tudo entregue conforme solicitado');
+    expect(HYBRID_GENIUS_PROMPT).toContain('Nenhuma limitação identificada');
+    expect(HYBRID_GENIUS_PROMPT).toContain('O artefato está completo');
+  });
+});
+
+describe('HYBRID_GENIUS_PROMPT — dark mode: detecção e obediência', () => {
+  it('contém regra DARK MODE na seção de CSS', () => {
+    expect(HYBRID_GENIUS_PROMPT).toContain('REGRA DARK MODE');
+  });
+
+  it('lista sinais de detecção de dark mode', () => {
+    expect(HYBRID_GENIUS_PROMPT).toContain('"visual escuro"');
+    expect(HYBRID_GENIUS_PROMPT).toContain('"dark"');
+    expect(HYBRID_GENIUS_PROMPT).toContain('"dark mode"');
+    expect(HYBRID_GENIUS_PROMPT).toContain('"tema escuro"');
+    expect(HYBRID_GENIUS_PROMPT).toContain('"fundo escuro"');
+  });
+
+  it('instrui --color-bg escuro com exemplos concretos de cor', () => {
+    expect(HYBRID_GENIUS_PROMPT).toContain('#0D0D0D');
+    expect(HYBRID_GENIUS_PROMPT).toContain('#121212');
+  });
+
+  it('instrui --color-text claro com contraste WCAG', () => {
+    expect(HYBRID_GENIUS_PROMPT).toContain('--color-text DEVE ser claro');
+    expect(HYBRID_GENIUS_PROMPT).toContain('#F0F0F0');
+  });
+
+  it('proíbe #fff ou #f0f0f0 como base dominante em dark mode', () => {
+    expect(HYBRID_GENIUS_PROMPT).toContain('NUNCA #fff ou #f0f0f0 como base');
+    expect(HYBRID_GENIUS_PROMPT).toContain('PROIBIDO usar fundo claro/branco como base dominante');
+  });
+});
+
+describe('HYBRID_GENIUS_PROMPT — anti-genérico reforçado: hero, CTA e copy', () => {
+  it('contém bloco REGRAS ANTI-GENÉRICO', () => {
+    expect(HYBRID_GENIUS_PROMPT).toContain('REGRAS ANTI-GENÉRICO — OBRIGATÓRIAS');
+  });
+
+  it('exige hero específico ao contexto do pedido com teste de intercambialidade', () => {
+    expect(HYBRID_GENIUS_PROMPT).toContain('teste de intercambialidade');
+    expect(HYBRID_GENIUS_PROMPT).toContain('está REPROVADA');
+  });
+
+  it('proíbe CTAs genéricos por nome explícito', () => {
+    expect(HYBRID_GENIUS_PROMPT).toContain('PROIBIDO: "Saiba mais"');
+    expect(HYBRID_GENIUS_PROMPT).toContain('"Conheça mais"');
+    expect(HYBRID_GENIUS_PROMPT).toContain('"Entre em contato"');
+    expect(HYBRID_GENIUS_PROMPT).toContain('"Confira"');
+  });
+
+  it('exige verbos de resultado no CTA', () => {
+    expect(HYBRID_GENIUS_PROMPT).toContain('verbo que descreve o resultado');
+    expect(HYBRID_GENIUS_PROMPT).toContain('Desbloquear');
+    expect(HYBRID_GENIUS_PROMPT).toContain('Automatizar');
+  });
+
+  it('proíbe abstrações vazias na copy sem contexto concreto', () => {
+    expect(HYBRID_GENIUS_PROMPT).toContain('"alta qualidade"');
+    expect(HYBRID_GENIUS_PROMPT).toContain('"profissionalismo"');
+    expect(HYBRID_GENIUS_PROMPT).toContain('"inovação"');
+    expect(HYBRID_GENIUS_PROMPT).toContain('"excelência"');
+  });
+});
+
+// ─── Bloco 14: HYBRID_SELF_REFLECTION_SUFFIX — verificações dos 3 desvios ─────
+
+describe('HYBRID_SELF_REFLECTION_SUFFIX — verificação dos 3 desvios de qualidade', () => {
+  it('verifica dark mode: --color-bg escuro quando solicitado', () => {
+    expect(HYBRID_SELF_REFLECTION_SUFFIX).toContain('sinal de dark mode');
+    expect(HYBRID_SELF_REFLECTION_SUFFIX).toContain('--color-bg é escuro');
+  });
+
+  it('proíbe #fff e #f0f0f0 como fundo em dark mode', () => {
+    expect(HYBRID_SELF_REFLECTION_SUFFIX).toContain('#fff ou #f0f0f0 como fundo dominante');
+  });
+
+  it('instrui remover OBSERVAÇÕES com frases burocráticas', () => {
+    expect(HYBRID_SELF_REFLECTION_SUFFIX).toContain('frase burocrática vazia');
+    expect(HYBRID_SELF_REFLECTION_SUFFIX).toContain('Nenhuma observação necessária');
+    expect(HYBRID_SELF_REFLECTION_SUFFIX).toContain('REMOVA a seção inteiramente');
+  });
+
+  it('instrui reescrever hero intercambiável com especificidade do pedido', () => {
+    expect(HYBRID_SELF_REFLECTION_SUFFIX).toContain('headline intercambiável');
+    expect(HYBRID_SELF_REFLECTION_SUFFIX).toContain('especificidade do pedido antes de entregar');
   });
 });
