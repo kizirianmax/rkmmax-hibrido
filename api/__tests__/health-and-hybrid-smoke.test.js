@@ -158,7 +158,7 @@ describe('Test 4 — /api/health returns 200 with correct structure', () => {
     expect(responseBody).toHaveProperty('providers');
   });
 
-  it('returns providers.groqOnly true when only GROQ_API_KEY is set', async () => {
+  it('returns providers.groq true when GROQ_API_KEY is set', async () => {
     const { default: handler } = await import('../health.js');
 
     let responseBody;
@@ -172,8 +172,8 @@ describe('Test 4 — /api/health returns 200 with correct structure', () => {
     handler(req, res);
 
     expect(responseBody.providers.groq).toBe(true);
-    expect(responseBody.providers.gemini).toBe(false);
-    expect(responseBody.providers.groqOnly).toBe(true);
+    expect(responseBody.providers.gemini).toBeUndefined();
+    expect(responseBody.providers.groqOnly).toBeUndefined();
   });
 
   it('returns 405 for non-GET methods', async () => {

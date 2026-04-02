@@ -6,7 +6,6 @@ export default function handler(req, res) {
   }
 
   const groqKey = !!process.env.GROQ_API_KEY;
-  const geminiKey = !!(process.env.GOOGLE_API_KEY || process.env.GEMINI_API_KEY || process.env.GERMINI_API_KEY);
 
   const enabledProviders = getEnabledProviders();
   const weightedProviders = getWeightedProviders();
@@ -38,8 +37,6 @@ export default function handler(req, res) {
     commit: process.env.VERCEL_GIT_COMMIT_SHA || process.env.GIT_COMMIT_SHA || 'unknown',
     providers: {
       groq: groqKey,
-      gemini: geminiKey,
-      groqOnly: groqKey && !geminiKey,
     },
     models,
     primaryProvider,

@@ -77,7 +77,6 @@ export default function HybridSystemDashboard() {
 
   const isOnline = health?.status === "ok";
   const groqOk = health?.providers?.groq === true;
-  const geminiOk = health?.providers?.gemini === true;
   const models = health?.models || [];
   const primaryProvider = health?.primaryProvider;
   const primaryModel = models.find((m) => m.id === primaryProvider);
@@ -123,38 +122,27 @@ export default function HybridSystemDashboard() {
             </CardContent>
           </Card>
 
-          {/* Providers */}
+          {/* Provider */}
           <Card className="bg-slate-800 border-slate-700">
             <CardHeader>
-              <CardTitle className="text-sm text-gray-400">Providers Configurados</CardTitle>
+              <CardTitle className="text-sm text-gray-400">Provider Configurado</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="space-y-2">
                 <div className="flex items-center justify-between">
                   <span className="text-gray-400">Groq:</span>
                   <span className={`font-bold ${groqOk ? "text-green-400" : "text-red-400"}`}>
-                    {groqOk ? "✅ Ativo" : "❌ Não configurado"}
+                    {groqOk ? "✅ Configurado" : "❌ Não configurado"}
                   </span>
                 </div>
-                <div className="flex items-center justify-between">
-                  <span className="text-gray-400">Gemini:</span>
-                  <span className={`font-bold ${geminiOk ? "text-green-400" : "text-yellow-400"}`}>
-                    {geminiOk ? "✅ Ativo" : "— Não configurado"}
-                  </span>
-                </div>
-                {health?.providers?.groqOnly && (
-                  <p className="text-xs text-yellow-400 mt-2">
-                    ⚠️ Modo Groq-only ativo
-                  </p>
-                )}
               </div>
             </CardContent>
           </Card>
 
-          {/* Provider Principal */}
+          {/* Configuração do Provider Principal */}
           <Card className="bg-slate-800 border-slate-700">
             <CardHeader>
-              <CardTitle className="text-sm text-gray-400">Provider Principal Ativo</CardTitle>
+              <CardTitle className="text-sm text-gray-400">Modelo Configurado</CardTitle>
             </CardHeader>
             <CardContent>
               {primaryModel ? (
@@ -247,7 +235,6 @@ export default function HybridSystemDashboard() {
         <div className="flex flex-wrap gap-2 mb-8">
           <StatusBadge ok={isOnline} label="Sistema Online" />
           <StatusBadge ok={groqOk} label="Groq API" />
-          {geminiOk && <StatusBadge ok={true} label="Gemini API" />}
         </div>
 
         {/* Footer */}
