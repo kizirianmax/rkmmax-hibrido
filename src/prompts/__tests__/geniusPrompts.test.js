@@ -914,3 +914,79 @@ describe('HYBRID_GENIUS_PROMPT — bloco de formato de saída multiarquivo', () 
     expect(HYBRID_GENIUS_PROMPT).toContain('E. ESTRUTURA OBRIGATÓRIA PARA LANDING PAGES');
   });
 });
+
+// ─── Bloco: TÉCNICAS DE CONSTRUÇÃO DE COPY PREMIUM no HYBRID_GENIUS_PROMPT ────
+
+describe('HYBRID_GENIUS_PROMPT — técnicas de construção de copy premium', () => {
+  it('contém bloco de construção de headline', () => {
+    expect(HYBRID_GENIUS_PROMPT).toContain('CONSTRUÇÃO DE HEADLINE');
+  });
+
+  it('instrui extrair palavras-chave do pedido do usuário', () => {
+    expect(HYBRID_GENIUS_PROMPT).toContain('palavra-chave do pedido');
+  });
+
+  it('contém blacklist ampliada de fórmulas gastas', () => {
+    expect(HYBRID_GENIUS_PROMPT).toContain('Simplifique');
+    expect(HYBRID_GENIUS_PROMPT).toContain('Potencialize');
+    expect(HYBRID_GENIUS_PROMPT).toContain('Revolucione');
+  });
+
+  it('contém bloco de construção de subheadline', () => {
+    expect(HYBRID_GENIUS_PROMPT).toContain('CONSTRUÇÃO DE SUBHEADLINE');
+  });
+
+  it('exige que subheadline responda O QUE faz + PARA QUEM + POR QUE importa', () => {
+    expect(HYBRID_GENIUS_PROMPT).toContain('O QUE faz');
+    expect(HYBRID_GENIUS_PROMPT).toContain('PARA QUEM');
+    expect(HYBRID_GENIUS_PROMPT).toContain('POR QUE importa');
+  });
+
+  it('contém bloco de construção de CTA', () => {
+    expect(HYBRID_GENIUS_PROMPT).toContain('CONSTRUÇÃO DE CTA');
+  });
+
+  it('instrui CTA a espelhar resultado prometido na headline', () => {
+    expect(HYBRID_GENIUS_PROMPT).toContain('espelhar o resultado prometido');
+  });
+
+  it('contém blacklist ampliada de verbos para CTA', () => {
+    expect(HYBRID_GENIUS_PROMPT).toContain('"Acessar"');
+    expect(HYBRID_GENIUS_PROMPT).toContain('"Explorar"');
+    expect(HYBRID_GENIUS_PROMPT).toContain('"Descobrir"');
+  });
+
+  it('contém bloco de densidade mínima por seção', () => {
+    expect(HYBRID_GENIUS_PROMPT).toContain('DENSIDADE MÍNIMA POR SEÇÃO');
+  });
+
+  it('exige mínimo de 2 linhas para cartão de benefício', () => {
+    expect(HYBRID_GENIUS_PROMPT).toContain('mínimo 2 linhas');
+  });
+
+  it('exige contraste explícito na seção de diferenciação', () => {
+    expect(HYBRID_GENIUS_PROMPT).toContain('contraste explícito');
+  });
+
+  it('proíbe diferenciação circular', () => {
+    expect(HYBRID_GENIUS_PROMPT).toContain('diferenciação circular');
+  });
+});
+
+describe('HYBRID_SELF_REFLECTION_SUFFIX — verificação de copy premium reforçada', () => {
+  it('verifica se headline usa palavra-chave do pedido', () => {
+    expect(HYBRID_SELF_REFLECTION_SUFFIX).toContain('palavra-chave do pedido original');
+  });
+
+  it('verifica se subheadline traz informação nova', () => {
+    expect(HYBRID_SELF_REFLECTION_SUFFIX).toContain('informação NOVA');
+  });
+
+  it('verifica se CTA espelha resultado da headline', () => {
+    expect(HYBRID_SELF_REFLECTION_SUFFIX).toContain('espelha o resultado');
+  });
+
+  it('verifica densidade mínima dos cartões de benefício', () => {
+    expect(HYBRID_SELF_REFLECTION_SUFFIX).toContain('mínimo 2 linhas');
+  });
+});
