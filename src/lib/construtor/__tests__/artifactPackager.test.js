@@ -9,7 +9,7 @@
  * - erros de input são tratados adequadamente
  */
 
-import { packageArtifact } from '../artifactPackager.js';
+import { packageArtifact, detectContentType, tryExtractHtmlParts } from '../artifactPackager.js';
 import { generateManifest, computeChecksum, resolveModelName, DEFAULT_PROMPT_ID } from '../artifactManifest.js';
 import { generateGenerationLog, generateStructureLog } from '../artifactLogger.js';
 
@@ -260,5 +260,154 @@ describe('packageArtifact', () => {
       metadata: { ...sampleMetadata, filename: 'meu_artefato.txt' },
     });
     expect(result.zipBuffer.length).toBeGreaterThan(0);
+  });
+
+  test('conteúdo HTML deve gerar manifest com contentType = "html"', async () => {
+    const htmlContent = '<!DOCTYPE html><html><head></head><body><h1>Olá</h1></body></html>';
+    const result = await packageArtifact({ content: htmlContent, metadata: sampleMetadata });
+    expect(result.manifest.contentType).toBe('html');
+  });
+
+  test('conteúdo Markdown deve gerar manifest com contentType = "md"', async () => {
+    const result = await packageArtifact({ content: sampleContent, metadata: sampleMetadata });
+    expect(result.manifest.contentType).toBe('md');
+  });
+
+  test('manifest deve conter campo contents descrevendo os arquivos do pacote', async () => {
+    const result = await packageArtifact({ content: sampleContent, metadata: sampleMetadata });
+    expect(result.manifest).toHaveProperty('contents');
+    expect(Array.isArray(result.manifest.contents)).toBe(true);
+    expect(result.manifest.contents.length).toBeGreaterThan(0);
+    expect(result.manifest.contents.some((c) => c.path === 'manifest.json')).toBe(true);
+    expect(result.manifest.contents.some((c) => c.path === 'README.md')).toBe(true);
+  });
+
+  test('ZIP deve conter README.md na raiz', async () => {
+    const AdmZip = (await import('adm-zip')).default;
+    const result = await packageArtifact({ content: sampleContent, metadata: sampleMetadata });
+    const zip = new AdmZip(result.zipBuffer);
+    const entries = zip.getEntries().map((e) => e.entryName);
+    expect(entries).toContain('README.md');
+  });
+
+  test('ZIP de conteúdo Markdown deve ter content.md na raiz (não em content/)', async () => {
+    const AdmZip = (await import('adm-zip')).default;
+    const result = await packageArtifact({ content: sampleContent, metadata: sampleMetadata });
+    const zip = new AdmZip(result.zipBuffer);
+    const entries = zip.getEntries().map((e) => e.entryName);
+    expect(entries).toContain('content.md');
+    expect(entries.some((e) => e.startsWith('content/'))).toBe(false);
+  });
+
+  test('ZIP de conteúdo HTML deve ter index.html na raiz', async () => {
+    const AdmZip = (await import('adm-zip')).default;
+    const htmlContent = '<!DOCTYPE html><html><head></head><body><h1>Olá</h1></body></html>';
+    const result = await packageArtifact({ content: htmlContent, metadata: sampleMetadata });
+    const zip = new AdmZip(result.zipBuffer);
+    const entries = zip.getEntries().map((e) => e.entryName);
+    expect(entries).toContain('index.html');
+  });
+});
+
+describe('detectContentType', () => {
+  test('deve detectar HTML com <!DOCTYPE html>', () => {
+    const ct = detectContentType('<!DOCTYPE html><html><body></body></html>');
+    expect(ct.extension).toBe('.html');
+    expect(ct.name).toBe('index.html');
+    expect(ct.type).toBe('text/html');
+  });
+
+  test('deve detectar HTML com <html>', () => {
+    const ct = detectContentType('<html><body><h1>Olá</h1></body></html>');
+    expect(ct.extension).toBe('.html');
+    expect(ct.name).toBe('index.html');
+  });
+
+  test('deve detectar HTML com </html> no conteúdo', () => {
+    const ct = detectContentType('<div>conteúdo</div></html>');
+    expect(ct.extension).toBe('.html');
+  });
+
+  test('deve detectar Markdown por cabeçalho #', () => {
+    const ct = detectContentType('# Título\n\nConteúdo.');
+    expect(ct.extension).toBe('.md');
+    expect(ct.name).toBe('content.md');
+    expect(ct.type).toBe('text/markdown');
+  });
+
+  test('deve detectar Markdown por ## subseção', () => {
+    const ct = detectContentType('Introdução\n## Seção\nTexto');
+    expect(ct.extension).toBe('.md');
+  });
+
+  test('deve usar .md como fallback para texto simples', () => {
+    const ct = detectContentType('Texto simples sem marcadores.');
+    expect(ct.extension).toBe('.md');
+    expect(ct.name).toBe('content.md');
+  });
+
+  test('deve ignorar espaços iniciais na detecção', () => {
+    const ct = detectContentType('  <!DOCTYPE html><html></html>');
+    expect(ct.extension).toBe('.html');
+  });
+});
+
+describe('tryExtractHtmlParts', () => {
+  test('deve retornar null para conteúdo que não é HTML completo', () => {
+    expect(tryExtractHtmlParts('# Título\n\nConteúdo')).toBeNull();
+    expect(tryExtractHtmlParts('Texto simples')).toBeNull();
+  });
+
+  test('deve retornar null se não houver <style> nem <script> inline', () => {
+    const html = '<!DOCTYPE html><html><head></head><body><h1>Olá</h1></body></html>';
+    expect(tryExtractHtmlParts(html)).toBeNull();
+  });
+
+  test('deve extrair <style> inline para styles.css', () => {
+    const html = '<!DOCTYPE html><html><head><style>body { color: red; }</style></head><body></body></html>';
+    const result = tryExtractHtmlParts(html);
+    expect(result).not.toBeNull();
+    const css = result.extractedFiles.find((f) => f.name === 'styles.css');
+    expect(css).toBeDefined();
+    expect(css.content).toContain('body { color: red; }');
+    expect(css.type).toBe('text/css');
+  });
+
+  test('deve extrair <script> inline para script.js', () => {
+    const html = '<!DOCTYPE html><html><head></head><body><script>console.log("ok");</script></body></html>';
+    const result = tryExtractHtmlParts(html);
+    expect(result).not.toBeNull();
+    const js = result.extractedFiles.find((f) => f.name === 'script.js');
+    expect(js).toBeDefined();
+    expect(js.content).toContain('console.log("ok");');
+    expect(js.type).toBe('application/javascript');
+  });
+
+  test('não deve extrair <script src="..."> externos', () => {
+    const html = '<!DOCTYPE html><html><head></head><body><script src="app.js"></script></body></html>';
+    const result = tryExtractHtmlParts(html);
+    expect(result).toBeNull();
+  });
+
+  test('deve substituir <style> por <link rel="stylesheet"> no HTML modificado', () => {
+    const html = '<!DOCTYPE html><html><head><style>h1 { color: blue; }</style></head><body></body></html>';
+    const result = tryExtractHtmlParts(html);
+    expect(result.htmlContent).toContain('<link rel="stylesheet" href="styles.css">');
+    expect(result.htmlContent).not.toContain('<style>');
+  });
+
+  test('deve substituir <script> inline por <script src="script.js"> no HTML modificado', () => {
+    const html = '<!DOCTYPE html><html><head></head><body><script>alert(1);</script></body></html>';
+    const result = tryExtractHtmlParts(html);
+    expect(result.htmlContent).toContain('<script src="script.js">');
+    expect(result.htmlContent).not.toContain('alert(1)');
+  });
+
+  test('extractedFiles devem ser não vazios', () => {
+    const html = '<!DOCTYPE html><html><head><style>.a{}</style></head><body><script>var x=1;</script></body></html>';
+    const result = tryExtractHtmlParts(html);
+    for (const f of result.extractedFiles) {
+      expect(f.content.trim().length).toBeGreaterThan(0);
+    }
   });
 });

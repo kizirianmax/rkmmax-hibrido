@@ -40,6 +40,7 @@ function resolveMime(filePath) {
 
 /**
  * Extrai a lista de arquivos e o preview do conteúdo principal do zipBuffer.
+ * Suporta tanto a estrutura nova (arquivos na raiz) quanto a legada (content/).
  *
  * @param {Buffer} zipBuffer
  * @param {string} [contentFilename] - nome do arquivo de conteúdo principal
@@ -62,13 +63,18 @@ function extractZipInfo(zipBuffer, contentFilename = 'content.md') {
       });
     }
 
-    // Extrair preview do conteúdo principal (content/)
-    const contentEntry = entries.find(
-      (e) =>
-        !e.isDirectory &&
-        e.entryName.startsWith('content/') &&
-        e.entryName.endsWith(contentFilename),
-    ) || entries.find((e) => !e.isDirectory && e.entryName.startsWith('content/'));
+    // Extrair preview do conteúdo principal
+    // Prioridade: nova estrutura (raiz) → estrutura legada (content/)
+    const contentEntry =
+      entries.find((e) => !e.isDirectory && e.entryName === contentFilename) ||
+      entries.find((e) => !e.isDirectory && (e.entryName === 'index.html' || e.entryName === 'content.md')) ||
+      entries.find(
+        (e) =>
+          !e.isDirectory &&
+          e.entryName.startsWith('content/') &&
+          e.entryName.endsWith(contentFilename),
+      ) ||
+      entries.find((e) => !e.isDirectory && e.entryName.startsWith('content/'));
 
     if (contentEntry) {
       const raw = contentEntry.getData().toString('utf-8');
