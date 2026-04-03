@@ -149,7 +149,8 @@ describe('generatePreview', () => {
 
       expect(preview.summary.files.length).toBeGreaterThan(0);
       const paths = preview.summary.files.map((f) => f.path);
-      expect(paths.some((p) => p.startsWith('content/'))).toBe(true);
+      // Nova estrutura: arquivo principal na raiz (content.md ou index.html)
+      expect(paths.some((p) => p === 'content.md' || p === 'index.html' || p.startsWith('content/'))).toBe(true);
       expect(paths.some((p) => p === 'manifest.json')).toBe(true);
     });
 
