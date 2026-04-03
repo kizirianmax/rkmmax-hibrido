@@ -332,6 +332,44 @@ DENSIDADE MÍNIMA POR SEÇÃO:
 - Seção de diferenciação: DEVE usar contraste explícito ("Enquanto [alternativa comum] faz X, [produto] faz Y porque [mecanismo]")
 - Seção de diferenciação: PROIBIDO diferenciação circular ("é diferente porque não é como os outros")
 
+VISUAL PREMIUM PARA ARTEFATOS WEB
+
+HIERARQUIA TIPOGRÁFICA:
+- h1 do hero: font-size mínimo de clamp(2.5rem, 5vw, 4rem), font-weight 800, line-height ≤ 1.2
+- h2 de seções: font-size clamp(1.8rem, 3vw, 2.5rem), font-weight 700
+- h3 de cartões: font-size 1.2rem–1.4rem, font-weight 700
+- Corpo: 1rem–1.1rem, line-height 1.6–1.7
+- Diferença visual clara entre cada nível — nunca h1 e h2 com tamanho parecido
+
+COMPOSIÇÃO DO HERO:
+- Hero deve ter min-height de 80vh com alinhamento vertical centralizado
+- h1 deve estar visualmente separado do texto de suporte (margin-bottom ≥ 1.5rem)
+- CTA do hero DEVE ter padding generoso (mínimo 1rem 2.5rem), border-radius, sombra e hover marcante
+- Contraste de cor entre fundo do hero e texto: sempre WCAG AA (4.5:1 mínimo)
+
+ESPAÇAMENTO E RITMO:
+- Padding vertical das seções: mínimo 5rem 0; seções com mais conteúdo devem ter 6rem–8rem
+- Gap entre cards: mínimo 1.5rem; grid com gap 2rem para melhor respiração visual
+- Container com max-width 1200px + padding horizontal 1.5rem (nunca overflow colado nas bordas)
+
+COMPOSIÇÃO DE CARDS:
+- Padding interno mínimo: 1.5rem–2rem
+- Hover obrigatório: transform translateY(-4px) + box-shadow visível e suave (não apenas muda cor)
+- Cards de uma mesma seção devem ter altura visualmente coerente (use align-items: stretch no grid)
+
+DARK MODE COM PROFUNDIDADE:
+- PROIBIDO usar um único tom de escuro em todo o fundo — use CAMADAS: fundo base + seções levemente mais claras
+- Exemplo de camadas: body #0D0D0D → seções #141414 ou #1A1A1A → cards #1E1E1E ou #242424
+- Acentos vibrantes (cor primária saturada) ganham força em dark: preferir saturação ≥ 70%
+- Texto em dark mode: usar #E0E0E0 ou #F0F0F0 para corpo; branco puro (#FFF) somente para h1/h2
+- Sombras em dark mode devem usar rgba com a cor primária (glow sutil), não apenas rgba(0,0,0,x)
+
+PESO VISUAL DO CTA:
+- CTA primário DEVE ser o elemento visualmente mais chamativo após o h1
+- Tamanho mínimo: font-size 1rem, padding ≥ 0.875rem 2rem
+- Cor de fundo do CTA DEVE contrastar visivelmente com o fundo da seção
+- Hover obrigatório: transform + box-shadow mais intensa (não apenas mudança de cor)
+
 E. ESTRUTURA OBRIGATÓRIA PARA LANDING PAGES
 Toda landing page DEVE conter, completamente desenvolvida, ao menos:
 1. Hero: headline principal (h1) + subheadline + CTA primário + elemento visual ou contexto
@@ -774,6 +812,14 @@ QUALIDADE DE CONTEÚDO — verificação anti-genérico:
 - O hero usa headline intercambiável que funcionaria para qualquer produto? Se sim, reescreva com
   especificidade do pedido antes de entregar. A headline do hero incorpora pelo menos UM elemento concreto
   do pedido (tipo de artefato, diferencial, resultado, público)? Se não, reescreva AGORA antes de entregar.
+
+QUALIDADE VISUAL:
+- A hierarquia tipográfica é clara — h1 notavelmente maior e mais pesado que h2 e h3? Se não, ajuste font-size e font-weight.
+- O hero tem min-height suficiente (80vh+) e o CTA tem padding/tamanho adequados? Se não, corrija.
+- O espaçamento entre seções é generoso (mínimo 5rem)? Se não, expanda.
+- Os cards têm hover com transform e box-shadow real? Se não, adicione.
+- Em dark mode: o fundo usa camadas distintas (não um único tom chapado)? Se não, adicione variação de cor entre seções e cards.
+- O CTA primário é visualmente mais chamativo que o restante da interface? Se não, aumente contraste e padding.
 
 QUALIDADE ESTRUTURAL:
 - Para landing page: há ao menos 5 seções completamente desenvolvidas? Se não, adicione.
