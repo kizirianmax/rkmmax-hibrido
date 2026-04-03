@@ -75,6 +75,7 @@ export default function HybridAgentSimple() {
   const [previews, setPreviews] = useState({});
   const [previewLoading, setPreviewLoading] = useState({});
   const [previewErrors, setPreviewErrors] = useState({});
+  const [deliveryData, setDeliveryData] = useState({});
   const messagesEndRef = useRef(null);
   const mediaRecorderRef = useRef(null);
 
@@ -162,14 +163,16 @@ export default function HybridAgentSimple() {
   };
 
   // Fase 2D — aplicar decisão (aprovação/rejeição) ao preview
-  const handlePreviewDecision = async (msgId, decision, feedback) => {
+  const handlePreviewDecision = async (msgId, decision, feedback, content) => {
     const currentPreview = previews[msgId];
     if (!currentPreview) return;
     try {
+      const body = { preview: currentPreview, decision, feedback };
+      if (decision === 'approved' && content) body.content = content;
       const response = await fetch("/api/artifact-preview", {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ preview: currentPreview, decision, feedback }),
+        body: JSON.stringify(body),
       });
       if (!response.ok) {
         throw new Error(`Preview API error: ${response.status}`);
@@ -177,6 +180,9 @@ export default function HybridAgentSimple() {
       const data = await response.json();
       if (data.success && data.preview) {
         setPreviews((prev) => ({ ...prev, [msgId]: data.preview }));
+        if (data.zipBase64) {
+          setDeliveryData((prev) => ({ ...prev, [msgId]: { zipBase64: data.zipBase64 } }));
+        }
       }
     } catch (err) {
       console.error("❌ Erro ao aplicar decisão:", err);
@@ -535,9 +541,10 @@ export default function HybridAgentSimple() {
                       preview={previews[msg.id]}
                       loading={previewLoading[msg.id]}
                       onDecision={(decision, feedback) =>
-                        handlePreviewDecision(msg.id, decision, feedback)
+                        handlePreviewDecision(msg.id, decision, feedback, msg.content)
                       }
                       onRevision={(fb) => handleRequestRevision(msg.id, fb)}
+                      delivery={deliveryData[msg.id]}
                     />
                   )}
                   {previewErrors[msg.id] && previews[msg.id] && (

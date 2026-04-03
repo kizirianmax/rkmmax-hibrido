@@ -166,6 +166,43 @@ describe('PATCH /api/artifact-preview', () => {
     expect(res._json.preview.decision).toBe('rejected');
     expect(res._json.preview.feedback).toBe('Conteúdo incompleto');
   });
+
+  test('deve retornar zipBase64 quando decision=approved e content fornecido', async () => {
+    const { req, res } = makeReqRes('PATCH', {
+      preview: validPreview,
+      decision: 'approved',
+      content: '# Artefato aprovado\n\nConteúdo gerado.',
+    });
+    await handler(req, res);
+    expect(res._status).toBe(200);
+    expect(res._json.success).toBe(true);
+    expect(res._json.preview.decision).toBe('approved');
+    expect(res._json.zipBase64).toBe('UEsDBA==');
+  });
+
+  test('NÃO deve retornar zipBase64 quando decision=approved sem content', async () => {
+    const { req, res } = makeReqRes('PATCH', {
+      preview: validPreview,
+      decision: 'approved',
+    });
+    await handler(req, res);
+    expect(res._status).toBe(200);
+    expect(res._json.preview.decision).toBe('approved');
+    expect(res._json.zipBase64).toBeUndefined();
+  });
+
+  test('NÃO deve retornar zipBase64 quando decision=rejected mesmo com content', async () => {
+    const { req, res } = makeReqRes('PATCH', {
+      preview: validPreview,
+      decision: 'rejected',
+      content: '# Artefato rejeitado\n\nConteúdo.',
+      feedback: 'Não aprovado',
+    });
+    await handler(req, res);
+    expect(res._status).toBe(200);
+    expect(res._json.preview.decision).toBe('rejected');
+    expect(res._json.zipBase64).toBeUndefined();
+  });
 });
 
 describe('Method not allowed', () => {

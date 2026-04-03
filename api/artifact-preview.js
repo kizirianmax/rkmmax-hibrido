@@ -91,7 +91,7 @@ export default async function handler(req, res) {
   // ── PATCH: aplicar decisão ────────────────────────────────────────────────
   if (req.method === 'PATCH') {
     try {
-      const { preview, decision, feedback = null } = req.body || {};
+      const { preview, decision, feedback = null, content } = req.body || {};
 
       if (!preview || typeof preview !== 'object') {
         return res.status(400).json({
@@ -109,6 +109,17 @@ export default async function handler(req, res) {
       }
 
       const updatedPreview = applyDecision(preview, decision, feedback);
+
+      // Quando aprovado e content fornecido, empacotar o artefato e retornar zipBase64
+      if (decision === 'approved' && content && typeof content === 'string' && content.trim() !== '') {
+        try {
+          const artifact = await packageArtifact({ content, metadata: preview.summary?.origin || {} });
+          return res.status(200).json({ success: true, preview: updatedPreview, zipBase64: artifact.zipBase64 });
+        } catch (packError) {
+          console.error('❌ Artifact packaging on approval failed:', packError);
+          // Falha no empacotamento não bloqueia a aprovação — retorna sem zipBase64
+        }
+      }
 
       return res.status(200).json({ success: true, preview: updatedPreview });
     } catch (error) {
