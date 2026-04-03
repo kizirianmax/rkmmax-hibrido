@@ -886,3 +886,31 @@ describe('HYBRID_SELF_REFLECTION_SUFFIX — remoção imperativa de OBSERVAÇÕE
     expect(HYBRID_SELF_REFLECTION_SUFFIX).toContain('REMOVA a seção INTEIRA da resposta AGORA');
   });
 });
+
+// ─── Bloco: FORMATO DE SAÍDA MULTIARQUIVO no HYBRID_GENIUS_PROMPT ─────────────
+
+describe('HYBRID_GENIUS_PROMPT — bloco de formato de saída multiarquivo', () => {
+  it('contém delimitador --- FILE: para formato multiarquivo', () => {
+    expect(HYBRID_GENIUS_PROMPT).toContain('--- FILE:');
+  });
+
+  it('instrui uso de index.html como arquivo principal', () => {
+    expect(HYBRID_GENIUS_PROMPT).toContain('index.html');
+  });
+
+  it('instrui criação de styles.css', () => {
+    expect(HYBRID_GENIUS_PROMPT).toContain('styles.css');
+  });
+
+  it('instrui criação de script.js', () => {
+    expect(HYBRID_GENIUS_PROMPT).toContain('script.js');
+  });
+
+  it('instrui não usar formato multiarquivo para pedidos não-web', () => {
+    expect(HYBRID_GENIUS_PROMPT).toContain('não for web');
+  });
+
+  it('bloco E de estrutura obrigatória de landing page ainda está presente', () => {
+    expect(HYBRID_GENIUS_PROMPT).toContain('E. ESTRUTURA OBRIGATÓRIA PARA LANDING PAGES');
+  });
+});
