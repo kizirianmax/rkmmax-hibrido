@@ -220,6 +220,59 @@ export { RequestBatcher };
 export const requestBatcher = new RequestBatcher();
 
 /**
+ * GUARD DE BUDGET DE TOKENS
+ * Garante que system prompt + messages caibam no context window seguro do provider.
+ *
+ * Budget conservador para Groq free tier:
+ *   - MAX_INPUT_TOKENS: 6000 tokens para system + messages combined
+ *   - DEFAULT_OUTPUT_BUDGET: 4096 tokens (reservado para saída)
+ *
+ * Se o total ultrapassar o budget, trunca o system prompt de forma inteligente
+ * removendo blocos opcionais do final do prompt (few-shot, micro-referência, etc.).
+ * Retorna sempre um objeto com { systemPrompt, messages, truncated }.
+ *
+ * @param {string} systemPrompt - System prompt já comprimido
+ * @param {Array} messages - Mensagens já limitadas por limitContext()
+ * @param {number} [maxInputTokens=6000] - Budget máximo para system + messages
+ * @returns {{ systemPrompt: string, messages: Array, truncated: boolean }}
+ */
+export function ensureTokenBudget(systemPrompt, messages, maxInputTokens = 6000) {
+  const systemTokens = estimateTokens(systemPrompt);
+  const messagesTokens = messages.reduce((sum, msg) => sum + estimateTokens(msg.content), 0);
+  const totalInputTokens = systemTokens + messagesTokens;
+
+  if (totalInputTokens <= maxInputTokens) {
+    return { systemPrompt, messages, truncated: false };
+  }
+
+  // Budget excedido — tentar reduzir o system prompt removendo blocos opcionais do final.
+  // Estratégia: truncar no limite máximo de tokens para o system prompt, preservando
+  // parágrafos completos (split por dupla quebra de linha).
+  const maxSystemTokens = Math.max(maxInputTokens - messagesTokens, 1000);
+  const maxSystemChars = maxSystemTokens * 4; // estimativa reversa (~4 chars/token)
+
+  if (systemPrompt.length <= maxSystemChars) {
+    return { systemPrompt, messages, truncated: false };
+  }
+
+  // Truncar preservando parágrafos completos
+  const paragraphs = systemPrompt.split('\n\n');
+  let truncated = '';
+  for (const paragraph of paragraphs) {
+    const candidate = truncated ? truncated + '\n\n' + paragraph : paragraph;
+    if (candidate.length > maxSystemChars) break;
+    truncated = candidate;
+  }
+
+  // Fallback: se nenhum parágrafo coube, truncar por caractere no limite
+  if (!truncated) {
+    truncated = systemPrompt.slice(0, maxSystemChars);
+  }
+
+  return { systemPrompt: truncated.trim(), messages, truncated: true };
+}
+
+/**
  * OTIMIZAÇÃO COMPLETA
  * Aplica todas as otimizações
  */
@@ -239,23 +292,31 @@ export function optimizeRequest(messages, systemPrompt) {
   // 4. Comprimir prompt
   const compressedPrompt = compressPrompt(systemPrompt);
 
-  // 5. Estimar custo
-  const promptTokens = estimateTokens(compressedPrompt);
-  const messagesTokens = limited.reduce((sum, msg) => sum + estimateTokens(msg.content), 0);
+  // 5. Garantir budget de tokens (system + messages dentro do limite seguro)
+  const budgeted = ensureTokenBudget(compressedPrompt, limited);
+
+  // 6. Estimar custo
+  const promptTokens = estimateTokens(budgeted.systemPrompt);
+  const messagesTokens = budgeted.messages.reduce((sum, msg) => sum + estimateTokens(msg.content), 0);
   const totalTokens = promptTokens + messagesTokens;
   const estimatedCost = (totalTokens / 1000) * 0.00075; // Groq pricing reference
+
+  if (budgeted.truncated) {
+    console.warn(`⚠️ System prompt truncado para caber no budget de tokens (${promptTokens} tokens)`);
+  }
 
   console.log(`💰 Custo estimado: $${estimatedCost.toFixed(6)} (${totalTokens} tokens)`);
 
   return {
     cached: false,
-    messages: limited,
-    systemPrompt: compressedPrompt,
+    messages: budgeted.messages,
+    systemPrompt: budgeted.systemPrompt,
     stats: {
       originalMessages: messages.length,
-      optimizedMessages: limited.length,
+      optimizedMessages: budgeted.messages.length,
       totalTokens,
       estimatedCost,
+      systemPromptTruncated: budgeted.truncated,
     },
   };
 }
@@ -286,6 +347,7 @@ export default {
   deduplicateMessages,
   estimateTokens,
   limitContext,
+  ensureTokenBudget,
   requestBatcher,
   optimizeRequest,
   cacheResponse,
