@@ -24,6 +24,58 @@ import archiver from 'archiver';
 import { generateManifest } from './artifactManifest.js';
 import { generateGenerationLog, generateStructureLog } from './artifactLogger.js';
 
+// ── Resolução de MIME por extensão ───────────────────────────────────────────
+
+const MIME_MAP = {
+  '.html': 'text/html',
+  '.css': 'text/css',
+  '.js': 'application/javascript',
+  '.md': 'text/markdown',
+  '.json': 'application/json',
+  '.txt': 'text/plain',
+};
+
+/**
+ * Resolve o tipo MIME a partir do nome do arquivo.
+ * @param {string} filename
+ * @returns {string}
+ */
+function resolveMime(filename) {
+  const ext = filename.slice(filename.lastIndexOf('.')).toLowerCase();
+  return MIME_MAP[ext] || 'application/octet-stream';
+}
+
+// ── Parser de formato multiarquivo ────────────────────────────────────────────
+
+const MIN_MULTI_FILE_COUNT = 2;
+
+/**
+ * Tenta parsear conteúdo no formato multiarquivo com delimitadores --- FILE: <path> ---.
+ * Retorna array de { name, content, type } ou null se não for multiarquivo.
+ * @param {string} content
+ * @returns {Array<{name: string, content: string, type: string}> | null}
+ */
+export function parseMultiFileContent(content) {
+  const FILE_DELIMITER = /^---\s*FILE:\s*(.+?)\s*---\s*$/gm;
+  const matches = [...content.matchAll(FILE_DELIMITER)];
+
+  if (matches.length < MIN_MULTI_FILE_COUNT) return null;
+
+  const files = [];
+  for (let i = 0; i < matches.length; i++) {
+    const name = matches[i][1].trim();
+    const start = matches[i].index + matches[i][0].length;
+    const end = i + 1 < matches.length ? matches[i + 1].index : content.length;
+    const fileContent = content.slice(start, end).trim();
+
+    if (!fileContent) return null;
+
+    files.push({ name, content: fileContent, type: resolveMime(name) });
+  }
+
+  return files.length >= MIN_MULTI_FILE_COUNT ? files : null;
+}
+
 // ── Detecção de tipo de conteúdo ─────────────────────────────────────────────
 
 /**
@@ -144,7 +196,114 @@ ${howToUse}
 `;
 }
 
+/**
+ * Gera um README.md mínimo para artefatos multiarquivo gerados nativamente.
+ * @param {{ id: string, files: Array<{name: string}> }} params
+ * @returns {string}
+ */
+function generateMultiFileReadme({ id, files }) {
+  const fileList = files.map((f) => `- \`${f.name}\``).join('\n');
+  const hasHtml = files.some((f) => f.name.endsWith('.html'));
+  const howToUse = hasHtml
+    ? 'Abra o arquivo `index.html` no navegador para visualizar o artefato.'
+    : 'Abra o arquivo principal em um editor de texto ou visualizador.';
+
+  return `# Artefato do Construtor/Híbrido
+
+**ID:** ${id}
+**Status:** ✅ Aprovado
+
+## Arquivos
+
+${fileList}
+- \`manifest.json\` — Metadados e rastreabilidade
+- \`logs/\` — Logs de geração e estrutura
+
+## Como usar
+
+${howToUse}
+`;
+}
+
 // ── Empacotamento principal ───────────────────────────────────────────────────
+
+/**
+ * Empacota conteúdo multiarquivo já parseado em um ZIP rastreável.
+ * @private
+ */
+async function packageMultiFileArtifact({ id, content, multiFiles, metadata, startTime }) {
+  // Garantir README.md no pacote
+  const hasReadme = multiFiles.some((f) => f.name.toLowerCase() === 'readme.md');
+  const filesWithReadme = hasReadme ? multiFiles : [
+    ...multiFiles,
+    {
+      name: 'README.md',
+      content: generateMultiFileReadme({ id, files: multiFiles }),
+      type: 'text/markdown',
+    },
+  ];
+
+  const contents = [
+    ...filesWithReadme.map((f) => ({
+      path: f.name,
+      description: f.name,
+      type: f.type,
+    })),
+    { path: 'manifest.json', description: 'Metadados e rastreabilidade', type: 'application/json' },
+    { path: 'logs/generation.log', description: 'Log de geração', type: 'text/plain' },
+    { path: 'logs/structure.log', description: 'Log de estrutura', type: 'text/plain' },
+  ];
+
+  const manifest = generateManifest({
+    id,
+    content,
+    metadata,
+    contentType: 'multi-file',
+    contents,
+  });
+  const manifestJson = JSON.stringify(manifest, null, 2);
+
+  const durationMs = Date.now() - startTime;
+
+  const generationLog = generateGenerationLog({
+    timestamp: manifest.timestamp,
+    inputSummary: content.slice(0, 200),
+    model: manifest.origin.model,
+    tier: metadata.tier,
+    complexity: metadata.complexity,
+    durationMs,
+  });
+
+  const filesForLog = filesWithReadme.map((f) => ({
+    path: f.name,
+    size: Buffer.byteLength(f.content, 'utf-8'),
+    type: f.type,
+  }));
+  filesForLog.push({ path: 'manifest.json', size: Buffer.byteLength(manifestJson, 'utf-8'), type: 'application/json' });
+
+  const structureLog = generateStructureLog({ files: filesForLog });
+
+  const zipBuffer = await new Promise((resolve, reject) => {
+    const archive = archiver('zip', { zlib: { level: 6 } });
+    const chunks = [];
+
+    archive.on('data', (chunk) => chunks.push(chunk));
+    archive.on('end', () => resolve(Buffer.concat(chunks)));
+    archive.on('error', reject);
+
+    for (const f of filesWithReadme) {
+      archive.append(Buffer.from(f.content, 'utf-8'), { name: f.name });
+    }
+
+    archive.append(Buffer.from(manifestJson, 'utf-8'), { name: 'manifest.json' });
+    archive.append(Buffer.from(generationLog, 'utf-8'), { name: 'logs/generation.log' });
+    archive.append(Buffer.from(structureLog, 'utf-8'), { name: 'logs/structure.log' });
+
+    archive.finalize();
+  });
+
+  return { id, manifest, zipBuffer, zipBase64: zipBuffer.toString('base64') };
+}
 
 /**
  * Empacota o conteúdo gerado pelo Construtor em um ZIP rastreável.
@@ -169,7 +328,14 @@ export async function packageArtifact({ content, metadata = {} }) {
   const startTime = Date.now();
   const id = randomUUID();
 
-  // Detectar tipo de conteúdo (respeitando metadata.filename se fornecido)
+  // Tentar formato multiarquivo nativo (delimitadores --- FILE: <path> ---)
+  const multiFiles = parseMultiFileContent(content);
+
+  if (multiFiles) {
+    return packageMultiFileArtifact({ id, content, multiFiles, metadata, startTime });
+  }
+
+  // Fallback: detectar tipo de conteúdo (respeitando metadata.filename se fornecido)
   const contentType = detectContentType(content);
   const contentFilename = metadata.filename || contentType.name;
 

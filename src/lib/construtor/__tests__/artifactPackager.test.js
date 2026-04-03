@@ -9,7 +9,7 @@
  * - erros de input são tratados adequadamente
  */
 
-import { packageArtifact, detectContentType, tryExtractHtmlParts } from '../artifactPackager.js';
+import { packageArtifact, detectContentType, tryExtractHtmlParts, parseMultiFileContent } from '../artifactPackager.js';
 import { generateManifest, computeChecksum, resolveModelName, DEFAULT_PROMPT_ID } from '../artifactManifest.js';
 import { generateGenerationLog, generateStructureLog } from '../artifactLogger.js';
 
@@ -409,5 +409,138 @@ describe('tryExtractHtmlParts', () => {
     for (const f of result.extractedFiles) {
       expect(f.content.trim().length).toBeGreaterThan(0);
     }
+  });
+});
+
+// ─── parseMultiFileContent ────────────────────────────────────────────────────
+
+describe('parseMultiFileContent', () => {
+  const VALID_MULTI = `--- FILE: index.html ---
+<!DOCTYPE html><html><head></head><body></body></html>
+
+--- FILE: styles.css ---
+body { margin: 0; }
+
+--- FILE: script.js ---
+console.log('ok');`;
+
+  test('conteúdo multiarquivo válido → retorna array com 3 arquivos', () => {
+    const result = parseMultiFileContent(VALID_MULTI);
+    expect(result).not.toBeNull();
+    expect(result).toHaveLength(3);
+  });
+
+  test('cada arquivo tem name, content e type corretos', () => {
+    const result = parseMultiFileContent(VALID_MULTI);
+    expect(result[0].name).toBe('index.html');
+    expect(result[0].type).toBe('text/html');
+    expect(result[0].content).toContain('<!DOCTYPE html>');
+
+    expect(result[1].name).toBe('styles.css');
+    expect(result[1].type).toBe('text/css');
+    expect(result[1].content).toContain('margin');
+
+    expect(result[2].name).toBe('script.js');
+    expect(result[2].type).toBe('application/javascript');
+    expect(result[2].content).toContain("console.log");
+  });
+
+  test('conteúdo com apenas 1 delimitador → retorna null', () => {
+    const single = '--- FILE: index.html ---\n<!DOCTYPE html><html></html>';
+    expect(parseMultiFileContent(single)).toBeNull();
+  });
+
+  test('conteúdo sem delimitadores → retorna null', () => {
+    expect(parseMultiFileContent('conteúdo normal sem delimitadores')).toBeNull();
+    expect(parseMultiFileContent('<!DOCTYPE html><html></html>')).toBeNull();
+  });
+
+  test('arquivo vazio no meio → retorna null (fallback seguro)', () => {
+    const withEmpty = `--- FILE: index.html ---
+<!DOCTYPE html><html></html>
+
+--- FILE: styles.css ---
+
+--- FILE: script.js ---
+console.log('ok');`;
+    expect(parseMultiFileContent(withEmpty)).toBeNull();
+  });
+
+  test('inclui README.md quando presente', () => {
+    const withReadme = VALID_MULTI + '\n\n--- FILE: README.md ---\n# Projeto';
+    const result = parseMultiFileContent(withReadme);
+    expect(result).not.toBeNull();
+    expect(result.some((f) => f.name === 'README.md')).toBe(true);
+  });
+});
+
+// ─── packageArtifact — multiarquivo ──────────────────────────────────────────
+
+describe('packageArtifact — conteúdo multiarquivo', () => {
+  const MULTI_CONTENT = `--- FILE: index.html ---
+<!DOCTYPE html><html><head><link rel="stylesheet" href="styles.css"></head><body><script src="script.js"></script></body></html>
+
+--- FILE: styles.css ---
+body { margin: 0; color: #333; }
+
+--- FILE: script.js ---
+document.addEventListener('DOMContentLoaded', () => { console.log('ready'); });`;
+
+  test('ZIP contém index.html na raiz', async () => {
+    const { zipBuffer } = await packageArtifact({ content: MULTI_CONTENT });
+    const AdmZip = (await import('adm-zip')).default;
+    const zip = new AdmZip(zipBuffer);
+    const names = zip.getEntries().map((e) => e.entryName);
+    expect(names).toContain('index.html');
+  });
+
+  test('ZIP contém styles.css e script.js', async () => {
+    const { zipBuffer } = await packageArtifact({ content: MULTI_CONTENT });
+    const AdmZip = (await import('adm-zip')).default;
+    const zip = new AdmZip(zipBuffer);
+    const names = zip.getEntries().map((e) => e.entryName);
+    expect(names).toContain('styles.css');
+    expect(names).toContain('script.js');
+  });
+
+  test('ZIP contém README.md gerado automaticamente quando ausente', async () => {
+    const { zipBuffer } = await packageArtifact({ content: MULTI_CONTENT });
+    const AdmZip = (await import('adm-zip')).default;
+    const zip = new AdmZip(zipBuffer);
+    const names = zip.getEntries().map((e) => e.entryName);
+    expect(names).toContain('README.md');
+  });
+
+  test('manifest tem contentType "multi-file"', async () => {
+    const { manifest } = await packageArtifact({ content: MULTI_CONTENT });
+    expect(manifest.contentType).toBe('multi-file');
+  });
+
+  test('manifest tem contents[] com os 3 arquivos', async () => {
+    const { manifest } = await packageArtifact({ content: MULTI_CONTENT });
+    const paths = manifest.contents.map((c) => c.path);
+    expect(paths).toContain('index.html');
+    expect(paths).toContain('styles.css');
+    expect(paths).toContain('script.js');
+  });
+
+  test('ZIP contém manifest.json e logs/', async () => {
+    const { zipBuffer } = await packageArtifact({ content: MULTI_CONTENT });
+    const AdmZip = (await import('adm-zip')).default;
+    const zip = new AdmZip(zipBuffer);
+    const names = zip.getEntries().map((e) => e.entryName);
+    expect(names).toContain('manifest.json');
+    expect(names).toContain('logs/generation.log');
+    expect(names).toContain('logs/structure.log');
+  });
+
+  test('conteúdo normal (não multiarquivo) continua com comportamento atual', async () => {
+    const normalContent = '# Documento\n\nConteúdo normal sem delimitadores multiarquivo.';
+    const { manifest, zipBuffer } = await packageArtifact({ content: normalContent });
+    const AdmZip = (await import('adm-zip')).default;
+    const zip = new AdmZip(zipBuffer);
+    const names = zip.getEntries().map((e) => e.entryName);
+    expect(names).toContain('content.md');
+    expect(manifest.contentType).not.toBe('multi-file');
   });
 });
