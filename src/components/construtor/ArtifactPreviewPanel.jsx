@@ -12,8 +12,9 @@ import { useState } from 'react';
  *   onDecision  {function} — callback(decision, feedback) chamado ao aprovar/rejeitar
  *   onRevision  {function} — callback(feedback) chamado ao solicitar ajuste ou revisão
  *   loading     {boolean}  — exibir estado de carregamento
+ *   delivery    {object}   — { zipBase64 } retornado na aprovação (opcional)
  */
-export default function ArtifactPreviewPanel({ preview, onDecision, onRevision, loading = false }) {
+export default function ArtifactPreviewPanel({ preview, onDecision, onRevision, loading = false, delivery }) {
   const [rejectionFeedback, setRejectionFeedback] = useState('');
   const [showRejectionInput, setShowRejectionInput] = useState(false);
   const [adjustmentFeedback, setAdjustmentFeedback] = useState('');
@@ -81,6 +82,17 @@ export default function ArtifactPreviewPanel({ preview, onDecision, onRevision, 
   };
 
   const isPending = decision === 'pending';
+
+  const handleDownload = () => {
+    if (!delivery?.zipBase64) return;
+    const byteNums = Uint8Array.from(atob(delivery.zipBase64), (c) => c.charCodeAt(0));
+    const blob = new Blob([byteNums], { type: 'application/zip' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = `artifact-${summary.id || 'download'}.zip`;
+    a.click();
+    setTimeout(() => URL.revokeObjectURL(a.href), 100);
+  };
 
   return (
     <div className="artifact-preview-panel">
@@ -166,6 +178,18 @@ export default function ArtifactPreviewPanel({ preview, onDecision, onRevision, 
               <span className="artifact-value">{feedback}</span>
             </div>
           )}
+        </div>
+      )}
+
+      {/* Botão de download após aprovação */}
+      {decision === 'approved' && delivery?.zipBase64 && (
+        <div className="artifact-preview-actions">
+          <button
+            className="artifact-btn artifact-btn-approve"
+            onClick={handleDownload}
+          >
+            📥 Baixar Artefato (.zip)
+          </button>
         </div>
       )}
 
