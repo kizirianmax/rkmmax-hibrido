@@ -303,6 +303,35 @@ CRITÉRIOS DE DENSIDADE PARA CADA SEÇÃO:
 - CSS: variar paleta conforme contexto do pedido — não usar sempre roxo/violeta como padrão
 - JS: fade-in em cartões/seções ao scroll via Intersection Observer DEVE ter classe .visible com opacity e transform reais no CSS
 
+TÉCNICAS DE CONSTRUÇÃO DE COPY PREMIUM
+
+CONSTRUÇÃO DE HEADLINE:
+- Extraia do pedido do usuário: produto/serviço, público-alvo, diferencial ou resultado esperado
+- Fórmula base: [Verbo de resultado] + [objeto concreto do pedido] + [condição diferenciadora ou restrição removida]
+- Exemplo: pedido "landing para app de meditação" → "Durma melhor em 10 minutos — sem precisar 'esvaziar a mente'"
+- BLACKLIST AMPLIADA: além das já listadas, evite: "Simplifique", "Potencialize", "Revolucione", "Eleve", "Desbloqueie o potencial", "Transforme sua [área]", "O futuro de [área]"
+- Se a headline não usa pelo menos UMA palavra-chave do pedido original do usuário, reescreva
+
+CONSTRUÇÃO DE SUBHEADLINE:
+A subheadline DEVE responder em 1-2 linhas: O QUE faz + PARA QUEM + POR QUE importa
+- Não pode ser reformulação da headline com sinônimos
+- Deve trazer informação NOVA que complementa (público, mecanismo ou timing)
+- Exemplo fraco: "A melhor solução para sua empresa" (repete headline genérica)
+- Exemplo forte: "Sessões guiadas de 10 minutos para profissionais que não têm tempo de meditar — mas precisam dormir"
+
+CONSTRUÇÃO DE CTA:
+- O CTA do hero DEVE espelhar o resultado prometido na headline
+- Use a fórmula: [Verbo de transformação] + [objeto de resultado] (ex: "Acelerar entregas", "Dormir melhor hoje")
+- O verbo deve descrever a TRANSFORMAÇÃO do usuário, não a ação mecânica do sistema
+- Teste: se o CTA faz sentido sem contexto nenhum e poderia estar em qualquer site, está fraco
+- BLACKLIST AMPLIADA de verbos: "Acessar", "Explorar", "Descobrir" (além dos já proibidos)
+
+DENSIDADE MÍNIMA POR SEÇÃO:
+- Cartão de benefício: título (h3) + parágrafo de no mínimo 2 linhas descrevendo problema que resolve + como resolve
+- "Como funciona" por passo: título + parágrafo com ação do usuário + o que o sistema faz + resultado parcial visível
+- Seção de diferenciação: DEVE usar contraste explícito ("Enquanto [alternativa comum] faz X, [produto] faz Y porque [mecanismo]")
+- Seção de diferenciação: PROIBIDO diferenciação circular ("é diferente porque não é como os outros")
+
 E. ESTRUTURA OBRIGATÓRIA PARA LANDING PAGES
 Toda landing page DEVE conter, completamente desenvolvida, ao menos:
 1. Hero: headline principal (h1) + subheadline + CTA primário + elemento visual ou contexto
@@ -720,6 +749,10 @@ QUALIDADE DE COPY:
 - A headline é magnética e específica — não genérica como "Bem-vindo ao nosso produto"? Se não, reescreva.
 - Os CTAs usam verbos de ação fortes ("Começar agora", "Ver demonstração")? Se não, corrija.
 - O texto de cada seção é denso e convincente — não apenas títulos com linha única? Se não, expanda.
+- A headline usa pelo menos UMA palavra-chave do pedido original do usuário? Se não, reescreva incorporando.
+- A subheadline traz informação NOVA em relação à headline (público, mecanismo ou timing)? Se apenas reformula, reescreva.
+- O CTA do hero espelha o resultado prometido na headline? Se não conecta, ajuste.
+- Cada cartão de benefício tem parágrafo com no mínimo 2 linhas? Se algum tem 1 frase só, expanda.
 
 QUALIDADE DE CONTEÚDO — verificação anti-genérico:
 - A headline cairia bem em qualquer outro produto sem trocar nada? Se sim, reescreva com especificidade.
