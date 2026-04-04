@@ -36,7 +36,11 @@ export default function usePlan() {
         const j = await res.json().catch(() => ({}));
         const fetched = j.userPlan || "basic";
         setPlan(fetched);
-        window.localStorage.setItem("userPlan", fetched);
+        try {
+          window.localStorage.setItem("userPlan", fetched);
+        } catch {
+          // localStorage indisponível (ex.: modo privado com storage cheio) — ignora
+        }
       } catch {
         if (ctrl.signal.aborted) return;
         setPlan("basic");
