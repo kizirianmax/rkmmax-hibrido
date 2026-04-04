@@ -48,6 +48,26 @@ const PLANS = {
       priceId: "price_1S7TM1ENxlkCT0yfGHMGJ9Rh",
       cta: "Assinar Premium",
     },
+    {
+      planKey: "ultra_br",
+      icon: "🚀",
+      name: "Ultra",
+      price: "R$ 150,00/mês",
+      features: ["Sem limite de tokens/dia", "Sem limite mensal", "LGPD/GDPR/SLA", "Suporte VIP"],
+      payLink: process.env.REACT_APP_STRIPE_PAYMENT_LINK_ULTRA_BR || "",
+      priceId: null,
+      cta: "Assinar Ultra",
+    },
+    {
+      planKey: "dev_br",
+      icon: "🛠️",
+      name: "Dev",
+      price: "Plano interno",
+      features: ["Sem limite de tokens", "Todos os modelos", "Acesso total", "Uso interno"],
+      payLink: "",
+      priceId: null,
+      cta: "Contato",
+    },
   ],
   US: [
     {
@@ -79,6 +99,26 @@ const PLANS = {
       payLink: process.env.REACT_APP_STRIPE_PAYMENT_LINK_PREMIUM_US || "",
       priceId: null,
       cta: "Subscribe Premium",
+    },
+    {
+      planKey: "ultra_us",
+      icon: "🚀",
+      name: "Ultra",
+      price: "$60/month",
+      features: ["Unlimited tokens/day", "Unlimited monthly", "GDPR/SLA", "VIP support"],
+      payLink: process.env.REACT_APP_STRIPE_PAYMENT_LINK_ULTRA_US || "",
+      priceId: null,
+      cta: "Subscribe Ultra",
+    },
+    {
+      planKey: "dev_us",
+      icon: "🛠️",
+      name: "Dev",
+      price: "Internal plan",
+      features: ["Unlimited tokens", "All models", "Full access", "Internal use"],
+      payLink: "",
+      priceId: null,
+      cta: "Contact",
     },
   ],
 };
@@ -268,11 +308,15 @@ export default function PlansScreen() {
                 padding: "10px 14px",
                 borderRadius: 10,
                 border: "none",
-                background: p.planKey.includes("prem")
-                  ? "#6e2cf4"
-                  : p.planKey.includes("inter")
-                    ? "#4f8cff"
-                    : "#2eb88a",
+                background: p.planKey.includes("ultra")
+                  ? "#7c3aed"
+                  : p.planKey.includes("prem")
+                    ? "#6e2cf4"
+                    : p.planKey.includes("inter")
+                      ? "#4f8cff"
+                      : p.planKey.includes("dev")
+                        ? "#475569"
+                        : "#2eb88a",
                 color: "white",
                 fontWeight: 600,
                 cursor: "pointer",
