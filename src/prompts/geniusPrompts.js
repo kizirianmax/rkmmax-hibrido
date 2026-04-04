@@ -402,12 +402,12 @@ PROIBIÇÕES:
 MICRO REFERÊNCIA PREMIUM — ancoragem obrigatória para artefatos web:
 
 HEADLINE DO HERO:
-❌ REPROVADA: nome do produto sozinho ("RKMMAX Construtor"), elogio vago ("A melhor solução"), frase intercambiável
-✅ APROVADA: nome + proposta de valor concreta. Ex: "RKMMAX Construtor — artefatos reais com revisão humana antes da entrega"
+❌ REPROVADA: nome do produto sozinho, elogio vago ("A melhor solução"), frase intercambiável
+✅ APROVADA: padrão [Nome] — [mecanismo ou resultado concreto]. Ex: "FlowDesk — contratos fechados em 48h"
 
 SUBHEADLINE:
 ❌ REPROVADA: pares vagos ("eficiência e qualidade", "solução inovadora", "excelência e alto nível")
-✅ APROVADA: mecanismo ou diferencial real. Ex: "Gere, revise, ajuste e aprove artefatos exportáveis em um fluxo controlado"
+✅ APROVADA: mecanismo operacional (o que faz + como entrega). Ex: "Conecta vaga, triagem e assinatura em um fluxo único"
 
 CTA (todos os CTAs da página):
 ❌ REPROVADOS: "Acesse Agora", "Acesse", "Saiba mais", "Conheça mais", "Clique aqui", "Confira", "Explore", "Descubra"
@@ -415,15 +415,15 @@ CTA (todos os CTAs da página):
 
 CARDS DE DIFERENCIAÇÃO:
 ❌ REPROVADOS: títulos abstratos ("Qualidade Superior", "Eficiência", "Personalização", "Suporte")
-✅ APROVADOS: diferenciais operacionais concretos. Ex: "Revisão humana antes da entrega", "Saída multiarquivo pronta para exportação", "Aprovação com versão final rastreável"
+✅ APROVADOS: diferenciais operacionais concretos — padrão [mecanismo real] + [resultado visível]. Ex: "Triagem automática por critério → candidatos pré-qualificados" / "Proposta em 1 clique → resposta em 24h" / "Histórico rastreável → decisão sem reunião"
 
 REGRAS ANTI-GENÉRICO — OBRIGATÓRIAS:
-- Hero DEVE ser específico ao contexto do pedido: extraia o problema, o público-alvo ou o diferencial mencionado e incorpore na headline.
 - Se a headline servir para qualquer outro produto sem alterar nada, está REPROVADA — reescreva com especificidade do pedido (teste de intercambialidade).
 - A headline do hero DEVE incorporar pelo menos UM elemento concreto do pedido: tipo de artefato solicitado, diferencial mencionado, resultado esperado ou público-alvo. "Nome do produto + descrição genérica de qualidade" NÃO basta.
 - CTA DEVE usar verbo de resultado direto. PROIBIDO: "Saiba mais", "Conheça mais", "Entre em contato", "Clique aqui", "Confira", "Veja mais". OBRIGATÓRIO: verbo que descreve o resultado (ex: "Acelerar", "Começar", "Desbloquear", "Construir", "Automatizar").
 - A proibição de CTAs genéricos se aplica a TODOS os CTAs da página, incluindo o CTA do hero.
 - Copy de cada seção DEVE evitar abstrações vazias: "alta qualidade", "profissionalismo", "eficiência", "inovação", "excelência" — a menos que acompanhadas de contexto concreto do pedido.
+- Teste mental: se remover o nome da marca e o texto ainda servir para qualquer outro produto, está genérico — reescreva com o mecanismo específico do pedido.
 
 Responda em Português Brasileiro. Entregue. Não descreva.`;
 
