@@ -4,12 +4,12 @@
  * Sistema 100% Groq com 3 modelos em cascata:
  * 1. openai/gpt-oss-120b (Primary - raciocínio principal)
  * 2. llama-3.3-70b-versatile (Fallback - velocidade)
- * 3. mixtral-8x7b-32768 (Fallback - contextos longos)
+ * 3. llama-3.1-8b-instant (Fallback - alta disponibilidade)
  *
  * Estratégia:
  * - Primary para tarefas normais
  * - Fallback automático em caso de falha
- * - Mixtral para contextos longos (32K tokens)
+ * - llama-3.1-8b-instant para alta disponibilidade como último recurso
  *
  * ⚠️ SEGURANÇA: Usa SecretManager para injetar credenciais
  */
@@ -57,7 +57,7 @@ class OptimizedAPIManager {
    * Sistema com 3 modelos em cascata:
    * 1. openai/gpt-oss-120b - Primary (raciocínio principal)
    * 2. llama-3.3-70b-versatile - Fallback 1 (velocidade)
-   * 3. mixtral-8x7b-32768 - Fallback 2 (contextos longos)
+   * 3. llama-3.1-8b-instant - Fallback 2 (alta disponibilidade)
    */
   initGroq() {
     // 🔐 OBTER CHAVE DO SECRET MANAGER
@@ -82,11 +82,11 @@ class OptimizedAPIManager {
           priority: 2,
           tier: "fallback",
         },
-        'mixtral-8x7b-32768': {
-          maxTokens: 32768,
-          costPer1kTokens: 0.00024,
-          description: "Fallback para contextos longos",
-          priority: 3,
+        'llama-3.1-8b-instant': {
+          maxTokens: 8000,
+          costPer1kTokens: 0.00005,
+          description: "Fallback de alta disponibilidade",
+          priority: 4,
           tier: "fallback",
         },
       },
@@ -100,7 +100,7 @@ class OptimizedAPIManager {
    * Sistema 100% Groq com 3 modelos:
    * - Tarefas simples/normais: openai/gpt-oss-120b (primary)
    * - Fallback rápido: llama-3.3-70b-versatile
-   * - Contextos longos: mixtral-8x7b-32768
+   * - Alta disponibilidade: llama-3.1-8b-instant
    */
   selectModel(complexity = "simple", options = {}) {
     // Verificar se Groq está inicializado
@@ -153,7 +153,8 @@ class OptimizedAPIManager {
       case "long":
         return {
           provider: "groq",
-          model: "mixtral-8x7b-32768", // Para contextos longos
+          // llama-3.3-70b-versatile supports 128K context window on Groq
+          model: "llama-3.3-70b-versatile",
           tier: "long-context",
         };
 
@@ -175,7 +176,7 @@ class OptimizedAPIManager {
     const models = [
       'openai/gpt-oss-120b',      // Primary - Tenta primeiro
       'llama-3.3-70b-versatile',  // Fallback 1 - Rápido
-      'mixtral-8x7b-32768'        // Fallback 2 - Contextos longos
+      'llama-3.1-8b-instant'      // Fallback 2 - Alta disponibilidade
     ];
 
     for (let attempt = 0; attempt < maxRetries; attempt++) {

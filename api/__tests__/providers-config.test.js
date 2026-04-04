@@ -146,9 +146,9 @@ describe('providers-config', () => {
       expect(config.model).toBe('llama-3.1-8b-instant');
     });
 
-    test('Groq fallback uses Mixtral', () => {
+    test('Groq fallback uses Llama 3.1 8B', () => {
       const config = getProviderConfig('groq-fallback');
-      expect(config.model).toBe('mixtral-8x7b-32768');
+      expect(config.model).toBe('llama-3.1-8b-instant');
     });
   });
 

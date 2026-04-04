@@ -16,21 +16,33 @@ import { jest } from '@jest/globals';
 export function createMockFetch(options = {}) {
   const { failProviders = {}, customResponses = {} } = options;
 
+  // Track how many times each model has been called (for dual-mapping of llama-3.1-8b-instant)
+  const modelCallCount = {};
+
   return jest.fn().mockImplementation((url, requestOptions) => {
     // Parse request body to determine which provider is being called
     const body = JSON.parse(requestOptions.body);
     const model = body.model;
 
+    // Track call count per model
+    modelCallCount[model] = (modelCallCount[model] || 0) + 1;
+
     // Map model to provider name
+    // Note: llama-3.1-8b-instant is used by both llama-8b (first call) and
+    // groq-fallback (subsequent calls). Use call count to distinguish.
     const providerMap = {
       'openai/gpt-oss-120b': 'llama-120b',
       'llama-3.3-70b-versatile': 'llama-70b',
       'llama-3.1-70b-versatile': 'llama-70b',
-      'llama-3.1-8b-instant': 'llama-8b',
-      'mixtral-8x7b-32768': 'groq-fallback',
     };
 
-    const providerName = providerMap[model] || 'unknown';
+    let providerName;
+    if (model === 'llama-3.1-8b-instant') {
+      // First call maps to llama-8b; subsequent calls map to groq-fallback
+      providerName = modelCallCount[model] <= 1 ? 'llama-8b' : 'groq-fallback';
+    } else {
+      providerName = providerMap[model] || 'unknown';
+    }
 
     // Check if this provider should fail
     if (failProviders[providerName] || failProviders[model]) {
@@ -61,32 +73,6 @@ export function createMockFetch(options = {}) {
           prompt_tokens: 10,
           completion_tokens: 20,
           total_tokens: 30
-        }
-      }),
-      text: jest.fn().mockResolvedValue('OK'),
-    });
-  });
-}
-
-/**
- * Creates a mock fetch for Gemini API
- * @returns {Function} Mock fetch function for Gemini
- */
-export function createGeminiMockFetch() {
-  return jest.fn().mockImplementation((url, requestOptions) => {
-    return Promise.resolve({
-      ok: true,
-      status: 200,
-      json: jest.fn().mockResolvedValue({
-        candidates: [{
-          content: {
-            parts: [{ text: 'Mock response from Gemini' }]
-          }
-        }],
-        usageMetadata: {
-          promptTokenCount: 10,
-          candidatesTokenCount: 20,
-          totalTokenCount: 30
         }
       }),
       text: jest.fn().mockResolvedValue('OK'),
