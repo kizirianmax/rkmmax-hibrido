@@ -159,7 +159,7 @@ function PlanCard({ plan, onCheckout, isLoading }) {
       }}
     >
       <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 4 }}>
-        <span style={{ fontSize: 24 }} aria-hidden>{plan.icon}</span>
+        <span style={{ fontSize: 24 }} aria-hidden={true}>{plan.icon}</span>
         <h2 style={{ fontWeight: 800, fontSize: 24, margin: 0 }}>{plan.name}</h2>
       </div>
       <p style={{ margin: "6px 0", fontSize: 20, fontWeight: 700 }}>{plan.price}</p>
