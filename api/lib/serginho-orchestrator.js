@@ -245,11 +245,21 @@ class SerginhoOrchestrator {
    * Initialize circuit breakers for all providers
    */
   initializeCircuitBreakers() {
+    // Timeouts diferenciados por provider: 120B precisa de mais tempo para tarefas complexas
+    const PROVIDER_TIMEOUTS = {
+      'llama-120b': 15000, // 15s — tarefas complexas do Híbrido (modelos grandes precisam de mais tempo)
+    };
+    const PROVIDER_FAILURE_THRESHOLDS = {
+      'llama-120b': 5, // Mais tolerante a timeouts esporádicos; evita ciclo de fallback permanente
+    };
+    const DEFAULT_TIMEOUT = 8000; // 8s para demais providers (safe for 12s serverless limit)
+    const DEFAULT_FAILURE_THRESHOLD = 3;
+
     Object.keys(PROVIDERS).forEach(provider => {
       this.circuitBreakers.set(provider, new CircuitBreaker({
         name: provider,
-        timeout: 8000, // 8s per provider (safe for 12s serverless limit)
-        failureThreshold: 3,
+        timeout: PROVIDER_TIMEOUTS[provider] || DEFAULT_TIMEOUT,
+        failureThreshold: PROVIDER_FAILURE_THRESHOLDS[provider] || DEFAULT_FAILURE_THRESHOLD,
         resetTimeout: 30000, // 30s cooldown
       }));
     });

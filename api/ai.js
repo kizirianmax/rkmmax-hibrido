@@ -105,6 +105,8 @@ export default async function handler(req, res) {
       // Híbrido: fluxo estrito 120B → 70B apenas. Nenhum outro fallback permitido.
       let result;
       let hybridFallbackUsed = false;
+      let fallbackReason = null;
+      let primaryProviderError = null;
       try {
         result = await executeAITask(
           optimized.messages,
@@ -115,7 +117,13 @@ export default async function handler(req, res) {
       } catch (err120b) {
         // 120B indisponível — tentativa única com 70B (proibido qualquer outro fallback)
         hybridFallbackUsed = true;
-        console.log('🏗️ HYBRID: 120B falhou → tentando 70B (único fallback permitido)', err120b.message);
+        primaryProviderError = err120b.message;
+        fallbackReason = err120b.message?.includes('Timeout') ? 'timeout'
+          : err120b.message?.includes('Circuit breaker') ? 'circuit_breaker_open'
+          : err120b.message?.includes('429') ? 'rate_limit'
+          : err120b.message?.includes('503') ? 'service_unavailable'
+          : 'provider_error';
+        console.log('🏗️ HYBRID: 120B falhou → tentando 70B (único fallback permitido)', { reason: fallbackReason, error: err120b.message });
         try {
           result = await executeAITask(
             optimized.messages,
@@ -140,6 +148,8 @@ export default async function handler(req, res) {
           // Sobrescreve fallbackLevel para refletir o fallback explícito do Híbrido
           fallbackLevel: (hybridFallbackUsed ? 1 : 0) + (result.execution?.fallbackLevel || 0),
           status: hybridFallbackUsed ? 'fallback' : (result.execution?.status || 'success'),
+          fallbackReason: hybridFallbackUsed ? fallbackReason : null,
+          primaryProviderError: hybridFallbackUsed ? primaryProviderError : null,
         },
         type: "hybrid",
         metadata: {
