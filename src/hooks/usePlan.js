@@ -34,7 +34,13 @@ export default function usePlan() {
         }
 
         const j = await res.json().catch(() => ({}));
-        setPlan(j.userPlan || "basic");   // ✅ corrigido: era j.plan
+        const fetched = j.userPlan || "basic";
+        setPlan(fetched);
+        try {
+          window.localStorage.setItem("userPlan", fetched);
+        } catch {
+          // localStorage indisponível (ex.: modo privado com storage cheio) — ignora
+        }
       } catch {
         if (ctrl.signal.aborted) return;
         setPlan("basic");
