@@ -18,9 +18,21 @@ const PLANS = {
       planKey: "basic_br",
       icon: "🔹",
       name: "Básico",
-      price: "R$ 50,00/mês",
-      description: "Acesso ao Serginho e funções essenciais.",
-      features: ["Serginho (orquestrador)", "Todos os especialistas", "Limite diário de tokens", "Suporte inicial"],
+      price: "R$ 65,00/mês",
+      creditsDay: 100,
+      creditsMonth: 3000,
+      description: "Acesso ao Serginho e todas as ferramentas essenciais.",
+      features: [
+        "Serginho (orquestrador)",
+        "Todos os especialistas",
+        "ABNT e Study Lab",
+        "100 créditos/dia · 3.000/mês",
+        "Suporte inicial",
+      ],
+      examples: [
+        "100 perguntas comuns por dia",
+        "12 execuções pesadas + 4 perguntas",
+      ],
       payLink: process.env.REACT_APP_STRIPE_PAYMENT_LINK_BASIC_BR || "",
       cta: "Assinar Básico",
     },
@@ -28,9 +40,20 @@ const PLANS = {
       planKey: "inter_br",
       icon: "⚡",
       name: "Intermediário",
-      price: "R$ 50,00/mês",
-      description: "Mais tokens, voz e recursos avançados.",
-      features: ["Tudo do Básico", "Mais tokens/dia", "Voz (Whisper + TTS)", "Suporte prioritário"],
+      price: "R$ 119,00/mês",
+      creditsDay: 200,
+      creditsMonth: 6000,
+      description: "Mais créditos para uso intenso no dia a dia.",
+      features: [
+        "Tudo do Básico",
+        "200 créditos/dia · 6.000/mês",
+        "Voz (Whisper + TTS)",
+        "Suporte prioritário",
+      ],
+      examples: [
+        "200 perguntas comuns por dia",
+        "25 execuções pesadas por dia",
+      ],
       payLink: process.env.REACT_APP_STRIPE_PAYMENT_LINK_INTERMEDIATE_BR || "",
       cta: "Assinar Intermediário",
     },
@@ -38,31 +61,24 @@ const PLANS = {
       planKey: "prem_br",
       icon: "💎",
       name: "Premium",
-      price: "R$ 120,00/mês",
-      description: "Acesso total aos especialistas e recursos premium.",
-      features: ["Tudo do Intermediário", "GPT-5 Std + GPT-4.1 Mini", "12 especialistas + Orquestrador", "Suporte 24/7"],
+      price: "R$ 379,00/mês",
+      creditsDay: 600,
+      creditsMonth: 18000,
+      description: "Volume total para uso profissional e de agência.",
+      features: [
+        "Tudo do Intermediário",
+        "600 créditos/dia · 18.000/mês",
+        "Modelos avançados",
+        "Todos os especialistas",
+        "Suporte 24/7",
+      ],
+      examples: [
+        "600 perguntas comuns por dia",
+        "75 execuções pesadas por dia",
+        "50 execuções pesadas + 200 perguntas",
+      ],
       payLink: process.env.REACT_APP_STRIPE_PAYMENT_LINK_PREMIUM_BR || "",
       cta: "Assinar Premium",
-    },
-    {
-      planKey: "ultra_br",
-      icon: "🚀",
-      name: "Ultra",
-      price: "R$ 150,00/mês",
-      description: "Uso ilimitado com compliance e SLA dedicado.",
-      features: ["Sem limite de tokens/dia", "Sem limite mensal", "LGPD/GDPR/SLA", "Suporte VIP"],
-      payLink: process.env.REACT_APP_STRIPE_PAYMENT_LINK_ULTRA_BR || "",
-      cta: "Assinar Ultra",
-    },
-    {
-      planKey: "dev_br",
-      icon: "🛠️",
-      name: "Dev",
-      price: "Plano interno",
-      description: "Ambiente de desenvolvimento sem limites.",
-      features: ["Sem limite de tokens", "Todos os modelos", "Acesso total", "Uso interno"],
-      payLink: "",
-      cta: "Contato",
     },
   ],
   US: [
@@ -71,8 +87,19 @@ const PLANS = {
       icon: "🔹",
       name: "Basic",
       price: "$20/month",
+      creditsDay: 100,
+      creditsMonth: 3000,
       description: "Orchestrator access and core features.",
-      features: ["Serginho orchestrator", "All specialists", "Daily token limit", "Basic support"],
+      features: [
+        "Serginho orchestrator",
+        "All specialists",
+        "100 credits/day · 3,000/month",
+        "Basic support",
+      ],
+      examples: [
+        "100 common interactions per day",
+        "12 heavy executions + 4 questions",
+      ],
       payLink: process.env.REACT_APP_STRIPE_PAYMENT_LINK_BASIC_US || "",
       cta: "Subscribe Basic",
     },
@@ -80,9 +107,20 @@ const PLANS = {
       planKey: "inter_us",
       icon: "⚡",
       name: "Intermediate",
-      price: "$20/month",
-      description: "More tokens, voice and advanced features.",
-      features: ["Everything in Basic", "Higher daily limits", "Voice (Whisper + TTS)", "Priority support"],
+      price: "$48/month",
+      creditsDay: 200,
+      creditsMonth: 6000,
+      description: "More credits for daily intensive use.",
+      features: [
+        "Everything in Basic",
+        "200 credits/day · 6,000/month",
+        "Voice (Whisper + TTS)",
+        "Priority support",
+      ],
+      examples: [
+        "200 common interactions per day",
+        "25 heavy executions per day",
+      ],
       payLink: process.env.REACT_APP_STRIPE_PAYMENT_LINK_INTERMEDIATE_US || "",
       cta: "Subscribe Intermediate",
     },
@@ -90,43 +128,39 @@ const PLANS = {
       planKey: "prem_us",
       icon: "💎",
       name: "Premium",
-      price: "$48/month",
-      description: "Full access to specialists and premium features.",
-      features: ["Everything in Intermediate", "GPT-5 Std + GPT-4.1 Mini", "All specialists", "24/7 support"],
+      price: "$149/month",
+      creditsDay: 600,
+      creditsMonth: 18000,
+      description: "Full volume for professional and agency use.",
+      features: [
+        "Everything in Intermediate",
+        "600 credits/day · 18,000/month",
+        "Advanced models",
+        "All specialists",
+        "24/7 support",
+      ],
+      examples: [
+        "600 common interactions per day",
+        "75 heavy executions per day",
+      ],
       payLink: process.env.REACT_APP_STRIPE_PAYMENT_LINK_PREMIUM_US || "",
       cta: "Subscribe Premium",
-    },
-    {
-      planKey: "ultra_us",
-      icon: "🚀",
-      name: "Ultra",
-      price: "$60/month",
-      description: "Unlimited usage with compliance and dedicated SLA.",
-      features: ["Unlimited tokens/day", "Unlimited monthly", "GDPR/SLA", "VIP support"],
-      payLink: process.env.REACT_APP_STRIPE_PAYMENT_LINK_ULTRA_US || "",
-      cta: "Subscribe Ultra",
-    },
-    {
-      planKey: "dev_us",
-      icon: "🛠️",
-      name: "Dev",
-      price: "Internal plan",
-      description: "Development environment with no limits.",
-      features: ["Unlimited tokens", "All models", "Full access", "Internal use"],
-      payLink: "",
-      cta: "Contact",
     },
   ],
 };
 
 const FAQ = [
   {
-    q: "Posso usar para estudo?",
-    a: "Sim! Acesse o Study Lab (opcional) para estudo acelerado com ABNT/APA, cronogramas e fontes verificadas.",
+    q: "O que é um crédito?",
+    a: "Crédito é a unidade de consumo da plataforma. Interações comuns (Serginho, especialistas, ABNT) consomem 1 crédito. Execuções pesadas (Construtor, Híbrido, fluxos multi-etapa) consomem 8 créditos.",
   },
   {
-    q: "Há desconto educacional?",
-    a: "Sim! Use o código EDU50 no checkout para 50% OFF nos primeiros 6 meses.",
+    q: "O saldo é separado por ferramenta?",
+    a: "Não. Você tem um saldo único de créditos e usa onde quiser — Serginho, Especialistas, Construtor ou ABNT. A plataforma desconta conforme a complexidade real da execução.",
+  },
+  {
+    q: "Posso usar para estudo?",
+    a: "Sim! Acesse o Study Lab para estudo acelerado com ABNT/APA, cronogramas e fontes verificadas.",
   },
   {
     q: "Como funciona o pagamento?",
@@ -135,17 +169,15 @@ const FAQ = [
 ];
 
 function planAccentColor(planKey) {
-  if (planKey.includes("ultra")) return "#7c3aed";
   if (planKey.includes("prem")) return "#0f172a";
   if (planKey.includes("inter")) return "#0070f3";
-  if (planKey.includes("dev")) return "#475569";
   return "#334155";
 }
 
 function PlanCard({ plan, onCheckout, isLoading }) {
   const hasLink = Boolean(plan.payLink);
-  const isDev = plan.planKey.includes("dev");
   const borderColor = planAccentColor(plan.planKey);
+  const region = plan.planKey.endsWith("_br") ? "BR" : "US";
 
   return (
     <article
@@ -169,23 +201,22 @@ function PlanCard({ plan, onCheckout, isLoading }) {
           <li key={i}>{f}</li>
         ))}
       </ul>
+
+      {plan.examples && plan.examples.length > 0 && (
+        <div style={{ marginTop: 12, padding: "10px 14px", background: "rgba(0,0,0,0.04)", borderRadius: 10 }}>
+          <p style={{ margin: "0 0 6px", fontWeight: 700, fontSize: 13, color: "#334155" }}>
+            {region === "BR" ? "Exemplos de uso/dia:" : "Usage examples/day:"}
+          </p>
+          <ul style={{ margin: 0, paddingLeft: 18 }}>
+            {plan.examples.map((ex, i) => (
+              <li key={i} style={{ fontSize: 13, color: "#475569" }}>{ex}</li>
+            ))}
+          </ul>
+        </div>
+      )}
+
       <div style={{ marginTop: 16 }}>
-        {isDev ? (
-          <button
-            disabled
-            style={{
-              padding: "10px 16px",
-              fontWeight: 800,
-              borderRadius: 12,
-              background: "#475569",
-              color: "#cbd5e1",
-              border: "none",
-              cursor: "not-allowed",
-            }}
-          >
-            {plan.cta}
-          </button>
-        ) : hasLink ? (
+        {hasLink ? (
           <button
             onClick={() => onCheckout(plan)}
             disabled={isLoading}
@@ -265,7 +296,44 @@ export default function Pricing() {
       <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 8 }}>
         <h1 style={{ fontSize: 36, fontWeight: 800 }}>Planos RKMMAX</h1>
       </div>
-      <p style={{ opacity: 0.8, marginBottom: 24 }}>Região detectada: <b>{region}</b></p>
+      <p style={{ opacity: 0.8, marginBottom: 8 }}>Região detectada: <b>{region}</b></p>
+
+      {/* Como funciona o consumo */}
+      <div
+        style={{
+          marginBottom: 32,
+          padding: "16px 20px",
+          background: "rgba(0,112,243,0.06)",
+          borderRadius: 12,
+          maxWidth: 560,
+        }}
+      >
+        <p style={{ fontWeight: 700, margin: "0 0 8px" }}>
+          {region === "BR" ? "Como funciona o consumo?" : "How does credit usage work?"}
+        </p>
+        <p style={{ margin: "0 0 4px", fontSize: 14 }}>
+          {region === "BR"
+            ? "Você tem um saldo único de créditos — use onde quiser no sistema."
+            : "You have a single credit balance — use it anywhere in the platform."}
+        </p>
+        <ul style={{ margin: "8px 0 0", paddingLeft: 18, fontSize: 14 }}>
+          <li>
+            {region === "BR"
+              ? "Interações comuns (Serginho, Especialistas, ABNT) = 1 crédito"
+              : "Common interactions (Serginho, Specialists, ABNT) = 1 credit"}
+          </li>
+          <li>
+            {region === "BR"
+              ? "Execuções pesadas (Construtor, Híbrido, fluxos multi-etapa) = 8 créditos"
+              : "Heavy executions (Builder, Hybrid, multi-step flows) = 8 credits"}
+          </li>
+        </ul>
+        <p style={{ margin: "8px 0 0", fontSize: 13, color: "#475569" }}>
+          {region === "BR"
+            ? "Não existe limite separado por ferramenta. O peso depende da execução real."
+            : "There is no separate limit per tool. The weight depends on the actual execution."}
+        </p>
+      </div>
 
       {plans.map((p) => (
         <PlanCard
@@ -278,7 +346,9 @@ export default function Pricing() {
 
       {/* FAQ */}
       <section style={{ marginTop: 48, maxWidth: 720 }}>
-        <h2 style={{ fontSize: 28, fontWeight: 800, marginBottom: 24 }}>Perguntas Frequentes</h2>
+        <h2 style={{ fontSize: 28, fontWeight: 800, marginBottom: 24 }}>
+          {region === "BR" ? "Perguntas Frequentes" : "FAQ"}
+        </h2>
         {FAQ.map((item, i) => (
           <div key={i} style={{ marginBottom: 24 }}>
             <h3 style={{ fontSize: 18, fontWeight: 700, marginBottom: 8 }}>{item.q}</h3>

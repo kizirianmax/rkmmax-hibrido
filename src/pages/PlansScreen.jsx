@@ -18,8 +18,17 @@ const PLANS = {
       planKey: "basic_br",
       icon: "🔹",
       name: "Básico",
-      price: "R$ 50,00/mês",
-      features: ["Essenciais ilimitados", "Acesso ao orquestrador", "Suporte básico"],
+      price: "R$ 65,00/mês",
+      features: [
+        "Serginho (orquestrador)",
+        "Todos os especialistas e ABNT",
+        "100 créditos/dia · 3.000/mês",
+        "Suporte inicial",
+      ],
+      examples: [
+        "100 perguntas comuns por dia",
+        "12 execuções pesadas + 4 perguntas",
+      ],
       payLink: process.env.REACT_APP_STRIPE_PAYMENT_LINK_BASIC_BR || "",
       priceId: null,
       cta: "Assinar Básico",
@@ -28,8 +37,17 @@ const PLANS = {
       planKey: "inter_br",
       icon: "⚡",
       name: "Intermediário",
-      price: "R$ 50,00/mês",
-      features: ["Recursos avançados + voz", "Limites diários maiores", "Suporte via chat"],
+      price: "R$ 119,00/mês",
+      features: [
+        "Tudo do Básico",
+        "200 créditos/dia · 6.000/mês",
+        "Voz (Whisper + TTS)",
+        "Suporte prioritário",
+      ],
+      examples: [
+        "200 perguntas comuns por dia",
+        "25 execuções pesadas por dia",
+      ],
       payLink: process.env.REACT_APP_STRIPE_PAYMENT_LINK_INTERMEDIATE_BR || "",
       priceId: null,
       cta: "Assinar Intermediário",
@@ -38,35 +56,21 @@ const PLANS = {
       planKey: "prem_br",
       icon: "💎",
       name: "Premium",
-      price: "R$ 120,00/mês",
+      price: "R$ 379,00/mês",
       features: [
-        "GPT-5 Standard + GPT-4.1 Mini",
-        "12 especialistas + Orquestrador",
-        "Prioridade máxima de suporte",
+        "Tudo do Intermediário",
+        "600 créditos/dia · 18.000/mês",
+        "Modelos avançados",
+        "Suporte 24/7",
+      ],
+      examples: [
+        "600 perguntas comuns por dia",
+        "75 execuções pesadas por dia",
+        "50 execuções pesadas + 200 perguntas",
       ],
       payLink: process.env.REACT_APP_STRIPE_PAYMENT_LINK_PREMIUM_BR || "",
       priceId: "price_1S7TM1ENxlkCT0yfGHMGJ9Rh",
       cta: "Assinar Premium",
-    },
-    {
-      planKey: "ultra_br",
-      icon: "🚀",
-      name: "Ultra",
-      price: "R$ 150,00/mês",
-      features: ["Sem limite de tokens/dia", "Sem limite mensal", "LGPD/GDPR/SLA", "Suporte VIP"],
-      payLink: process.env.REACT_APP_STRIPE_PAYMENT_LINK_ULTRA_BR || "",
-      priceId: null,
-      cta: "Assinar Ultra",
-    },
-    {
-      planKey: "dev_br",
-      icon: "🛠️",
-      name: "Dev",
-      price: "Plano interno",
-      features: ["Sem limite de tokens", "Todos os modelos", "Acesso total", "Uso interno"],
-      payLink: "",
-      priceId: null,
-      cta: "Contato",
     },
   ],
   US: [
@@ -75,7 +79,16 @@ const PLANS = {
       icon: "🔹",
       name: "Basic",
       price: "$20/month",
-      features: ["Core features", "Orchestrator access", "Basic support"],
+      features: [
+        "Serginho orchestrator",
+        "All specialists",
+        "100 credits/day · 3,000/month",
+        "Basic support",
+      ],
+      examples: [
+        "100 common interactions per day",
+        "12 heavy executions + 4 questions",
+      ],
       payLink: process.env.REACT_APP_STRIPE_PAYMENT_LINK_BASIC_US || "",
       priceId: null,
       cta: "Subscribe Basic",
@@ -84,8 +97,17 @@ const PLANS = {
       planKey: "inter_us",
       icon: "⚡",
       name: "Intermediate",
-      price: "$20/month",
-      features: ["Advanced + voice", "Higher daily limits", "Chat support"],
+      price: "$48/month",
+      features: [
+        "Everything in Basic",
+        "200 credits/day · 6,000/month",
+        "Voice (Whisper + TTS)",
+        "Priority support",
+      ],
+      examples: [
+        "200 common interactions per day",
+        "25 heavy executions per day",
+      ],
       payLink: process.env.REACT_APP_STRIPE_PAYMENT_LINK_INTERMEDIATE_US || "",
       priceId: null,
       cta: "Subscribe Intermediate",
@@ -94,31 +116,20 @@ const PLANS = {
       planKey: "prem_us",
       icon: "💎",
       name: "Premium",
-      price: "$48/month",
-      features: ["GPT-5 Std + GPT-4.1 Mini", "All specialists", "Priority support"],
+      price: "$149/month",
+      features: [
+        "Everything in Intermediate",
+        "600 credits/day · 18,000/month",
+        "Advanced models",
+        "24/7 support",
+      ],
+      examples: [
+        "600 common interactions per day",
+        "75 heavy executions per day",
+      ],
       payLink: process.env.REACT_APP_STRIPE_PAYMENT_LINK_PREMIUM_US || "",
       priceId: null,
       cta: "Subscribe Premium",
-    },
-    {
-      planKey: "ultra_us",
-      icon: "🚀",
-      name: "Ultra",
-      price: "$60/month",
-      features: ["Unlimited tokens/day", "Unlimited monthly", "GDPR/SLA", "VIP support"],
-      payLink: process.env.REACT_APP_STRIPE_PAYMENT_LINK_ULTRA_US || "",
-      priceId: null,
-      cta: "Subscribe Ultra",
-    },
-    {
-      planKey: "dev_us",
-      icon: "🛠️",
-      name: "Dev",
-      price: "Internal plan",
-      features: ["Unlimited tokens", "All models", "Full access", "Internal use"],
-      payLink: "",
-      priceId: null,
-      cta: "Contact",
     },
   ],
 };
@@ -202,9 +213,25 @@ export default function PlansScreen() {
         >
           Escolha seu Plano
         </h1>
-        <p style={{ opacity: 0.8, margin: "8px 0 0" }}>
+        <p style={{ opacity: 0.8, margin: "8px 0 4px" }}>
           Região detectada: <b>{region}</b>
         </p>
+
+        {/* Resumo do modelo de créditos */}
+        <div
+          style={{
+            margin: "12px 0 0",
+            padding: "12px 16px",
+            background: "rgba(0,112,243,0.06)",
+            borderRadius: 10,
+            maxWidth: 540,
+            fontSize: 13,
+          }}
+        >
+          <b>Como funciona:</b> você tem um saldo único de créditos — use em qualquer parte do sistema.
+          {" "}Interações comuns = <b>1 crédito</b>. Execuções pesadas = <b>8 créditos</b>.
+          Sem limite separado por ferramenta.
+        </div>
 
         {/* Botão Admin - só aparece quando ativado */}
         {isAdminMode && (
@@ -297,6 +324,26 @@ export default function PlansScreen() {
                 <li key={i}>✔ {f}</li>
               ))}
             </ul>
+
+            {p.examples && p.examples.length > 0 && (
+              <div
+                style={{
+                  marginTop: 10,
+                  padding: "8px 12px",
+                  background: "rgba(0,0,0,0.04)",
+                  borderRadius: 8,
+                }}
+              >
+                <p style={{ margin: "0 0 4px", fontWeight: 700, fontSize: 12, color: "#334155" }}>
+                  Exemplos/dia:
+                </p>
+                <ul style={{ margin: 0, paddingLeft: 16 }}>
+                  {p.examples.map((ex, i) => (
+                    <li key={i} style={{ fontSize: 12, color: "#475569" }}>{ex}</li>
+                  ))}
+                </ul>
+              </div>
+            )}
 
             <button
               onClick={() => startCheckout(p)}
