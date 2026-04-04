@@ -228,9 +228,19 @@ export default function PlansScreen() {
             fontSize: 13,
           }}
         >
-          <b>Como funciona:</b> você tem um saldo único de créditos — use em qualquer parte do sistema.
-          {" "}Interações comuns = <b>1 crédito</b>. Execuções pesadas = <b>8 créditos</b>.
-          Sem limite separado por ferramenta.
+          {region === "BR" ? (
+            <>
+              <b>Como funciona:</b> você tem um saldo único de créditos — use em qualquer parte do sistema.
+              {" "}Interações comuns = <b>1 crédito</b>. Execuções pesadas = <b>8 créditos</b>.
+              Sem limite separado por ferramenta.
+            </>
+          ) : (
+            <>
+              <b>How it works:</b> you have a single credit balance — use it anywhere in the platform.
+              {" "}Common interactions = <b>1 credit</b>. Heavy executions = <b>8 credits</b>.
+              No separate limit per tool.
+            </>
+          )}
         </div>
 
         {/* Botão Admin - só aparece quando ativado */}
@@ -335,7 +345,7 @@ export default function PlansScreen() {
                 }}
               >
                 <p style={{ margin: "0 0 4px", fontWeight: 700, fontSize: 12, color: "#334155" }}>
-                  Exemplos/dia:
+                  {region === "BR" ? "Exemplos/dia:" : "Examples/day:"}
                 </p>
                 <ul style={{ margin: 0, paddingLeft: 16 }}>
                   {p.examples.map((ex, i) => (
@@ -355,15 +365,11 @@ export default function PlansScreen() {
                 padding: "10px 14px",
                 borderRadius: 10,
                 border: "none",
-                background: p.planKey.includes("ultra")
-                  ? "#7c3aed"
-                  : p.planKey.includes("prem")
+                background: p.planKey.includes("prem")
                     ? "#6e2cf4"
                     : p.planKey.includes("inter")
                       ? "#4f8cff"
-                      : p.planKey.includes("dev")
-                        ? "#475569"
-                        : "#2eb88a",
+                      : "#2eb88a",
                 color: "white",
                 fontWeight: 600,
                 cursor: "pointer",
