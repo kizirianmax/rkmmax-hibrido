@@ -82,13 +82,6 @@ class OptimizedAPIManager {
           priority: 2,
           tier: "fallback",
         },
-        'mixtral-8x7b-32768': {
-          maxTokens: 32768,
-          costPer1kTokens: 0.00024,
-          description: "Fallback para contextos longos (modelo legado)",
-          priority: 3,
-          tier: "fallback",
-        },
         'llama-3.1-8b-instant': {
           maxTokens: 8000,
           costPer1kTokens: 0.00005,
@@ -160,7 +153,8 @@ class OptimizedAPIManager {
       case "long":
         return {
           provider: "groq",
-          model: "llama-3.3-70b-versatile", // Para contextos longos
+          // llama-3.3-70b-versatile supports 128K context window on Groq
+          model: "llama-3.3-70b-versatile",
           tier: "long-context",
         };
 

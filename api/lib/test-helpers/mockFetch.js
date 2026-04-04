@@ -34,7 +34,6 @@ export function createMockFetch(options = {}) {
       'openai/gpt-oss-120b': 'llama-120b',
       'llama-3.3-70b-versatile': 'llama-70b',
       'llama-3.1-70b-versatile': 'llama-70b',
-      'mixtral-8x7b-32768': 'groq-fallback', // legacy, kept for backward compat
     };
 
     let providerName;
