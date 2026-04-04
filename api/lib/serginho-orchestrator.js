@@ -245,14 +245,18 @@ class SerginhoOrchestrator {
    * Initialize circuit breakers for all providers
    */
   initializeCircuitBreakers() {
-    // Timeouts diferenciados por provider: 120B precisa de mais tempo para tarefas complexas
+    // Timeouts diferenciados por provider — TODOS devem ser menores que maxDuration (25s)
+    // Regra: timeout_circuit_breaker < maxDuration - 5s (margem para serialização + overhead)
     const PROVIDER_TIMEOUTS = {
-      'llama-120b': 15000, // 15s — tarefas complexas do Híbrido (modelos grandes precisam de mais tempo)
+      'llama-120b': 20000, // 20s — modelo complexo, tarefas do Híbrido (margem de 5s)
+      'llama-70b': 12000,  // 12s — tier médio
+      'llama-8b': 6000,    // 6s  — tier rápido
+      'groq-fallback': 6000, // 6s — fallback rápido
     };
     const PROVIDER_FAILURE_THRESHOLDS = {
       'llama-120b': 5, // Mais tolerante a timeouts esporádicos; evita ciclo de fallback permanente
     };
-    const DEFAULT_TIMEOUT = 8000; // 8s para demais providers (safe for 12s serverless limit)
+    const DEFAULT_TIMEOUT = 8000; // 8s para providers não mapeados
     const DEFAULT_FAILURE_THRESHOLD = 3;
 
     Object.keys(PROVIDERS).forEach(provider => {
