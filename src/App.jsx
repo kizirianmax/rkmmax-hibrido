@@ -4,6 +4,9 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { initSentry } from "./lib/sentry.js";
 import { initAnalytics } from "./lib/analytics.js";
 
+import AuthProvider from "./auth/AuthProvider.jsx";
+import AuthGate from "./auth/AuthGate.jsx";
+
 import Header from "./components/Header.jsx";
 import BrandTitle from "./components/BrandTitle.jsx";
 import PlanGate from "./components/PlanGate.jsx";
@@ -65,6 +68,8 @@ export default function App() {
 
   return (
     <BrowserRouter>
+      <AuthProvider>
+        <AuthGate>
       <BrandTitle />
       <Header />
 
@@ -166,6 +171,8 @@ export default function App() {
           }
         />
       </Routes>
+        </AuthGate>
+      </AuthProvider>
     </BrowserRouter>
   );
 }
