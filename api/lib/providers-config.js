@@ -51,10 +51,10 @@ export const PROVIDERS = {
     },
   },
 
-  // Groq fallback - Mixtral for high availability
+  // Groq fallback - Llama 3.1 8B for high availability
   'groq-fallback': {
     type: 'groq',
-    model: 'mixtral-8x7b-32768',
+    model: 'llama-3.1-8b-instant',
     endpoint: 'https://api.groq.com/openai/v1/chat/completions',
     tier: 'fallback',
     defaultParams: {
@@ -119,7 +119,7 @@ export function getEnabledProviders() {
 
 /**
  * Parse optional provider weights from env var.
- * Format: JSON string, e.g. '{"groq":100}' or '{"groq":70,"gemini":30}'
+ * Format: JSON string, e.g. '{"llama-120b":100}' or '{"llama-120b":70,"llama-70b":30}'
  * Returns null if not configured or invalid.
  * Phase A5.3 scaffolding — not used in routing yet.
  * @returns {object|null}
@@ -191,7 +191,7 @@ export function getWeightedProviders() {
  * Provides human-readable information about each model
  * 
  * Structure:
- * - infrastructure: Provider infrastructure (groq, gemini, openai)
+ * - infrastructure: Provider infrastructure (groq)
  * - displayName: Human-readable model name
  * - description: Brief description of model capabilities
  * - icon: Visual icon for UI
@@ -221,7 +221,7 @@ export const MODEL_METADATA = {
   },
   'groq-fallback': {
     infrastructure: 'groq',
-    displayName: 'Mixtral 8x7B',
+    displayName: 'Llama 3.1 8B (Fallback)',
     description: 'Fallback de alta disponibilidade',
     icon: '🔄',
     logicalTier: 'fallback'

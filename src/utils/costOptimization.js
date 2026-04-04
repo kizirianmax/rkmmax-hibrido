@@ -223,7 +223,7 @@ export const requestBatcher = new RequestBatcher();
  * GUARD DE BUDGET DE TOKENS
  * Garante que system prompt + messages caibam no context window seguro do provider.
  *
- * Budget conservador para Groq free tier:
+ * Budget conservador para input Groq:
  *   - MAX_INPUT_TOKENS: 6000 tokens para system + messages combined
  *   - DEFAULT_OUTPUT_BUDGET: 4096 tokens (reservado para saída)
  *

@@ -153,13 +153,12 @@ export default async function handler(req, res) {
         return res.status(400).json({ error: "Messages array required" });
       }
 
-      const geminiKey = process.env.GEMINI_API_KEY || process.env.GERMINI_API_KEY;
       const groqKey = process.env.GROQ_API_KEY;
 
-      if (!geminiKey && !groqKey) {
+      if (!groqKey) {
         return res.status(500).json({
           error: "No AI providers configured",
-          hint: "Configure GEMINI_API_KEY or GROQ_API_KEY",
+          hint: "Configure GROQ_API_KEY",
         });
       }
 
@@ -171,7 +170,6 @@ export default async function handler(req, res) {
       );
 
       await streamResponse(res, messages, systemPrompt, {
-        geminiKey,
         groqKey,
         complexity,
         useParallel: true,

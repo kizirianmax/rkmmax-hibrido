@@ -16,8 +16,8 @@ export const PLAN = {
 export const MODEL_BY_PLAN = {
   [PLAN.BASIC]:        { model: "llama-3.1-8b-instant" },
   [PLAN.INTERMEDIATE]: { model: "llama-3.3-70b-versatile" },
-  [PLAN.PREMIUM]:      { model: "llama-3.3-70b-versatile" }, // Premium usa 70b no dia a dia; booster sob demanda
-  [PLAN.ULTRA]:        { model: "llama-3.3-70b-versatile" }, // Ultra usa o mesmo modelo mas sem hard limit
+  [PLAN.PREMIUM]:      { model: "openai/gpt-oss-120b" },  // Premium: acesso ao modelo principal
+  [PLAN.ULTRA]:        { model: "openai/gpt-oss-120b" },  // Ultra: modelo principal sem hard limit
   [PLAN.DEV]:          { model: "llama-3.1-8b-instant" },   // Dev: ambiente de desenvolvimento, sem limite
 };
 
