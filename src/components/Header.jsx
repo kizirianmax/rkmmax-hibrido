@@ -2,8 +2,11 @@
 import React from "react";
 import { Link, NavLink } from "react-router-dom";
 import { BRAND } from "../config/brand.js";
+import useOwner from "../hooks/useOwner.js";
 
 export default function Header() {
+  const { isOwner } = useOwner();
+
   return (
     <header
       style={{
@@ -30,6 +33,11 @@ export default function Header() {
         <NavLink to="/specialists">Especialistas</NavLink>
         <NavLink to="/projects">Projetos</NavLink>
         <NavLink to="/study">Study Lab</NavLink>
+        {isOwner && (
+          <NavLink to="/dashboard" title="Painel do administrador">
+            🛠️ Dashboard
+          </NavLink>
+        )}
       </nav>
     </header>
   );
