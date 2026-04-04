@@ -463,12 +463,12 @@ describe("buildGeniusPrompt('hybrid') — micro few-shot de ancoragem presente; 
     hybridPrompt = buildGeniusPrompt('hybrid');
   });
 
-  it('inclui micro few-shot de ancoragem de qualidade (MICRO REFERÊNCIA — HERO E CTA)', () => {
-    expect(hybridPrompt).toContain('MICRO REFERÊNCIA — HERO E CTA');
-    expect(hybridPrompt).toContain('Hero fraco');
-    expect(hybridPrompt).toContain('Hero forte');
-    expect(hybridPrompt).toContain('CTA fraco');
-    expect(hybridPrompt).toContain('CTA forte');
+  it('inclui micro few-shot de ancoragem de qualidade (MICRO REFERÊNCIA PREMIUM)', () => {
+    expect(hybridPrompt).toContain('MICRO REFERÊNCIA PREMIUM');
+    expect(hybridPrompt).toContain('HEADLINE DO HERO');
+    expect(hybridPrompt).toContain('REPROVADA');
+    expect(hybridPrompt).toContain('APROVADA');
+    expect(hybridPrompt).toContain('CARDS DE DIFERENCIAÇÃO');
   });
 
   it('NÃO inclui bloco de presets premium (PRESETS PREMIUM PARA ARTEFATOS WEB)', () => {
@@ -1070,5 +1070,25 @@ describe('HYBRID_SELF_REFLECTION_SUFFIX — verificação de qualidade visual', 
 
   it('verifica peso visual do CTA primário', () => {
     expect(HYBRID_SELF_REFLECTION_SUFFIX).toContain('CTA primário é visualmente mais chamativo');
+  });
+});
+
+// ─── Bloco: regras anti-genérico reforçadas (headline, subheadline, CTA, cards) ─
+
+describe('HYBRID prompt contém regras anti-genérico reforçadas', () => {
+  it('HYBRID prompt contém regra que reprova headline com apenas nome do produto', () => {
+    expect(HYBRID_GENIUS_PROMPT).toContain('nome do produto/marca sem proposta de valor');
+  });
+
+  it('HYBRID prompt contém blacklist expandida de CTAs incluindo "Acesse Agora"', () => {
+    expect(HYBRID_GENIUS_PROMPT).toContain('Acesse Agora');
+  });
+
+  it('HYBRID prompt contém regra de cards de diferenciação concretos', () => {
+    expect(HYBRID_GENIUS_PROMPT).toContain('diferenciais operacionais concretos');
+  });
+
+  it('HYBRID self-reflection verifica headline não é apenas nome do produto', () => {
+    expect(HYBRID_SELF_REFLECTION_SUFFIX).toContain('nome do produto/marca sem proposta de valor');
   });
 });
