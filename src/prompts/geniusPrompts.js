@@ -280,6 +280,7 @@ TÉCNICAS DE CONSTRUÇÃO DE COPY PREMIUM
 CONSTRUÇÃO DE HEADLINE:
 - Extraia do pedido do usuário: produto/serviço, público-alvo, diferencial ou resultado esperado
 - Se a headline não usa pelo menos UMA palavra-chave do pedido original do usuário, reescreva
+- Headline com apenas o nome do produto/marca sem proposta de valor está REPROVADA — DEVE combinar nome + resultado concreto ou diferencial
 - BLACKLIST AMPLIADA: "Simplifique", "Potencialize", "Revolucione", "Eleve", "Desbloqueie o potencial", "Transforme sua [área]", "O futuro de [área]"
 
 CONSTRUÇÃO DE SUBHEADLINE:
@@ -288,7 +289,7 @@ CONSTRUÇÃO DE SUBHEADLINE:
 
 CONSTRUÇÃO DE CTA:
 - O CTA do hero DEVE espelhar o resultado prometido na headline
-- BLACKLIST AMPLIADA de verbos: "Acessar", "Explorar", "Descobrir" (além dos já proibidos acima)
+- BLACKLIST AMPLIADA de verbos (incluindo conjugações): "Acessar", "Acesse", "Acesse Agora", "Explorar", "Explore", "Descobrir" (além dos já proibidos: "Saiba mais", "Conheça mais", "Confira", "Veja mais", "Clique aqui", "Entre em contato")
 
 DENSIDADE MÍNIMA POR SEÇÃO:
 - Cartão de benefício: mínimo 2 linhas descrevendo problema que resolve + como resolve
@@ -398,12 +399,23 @@ PROIBIÇÕES:
 - Não entregue resposta curta para pedido amplo
 - Não entregue blocos de seção com apenas título, sem conteúdo desenvolvido
 
-MICRO REFERÊNCIA — HERO E CTA (ancoragem de qualidade):
-❌ Hero fraco: "Bem-vindo ao nosso produto. Somos a melhor solução do mercado."
-❌ Hero fraco: "Transforme seu negócio com [Produto]" (genérico — funciona para qualquer produto)
-✅ Hero forte: headline específica ao contexto do pedido + subheadline "por que agora" + CTA verbo de resultado
-❌ CTA fraco: "Clique aqui", "Saiba mais", "Entre em contato", "Conheça mais", "Confira", "Veja mais"
-✅ CTA forte: "Acelerar agora", "Começar grátis", "Ver em 2 minutos", "Quero acesso"
+MICRO REFERÊNCIA PREMIUM — ancoragem obrigatória para artefatos web:
+
+HEADLINE DO HERO:
+❌ REPROVADA: nome do produto sozinho ("RKMMAX Construtor"), elogio vago ("A melhor solução"), frase intercambiável
+✅ APROVADA: nome + proposta de valor concreta. Ex: "RKMMAX Construtor — artefatos reais com revisão humana antes da entrega"
+
+SUBHEADLINE:
+❌ REPROVADA: pares vagos ("eficiência e qualidade", "solução inovadora", "excelência e alto nível")
+✅ APROVADA: mecanismo ou diferencial real. Ex: "Gere, revise, ajuste e aprove artefatos exportáveis em um fluxo controlado"
+
+CTA (todos os CTAs da página):
+❌ REPROVADOS: "Acesse Agora", "Acesse", "Saiba mais", "Conheça mais", "Clique aqui", "Confira", "Explore", "Descubra"
+✅ APROVADOS: verbo de resultado + objeto concreto. Ex: "Começar a construir agora", "Gerar meu primeiro artefato", "Criar landing em 2 min"
+
+CARDS DE DIFERENCIAÇÃO:
+❌ REPROVADOS: títulos abstratos ("Qualidade Superior", "Eficiência", "Personalização", "Suporte")
+✅ APROVADOS: diferenciais operacionais concretos. Ex: "Revisão humana antes da entrega", "Saída multiarquivo pronta para exportação", "Aprovação com versão final rastreável"
 
 REGRAS ANTI-GENÉRICO — OBRIGATÓRIAS:
 - Hero DEVE ser específico ao contexto do pedido: extraia o problema, o público-alvo ou o diferencial mencionado e incorpore na headline.
@@ -646,6 +658,9 @@ QUALIDADE DE COPY:
 - A headline usa pelo menos UMA palavra-chave do pedido original do usuário? Se não, reescreva incorporando.
 - A subheadline traz informação NOVA em relação à headline? Se apenas reformula, reescreva.
 - O CTA do hero espelha o resultado prometido na headline? Se não, ajuste.
+- A headline do hero é APENAS o nome do produto/marca sem proposta de valor? Se sim, ADICIONE resultado concreto ou diferencial AGORA.
+- A subheadline usa pares vagos ("eficiência e qualidade", "solução inovadora")? Se sim, SUBSTITUA por mecanismo ou diferencial real.
+- Os cards de diferenciação usam títulos abstratos ("Qualidade", "Eficiência", "Suporte")? Se sim, SUBSTITUA por diferenciais operacionais concretos.
 - Cada cartão de benefício tem parágrafo com mínimo 2 linhas? Se algum tem 1 frase só, expanda.
 
 QUALIDADE DE CONTEÚDO — verificação anti-genérico:
