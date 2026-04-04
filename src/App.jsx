@@ -4,7 +4,7 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { initSentry } from "./lib/sentry.js";
 import { initAnalytics } from "./lib/analytics.js";
 
-import AuthProvider from "./auth/AuthProvider.jsx";
+import { AuthProvider } from "./auth/AuthProvider.jsx";
 import AuthGate from "./auth/AuthGate.jsx";
 
 import Header from "./components/Header.jsx";
