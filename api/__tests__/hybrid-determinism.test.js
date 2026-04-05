@@ -219,6 +219,21 @@ describe('Test F — api/ai.js hybrid path enforces strict 120B→70B only', () 
     const orchContent = fs.readFileSync(orchFilePath, 'utf8');
     expect(orchContent).toContain('options.noFallback');
   });
+
+  it('hybrid path passes maxTokens: 4096 on both provider calls', () => {
+    // Both 120b and 70b executeAITask calls in the hybrid block must include maxTokens: 4096
+    const hybridBlockStart = aiContent.indexOf("TIPO: HYBRID");
+    const hybridBlock = aiContent.slice(hybridBlockStart, hybridBlockStart + 2500);
+    const maxTokensMatches = (hybridBlock.match(/maxTokens: 4096/g) || []).length;
+    expect(maxTokensMatches).toBeGreaterThanOrEqual(2);
+  });
+
+  it('orchestrator callGroq overrides max_tokens when maxTokens param is provided', () => {
+    const orchFilePath = path.resolve(__dirname, '../lib/serginho-orchestrator.js');
+    const orchContent = fs.readFileSync(orchFilePath, 'utf8');
+    // callGroq must spread defaultParams and then conditionally override max_tokens
+    expect(orchContent).toContain('maxTokens ? { max_tokens: maxTokens }');
+  });
 });
 
 describe('Test E — _handleStructured fallback uses providerName and skips disabled providers', () => {

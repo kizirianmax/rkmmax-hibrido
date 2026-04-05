@@ -112,7 +112,7 @@ export default async function handler(req, res) {
           optimized.messages,
           optimized.systemPrompt,
           { source: 'hybrid-api', type: 'hybrid' },
-          { forceProvider: 'llama-120b', noFallback: true }
+          { forceProvider: 'llama-120b', noFallback: true, maxTokens: 4096 }
         );
       } catch (err120b) {
         // 120B indisponível — tentativa única com 70B (proibido qualquer outro fallback)
@@ -129,7 +129,7 @@ export default async function handler(req, res) {
             optimized.messages,
             optimized.systemPrompt,
             { source: 'hybrid-api', type: 'hybrid' },
-            { forceProvider: 'llama-70b', noFallback: true }
+            { forceProvider: 'llama-70b', noFallback: true, maxTokens: 4096 }
           );
         } catch (err70b) {
           throw new Error(`All providers failed. Tried: llama-120b, llama-70b. ${err70b.message}`);

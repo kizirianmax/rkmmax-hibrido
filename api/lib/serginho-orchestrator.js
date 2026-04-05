@@ -722,6 +722,7 @@ class SerginhoOrchestrator {
           context,
           analysis,
           signal,
+          maxTokens: options.maxTokens,
         });
         const modelExecutionTime = Date.now() - modelExecutionStartTime;
 
@@ -1002,7 +1003,7 @@ class SerginhoOrchestrator {
    * Execute request with specific provider
    * @private
    */
-  async executeWithProvider(providerName, { message, messages, context, analysis, signal }) {
+  async executeWithProvider(providerName, { message, messages, context, analysis, signal, maxTokens }) {
     const config = getProviderConfig(providerName);
     const breaker = this.circuitBreakers.get(providerName);
 
@@ -1013,7 +1014,7 @@ class SerginhoOrchestrator {
     return breaker.execute(async () => {
       switch (config.type) {
         case 'groq':
-          return this.callGroq(config, message, messages, context, signal);
+          return this.callGroq(config, message, messages, context, signal, maxTokens);
         default:
           throw new Error(`Unknown provider type: ${config.type}`);
       }
@@ -1033,7 +1034,7 @@ class SerginhoOrchestrator {
    * Call Groq API (OpenAI-compatible)
    * @private
    */
-  async callGroq(config, message, messages, context, signal) {
+  async callGroq(config, message, messages, context, signal, maxTokens) {
     const apiKey = process.env.GROQ_API_KEY;
     if (!apiKey) {
       throw new Error('GROQ_API_KEY environment variable is required');
@@ -1065,6 +1066,7 @@ class SerginhoOrchestrator {
             model: config.model,
             messages: formattedMessages,
             ...config.defaultParams,
+            ...(maxTokens ? { max_tokens: maxTokens } : {}),
           }),
           ...(signal ? { signal } : {}),
         });
