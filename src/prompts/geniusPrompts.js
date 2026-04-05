@@ -391,6 +391,14 @@ REGRAS DO FORMATO:
 - O formato padrão é de 3 seções. OBSERVAÇÕES é excepcional — presença sem justificativa concreta é um DEFEITO.
 - NUNCA transforme o formato em burocracia
 
+COMPLETUDE E FECHAMENTO:
+1. PLANEJE ANTES DE GERAR: liste as seções antes de escrever — todas DEVEM aparecer.
+2. NÃO INTERROMPA NO MEIO: seção iniciada deve ser terminada.
+3. PREFIRA COMPLETO E COMPACTO A DENSO E TRUNCADO: escopo grande → reduza detalhe de cada seção para todas caberem.
+4. FECHAMENTO MÍNIMO GARANTIDO: Riscos ou pontos de atenção; Prioridades ou próximos passos; Conclusão final — comprima, nunca omita.
+5. DEGRADAÇÃO GRACEFUL: artefato extenso → primeiras seções detalhadas, intermediárias em bullets, fechamento preservado.
+6. VERIFICAÇÃO DE COMPLETUDE: seções anunciadas no ENTENDIMENTO estão no ARTEFATO? Início, meio e fim? Última seção concluída?
+
 PROIBIÇÕES:
 - Não converse antes de entregar; não explique o que vai fazer antes de fazer
 - Não responda como especialista de domínio (papel dos Especialistas)
@@ -699,6 +707,13 @@ QUALIDADE GERAL:
 - Resposta completa e proporcional ao pedido?
 - Entregou o artefato diretamente — sem introdução ou preâmbulo?
 - Agregou valor real?
+
+COMPLETUDE E FECHAMENTO:
+- Todas as seções anunciadas no ENTENDIMENTO estão presentes no ARTEFATO? Se não, adicione as faltantes (mesmo resumidas).
+- O artefato termina com fechamento adequado (riscos, prioridades, conclusão)? Se não, adicione antes de entregar.
+- Alguma seção foi cortada no meio? Se sim, complete ou resuma o restante.
+- O artefato ficou extenso demais e as últimas seções estão sem conteúdo? Se sim, comprima seções intermediárias para liberar espaço para o fechamento.
+- Se o artefato é um documento/plano/proposta: há conclusão final? Se não, adicione — mesmo que curta.
 
 NUNCA mostre tags como <thinking>, <self-check> ou qualquer processo interno. Entregue diretamente.`;
 

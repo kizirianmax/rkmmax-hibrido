@@ -1092,3 +1092,69 @@ describe('HYBRID prompt contém regras anti-genérico reforçadas', () => {
     expect(HYBRID_SELF_REFLECTION_SUFFIX).toContain('nome do produto/marca sem proposta de valor');
   });
 });
+
+// ─── Bloco: HYBRID_GENIUS_PROMPT — completude e fechamento ────────────────────
+
+describe('HYBRID_GENIUS_PROMPT — completude e fechamento', () => {
+  it('contém bloco COMPLETUDE E FECHAMENTO', () => {
+    expect(HYBRID_GENIUS_PROMPT).toContain('COMPLETUDE E FECHAMENTO');
+  });
+
+  it('instrui planejar seções antes de gerar', () => {
+    expect(HYBRID_GENIUS_PROMPT).toContain('PLANEJE ANTES DE GERAR');
+  });
+
+  it('instrui não interromper no meio de seção', () => {
+    expect(HYBRID_GENIUS_PROMPT).toContain('NÃO INTERROMPA NO MEIO');
+  });
+
+  it('instrui preferir completo e compacto a denso e truncado', () => {
+    expect(HYBRID_GENIUS_PROMPT).toContain('COMPLETO E COMPACTO');
+    expect(HYBRID_GENIUS_PROMPT).toContain('DENSO E TRUNCADO');
+  });
+
+  it('exige fechamento mínimo com riscos, prioridades e conclusão', () => {
+    expect(HYBRID_GENIUS_PROMPT).toContain('FECHAMENTO MÍNIMO GARANTIDO');
+    expect(HYBRID_GENIUS_PROMPT).toContain('Riscos ou pontos de atenção');
+    expect(HYBRID_GENIUS_PROMPT).toContain('Prioridades ou próximos passos');
+    expect(HYBRID_GENIUS_PROMPT).toContain('Conclusão final');
+  });
+
+  it('instrui degradação graceful quando espaço for escasso', () => {
+    expect(HYBRID_GENIUS_PROMPT).toContain('DEGRADAÇÃO GRACEFUL');
+  });
+
+  it('instrui verificação de completude antes de entregar', () => {
+    expect(HYBRID_GENIUS_PROMPT).toContain('VERIFICAÇÃO DE COMPLETUDE');
+  });
+
+  it('bloco de completude aparece DEPOIS de FORMATO DE RESPOSTA e ANTES de PROIBIÇÕES', () => {
+    const completudeIdx = HYBRID_GENIUS_PROMPT.indexOf('COMPLETUDE E FECHAMENTO');
+    const formatIdx = HYBRID_GENIUS_PROMPT.indexOf('FORMATO DE RESPOSTA OBRIGATÓRIO');
+    const proibIdx = HYBRID_GENIUS_PROMPT.indexOf('PROIBIÇÕES:');
+    expect(completudeIdx).toBeGreaterThan(formatIdx);
+    expect(completudeIdx).toBeLessThan(proibIdx);
+  });
+});
+
+describe('HYBRID_SELF_REFLECTION_SUFFIX — verificação de completude e fechamento', () => {
+  it('contém bloco de verificação de COMPLETUDE E FECHAMENTO', () => {
+    expect(HYBRID_SELF_REFLECTION_SUFFIX).toContain('COMPLETUDE E FECHAMENTO');
+  });
+
+  it('verifica se todas as seções anunciadas estão presentes', () => {
+    expect(HYBRID_SELF_REFLECTION_SUFFIX).toContain('seções anunciadas no ENTENDIMENTO');
+  });
+
+  it('verifica fechamento adequado com riscos, prioridades e conclusão', () => {
+    expect(HYBRID_SELF_REFLECTION_SUFFIX).toContain('fechamento adequado');
+  });
+
+  it('verifica se alguma seção foi cortada no meio', () => {
+    expect(HYBRID_SELF_REFLECTION_SUFFIX).toContain('cortada no meio');
+  });
+
+  it('instrui comprimir seções intermediárias se artefato ficou extenso', () => {
+    expect(HYBRID_SELF_REFLECTION_SUFFIX).toContain('comprima seções intermediárias');
+  });
+});
