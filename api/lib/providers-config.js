@@ -23,7 +23,7 @@ export const PROVIDERS = {
     tier: 'complex',
     defaultParams: {
       temperature: 0.7,
-      max_tokens: 4096, // reduzido de 8192 para caber no TPM do tier gratuito Groq (8000 TPM total)
+      max_tokens: 2048, // reduzido de 4096 para mitigar estouro de TPM no free tier Groq (input profundo + output cabem dentro do limite)
     },
   },
 
@@ -35,7 +35,7 @@ export const PROVIDERS = {
     tier: 'medium',
     defaultParams: {
       temperature: 0.6,
-      max_tokens: 4096,
+      max_tokens: 2048, // reduzido de 4096 para mitigar estouro de TPM no free tier Groq
     },
   },
 
@@ -47,7 +47,7 @@ export const PROVIDERS = {
     tier: 'simple',
     defaultParams: {
       temperature: 0.5,
-      max_tokens: 2048,
+      max_tokens: 1024, // reduzido de 2048 para mitigar estouro de TPM no free tier Groq
     },
   },
 
@@ -59,7 +59,7 @@ export const PROVIDERS = {
     tier: 'fallback',
     defaultParams: {
       temperature: 0.7,
-      max_tokens: 4096,
+      max_tokens: 1024, // reduzido de 4096 para garantir disponibilidade máxima no fallback (TPM free tier Groq)
     },
   },
 };
