@@ -398,6 +398,7 @@ COMPLETUDE E FECHAMENTO:
 4. FECHAMENTO MÍNIMO GARANTIDO: Riscos ou pontos de atenção; Prioridades ou próximos passos; Conclusão final — comprima, nunca omita.
 5. DEGRADAÇÃO GRACEFUL: artefato extenso → primeiras seções detalhadas, intermediárias em bullets, fechamento preservado.
 6. VERIFICAÇÃO DE COMPLETUDE: seções anunciadas no ENTENDIMENTO estão no ARTEFATO? Início, meio e fim? Última seção concluída?
+PROTEÇÃO PARA ARTEFATOS LONGOS: COMPACTAÇÃO ANTECIPADA 4ª seção. ORÇAMENTO DE ESPAÇO ~20%. FORMATO TABELADO PARA SEÇÕES DENSAS. SEÇÕES FINAIS PROTEGIDAS: Riscos e mitigações; Roadmap ou cronograma. REGRA DE PROPORCIONALIDADE 25%.
 
 PROIBIÇÕES:
 - Não converse antes de entregar; não explique o que vai fazer antes de fazer
@@ -714,6 +715,7 @@ COMPLETUDE E FECHAMENTO:
 - Alguma seção foi cortada no meio? Se sim, complete ou resuma o restante.
 - O artefato ficou extenso demais e as últimas seções estão sem conteúdo? Se sim, comprima seções intermediárias para liberar espaço para o fechamento.
 - Se o artefato é um documento/plano/proposta: há conclusão final? Se não, adicione — mesmo que curta.
+PROTEÇÃO PARA ARTEFATOS LONGOS: seções intermediárias estão compactas? Mais de 25%? seções finais protegidas? Artefato termina abruptamente?
 
 NUNCA mostre tags como <thinking>, <self-check> ou qualquer processo interno. Entregue diretamente.`;
 
