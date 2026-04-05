@@ -47,6 +47,13 @@ describe('classifyPromptIntent', () => {
       'explique a diferença entre orquestrador e especialista em sistemas de IA',
       'o que é um orquestrador de IA?',
       'what is a multi-agent orchestration system?',
+      // Pedidos de geração de código — NÃO devem ser roteados para o fluxo GitHub
+      'Crie um script Node.js que leia um arquivo JSON local, agrupe os itens por categoria e imprima um resumo no console. Entregue no formato de artefato de código, com arquivo principal e README.md',
+      'Gere uma função TypeScript que valide um schema JSON e retorne um relatório de erros',
+      'Escreva um componente React que exiba uma lista de itens com paginação',
+      'create a Python script that reads a CSV file and outputs a summary report',
+      'write a Node.js server with Express that handles REST API requests',
+      'build a JavaScript function that parses markdown and returns HTML',
     ];
 
     test.each(conceptualCases)('returns conceptual for: %s', (message) => {

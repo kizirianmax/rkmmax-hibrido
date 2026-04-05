@@ -73,7 +73,12 @@ function _hasGitHubReference(message) {
   // owner/repo pattern (e.g. "facebook/react", "de owner/repo")
   if (/[\w.-]+\/[\w.-]+/.test(message)) return true;
   // File path patterns (e.g. "package.json", ".js", ".ts", ".md", "/src/")
-  if (/\b\w+\.(json|js|ts|jsx|tsx|md|yaml|yml|txt|py|go|java|rb|rs)\b/i.test(message)) return true;
+  // Ignorados quando a mensagem é um pedido de criação/geração de código
+  // (e.g. "Node.js" e "README.md" em "Crie um script Node.js... com README.md" NÃO são sinais de repo)
+  if (
+    /\b\w+\.(json|js|ts|jsx|tsx|md|yaml|yml|txt|py|go|java|rb|rs)\b/i.test(message) &&
+    !/\b(crie|gere|cria|faça|desenvolva|implemente|escreva|construa|create|generate|build|make|write|implement)\b/i.test(message)
+  ) return true;
   // Branch references
   if (/\b(branch|branches|main|master|develop|feature\/|hotfix\/)\b/i.test(message)) return true;
   // GitHub action verbs with file/repo objects
