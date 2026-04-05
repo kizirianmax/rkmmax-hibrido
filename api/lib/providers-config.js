@@ -23,7 +23,7 @@ export const PROVIDERS = {
     tier: 'complex',
     defaultParams: {
       temperature: 0.7,
-      max_tokens: 8192,
+      max_tokens: 4096, // reduzido de 8192 para caber no TPM do tier gratuito Groq (8000 TPM total)
     },
   },
 

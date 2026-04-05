@@ -1039,7 +1039,10 @@ class SerginhoOrchestrator {
       throw new Error('GROQ_API_KEY environment variable is required');
     }
 
-    const formattedMessages = this.formatMessages(messages, message, 'openai', context?.systemPrompt);
+    const formattedMessages = this._limitMessagesForModel(
+      this.formatMessages(messages, message, 'openai', context?.systemPrompt),
+      config.model
+    );
 
     const RETRYABLE_STATUSES = new Set([429, 503]);
     const MAX_ATTEMPTS = 3;
@@ -1071,6 +1074,10 @@ class SerginhoOrchestrator {
       }
 
       if (!response.ok) {
+        if (response.status === 413) {
+          const errorText = await response.text().catch(() => '');
+          throw new Error(`Groq API error: 413 request_too_large ${errorText}`);
+        }
         if (RETRYABLE_STATUSES.has(response.status) && attempt < MAX_ATTEMPTS) {
           // Linear backoff: 1000ms on first retry, 2000ms on second retry
           const delayMs = attempt * 1000;
@@ -1098,6 +1105,65 @@ class SerginhoOrchestrator {
 
     // All attempts exhausted on retryable errors
     throw lastError;
+  }
+
+  /**
+   * Limita o histórico de mensagens antes de enviar ao Groq para evitar erro 413.
+   * Usa estimativa simples: ~4 chars = 1 token (aproximação; varia por idioma e tipo de conteúdo).
+   * Para o modelo 120B (openai/gpt-oss-120b), mantém o total abaixo de 5000 tokens de input.
+   * @private
+   */
+  _limitMessagesForModel(formattedMessages, model) {
+    // Tokens de input reservados por modelo; outros modelos usam limite mais generoso
+    const INPUT_TOKEN_BUDGET = model === 'openai/gpt-oss-120b' ? 5000 : 12000;
+    const CHARS_PER_TOKEN = 4; // estimativa simples para cálculo de truncamento
+
+    if (!formattedMessages || formattedMessages.length === 0) {
+      return formattedMessages;
+    }
+
+    const maxChars = INPUT_TOKEN_BUDGET * CHARS_PER_TOKEN;
+
+    const totalChars = formattedMessages.reduce((sum, m) => sum + (m.content?.length || 0), 0);
+    if (totalChars <= maxChars) {
+      return formattedMessages;
+    }
+
+    // Preserva system message (primeiro, se role === 'system') e última mensagem do usuário
+    const systemMsg = formattedMessages[0]?.role === 'system' ? formattedMessages[0] : null;
+    const lastUserMsg = formattedMessages[formattedMessages.length - 1];
+
+    if (!lastUserMsg) {
+      return formattedMessages;
+    }
+
+    const middle = formattedMessages.slice(systemMsg ? 1 : 0, -1);
+
+    // Remove mensagens mais antigas até caber no budget
+    const reserved = (systemMsg ? systemMsg.content.length : 0) + (lastUserMsg.content?.length || 0);
+    let budget = maxChars - reserved;
+    const kept = [];
+    for (let i = middle.length - 1; i >= 0; i--) {
+      const len = middle[i].content?.length || 0;
+      if (budget - len >= 0) {
+        kept.unshift(middle[i]);
+        budget -= len;
+      } else {
+        break;
+      }
+    }
+
+    const truncated = [
+      ...(systemMsg ? [systemMsg] : []),
+      ...kept,
+      lastUserMsg,
+    ];
+
+    const removed = formattedMessages.length - truncated.length;
+    if (removed > 0) {
+      console.log(`[Serginho] _limitMessagesForModel: truncou ${removed} mensagem(ns) do histórico para o modelo ${model} (total original: ~${Math.round(totalChars / CHARS_PER_TOKEN)} tokens estimados)`);
+    }
+    return truncated;
   }
 
   /**
