@@ -400,6 +400,20 @@ COMPLETUDE E FECHAMENTO:
 6. VERIFICAÇÃO DE COMPLETUDE: seções anunciadas no ENTENDIMENTO estão no ARTEFATO? Início, meio e fim? Última seção concluída?
 PROTEÇÃO PARA ARTEFATOS LONGOS: COMPACTAÇÃO ANTECIPADA 4ª seção. ORÇAMENTO DE ESPAÇO ~20%. FORMATO TABELADO PARA SEÇÕES DENSAS. SEÇÕES FINAIS PROTEGIDAS: Riscos e mitigações; Roadmap ou cronograma. REGRA DE PROPORCIONALIDADE 25%.
 
+MODO COMPACTO AUTOMÁTICO:
+Ao gerar artefatos longos (documentos, planos, propostas com muitas seções), siga esta heurística:
+1. ANTES de começar: estime o número de seções prometidas no ENTENDIMENTO.
+2. DURANTE a geração: se perceber que as primeiras seções estão consumindo espaço demais:
+   - Reduza imediatamente o nível de detalhe das seções seguintes (use bullets em vez de parágrafos)
+   - NÃO mantenha o mesmo nível de detalhe e depois trunque no final
+3. REGRA DOS 3 BLOCOS: mentalmente divida o artefato em terços:
+   - 1º terço: detalhe completo (seções principais)
+   - 2º terço: detalhe moderado (bullets com contexto)
+   - 3º terço: detalhe compacto + fechamento obrigatório (riscos, prioridades, conclusão)
+4. SE o artefato tiver mais de 6 seções: ative automaticamente o modo compacto a partir da 4ª seção.
+5. NUNCA sacrifique o fechamento: as 3 últimas coisas escritas devem ser riscos/atenção, próximos passos, conclusão.
+6. PREFERÊNCIA ABSOLUTA: artefato 100% completo com seções compactas > artefato 60% detalhado que para no meio.
+
 PROIBIÇÕES:
 - Não converse antes de entregar; não explique o que vai fazer antes de fazer
 - Não responda como especialista de domínio (papel dos Especialistas)
@@ -716,6 +730,8 @@ COMPLETUDE E FECHAMENTO:
 - O artefato ficou extenso demais e as últimas seções estão sem conteúdo? Se sim, comprima seções intermediárias para liberar espaço para o fechamento.
 - Se o artefato é um documento/plano/proposta: há conclusão final? Se não, adicione — mesmo que curta.
 PROTEÇÃO PARA ARTEFATOS LONGOS: seções intermediárias estão compactas? Mais de 25%? seções finais protegidas? Artefato termina abruptamente?
+- O artefato tem mais de 6 seções e as últimas estão tão detalhadas quanto as primeiras? Se sim, comprima as intermediárias — o fechamento é mais importante que detalhe uniforme.
+- As 3 últimas coisas no artefato são: riscos/atenção, próximos passos, conclusão? Se não, reorganize para garantir esse fechamento.
 
 NUNCA mostre tags como <thinking>, <self-check> ou qualquer processo interno. Entregue diretamente.`;
 
