@@ -1158,3 +1158,83 @@ describe('HYBRID_SELF_REFLECTION_SUFFIX — verificação de completude e fecham
     expect(HYBRID_SELF_REFLECTION_SUFFIX).toContain('comprima seções intermediárias');
   });
 });
+
+// ─── Bloco: HYBRID_GENIUS_PROMPT — proteção para artefatos longos ─────────────
+
+describe('HYBRID_GENIUS_PROMPT — proteção para artefatos longos', () => {
+  it('contém sub-bloco PROTEÇÃO PARA ARTEFATOS LONGOS', () => {
+    expect(HYBRID_GENIUS_PROMPT).toContain('PROTEÇÃO PARA ARTEFATOS LONGOS');
+  });
+
+  it('instrui compactação antecipada a partir da 4ª seção', () => {
+    expect(HYBRID_GENIUS_PROMPT).toContain('COMPACTAÇÃO ANTECIPADA');
+    expect(HYBRID_GENIUS_PROMPT).toContain('4ª seção');
+  });
+
+  it('instrui reservar ~20% do espaço para seções finais (orçamento de espaço)', () => {
+    expect(HYBRID_GENIUS_PROMPT).toContain('ORÇAMENTO DE ESPAÇO');
+    expect(HYBRID_GENIUS_PROMPT).toContain('20%');
+  });
+
+  it('instrui formato tabelado para seções densas', () => {
+    expect(HYBRID_GENIUS_PROMPT).toContain('FORMATO TABELADO PARA SEÇÕES DENSAS');
+  });
+
+  it('lista seções finais protegidas explicitamente', () => {
+    expect(HYBRID_GENIUS_PROMPT).toContain('SEÇÕES FINAIS PROTEGIDAS');
+    expect(HYBRID_GENIUS_PROMPT).toContain('Riscos e mitigações');
+    expect(HYBRID_GENIUS_PROMPT).toContain('Roadmap ou cronograma');
+  });
+
+  it('instrui regra de proporcionalidade (máx 25% por seção intermediária)', () => {
+    expect(HYBRID_GENIUS_PROMPT).toContain('REGRA DE PROPORCIONALIDADE');
+    expect(HYBRID_GENIUS_PROMPT).toContain('25%');
+  });
+
+  it('bloco de proteção para longos aparece DENTRO do bloco de completude (ANTES de PROIBIÇÕES)', () => {
+    const protecaoIdx = HYBRID_GENIUS_PROMPT.indexOf('PROTEÇÃO PARA ARTEFATOS LONGOS');
+    const proibIdx = HYBRID_GENIUS_PROMPT.indexOf('PROIBIÇÕES:');
+    expect(protecaoIdx).toBeGreaterThan(-1);
+    expect(proibIdx).toBeGreaterThan(-1);
+    expect(protecaoIdx).toBeLessThan(proibIdx);
+  });
+
+  it('proteção para artefatos longos NÃO aparece no prompt do Serginho', () => {
+    const serginhoPrompt = buildGeniusPrompt('serginho');
+    expect(serginhoPrompt).not.toContain('PROTEÇÃO PARA ARTEFATOS LONGOS');
+  });
+
+  it('proteção para artefatos longos NÃO aparece no prompt de especialistas', () => {
+    const specialistPrompt = buildGeniusPrompt('specialist', {
+      name: 'Code',
+      description: 'Especialista em programação',
+      category: 'tech',
+      systemPrompt: 'Responda apenas questões de desenvolvimento.',
+    });
+    expect(specialistPrompt).not.toContain('PROTEÇÃO PARA ARTEFATOS LONGOS');
+  });
+});
+
+// ─── Bloco: HYBRID_SELF_REFLECTION_SUFFIX — proteção para artefatos longos ────
+
+describe('HYBRID_SELF_REFLECTION_SUFFIX — verificação de proteção para artefatos longos', () => {
+  it('contém sub-bloco PROTEÇÃO PARA ARTEFATOS LONGOS na self-reflection', () => {
+    expect(HYBRID_SELF_REFLECTION_SUFFIX).toContain('PROTEÇÃO PARA ARTEFATOS LONGOS');
+  });
+
+  it('verifica se seções intermediárias estão compactas em artefatos longos', () => {
+    expect(HYBRID_SELF_REFLECTION_SUFFIX).toContain('seções intermediárias estão compactas');
+  });
+
+  it('verifica proporcionalidade — seção intermediária ocupando mais de 25%', () => {
+    expect(HYBRID_SELF_REFLECTION_SUFFIX).toContain('25%');
+  });
+
+  it('verifica presença das seções finais protegidas', () => {
+    expect(HYBRID_SELF_REFLECTION_SUFFIX).toContain('seções finais protegidas');
+  });
+
+  it('instrui adicionar fechamento mínimo se artefato termina abruptamente', () => {
+    expect(HYBRID_SELF_REFLECTION_SUFFIX).toContain('termina abruptamente');
+  });
+});
