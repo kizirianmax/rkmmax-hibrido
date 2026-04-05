@@ -1237,4 +1237,73 @@ describe('HYBRID_SELF_REFLECTION_SUFFIX — verificação de proteção para art
   it('instrui adicionar fechamento mínimo se artefato termina abruptamente', () => {
     expect(HYBRID_SELF_REFLECTION_SUFFIX).toContain('termina abruptamente');
   });
+
+  it('verifica se artefatos com 6+ seções têm intermediárias comprimidas', () => {
+    expect(HYBRID_SELF_REFLECTION_SUFFIX).toContain('mais de 6 seções');
+    expect(HYBRID_SELF_REFLECTION_SUFFIX).toContain('fechamento é mais importante que detalhe uniforme');
+  });
+
+  it('verifica se as 3 últimas coisas do artefato são riscos, próximos passos e conclusão', () => {
+    expect(HYBRID_SELF_REFLECTION_SUFFIX).toContain('riscos/atenção, próximos passos, conclusão');
+    expect(HYBRID_SELF_REFLECTION_SUFFIX).toContain('reorganize para garantir esse fechamento');
+  });
+});
+
+// ─── Bloco: HYBRID_GENIUS_PROMPT — modo compacto automático ──────────────────
+
+describe('HYBRID_GENIUS_PROMPT — modo compacto automático', () => {
+  it('contém bloco MODO COMPACTO AUTOMÁTICO', () => {
+    expect(HYBRID_GENIUS_PROMPT).toContain('MODO COMPACTO AUTOMÁTICO');
+  });
+
+  it('instrui estimar seções antes de começar', () => {
+    expect(HYBRID_GENIUS_PROMPT).toContain('estime o número de seções prometidas');
+  });
+
+  it('instrui reduzir detalhe quando espaço for consumido', () => {
+    expect(HYBRID_GENIUS_PROMPT).toContain('Reduza imediatamente o nível de detalhe');
+  });
+
+  it('instrui a REGRA DOS 3 BLOCOS (terços)', () => {
+    expect(HYBRID_GENIUS_PROMPT).toContain('REGRA DOS 3 BLOCOS');
+    expect(HYBRID_GENIUS_PROMPT).toContain('terços');
+  });
+
+  it('instrui ativar modo compacto automaticamente a partir da 4ª seção em artefatos com 6+ seções', () => {
+    expect(HYBRID_GENIUS_PROMPT).toContain('mais de 6 seções');
+    expect(HYBRID_GENIUS_PROMPT).toContain('modo compacto a partir da 4ª seção');
+  });
+
+  it('instrui nunca sacrificar o fechamento', () => {
+    expect(HYBRID_GENIUS_PROMPT).toContain('NUNCA sacrifique o fechamento');
+    expect(HYBRID_GENIUS_PROMPT).toContain('riscos/atenção, próximos passos, conclusão');
+  });
+
+  it('declara preferência absoluta por artefato completo compacto vs parcial detalhado', () => {
+    expect(HYBRID_GENIUS_PROMPT).toContain('PREFERÊNCIA ABSOLUTA');
+    expect(HYBRID_GENIUS_PROMPT).toContain('100% completo com seções compactas');
+  });
+
+  it('bloco MODO COMPACTO aparece APÓS PROTEÇÃO PARA ARTEFATOS LONGOS e ANTES de PROIBIÇÕES', () => {
+    const compactoIdx = HYBRID_GENIUS_PROMPT.indexOf('MODO COMPACTO AUTOMÁTICO');
+    const protecaoIdx = HYBRID_GENIUS_PROMPT.indexOf('PROTEÇÃO PARA ARTEFATOS LONGOS');
+    const proibIdx = HYBRID_GENIUS_PROMPT.indexOf('PROIBIÇÕES:');
+    expect(compactoIdx).toBeGreaterThan(protecaoIdx);
+    expect(compactoIdx).toBeLessThan(proibIdx);
+  });
+
+  it('MODO COMPACTO AUTOMÁTICO NÃO aparece no prompt do Serginho', () => {
+    const serginhoPrompt = buildGeniusPrompt('serginho');
+    expect(serginhoPrompt).not.toContain('MODO COMPACTO AUTOMÁTICO');
+  });
+
+  it('MODO COMPACTO AUTOMÁTICO NÃO aparece no prompt de especialistas', () => {
+    const specialistPrompt = buildGeniusPrompt('specialist', {
+      name: 'Code',
+      description: 'Especialista em programação',
+      category: 'tech',
+      systemPrompt: 'Responda apenas questões de desenvolvimento.',
+    });
+    expect(specialistPrompt).not.toContain('MODO COMPACTO AUTOMÁTICO');
+  });
 });
