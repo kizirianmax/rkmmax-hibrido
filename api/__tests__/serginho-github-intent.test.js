@@ -359,6 +359,46 @@ describe('detectGitHubIntent — mensagens não-GitHub → null', () => {
 });
 
 // ---------------------------------------------------------------------------
+// 4b) detectGitHubIntent — pedidos de geração de código → null (falso positivo corrigido)
+// ---------------------------------------------------------------------------
+
+describe('detectGitHubIntent — pedidos de geração de código → null', () => {
+  test('prompt de geração de artefato com Node.js, JSON e README.md → null', () => {
+    const prompt =
+      'Crie um script Node.js que leia um arquivo JSON local, agrupe os itens por categoria e imprima um resumo no console. Entregue no formato de artefato de código, com arquivo principal e README.md';
+    expect(detectGitHubIntent(prompt)).toBeNull();
+  });
+
+  test('"Gere uma função TypeScript que valide um schema JSON" → null', () => {
+    expect(detectGitHubIntent('Gere uma função TypeScript que valide um schema JSON')).toBeNull();
+  });
+
+  test('"Escreva um script Python que leia um arquivo CSV" → null', () => {
+    expect(detectGitHubIntent('Escreva um script Python que leia um arquivo CSV')).toBeNull();
+  });
+
+  test('"create a Node.js script that reads a JSON file" → null', () => {
+    expect(detectGitHubIntent('create a Node.js script that reads a JSON file')).toBeNull();
+  });
+
+  test('"write a function that opens a file and returns its contents" → null', () => {
+    expect(detectGitHubIntent('write a function that opens a file and returns its contents')).toBeNull();
+  });
+
+  test('"build a React component that shows a README.md preview" → null', () => {
+    expect(detectGitHubIntent('build a React component that shows a README.md preview')).toBeNull();
+  });
+
+  test('criação COM owner/repo explícito ainda passa detecção → não null', () => {
+    // Se o usuário especifica owner/repo junto com verbo de criação, pode precisar de contexto
+    const r = detectGitHubIntent('liste meus repositórios para criar um novo script');
+    // LIST_REPOS_PATTERNS deve detectar "liste meus repositórios"
+    expect(r).not.toBeNull();
+    expect(r.tool).toBe('github_list_repos');
+  });
+});
+
+// ---------------------------------------------------------------------------
 // 5) Integração orchestrator — intent GitHub detectada → tool executada
 // ---------------------------------------------------------------------------
 

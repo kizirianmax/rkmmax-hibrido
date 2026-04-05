@@ -62,6 +62,15 @@ const CONCEPTUAL_EXPLANATION_PTBR = [
 // ---------------------------------------------------------------------------
 
 /**
+ * Verbos de criação/geração de código (PT-BR e EN).
+ * Quando presentes, indicam pedido de geração de artefato — não de acesso a repositório.
+ * Usado para evitar falso positivo no match de extensões de arquivo
+ * (ex: "Node.js", "README.md" em "Crie um script Node.js... com README.md").
+ */
+const CODE_CREATION_PATTERN =
+  /\b(crie|gere|cria|faça|desenvolva|implemente|escreva|construa|create|generate|build|make|write|implement)\b/i;
+
+/**
  * Detecta se a mensagem contém referências explícitas a artefatos GitHub:
  * owner/repo, caminhos de arquivo, branches ou verbos de ação GitHub.
  *
@@ -72,7 +81,12 @@ function _hasRepoSignal(message) {
   // owner/repo pattern (e.g. "facebook/react", "de owner/repo")
   if (/[\w.-]+\/[\w.-]+/.test(message)) return true;
   // File path patterns (e.g. "package.json", ".js", ".ts", ".md")
-  if (/\b\w+\.(json|js|ts|jsx|tsx|md|yaml|yml|txt|py|go|java|rb|rs)\b/i.test(message)) return true;
+  // Ignorados quando a mensagem é um pedido de criação/geração de código
+  // (e.g. "Node.js" e "README.md" em "Crie um script Node.js... com README.md" NÃO são sinais de repo)
+  if (
+    /\b\w+\.(json|js|ts|jsx|tsx|md|yaml|yml|txt|py|go|java|rb|rs)\b/i.test(message) &&
+    !CODE_CREATION_PATTERN.test(message)
+  ) return true;
   // Branch references
   if (/\b(branch|branches|main|master|develop|feature\/|hotfix\/)\b/i.test(message)) return true;
   // GitHub action verbs with file/repo objects
@@ -158,10 +172,12 @@ function _isConceptualSignal(trimmed) {
   // "o que é/são/representam" questions (PT-BR) without repo references
   // "what is/are/does" questions (EN) without repo references
   // Long messages (> 200 chars) with no repo references are likely conceptual
+  // Code generation/creation requests without GitHub-specific references are conceptual
   const noRepoSignal = !_hasRepoSignal(trimmed);
   if (/^o que (é|são|representa[m]?)/i.test(trimmed) && noRepoSignal) return true;
   if (/^what (is|are|does)\b/i.test(trimmed) && noRepoSignal) return true;
   if (trimmed.length > 200 && noRepoSignal) return true;
+  if (CODE_CREATION_PATTERN.test(trimmed) && noRepoSignal) return true;
 
   return false;
 }
