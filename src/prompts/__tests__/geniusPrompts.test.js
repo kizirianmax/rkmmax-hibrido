@@ -915,6 +915,30 @@ describe('HYBRID_GENIUS_PROMPT — bloco de formato de saída multiarquivo', () 
   });
 });
 
+// ─── Bloco: FORMATO DE SAÍDA PARA CÓDIGO no HYBRID_GENIUS_PROMPT ─────────────
+
+describe('HYBRID_GENIUS_PROMPT — contrato de formato para artefatos de código', () => {
+  it('contém seção de formato de saída para código', () => {
+    expect(HYBRID_GENIUS_PROMPT).toContain('FORMATO DE SAÍDA PARA CÓDIGO');
+  });
+
+  it('instrui uso de --- FILE: <nome.ext> --- para artefatos de código', () => {
+    expect(HYBRID_GENIUS_PROMPT).toContain('<nome.ext>');
+  });
+
+  it('proíbe fence markdown no conteúdo do arquivo de código', () => {
+    expect(HYBRID_GENIUS_PROMPT).toContain('sem fence markdown');
+  });
+
+  it('instrui inclusão de README.md junto ao artefato de código', () => {
+    expect(HYBRID_GENIUS_PROMPT).toContain('nem código');
+  });
+
+  it('heurística de tipo aponta para FORMATO DE CÓDIGO', () => {
+    expect(HYBRID_GENIUS_PROMPT).toContain('FORMATO DE CÓDIGO abaixo');
+  });
+});
+
 // ─── Bloco: TÉCNICAS DE CONSTRUÇÃO DE COPY PREMIUM no HYBRID_GENIUS_PROMPT ────
 
 describe('HYBRID_GENIUS_PROMPT — técnicas de construção de copy premium', () => {
