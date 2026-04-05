@@ -930,7 +930,7 @@ describe('HYBRID_GENIUS_PROMPT — contrato de formato para artefatos de código
     expect(HYBRID_GENIUS_PROMPT).toContain('sem fence markdown');
   });
 
-  it('instrui inclusão de README.md junto ao artefato de código', () => {
+  it('instrui fallback para documentos quando não for web nem código', () => {
     expect(HYBRID_GENIUS_PROMPT).toContain('nem código');
   });
 
