@@ -69,11 +69,13 @@ export function stripMarkdownFences(content) {
  * @returns {string | null}
  */
 export function tryNormalizeAlternativeFormat(content) {
-  const ALT_PATTERN = /^#{2,4}\s+(\S+\.\w+)\s*$/gm;
+  // Match ### and #### headers only (h3/h4) — these are the levels the LLM uses for filenames
+  const ALT_PATTERN = /^#{3,4}\s+(\S+\.\w+)\s*$/gm;
   const matches = [...content.matchAll(ALT_PATTERN)];
 
   if (matches.length < MIN_MULTI_FILE_COUNT) return null;
 
+  // Extension length capped at 10 chars to reject section headers disguised as filenames
   const fileExtRegex = /\.\w{1,10}$/;
   const validFiles = matches.filter((m) => fileExtRegex.test(m[1].trim()));
   if (validFiles.length < MIN_MULTI_FILE_COUNT) return null;
