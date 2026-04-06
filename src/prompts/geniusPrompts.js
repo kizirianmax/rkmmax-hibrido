@@ -352,6 +352,7 @@ Quando o pedido resultar em landing page, página web ou interface HTML, gere em
 (Breve descrição do projeto e instruções de uso)
 
 - O HTML NÃO deve conter <style> ou <script> inline — usar referências externas
+- PROIBIDO fence markdown nos arquivos
 
 FORMATO DE SAÍDA PARA CÓDIGO (script/função/API/componente):
 --- FILE: <nome.ext> ---

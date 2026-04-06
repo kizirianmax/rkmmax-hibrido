@@ -50,6 +50,18 @@ function resolveMime(filename) {
 const MIN_MULTI_FILE_COUNT = 2;
 
 /**
+ * Remove fences markdown residuais (```language ... ```) do conteúdo de um arquivo.
+ * Garante contrato de código bruto sem marcação markdown.
+ * @param {string} content
+ * @returns {string}
+ */
+export function stripMarkdownFences(content) {
+  let cleaned = content.replace(/^```[a-zA-Z0-9_+#-]*\s*\n?/, '');
+  cleaned = cleaned.replace(/\n?```\s*$/, '');
+  return cleaned.trim();
+}
+
+/**
  * Tenta parsear conteúdo no formato multiarquivo com delimitadores --- FILE: <path> ---.
  * Retorna array de { name, content, type } ou null se não for multiarquivo.
  * @param {string} content
@@ -66,7 +78,8 @@ export function parseMultiFileContent(content) {
     const name = matches[i][1].trim();
     const start = matches[i].index + matches[i][0].length;
     const end = i + 1 < matches.length ? matches[i + 1].index : content.length;
-    const fileContent = content.slice(start, end).trim();
+    let fileContent = content.slice(start, end).trim();
+    fileContent = stripMarkdownFences(fileContent);
 
     if (!fileContent) return null;
 
