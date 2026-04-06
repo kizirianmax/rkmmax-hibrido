@@ -9,7 +9,7 @@
  * - erros de input são tratados adequadamente
  */
 
-import { packageArtifact, detectContentType, tryExtractHtmlParts, parseMultiFileContent } from '../artifactPackager.js';
+import { packageArtifact, detectContentType, tryExtractHtmlParts, parseMultiFileContent, stripMarkdownFences, tryNormalizeAlternativeFormat } from '../artifactPackager.js';
 import { generateManifest, computeChecksum, resolveModelName, DEFAULT_PROMPT_ID } from '../artifactManifest.js';
 import { generateGenerationLog, generateStructureLog } from '../artifactLogger.js';
 
@@ -603,5 +603,99 @@ document.addEventListener('DOMContentLoaded', () => { console.log('ready'); });`
     const names = zip.getEntries().map((e) => e.entryName);
     expect(names).toContain('content.md');
     expect(manifest.contentType).not.toBe('multi-file');
+  });
+});
+
+// ─── tryNormalizeAlternativeFormat ────────────────────────────────────────────
+
+describe('tryNormalizeAlternativeFormat', () => {
+  test('converte #### arquivo.ext para --- FILE: arquivo.ext ---', () => {
+    const alt = `#### script.js
+\`\`\`javascript
+console.log('hello');
+\`\`\`
+
+#### README.md
+\`\`\`markdown
+Execute com: node script.js
+\`\`\``;
+    const result = tryNormalizeAlternativeFormat(alt);
+    expect(result).not.toBeNull();
+    expect(result).toContain('--- FILE: script.js ---');
+    expect(result).toContain('--- FILE: README.md ---');
+  });
+
+  test('converte ### arquivo.ext para --- FILE: arquivo.ext ---', () => {
+    const alt = `### index.js
+\`\`\`javascript
+console.log('hello');
+\`\`\`
+
+### package.json
+\`\`\`json
+{}
+\`\`\``;
+    const result = tryNormalizeAlternativeFormat(alt);
+    expect(result).not.toBeNull();
+    expect(result).toContain('--- FILE: index.js ---');
+    expect(result).toContain('--- FILE: package.json ---');
+  });
+
+  test('retorna null quando não há headers com nomes de arquivo', () => {
+    expect(tryNormalizeAlternativeFormat('conteúdo normal')).toBeNull();
+    expect(tryNormalizeAlternativeFormat('### Seção\nTexto')).toBeNull();
+  });
+
+  test('retorna null para apenas 1 arquivo (precisa de pelo menos 2)', () => {
+    const single = `#### script.js
+\`\`\`javascript
+console.log('hello');
+\`\`\``;
+    expect(tryNormalizeAlternativeFormat(single)).toBeNull();
+  });
+
+  test('não afeta conteúdo que já usa --- FILE: ---', () => {
+    const correct = `--- FILE: script.js ---
+console.log('hello');
+
+--- FILE: README.md ---
+Instruções`;
+    expect(tryNormalizeAlternativeFormat(correct)).toBeNull();
+  });
+});
+
+// ─── parseMultiFileContent — formato alternativo com #### headers ─────────────
+
+describe('parseMultiFileContent — formato alternativo com #### headers', () => {
+  test('formato alternativo (#### + fences) é normalizado e parseado', () => {
+    const alt = `#### script.js
+\`\`\`javascript
+console.log('hello');
+\`\`\`
+
+#### dados.json
+\`\`\`json
+{"nome": "teste"}
+\`\`\``;
+    const result = parseMultiFileContent(alt);
+    expect(result).not.toBeNull();
+    expect(result).toHaveLength(2);
+    expect(result[0].name).toBe('script.js');
+    expect(result[0].content).toBe("console.log('hello');");
+    expect(result[0].content).not.toContain('```');
+    expect(result[1].name).toBe('dados.json');
+    expect(result[1].content).toBe('{"nome": "teste"}');
+  });
+
+  test('formato correto (--- FILE: ---) continua funcionando normalmente', () => {
+    const correct = `--- FILE: script.js ---
+console.log('hello');
+
+--- FILE: README.md ---
+Instruções`;
+    const result = parseMultiFileContent(correct);
+    expect(result).not.toBeNull();
+    expect(result[0].name).toBe('script.js');
+    expect(result[1].name).toBe('README.md');
   });
 });

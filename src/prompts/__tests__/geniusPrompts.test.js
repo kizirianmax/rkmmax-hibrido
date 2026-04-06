@@ -941,6 +941,22 @@ describe('HYBRID_GENIUS_PROMPT — contrato de formato para artefatos de código
   it('heurística de tipo aponta para FORMATO DE CÓDIGO', () => {
     expect(HYBRID_GENIUS_PROMPT).toContain('FORMATO DE CÓDIGO abaixo');
   });
+
+  it('contém exemplo concreto de formato multi-file para código', () => {
+    expect(HYBRID_GENIUS_PROMPT).toContain('--- FILE: script.js ---');
+  });
+
+  it('proíbe headers markdown (#### ou ###) como delimitador de arquivo', () => {
+    expect(HYBRID_GENIUS_PROMPT).toContain('PROIBIDO usar #### nome.ext ou ### nome.ext');
+  });
+
+  it('contém exceção de formato para artefatos multi-file', () => {
+    expect(HYBRID_GENIUS_PROMPT).toContain('EXCEÇÃO PARA ARTEFATOS DE CÓDIGO E WEB');
+  });
+
+  it('instrui que --- FILE: --- substitui a seção ARTEFATO', () => {
+    expect(HYBRID_GENIUS_PROMPT).toContain('seção ARTEFATO é substituída pelos próprios blocos --- FILE:');
+  });
 });
 
 // ─── Bloco: TÉCNICAS DE CONSTRUÇÃO DE COPY PREMIUM no HYBRID_GENIUS_PROMPT ────
@@ -1274,6 +1290,26 @@ describe('HYBRID_SELF_REFLECTION_SUFFIX — verificação de proteção para art
   it('verifica se as 3 últimas coisas do artefato são riscos, próximos passos e conclusão', () => {
     expect(HYBRID_SELF_REFLECTION_SUFFIX).toContain('riscos/atenção, próximos passos, conclusão');
     expect(HYBRID_SELF_REFLECTION_SUFFIX).toContain('reorganize para garantir esse fechamento');
+  });
+});
+
+// ─── Bloco: HYBRID_SELF_REFLECTION_SUFFIX — verificação de formato multi-file ─
+
+describe('HYBRID_SELF_REFLECTION_SUFFIX — verificação de formato multi-file', () => {
+  it('contém bloco de verificação FORMATO MULTI-FILE', () => {
+    expect(HYBRID_SELF_REFLECTION_SUFFIX).toContain('FORMATO MULTI-FILE');
+  });
+
+  it('verifica uso de delimitadores --- FILE: ---', () => {
+    expect(HYBRID_SELF_REFLECTION_SUFFIX).toContain('--- FILE: nome.ext ---');
+  });
+
+  it('detecta uso incorreto de #### como cabeçalho de arquivo', () => {
+    expect(HYBRID_SELF_REFLECTION_SUFFIX).toContain('#### ou ###');
+  });
+
+  it('instrui remover header ### ARTEFATO quando multi-file', () => {
+    expect(HYBRID_SELF_REFLECTION_SUFFIX).toContain('### ARTEFATO');
   });
 });
 

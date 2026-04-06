@@ -62,6 +62,34 @@ export function stripMarkdownFences(content) {
 }
 
 /**
+ * Detecta formato alternativo onde a LLM usou headers markdown (#### ou ### nome.ext)
+ * com fences em vez de delimitadores --- FILE: ---. Converte para formato canônico.
+ * Retorna o conteúdo normalizado ou null se não detectou o padrão alternativo.
+ * @param {string} content
+ * @returns {string | null}
+ */
+export function tryNormalizeAlternativeFormat(content) {
+  // Match ### and #### headers only (h3/h4) — these are the levels the LLM uses for filenames
+  const ALT_PATTERN = /^#{3,4}\s+(\S+\.\w+)\s*$/gm;
+  const matches = [...content.matchAll(ALT_PATTERN)];
+
+  if (matches.length < MIN_MULTI_FILE_COUNT) return null;
+
+  // Extension length capped at 10 chars to reject section headers disguised as filenames
+  const fileExtRegex = /\.\w{1,10}$/;
+  const validFiles = matches.filter((m) => fileExtRegex.test(m[1].trim()));
+  if (validFiles.length < MIN_MULTI_FILE_COUNT) return null;
+
+  let normalized = content;
+  for (const m of validFiles) {
+    const filename = m[1].trim();
+    normalized = normalized.replace(m[0], `--- FILE: ${filename} ---`);
+  }
+
+  return normalized;
+}
+
+/**
  * Tenta parsear conteúdo no formato multiarquivo com delimitadores --- FILE: <path> ---.
  * Retorna array de { name, content, type } ou null se não for multiarquivo.
  * @param {string} content
@@ -71,7 +99,13 @@ export function parseMultiFileContent(content) {
   const FILE_DELIMITER = /^---\s*FILE:\s*(.+?)\s*---\s*$/gm;
   const matches = [...content.matchAll(FILE_DELIMITER)];
 
-  if (matches.length < MIN_MULTI_FILE_COUNT) return null;
+  if (matches.length < MIN_MULTI_FILE_COUNT) {
+    const normalized = tryNormalizeAlternativeFormat(content);
+    if (normalized) {
+      return parseMultiFileContent(normalized);
+    }
+    return null;
+  }
 
   const files = [];
   for (let i = 0; i < matches.length; i++) {
