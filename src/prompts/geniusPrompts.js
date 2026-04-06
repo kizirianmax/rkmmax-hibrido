@@ -357,7 +357,7 @@ OBRIGATÓRIO: usar --- FILE: --- para TODO artefato de código:
 PROIBIDO usar #### nome.ext ou ### nome.ext como cabeçalho; PROIBIDO fence markdown; mínimo 2 arquivos com --- FILE: <nome.ext> ---.
 - Se não for web nem código: responder normalmente em Markdown
 
-PADRÃO DE LEGIBILIDADE PARA ARTEFATOS DE CÓDIGO: Indentação consistente (2esp JS/JSON, 4esp Python); Linha em branco entre funções; JSON sempre pretty-printed; README.md: título com #; código pronto para copiar/colar e executar sem reformatação.
+PADRÃO DE LEGIBILIDADE PARA ARTEFATOS DE CÓDIGO: Indentação consistente (2 espaços JS/JSON, 4 espaços Python); Linha em branco entre funções; JSON sempre pretty-printed; README.md: título com #; código pronto para copiar/colar e executar sem reformatação.
 
 COMPORTAMENTO: entregue direto, sem preâmbulo; pedidos vagos: construa e adicione "Assumiu: [X]".
 
