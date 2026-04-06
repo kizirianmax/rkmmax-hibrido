@@ -492,6 +492,77 @@ console.log('hello');
     expect(result[1].content).not.toContain('```');
   });
 
+  test('remove TODOS os fences em arquivo de código (não .md)', () => {
+    const withMultipleFences = `--- FILE: script.js ---
+\`\`\`javascript
+const fs = require('fs');
+const dados = JSON.parse(fs.readFileSync('./dados.json', 'utf-8'));
+console.log(dados);
+\`\`\`
+
+--- FILE: dados.json ---
+\`\`\`json
+{"nome": "teste"}
+\`\`\``;
+    const result = parseMultiFileContent(withMultipleFences);
+    expect(result).not.toBeNull();
+    expect(result[0].content).not.toContain('```');
+    expect(result[1].content).not.toContain('```');
+  });
+
+  test('preserva fences internas legítimas em README.md', () => {
+    const withReadme = `--- FILE: script.js ---
+console.log('hello');
+
+--- FILE: README.md ---
+# Como usar
+
+Execute com:
+\`\`\`bash
+node script.js
+\`\`\``;
+    const result = parseMultiFileContent(withReadme);
+    expect(result).not.toBeNull();
+    expect(result[0].content).toBe("console.log('hello');");
+    // README.md preserva fence interna (é documentação legítima)
+    expect(result[1].content).toContain('```bash');
+  });
+
+  test('remove fence envolvente de README.md quando é wrapper completo', () => {
+    const withWrappedReadme = `--- FILE: script.js ---
+console.log('hello');
+
+--- FILE: README.md ---
+\`\`\`markdown
+# Como usar
+Execute com: node script.js
+\`\`\``;
+    const result = parseMultiFileContent(withWrappedReadme);
+    expect(result).not.toBeNull();
+    expect(result[1].content).toBe('# Como usar\nExecute com: node script.js');
+    expect(result[1].content).not.toMatch(/^```/);
+  });
+
+  test('conteúdo de código com newline antes do fence é limpo', () => {
+    const withLeadingNewline = `--- FILE: index.js ---
+
+\`\`\`javascript
+console.log('hello');
+\`\`\`
+
+--- FILE: config.json ---
+
+\`\`\`json
+{"port": 3000}
+\`\`\``;
+    const result = parseMultiFileContent(withLeadingNewline);
+    expect(result).not.toBeNull();
+    expect(result[0].content).not.toContain('```');
+    expect(result[0].content).toContain("console.log('hello');");
+    expect(result[1].content).not.toContain('```');
+    expect(result[1].content).toContain('"port": 3000');
+  });
+
   test('conteúdo sem fences permanece inalterado', () => {
     const clean = `--- FILE: index.js ---
 console.log('hello');
@@ -603,6 +674,24 @@ document.addEventListener('DOMContentLoaded', () => { console.log('ready'); });`
     const names = zip.getEntries().map((e) => e.entryName);
     expect(names).toContain('content.md');
     expect(manifest.contentType).not.toBe('multi-file');
+  });
+
+  test('conteúdo de código no ZIP está limpo de fences markdown', async () => {
+    const AdmZip = (await import('adm-zip')).default;
+    const contentWithFences = `--- FILE: script.js ---
+\`\`\`javascript
+const x = 42;
+console.log(x);
+\`\`\`
+
+--- FILE: README.md ---
+Execute com: node script.js`;
+    const { zipBuffer } = await packageArtifact({ content: contentWithFences });
+    const zip = new AdmZip(zipBuffer);
+    const scriptEntry = zip.getEntry('script.js');
+    const scriptContent = scriptEntry.getData().toString('utf-8');
+    expect(scriptContent).not.toContain('```');
+    expect(scriptContent).toContain('const x = 42;');
   });
 });
 
