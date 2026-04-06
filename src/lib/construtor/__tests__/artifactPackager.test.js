@@ -9,7 +9,7 @@
  * - erros de input são tratados adequadamente
  */
 
-import { packageArtifact, detectContentType, tryExtractHtmlParts, parseMultiFileContent, stripMarkdownFences, tryNormalizeAlternativeFormat } from '../artifactPackager.js';
+import { packageArtifact, detectContentType, tryExtractHtmlParts, parseMultiFileContent, stripMarkdownFences, tryNormalizeAlternativeFormat, normalizeVisibleContent } from '../artifactPackager.js';
 import { generateManifest, computeChecksum, resolveModelName, DEFAULT_PROMPT_ID } from '../artifactManifest.js';
 import { generateGenerationLog, generateStructureLog } from '../artifactLogger.js';
 
@@ -786,5 +786,97 @@ Instruções`;
     expect(result).not.toBeNull();
     expect(result[0].name).toBe('script.js');
     expect(result[1].name).toBe('README.md');
+  });
+});
+
+// ─── normalizeVisibleContent ──────────────────────────────────────────────────
+
+describe('normalizeVisibleContent', () => {
+  test('conteúdo não-multi-file retorna sem alteração', () => {
+    const plain = '# Documento\n\nConteúdo normal sem delimitadores.';
+    expect(normalizeVisibleContent(plain)).toBe(plain);
+  });
+
+  test('conteúdo HTML simples retorna sem alteração', () => {
+    const html = '<!DOCTYPE html><html><body><h1>Olá</h1></body></html>';
+    expect(normalizeVisibleContent(html)).toBe(html);
+  });
+
+  test('conteúdo multi-file com fences → fences removidas, delimitadores preservados', () => {
+    const withFences = `--- FILE: script.js ---
+\`\`\`javascript
+console.log('hello');
+\`\`\`
+
+--- FILE: dados.json ---
+\`\`\`json
+{"nome": "teste"}
+\`\`\``;
+    const result = normalizeVisibleContent(withFences);
+    expect(result).toContain('--- FILE: script.js ---');
+    expect(result).toContain('--- FILE: dados.json ---');
+    expect(result).not.toContain('```javascript');
+    expect(result).not.toContain('```json');
+    expect(result).not.toContain('```');
+    expect(result).toContain("console.log('hello');");
+    expect(result).toContain('{"nome": "teste"}');
+  });
+
+  test('conteúdo multi-file sem fences retorna inalterado (exceto espaço extra)', () => {
+    const clean = `--- FILE: script.js ---
+console.log('hello');
+
+--- FILE: README.md ---
+# Instruções`;
+    const result = normalizeVisibleContent(clean);
+    expect(result).toContain('--- FILE: script.js ---');
+    expect(result).toContain('--- FILE: README.md ---');
+    expect(result).toContain("console.log('hello');");
+    expect(result).toContain('# Instruções');
+  });
+
+  test('README.md preserva fences internas legítimas após normalização', () => {
+    const withReadme = `--- FILE: script.js ---
+console.log('hello');
+
+--- FILE: README.md ---
+# Como usar
+
+\`\`\`bash
+node script.js
+\`\`\``;
+    const result = normalizeVisibleContent(withReadme);
+    expect(result).toContain('--- FILE: README.md ---');
+    expect(result).toContain('```bash');
+    expect(result).not.toContain('```javascript');
+  });
+
+  test('formato alternativo (#### headers) é convertido e normalizado', () => {
+    const alt = `#### script.js
+\`\`\`javascript
+const x = 1;
+\`\`\`
+
+#### dados.json
+\`\`\`json
+{"x": 1}
+\`\`\``;
+    const result = normalizeVisibleContent(alt);
+    expect(result).toContain('--- FILE: script.js ---');
+    expect(result).toContain('--- FILE: dados.json ---');
+    expect(result).not.toContain('```');
+    expect(result).toContain('const x = 1;');
+  });
+
+  test('entrada null retorna null', () => {
+    expect(normalizeVisibleContent(null)).toBeNull();
+  });
+
+  test('entrada string vazia retorna string vazia', () => {
+    expect(normalizeVisibleContent('')).toBe('');
+  });
+
+  test('entrada "Sem resposta" retorna sem alteração', () => {
+    expect(normalizeVisibleContent('Sem resposta')).toBe('Sem resposta');
   });
 });
