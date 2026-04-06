@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from "react";
 import "../styles/HybridAgent.css";
 import ArtifactPreviewPanel from "../components/construtor/ArtifactPreviewPanel";
+import { normalizeVisibleContent } from "../lib/construtor/artifactNormalizer";
 
 /**
  * Renders AI response text with basic markdown formatting.
@@ -251,7 +252,7 @@ export default function HybridAgentSimple() {
       }
 
       const data = await response.json();
-      const aiResponse = data.text || data.response || data.message || "Sem resposta";
+      const aiResponse = normalizeVisibleContent(data.text || data.response || data.message || "Sem resposta");
 
       // Extrair informação do motor ativo (120B vs 70B) e status de fallback
       const modelInfo = data.model || {};

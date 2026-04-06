@@ -23,118 +23,14 @@ import archiver from 'archiver';
 
 import { generateManifest } from './artifactManifest.js';
 import { generateGenerationLog, generateStructureLog } from './artifactLogger.js';
+import {
+  stripMarkdownFences,
+  tryNormalizeAlternativeFormat,
+  parseMultiFileContent,
+} from './artifactNormalizer.js';
 
-// ── Resolução de MIME por extensão ───────────────────────────────────────────
-
-const MIME_MAP = {
-  '.html': 'text/html',
-  '.css': 'text/css',
-  '.js': 'application/javascript',
-  '.md': 'text/markdown',
-  '.json': 'application/json',
-  '.txt': 'text/plain',
-};
-
-/**
- * Resolve o tipo MIME a partir do nome do arquivo.
- * @param {string} filename
- * @returns {string}
- */
-function resolveMime(filename) {
-  const ext = filename.slice(filename.lastIndexOf('.')).toLowerCase();
-  return MIME_MAP[ext] || 'application/octet-stream';
-}
-
-// ── Parser de formato multiarquivo ────────────────────────────────────────────
-
-const MIN_MULTI_FILE_COUNT = 2;
-
-/**
- * Remove fences markdown residuais (```language ... ```) do conteúdo de um arquivo.
- * Para arquivos .md: remove apenas fence envolvente (início + fim) — preserva fences
- * internas que podem ser intencionais em documentação.
- * Para arquivos de código: remove TODOS os fences (abertura e fechamento).
- * Garante contrato de código bruto sem marcação markdown.
- * @param {string} content
- * @param {string} [filename] - nome do arquivo para decisão contextual
- * @returns {string}
- */
-export function stripMarkdownFences(content, filename) {
-  const isMd = filename && /\.md$/i.test(filename);
-
-  if (isMd) {
-    // Para .md: remover apenas fence envolvente (wrapper) se presente
-    let cleaned = content.replace(/^```[a-zA-Z0-9_+#-]*\s*\n?/, '');
-    cleaned = cleaned.replace(/\n?```\s*$/, '');
-    return cleaned.trim();
-  }
-
-  // Para código: remover TODOS os fences — opening e closing
-  let cleaned = content.replace(/^```[a-zA-Z0-9_+#-]*\s*$/gm, '');
-  return cleaned.trim();
-}
-
-/**
- * Detecta formato alternativo onde a LLM usou headers markdown (#### ou ### nome.ext)
- * com fences em vez de delimitadores --- FILE: ---. Converte para formato canônico.
- * Retorna o conteúdo normalizado ou null se não detectou o padrão alternativo.
- * @param {string} content
- * @returns {string | null}
- */
-export function tryNormalizeAlternativeFormat(content) {
-  // Match ### and #### headers only (h3/h4) — these are the levels the LLM uses for filenames
-  const ALT_PATTERN = /^#{3,4}\s+(\S+\.\w+)\s*$/gm;
-  const matches = [...content.matchAll(ALT_PATTERN)];
-
-  if (matches.length < MIN_MULTI_FILE_COUNT) return null;
-
-  // Extension length capped at 10 chars to reject section headers disguised as filenames
-  const fileExtRegex = /\.\w{1,10}$/;
-  const validFiles = matches.filter((m) => fileExtRegex.test(m[1].trim()));
-  if (validFiles.length < MIN_MULTI_FILE_COUNT) return null;
-
-  let normalized = content;
-  for (const m of validFiles) {
-    const filename = m[1].trim();
-    normalized = normalized.replace(m[0], `--- FILE: ${filename} ---`);
-  }
-
-  return normalized;
-}
-
-/**
- * Tenta parsear conteúdo no formato multiarquivo com delimitadores --- FILE: <path> ---.
- * Retorna array de { name, content, type } ou null se não for multiarquivo.
- * @param {string} content
- * @returns {Array<{name: string, content: string, type: string}> | null}
- */
-export function parseMultiFileContent(content) {
-  const FILE_DELIMITER = /^---\s*FILE:\s*(.+?)\s*---\s*$/gm;
-  const matches = [...content.matchAll(FILE_DELIMITER)];
-
-  if (matches.length < MIN_MULTI_FILE_COUNT) {
-    const normalized = tryNormalizeAlternativeFormat(content);
-    if (normalized) {
-      return parseMultiFileContent(normalized);
-    }
-    return null;
-  }
-
-  const files = [];
-  for (let i = 0; i < matches.length; i++) {
-    const name = matches[i][1].trim();
-    const start = matches[i].index + matches[i][0].length;
-    const end = i + 1 < matches.length ? matches[i + 1].index : content.length;
-    let fileContent = content.slice(start, end).trim();
-    fileContent = stripMarkdownFences(fileContent, name);
-
-    if (!fileContent) return null;
-
-    files.push({ name, content: fileContent, type: resolveMime(name) });
-  }
-
-  return files.length >= MIN_MULTI_FILE_COUNT ? files : null;
-}
+// Re-export pure normalizer functions for backwards compatibility with existing callers.
+export { stripMarkdownFences, tryNormalizeAlternativeFormat, parseMultiFileContent, normalizeVisibleContent } from './artifactNormalizer.js';
 
 // ── Detecção de tipo de conteúdo ─────────────────────────────────────────────
 
