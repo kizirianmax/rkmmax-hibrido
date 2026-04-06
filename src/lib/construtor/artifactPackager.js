@@ -51,13 +51,26 @@ const MIN_MULTI_FILE_COUNT = 2;
 
 /**
  * Remove fences markdown residuais (```language ... ```) do conteúdo de um arquivo.
+ * Para arquivos .md: remove apenas fence envolvente (início + fim) — preserva fences
+ * internas que podem ser intencionais em documentação.
+ * Para arquivos de código: remove TODOS os fences (abertura e fechamento).
  * Garante contrato de código bruto sem marcação markdown.
  * @param {string} content
+ * @param {string} [filename] - nome do arquivo para decisão contextual
  * @returns {string}
  */
-export function stripMarkdownFences(content) {
-  let cleaned = content.replace(/^```[a-zA-Z0-9_+#-]*\s*\n?/, '');
-  cleaned = cleaned.replace(/\n?```\s*$/, '');
+export function stripMarkdownFences(content, filename) {
+  const isMd = filename && /\.md$/i.test(filename);
+
+  if (isMd) {
+    // Para .md: remover apenas fence envolvente (wrapper) se presente
+    let cleaned = content.replace(/^```[a-zA-Z0-9_+#-]*\s*\n?/, '');
+    cleaned = cleaned.replace(/\n?```\s*$/, '');
+    return cleaned.trim();
+  }
+
+  // Para código: remover TODOS os fences — opening e closing
+  let cleaned = content.replace(/^```[a-zA-Z0-9_+#-]*\s*$/gm, '');
   return cleaned.trim();
 }
 
@@ -113,7 +126,7 @@ export function parseMultiFileContent(content) {
     const start = matches[i].index + matches[i][0].length;
     const end = i + 1 < matches.length ? matches[i + 1].index : content.length;
     let fileContent = content.slice(start, end).trim();
-    fileContent = stripMarkdownFences(fileContent);
+    fileContent = stripMarkdownFences(fileContent, name);
 
     if (!fileContent) return null;
 
