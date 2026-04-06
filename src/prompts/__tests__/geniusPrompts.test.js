@@ -913,6 +913,10 @@ describe('HYBRID_GENIUS_PROMPT — bloco de formato de saída multiarquivo', () 
   it('bloco E de estrutura obrigatória de landing page ainda está presente', () => {
     expect(HYBRID_GENIUS_PROMPT).toContain('E. ESTRUTURA OBRIGATÓRIA PARA LANDING PAGES');
   });
+
+  it('proíbe fence markdown no conteúdo de artefatos web', () => {
+    expect(HYBRID_GENIUS_PROMPT).toContain('PROIBIDO fence markdown nos arquivos');
+  });
 });
 
 // ─── Bloco: FORMATO DE SAÍDA PARA CÓDIGO no HYBRID_GENIUS_PROMPT ─────────────

@@ -472,6 +472,67 @@ console.log('ok');`;
     expect(result).not.toBeNull();
     expect(result.some((f) => f.name === 'README.md')).toBe(true);
   });
+
+  test('remove fences markdown do conteúdo dos arquivos', () => {
+    const withFences = `--- FILE: index.js ---
+\`\`\`javascript
+console.log('hello');
+\`\`\`
+
+--- FILE: dados.json ---
+\`\`\`json
+{"nome": "teste"}
+\`\`\``;
+    const result = parseMultiFileContent(withFences);
+    expect(result).not.toBeNull();
+    expect(result).toHaveLength(2);
+    expect(result[0].content).toBe("console.log('hello');");
+    expect(result[0].content).not.toContain('```');
+    expect(result[1].content).toBe('{"nome": "teste"}');
+    expect(result[1].content).not.toContain('```');
+  });
+
+  test('conteúdo sem fences permanece inalterado', () => {
+    const clean = `--- FILE: index.js ---
+console.log('hello');
+
+--- FILE: style.css ---
+body { margin: 0; }`;
+    const result = parseMultiFileContent(clean);
+    expect(result).not.toBeNull();
+    expect(result[0].content).toBe("console.log('hello');");
+    expect(result[1].content).toBe('body { margin: 0; }');
+  });
+
+  test('remove fence sem identificador de linguagem', () => {
+    const withPlainFence = `--- FILE: index.js ---
+\`\`\`
+console.log('hello');
+\`\`\`
+
+--- FILE: style.css ---
+\`\`\`
+body { margin: 0; }
+\`\`\``;
+    const result = parseMultiFileContent(withPlainFence);
+    expect(result).not.toBeNull();
+    expect(result[0].content).toBe("console.log('hello');");
+    expect(result[0].content).not.toContain('```');
+  });
+
+  test('remove fence com identificador hyphenado (objective-c)', () => {
+    const withHyphen = `--- FILE: main.m ---
+\`\`\`objective-c
+NSLog(@"hello");
+\`\`\`
+
+--- FILE: README.md ---
+# Docs`;
+    const result = parseMultiFileContent(withHyphen);
+    expect(result).not.toBeNull();
+    expect(result[0].content).toBe('NSLog(@"hello");');
+    expect(result[0].content).not.toContain('```');
+  });
 });
 
 // ─── packageArtifact — multiarquivo ──────────────────────────────────────────
