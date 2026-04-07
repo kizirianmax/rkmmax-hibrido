@@ -10,7 +10,7 @@
  */
 
 import { packageArtifact } from '../artifactPackager.js';
-import { validateArtifact } from '../artifactValidator.js';
+import { validateArtifact, validateFileContent, validateMultiFileCompleteness } from '../artifactValidator.js';
 import { computeChecksum } from '../artifactManifest.js';
 
 // Bytes mágicos do formato ZIP: PK\x03\x04
@@ -285,5 +285,217 @@ describe('validateArtifact', () => {
       expect(result.valid).toBe(false);
       expect(result.errors.length).toBeGreaterThan(1);
     });
+  });
+});
+
+// ─── validateFileContent ──────────────────────────────────────────────────────
+
+describe('validação de conteúdo de arquivo', () => {
+  // ── arquivo vazio ──────────────────────────────────────────────────────────
+  describe('arquivo vazio ou muito curto', () => {
+    test('arquivo vazio → warning de conteúdo vazio', () => {
+      const result = validateFileContent('app.js', '');
+      expect(result.warnings.some((w) => w.includes('vazio'))).toBe(true);
+      expect(result.errors).toHaveLength(0);
+    });
+
+    test('apenas whitespace → warning de conteúdo vazio', () => {
+      const result = validateFileContent('app.js', '   \n\t  ');
+      expect(result.warnings.some((w) => w.includes('vazio'))).toBe(true);
+    });
+
+    test('conteúdo menor que 10 chars → warning de conteúdo curto', () => {
+      const result = validateFileContent('note.txt', 'hi');
+      expect(result.warnings.some((w) => w.includes('curto'))).toBe(true);
+    });
+  });
+
+  // ── .json ─────────────────────────────────────────────────────────────────
+  describe('.json', () => {
+    test('JSON válido → sem errors nem warnings de conteúdo', () => {
+      const result = validateFileContent('config.json', '{"name": "test", "version": "1.0.0"}');
+      expect(result.errors).toHaveLength(0);
+      expect(result.warnings).toHaveLength(0);
+    });
+
+    test('JSON truncado → error claro', () => {
+      const result = validateFileContent('config.json', '{"name": "test"');
+      expect(result.errors.some((e) => e.includes('JSON inválido'))).toBe(true);
+    });
+
+    test('JSON completamente inválido → error', () => {
+      const result = validateFileContent('data.json', '{nome: sem-aspas}');
+      expect(result.errors.some((e) => e.includes('JSON inválido'))).toBe(true);
+    });
+
+    test('array JSON válido → sem errors', () => {
+      const result = validateFileContent('items.json', '[1, 2, 3]');
+      expect(result.errors).toHaveLength(0);
+    });
+  });
+
+  // ── .js / .ts ─────────────────────────────────────────────────────────────
+  describe('.js / .ts', () => {
+    test('função completa → sem warnings', () => {
+      const complete = `function greet(name) {\n  return 'Hello ' + name;\n}\n\nmodule.exports = { greet };`;
+      const result = validateFileContent('greet.js', complete);
+      expect(result.warnings).toHaveLength(0);
+      expect(result.errors).toHaveLength(0);
+    });
+
+    test('função aberta (bloco não fechado) → warning de chave não fechada', () => {
+      const truncated = `function foo() {`;
+      const result = validateFileContent('app.js', truncated);
+      expect(result.warnings.some((w) => w.includes('chave'))).toBe(true);
+    });
+
+    test('arquivo .ts com bloco aberto → warning', () => {
+      const truncated = `export class MyService {\n  constructor() {`;
+      const result = validateFileContent('service.ts', truncated);
+      expect(result.warnings.some((w) => w.includes('chave'))).toBe(true);
+    });
+
+    test('arquivo .mjs completo → sem warnings', () => {
+      const complete = `export const add = (a, b) => a + b;\nexport default add;`;
+      const result = validateFileContent('utils.mjs', complete);
+      expect(result.warnings).toHaveLength(0);
+    });
+
+    test('última linha terminando em "," → warning de corte abrupto', () => {
+      const result = validateFileContent('config.js', 'const x = {\n  a: 1,\n  b: 2,');
+      expect(result.warnings.some((w) => w.includes('corte abrupto'))).toBe(true);
+    });
+
+    test('última linha terminando em "=>" → warning de corte abrupto', () => {
+      const result = validateFileContent('fn.js', 'const fn = (x) =>');
+      expect(result.warnings.some((w) => w.includes('corte abrupto'))).toBe(true);
+    });
+  });
+
+  // ── .html ─────────────────────────────────────────────────────────────────
+  describe('.html', () => {
+    test('HTML completo → sem warnings', () => {
+      const complete = `<!DOCTYPE html>\n<html>\n<head><title>Test</title></head>\n<body><p>Hello</p></body>\n</html>`;
+      const result = validateFileContent('index.html', complete);
+      expect(result.warnings).toHaveLength(0);
+      expect(result.errors).toHaveLength(0);
+    });
+
+    test('HTML sem </html> → warning', () => {
+      const truncated = `<!DOCTYPE html>\n<html>\n<head><title>Test</title></head>\n<body><p>Hello</p></body>`;
+      const result = validateFileContent('index.html', truncated);
+      expect(result.warnings.some((w) => w.includes('</html>'))).toBe(true);
+    });
+
+    test('HTML sem </body> → warning', () => {
+      const truncated = `<html>\n<head></head>\n<body><p>truncado`;
+      const result = validateFileContent('index.html', truncated);
+      expect(result.warnings.some((w) => w.includes('</body>'))).toBe(true);
+    });
+
+    test('HTML sem </head> → warning', () => {
+      const truncated = `<html>\n<head><title>Test</title>`;
+      const result = validateFileContent('index.html', truncated);
+      expect(result.warnings.some((w) => w.includes('</head>'))).toBe(true);
+    });
+
+    test('HTML parcial sem tags estruturais → sem warnings de estrutura', () => {
+      const partial = `<p>Parágrafo simples</p>`;
+      const result = validateFileContent('snippet.html', partial);
+      expect(result.warnings.filter((w) => w.includes('</html>'))).toHaveLength(0);
+    });
+  });
+
+  // ── .md ───────────────────────────────────────────────────────────────────
+  describe('.md', () => {
+    test('Markdown completo → sem warnings', () => {
+      const complete = `# Título\n\nEste é um parágrafo completo.\n\n## Seção\n\nMais conteúdo aqui.`;
+      const result = validateFileContent('README.md', complete);
+      expect(result.warnings).toHaveLength(0);
+      expect(result.errors).toHaveLength(0);
+    });
+
+    test('termina com heading vazio "# " → warning', () => {
+      const result = validateFileContent('doc.md', '# Título\n\nConteúdo.\n\n# ');
+      expect(result.warnings.some((w) => w.includes('heading Markdown vazio'))).toBe(true);
+    });
+
+    test('termina com item de lista vazio "- " → warning', () => {
+      const result = validateFileContent('doc.md', '# Lista\n\n- item 1\n- ');
+      expect(result.warnings.some((w) => w.includes('item de lista Markdown vazio'))).toBe(true);
+    });
+
+    test('termina com item numerado vazio "1. " → warning', () => {
+      const result = validateFileContent('doc.md', '# Lista\n\n1. primeiro\n1. ');
+      expect(result.warnings.some((w) => w.includes('item de lista Markdown vazio'))).toBe(true);
+    });
+
+    test('fence de código aberto (sem fechamento) → warning', () => {
+      const result = validateFileContent('doc.md', '# Código\n\n```javascript\nconst x = 1;');
+      expect(result.warnings.some((w) => w.includes('bloco de código Markdown'))).toBe(true);
+    });
+
+    test('fence de código fechado corretamente → sem warning de fence', () => {
+      const result = validateFileContent('doc.md', '# Código\n\n```javascript\nconst x = 1;\n```\n\nFim.');
+      expect(result.warnings.filter((w) => w.includes('bloco de código'))).toHaveLength(0);
+    });
+  });
+});
+
+// ─── validateMultiFileCompleteness ───────────────────────────────────────────
+
+describe('validateMultiFileCompleteness', () => {
+  test('array vazio → sem errors nem warnings', () => {
+    const result = validateMultiFileCompleteness([]);
+    expect(result.errors).toHaveLength(0);
+    expect(result.warnings).toHaveLength(0);
+  });
+
+  test('todos os arquivos completos → sem warnings de conteúdo', () => {
+    const files = [
+      { name: 'index.html', content: '<!DOCTYPE html>\n<html>\n<head></head>\n<body><p>OK</p></body>\n</html>' },
+      { name: 'styles.css', content: 'body { margin: 0; }' },
+      { name: 'script.js', content: "console.log('ready');" },
+    ];
+    const result = validateMultiFileCompleteness(files);
+    expect(result.errors).toHaveLength(0);
+    expect(result.warnings).toHaveLength(0);
+  });
+
+  test('último arquivo truncado → warning especial de corte', () => {
+    const files = [
+      { name: 'index.html', content: '<html><head></head><body></body></html>' },
+      { name: 'script.js', content: 'function init() {' },
+    ];
+    const result = validateMultiFileCompleteness(files);
+    expect(result.warnings.some((w) => w.includes('script.js'))).toBe(true);
+  });
+
+  test('arquivo .json inválido no meio → error com nome do arquivo', () => {
+    const files = [
+      { name: 'config.json', content: '{"name": "test"' },
+      { name: 'index.js', content: "console.log('ok');" },
+    ];
+    const result = validateMultiFileCompleteness(files);
+    expect(result.errors.some((e) => e.includes('config.json'))).toBe(true);
+  });
+
+  test('multi-file com .json válido e .js completo → sem warnings de conteúdo', () => {
+    const files = [
+      { name: 'package.json', content: '{"name": "proj", "version": "1.0.0"}' },
+      { name: 'index.js', content: "const x = 1;\nmodule.exports = x;" },
+    ];
+    const result = validateMultiFileCompleteness(files);
+    expect(result.errors).toHaveLength(0);
+    expect(result.warnings).toHaveLength(0);
+  });
+
+  test('último arquivo termina em "," → warning de corte abrupto no último arquivo', () => {
+    const files = [
+      { name: 'a.js', content: "console.log('first');" },
+      { name: 'b.js', content: 'const obj = { a: 1,' },
+    ];
+    const result = validateMultiFileCompleteness(files);
+    expect(result.warnings.some((w) => w.includes('b.js'))).toBe(true);
   });
 });
