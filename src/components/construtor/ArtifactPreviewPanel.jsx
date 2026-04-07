@@ -122,8 +122,8 @@ export default function ArtifactPreviewPanel({ preview, onDecision, onRevision, 
           </span>
           {summary.filesSummary.fileNames?.length > 0 && (
             <ul className="artifact-files-summary-list">
-              {summary.filesSummary.fileNames.map((name) => (
-                <li key={name} className="artifact-files-summary-item">{name}</li>
+              {summary.filesSummary.fileNames.map((name, i) => (
+                <li key={i} className="artifact-files-summary-item">{name}</li>
               ))}
             </ul>
           )}
@@ -134,12 +134,12 @@ export default function ArtifactPreviewPanel({ preview, onDecision, onRevision, 
       {(summary.validation?.errors?.length > 0 || summary.validation?.warnings?.length > 0) && (
         <div className="artifact-preview-messages">
           {summary.validation.errors?.map((msg, i) => (
-            <div key={i} className="artifact-message artifact-message-error">
+            <div key={`error-${i}`} className="artifact-message artifact-message-error">
               ❌ {msg}
             </div>
           ))}
           {summary.validation.warnings?.map((msg, i) => (
-            <div key={i} className="artifact-message artifact-message-warning">
+            <div key={`warning-${i}`} className="artifact-message artifact-message-warning">
               ⚠️ {msg}
             </div>
           ))}
