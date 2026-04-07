@@ -370,6 +370,41 @@ describe('validação de conteúdo de arquivo', () => {
       const result = validateFileContent('fn.js', 'const fn = (x) =>');
       expect(result.warnings.some((w) => w.includes('corte abrupto'))).toBe(true);
     });
+
+    test('última linha terminando em "{" → warning de corte abrupto', () => {
+      const result = validateFileContent('handler.js', 'module.exports = {');
+      expect(result.warnings.some((w) => w.includes('corte abrupto'))).toBe(true);
+    });
+
+    test('colchetes "[" desbalanceados → warning de colchete não fechado', () => {
+      const result = validateFileContent('data.js', 'const arr = [\n  1,\n  2,\n  3');
+      expect(result.warnings.some((w) => w.includes('colchete'))).toBe(true);
+    });
+
+    test('parênteses "(" desbalanceados → warning de parêntese não fechado', () => {
+      const result = validateFileContent('call.js', 'foo(bar(baz,');
+      expect(result.warnings.some((w) => w.includes('parêntese'))).toBe(true);
+    });
+
+    test('string não fechada na última linha → warning de string não fechada', () => {
+      const result = validateFileContent('app.js', 'const msg = "Hello World');
+      expect(result.warnings.some((w) => w.includes('string não fechada'))).toBe(true);
+    });
+  });
+
+  // ── extensão desconhecida ─────────────────────────────────────────────────
+  describe('extensão desconhecida', () => {
+    test('arquivo sem extensão reconhecida → sem errors nem warnings', () => {
+      const result = validateFileContent('Makefile', 'all:\n\tnpm test\n');
+      expect(result.errors).toHaveLength(0);
+      expect(result.warnings).toHaveLength(0);
+    });
+
+    test('arquivo .txt com conteúdo normal → sem errors nem warnings', () => {
+      const result = validateFileContent('notes.txt', 'This is a plain text file with enough content.');
+      expect(result.errors).toHaveLength(0);
+      expect(result.warnings).toHaveLength(0);
+    });
   });
 
   // ── .html ─────────────────────────────────────────────────────────────────
@@ -497,5 +532,72 @@ describe('validateMultiFileCompleteness', () => {
     ];
     const result = validateMultiFileCompleteness(files);
     expect(result.warnings.some((w) => w.includes('b.js'))).toBe(true);
+  });
+
+  test('input null → sem errors nem warnings (retorno seguro)', () => {
+    const result = validateMultiFileCompleteness(null);
+    expect(result.errors).toHaveLength(0);
+    expect(result.warnings).toHaveLength(0);
+  });
+
+  test('input não-array → sem errors nem warnings (retorno seguro)', () => {
+    const result = validateMultiFileCompleteness('not an array');
+    expect(result.errors).toHaveLength(0);
+    expect(result.warnings).toHaveLength(0);
+  });
+
+  test('multi-file com .html sem fechamento → warning para o arquivo HTML', () => {
+    const files = [
+      { name: 'index.html', content: '<html>\n<head><title>Test</title></head>\n<body><p>truncado' },
+      { name: 'styles.css', content: 'body { margin: 0; }' },
+    ];
+    const result = validateMultiFileCompleteness(files);
+    expect(result.warnings.some((w) => w.includes('index.html'))).toBe(true);
+    expect(result.warnings.some((w) => w.includes('</body>'))).toBe(true);
+  });
+});
+
+// ─── integração: validateArtifact + multi-file ────────────────────────────────
+
+describe('integração validateArtifact + multi-file', () => {
+  const multiFileContent = [
+    '--- FILE: index.html ---',
+    '<!DOCTYPE html>\n<html>\n<head><title>Test</title></head>\n<body><p>Hello</p></body>\n</html>',
+    '--- FILE: styles.css ---',
+    'body { margin: 0; padding: 0; }',
+    '--- FILE: script.js ---',
+    "console.log('ready');",
+  ].join('\n');
+
+  test('artefato multi-file completo via packageArtifact → sem warnings de truncamento', async () => {
+    const artifact = await packageArtifact({
+      content: multiFileContent,
+      metadata: sampleMetadata,
+    });
+    const result = validateArtifact(artifact);
+    expect(result.valid).toBe(true);
+    expect(result.errors).toHaveLength(0);
+    // Nenhum warning de truncamento deve aparecer para artefato completo
+    const truncationWarnings = result.warnings.filter(
+      (w) => w.includes('truncamento') || w.includes('corte abrupto') || w.includes('não fechada'),
+    );
+    expect(truncationWarnings).toHaveLength(0);
+  });
+
+  test('artefato multi-file com JS truncado → warnings de conteúdo propagados', async () => {
+    const truncatedContent = [
+      '--- FILE: index.html ---',
+      '<!DOCTYPE html>\n<html>\n<head></head>\n<body></body>\n</html>',
+      '--- FILE: app.js ---',
+      'function init() {',
+    ].join('\n');
+
+    const artifact = await packageArtifact({
+      content: truncatedContent,
+      metadata: sampleMetadata,
+    });
+    const result = validateArtifact(artifact);
+    // O artefato ainda é válido estruturalmente mas deve ter warnings de conteúdo
+    expect(result.warnings.some((w) => w.includes('app.js'))).toBe(true);
   });
 });
