@@ -30,6 +30,65 @@ function resolveMime(filename) {
 
 const MIN_MULTI_FILE_COUNT = 2;
 
+// ── Formatação leve por extensão ─────────────────────────────────────────────
+
+/**
+ * Aplica normalização leve de legibilidade ao conteúdo de um arquivo,
+ * de acordo com a sua extensão.
+ *
+ * - `.json`: pretty-print com 2 espaços se o JSON for válido; caso contrário sem alteração.
+ * - `.md`: garante quebras de linha antes de listas numeradas e headings colados.
+ * - `.js` / `.ts` / `.mjs`: garante quebra após `;` quando seguido imediatamente por outro
+ *   statement, e linha em branco entre blocos de função colados.
+ * - Qualquer outra extensão: retorna sem alteração.
+ *
+ * @param {string} filename - nome do arquivo (usado para determinar a extensão)
+ * @param {string} content  - conteúdo já parseado (após stripMarkdownFences)
+ * @returns {string}
+ */
+export function prettyFormatByExtension(filename, content) {
+  if (!content || typeof content !== 'string') return content;
+
+  const dotIndex = filename.lastIndexOf('.');
+  const ext = dotIndex === -1 ? '' : filename.slice(dotIndex).toLowerCase();
+
+  if (ext === '.json') {
+    try {
+      const parsed = JSON.parse(content);
+      return JSON.stringify(parsed, null, 2);
+    } catch {
+      return content;
+    }
+  }
+
+  if (ext === '.md') {
+    let out = content;
+    // Garante linha em branco antes de heading colado ao parágrafo anterior
+    out = out.replace(/([^\n])\n(#{1,6} )/g, '$1\n\n$2');
+    // Garante quebra de linha antes de item de lista numerada colado ao texto anterior
+    out = out.replace(/([^\n])\n(\d+\. )/g, '$1\n\n$2');
+    return out;
+  }
+
+  if (ext === '.js' || ext === '.ts' || ext === '.mjs') {
+    let out = content;
+    // Garante quebra de linha após `;` quando seguido diretamente por um início de statement
+    // (heurística conservadora: apenas palavras-chave e identificadores comuns)
+    out = out.replace(
+      /;(?=(const |let |var |function |class |return |if |else |while |do |try |throw |import |export |new |console\.|process\.|module\.|require\())/g,
+      ';\n',
+    );
+    // Garante linha em branco entre blocos function/class/const colados
+    out = out.replace(
+      /([^\n])\n((?:function |class |const \w+ = ))/g,
+      '$1\n\n$2',
+    );
+    return out;
+  }
+
+  return content;
+}
+
 // ── Funções de normalização ───────────────────────────────────────────────────
 
 /**
@@ -113,6 +172,7 @@ export function parseMultiFileContent(content) {
 
     if (!fileContent) return null;
 
+    fileContent = prettyFormatByExtension(name, fileContent);
     files.push({ name, content: fileContent, type: resolveMime(name) });
   }
 

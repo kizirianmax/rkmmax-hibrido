@@ -9,7 +9,7 @@
  * - erros de input são tratados adequadamente
  */
 
-import { packageArtifact, detectContentType, tryExtractHtmlParts, parseMultiFileContent, stripMarkdownFences, tryNormalizeAlternativeFormat, normalizeVisibleContent } from '../artifactPackager.js';
+import { packageArtifact, detectContentType, tryExtractHtmlParts, parseMultiFileContent, stripMarkdownFences, tryNormalizeAlternativeFormat, normalizeVisibleContent, prettyFormatByExtension } from '../artifactPackager.js';
 import { generateManifest, computeChecksum, resolveModelName, DEFAULT_PROMPT_ID } from '../artifactManifest.js';
 import { generateGenerationLog, generateStructureLog } from '../artifactLogger.js';
 
@@ -488,7 +488,7 @@ console.log('hello');
     expect(result).toHaveLength(2);
     expect(result[0].content).toBe("console.log('hello');");
     expect(result[0].content).not.toContain('```');
-    expect(result[1].content).toBe('{"nome": "teste"}');
+    expect(result[1].content).toBe('{\n  "nome": "teste"\n}');
     expect(result[1].content).not.toContain('```');
   });
 
@@ -773,7 +773,7 @@ console.log('hello');
     expect(result[0].content).toBe("console.log('hello');");
     expect(result[0].content).not.toContain('```');
     expect(result[1].name).toBe('dados.json');
-    expect(result[1].content).toBe('{"nome": "teste"}');
+    expect(result[1].content).toBe('{\n  "nome": "teste"\n}');
   });
 
   test('formato correto (--- FILE: ---) continua funcionando normalmente', () => {
@@ -819,7 +819,7 @@ console.log('hello');
     expect(result).not.toContain('```json');
     expect(result).not.toContain('```');
     expect(result).toContain("console.log('hello');");
-    expect(result).toContain('{"nome": "teste"}');
+    expect(result).toContain('"nome": "teste"');
   });
 
   test('conteúdo multi-file sem fences retorna inalterado (exceto espaço extra)', () => {
@@ -878,5 +878,39 @@ const x = 1;
 
   test('entrada "Sem resposta" retorna sem alteração', () => {
     expect(normalizeVisibleContent('Sem resposta')).toBe('Sem resposta');
+  });
+});
+
+// ─── prettyFormatByExtension ──────────────────────────────────────────────────
+
+describe('prettyFormatByExtension', () => {
+  test('.json em linha única → indentado com 2 espaços', () => {
+    const input = '{"itens":[{"cat":"A","nome":"x"}]}';
+    const result = prettyFormatByExtension('dados.json', input);
+    expect(result).toContain('\n');
+    expect(result).toContain('  ');
+    expect(JSON.parse(result)).toEqual(JSON.parse(input));
+  });
+
+  test('.json inválido → retorna sem alteração', () => {
+    const input = '{broken json';
+    expect(prettyFormatByExtension('dados.json', input)).toBe(input);
+  });
+
+  test('.md com listas grudadas → insere quebras', () => {
+    const input = '# Título\n1. Passo um\n2. Passo dois';
+    const result = prettyFormatByExtension('README.md', input);
+    expect(result).toContain('\n\n1. Passo');
+  });
+
+  test('.js com statements colados → insere quebras após ;', () => {
+    const input = "const fs = require('fs');const dados = JSON.parse('{}');console.log(dados);";
+    const result = prettyFormatByExtension('script.js', input);
+    expect(result).toContain(';\n');
+  });
+
+  test('.html → retorna sem alteração (extensão não tratada)', () => {
+    const input = '<div>test</div>';
+    expect(prettyFormatByExtension('index.html', input)).toBe(input);
   });
 });
