@@ -30,7 +30,7 @@ import {
 } from './artifactNormalizer.js';
 
 // Re-export pure normalizer functions for backwards compatibility with existing callers.
-export { stripMarkdownFences, tryNormalizeAlternativeFormat, parseMultiFileContent, normalizeVisibleContent } from './artifactNormalizer.js';
+export { stripMarkdownFences, tryNormalizeAlternativeFormat, parseMultiFileContent, normalizeVisibleContent, prettyFormatByExtension } from './artifactNormalizer.js';
 
 // ── Detecção de tipo de conteúdo ─────────────────────────────────────────────
 
