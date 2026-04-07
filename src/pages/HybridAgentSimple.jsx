@@ -46,6 +46,39 @@ function isMultiFileContent(text) {
 }
 
 /**
+ * Renderiza conteúdo multi-file como cards visuais separados.
+ * Cada bloco --- FILE: nome.ext --- vira um card com header destacado e corpo <pre>.
+ * Fallback para <pre> monolítico se o parse falhar.
+ */
+function MultiFileRenderer({ content }) {
+  const FILE_DELIMITER = /^---\s*FILE:\s*(.+?)\s*---\s*$/gm;
+  const matches = [...content.matchAll(FILE_DELIMITER)];
+
+  if (matches.length === 0) {
+    return <pre className="artifact-code-block">{content}</pre>;
+  }
+
+  const files = matches.map((match, i) => {
+    const name = match[1].trim();
+    const start = match.index + match[0].length;
+    const end = i + 1 < matches.length ? matches[i + 1].index : content.length;
+    const body = content.slice(start, end).trim();
+    return { name, body };
+  });
+
+  return (
+    <>
+      {files.map((file, i) => (
+        <div key={`${i}-${file.name}`} className="artifact-file-card">
+          <div className="artifact-file-card-header">📄 {file.name}</div>
+          <pre className="artifact-file-card-body">{file.body}</pre>
+        </div>
+      ))}
+    </>
+  );
+}
+
+/**
  * RKMMAX HYBRID - CONSTRUTOR (KIZI)
  * Agente Construtor: geração e entrega de artefatos via orquestrador KIZI.
  * Roteamento adaptativo multi-provedor (KIZI 2.5 Pro, Speed, Flash).
@@ -519,7 +552,7 @@ export default function HybridAgentSimple() {
               <div className="message-content">
                 {msg.type === "agent" ? (
                   isMultiFileContent(msg.content) ? (
-                    <pre className="artifact-code-block">{msg.content}</pre>
+                    <MultiFileRenderer content={msg.content} />
                   ) : (
                     <SimpleMarkdown text={msg.content} />
                   )

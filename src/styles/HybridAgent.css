@@ -263,6 +263,46 @@
   color: inherit;
 }
 
+/* Card visual para cada arquivo em artefato multi-file */
+.artifact-file-card {
+  margin-bottom: 1rem;
+  border: 1px solid rgba(168, 85, 247, 0.3);
+  border-radius: 8px;
+  overflow: hidden;
+  background: rgba(0, 0, 0, 0.25);
+}
+
+.artifact-file-card:last-child {
+  margin-bottom: 0;
+}
+
+.artifact-file-card-header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  background: rgba(168, 85, 247, 0.15);
+  border-bottom: 1px solid rgba(168, 85, 247, 0.25);
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: #d8b4fe;
+  letter-spacing: 0.02em;
+}
+
+.artifact-file-card-body {
+  white-space: pre-wrap;
+  word-break: break-word;
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 0.85rem;
+  line-height: 1.5;
+  margin: 0;
+  padding: 1rem;
+  background: transparent;
+  color: #e2e8f0;
+  overflow-x: auto;
+}
+
 /* System Message */
 .message-system {
   align-self: center;
