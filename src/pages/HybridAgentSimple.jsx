@@ -39,6 +39,12 @@ function SimpleMarkdown({ text }) {
   );
 }
 
+/** Detecta se o conteúdo é formato multi-file (contém pelo menos um --- FILE: --- ). */
+const MULTI_FILE_DELIMITER_PATTERN = /^---\s*FILE:\s*.+?---/m;
+function isMultiFileContent(text) {
+  return typeof text === "string" && MULTI_FILE_DELIMITER_PATTERN.test(text);
+}
+
 /**
  * RKMMAX HYBRID - CONSTRUTOR (KIZI)
  * Agente Construtor: geração e entrega de artefatos via orquestrador KIZI.
@@ -512,7 +518,11 @@ export default function HybridAgentSimple() {
               )}
               <div className="message-content">
                 {msg.type === "agent" ? (
-                  <SimpleMarkdown text={msg.content} />
+                  isMultiFileContent(msg.content) ? (
+                    <pre className="artifact-code-block">{msg.content}</pre>
+                  ) : (
+                    <SimpleMarkdown text={msg.content} />
+                  )
                 ) : (
                   msg.content
                 )}

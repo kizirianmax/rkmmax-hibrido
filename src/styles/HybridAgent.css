@@ -251,6 +251,18 @@
   margin-bottom: 0;
 }
 
+/* Bloco de código multi-file — preserva indentação e quebras de linha */
+.artifact-code-block {
+  white-space: pre-wrap;
+  word-break: break-word;
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 0.85rem;
+  line-height: 1.5;
+  margin: 0;
+  background: transparent;
+  color: inherit;
+}
+
 /* System Message */
 .message-system {
   align-self: center;

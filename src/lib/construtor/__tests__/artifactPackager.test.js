@@ -879,6 +879,49 @@ const x = 1;
   test('entrada "Sem resposta" retorna sem alteração', () => {
     expect(normalizeVisibleContent('Sem resposta')).toBe('Sem resposta');
   });
+
+  // ── Casos com arquivo único (parseDisplayFiles — aceita >= 1) ─────────────────
+
+  test('arquivo único com fence → fence removida, delimitador preservado', () => {
+    const single = `--- FILE: script.js ---
+\`\`\`javascript
+const x = 1;
+\`\`\``;
+    const result = normalizeVisibleContent(single);
+    expect(result).toContain('--- FILE: script.js ---');
+    expect(result).not.toContain('```');
+    expect(result).toContain('const x = 1;');
+  });
+
+  test('arquivo único JSON em linha → indentado no output visível', () => {
+    const single = `--- FILE: dados.json ---
+{"nome":"teste","valor":42}`;
+    const result = normalizeVisibleContent(single);
+    expect(result).toContain('--- FILE: dados.json ---');
+    expect(result).toContain('\n');
+    expect(result).toContain('  ');
+    expect(JSON.parse(result.replace(/^--- FILE: dados\.json ---\n/, ''))).toEqual({ nome: 'teste', valor: 42 });
+  });
+
+  test('arquivo único README.md sem fence → aplicado prettyFormat .md', () => {
+    const single = `--- FILE: README.md ---
+# Título
+1. Passo um
+2. Passo dois`;
+    const result = normalizeVisibleContent(single);
+    expect(result).toContain('--- FILE: README.md ---');
+    expect(result).toContain('# Título');
+    expect(result).toContain('1. Passo um');
+  });
+
+  test('arquivo único com conteúdo vazio após strip → retorna conteúdo sem alteração (nenhum arquivo válido)', () => {
+    const single = `--- FILE: script.js ---
+\`\`\`javascript
+\`\`\``;
+    // Arquivo vazio após strip: parseDisplayFiles retorna null → conteúdo bruto preservado
+    const result = normalizeVisibleContent(single);
+    expect(result).toBe(single);
+  });
 });
 
 // ─── prettyFormatByExtension ──────────────────────────────────────────────────
