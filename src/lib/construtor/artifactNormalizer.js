@@ -54,10 +54,19 @@ export function prettyFormatByExtension(filename, content) {
 
   if (ext === '.json') {
     try {
-      const parsed = JSON.parse(content);
+      const trimmed = content.trim();
+      const parsed = JSON.parse(trimmed);
       return JSON.stringify(parsed, null, 2);
     } catch {
-      return content;
+      // Tentar limpeza conservadora de trailing commas antes de desistir
+      try {
+        const sanitized = content.trim()
+          .replace(/,\s*([\]}])/g, '$1');  // remove trailing commas
+        const parsed = JSON.parse(sanitized);
+        return JSON.stringify(parsed, null, 2);
+      } catch {
+        return content;
+      }
     }
   }
 
@@ -72,17 +81,40 @@ export function prettyFormatByExtension(filename, content) {
 
   if (ext === '.js' || ext === '.ts' || ext === '.mjs') {
     let out = content;
-    // Garante quebra de linha após `;` quando seguido diretamente por um início de statement
-    // (heurística conservadora: apenas palavras-chave e identificadores comuns)
+
+    // 1. Garante que `} catch`, `} else`, `} finally` tenham espaço se colados
+    //    (deve rodar antes das heurísticas de quebra de linha para não conflitar)
+    out = out.replace(/\}(?!\s)(catch|else|finally)/g, '} $1');
+
+    // 2. Garante quebra de linha após `;` quando seguido diretamente por keyword de statement
     out = out.replace(
-      /;(?=(const |let |var |function |class |return |if |else |while |do |try |throw |import |export |new |console\.|process\.|module\.|require\())/g,
+      /;(?=(const |let |var |function |class |return |if |else |while |do |for |switch |try |throw |import |export |new |console\.|process\.|module\.|require\())/g,
       ';\n',
     );
-    // Garante linha em branco entre blocos function/class/const colados
+
+    // 3. Garante quebra após `}` seguido diretamente por keyword de declaração/bloco
+    //    Exemplos: `}function`, `}const`, `}class`, `}if`, `}try`
     out = out.replace(
-      /([^\n])\n((?:function |class |const \w+ = ))/g,
-      '$1\n\n$2',
+      /\}(?=(function |class |const |let |var |if |while |for |switch |try |return |throw |import |export |async ))/g,
+      '}\n\n',
     );
+
+    // 4. Garante quebra após `});` ou `})` seguido por keyword
+    out = out.replace(
+      /\}\);?\s*(?=(const |let |var |function |class |return |if |else |while |for |switch |try |throw |import |export |new |console\.|process\.|module\.|require\())/g,
+      (match) => {
+        const trimmed = match.trimEnd();
+        return trimmed + '\n';
+      },
+    );
+
+    // 5. Garante linha em branco entre blocos function/class/const colados
+    //    (quando já em linhas separadas, mas sem linha em branco entre eles)
+    out = out.replace(
+      /\}\n(?=(function |async function |class |const \w+ = (?:function|\())|export (?:default )?(?:function|class|const))/g,
+      '}\n\n',
+    );
+
     return out;
   }
 

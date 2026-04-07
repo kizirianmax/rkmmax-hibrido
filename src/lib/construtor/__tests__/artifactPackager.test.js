@@ -913,4 +913,55 @@ describe('prettyFormatByExtension', () => {
     const input = '<div>test</div>';
     expect(prettyFormatByExtension('index.html', input)).toBe(input);
   });
+
+  test('.json com espaços ao redor → indentado corretamente', () => {
+    const input = '  {"nome":"teste","valor":42}  ';
+    const result = prettyFormatByExtension('dados.json', input);
+    expect(result).toContain('\n');
+    expect(JSON.parse(result)).toEqual({ nome: 'teste', valor: 42 });
+  });
+
+  test('.json com trailing comma → limpa e indenta', () => {
+    const input = '{"itens":["a","b","c",]}';
+    const result = prettyFormatByExtension('dados.json', input);
+    expect(result).toContain('\n');
+    expect(JSON.parse(result)).toEqual({ itens: ['a', 'b', 'c'] });
+  });
+
+  test('.json já indentado → preserva (não duplica formatação)', () => {
+    const input = '{\n  "nome": "teste"\n}';
+    const result = prettyFormatByExtension('dados.json', input);
+    expect(result).toBe(input);
+  });
+
+  test('.js com } seguido de function → insere quebra', () => {
+    const input = "function a() { return 1; }function b() { return 2; }";
+    const result = prettyFormatByExtension('script.js', input);
+    expect(result).toContain('}\n\nfunction b');
+  });
+
+  test('.js com }); seguido de const → insere quebra', () => {
+    const input = "app.listen(3000, () => { console.log('ok'); });const x = 1;";
+    const result = prettyFormatByExtension('script.js', input);
+    expect(result).toContain(';\nconst x');
+  });
+
+  test('.js com }catch → insere espaço', () => {
+    const input = "try { foo(); }catch(e) { bar(); }";
+    const result = prettyFormatByExtension('script.js', input);
+    expect(result).toContain('} catch');
+  });
+
+  test('.js com }else → insere espaço', () => {
+    const input = "if (x) { foo(); }else { bar(); }";
+    const result = prettyFormatByExtension('script.js', input);
+    expect(result).toContain('} else');
+  });
+
+  test('.js já bem formatado → preserva sem alteração significativa', () => {
+    const input = "const fs = require('fs');\n\nfunction main() {\n  console.log('ok');\n}\n\nmain();";
+    const result = prettyFormatByExtension('script.js', input);
+    expect(result).toContain("const fs = require('fs');");
+    expect(result).toContain('function main()');
+  });
 });
