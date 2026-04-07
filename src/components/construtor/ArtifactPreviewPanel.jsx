@@ -105,6 +105,47 @@ export default function ArtifactPreviewPanel({ preview, onDecision, onRevision, 
         <p className="artifact-preview-hint">Revise o artefato e escolha uma ação abaixo.</p>
       )}
 
+      {/* Status Geral */}
+      {summary.status && (
+        <div className={`artifact-preview-status-geral artifact-status-${summary.status.level}`}>
+          <span className="artifact-status-label">{summary.status.label}</span>
+          <span className="artifact-status-description">{summary.status.description}</span>
+        </div>
+      )}
+
+      {/* Resumo Estrutural */}
+      {summary.filesSummary && (
+        <div className="artifact-preview-files-summary">
+          <span className="artifact-label">
+            {summary.filesSummary.totalFiles} arquivo(s)
+            {summary.filesSummary.contentType ? ` — ${summary.filesSummary.contentType}` : ''}
+          </span>
+          {summary.filesSummary.fileNames?.length > 0 && (
+            <ul className="artifact-files-summary-list">
+              {summary.filesSummary.fileNames.map((name) => (
+                <li key={name} className="artifact-files-summary-item">{name}</li>
+              ))}
+            </ul>
+          )}
+        </div>
+      )}
+
+      {/* Errors e Warnings expandidos */}
+      {(summary.validation?.errors?.length > 0 || summary.validation?.warnings?.length > 0) && (
+        <div className="artifact-preview-messages">
+          {summary.validation.errors?.map((msg, i) => (
+            <div key={i} className="artifact-message artifact-message-error">
+              ❌ {msg}
+            </div>
+          ))}
+          {summary.validation.warnings?.map((msg, i) => (
+            <div key={i} className="artifact-message artifact-message-warning">
+              ⚠️ {msg}
+            </div>
+          ))}
+        </div>
+      )}
+
       {/* Metadados */}
       <div className="artifact-preview-meta">
         <div className="artifact-preview-row">
@@ -131,15 +172,10 @@ export default function ArtifactPreviewPanel({ preview, onDecision, onRevision, 
         </div>
       </div>
 
-      {/* Status */}
+      {/* Status de validação e execução */}
       <div className="artifact-preview-status">
         {validationBadge}
         {executionBadge}
-        {summary.validation?.warningCount > 0 && (
-          <span className="artifact-badge artifact-badge-warn">
-            ⚠️ {summary.validation.warningCount} aviso(s)
-          </span>
-        )}
       </div>
 
       {/* Arquivos */}
