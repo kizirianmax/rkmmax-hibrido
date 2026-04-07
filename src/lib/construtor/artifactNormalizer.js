@@ -212,21 +212,60 @@ export function parseMultiFileContent(content) {
 }
 
 /**
+ * Parseia conteúdo para exibição no chat, aceitando 1 ou mais blocos --- FILE: ---.
+ *
+ * Ao contrário de parseMultiFileContent (que exige MIN_MULTI_FILE_COUNT = 2 para ZIP),
+ * esta função é usada exclusivamente para normalização visível e aceita arquivo único.
+ * Arquivos com conteúdo vazio após strip são ignorados (não abortam o parse).
+ *
+ * @param {string} content
+ * @returns {Array<{name: string, content: string}> | null}
+ */
+function parseDisplayFiles(content) {
+  const FILE_DELIMITER = /^---\s*FILE:\s*(.+?)\s*---\s*$/gm;
+  const matches = [...content.matchAll(FILE_DELIMITER)];
+
+  if (matches.length === 0) {
+    // Tentar formato alternativo (### headers) — requer >= 2 para essa heurística
+    const normalized = tryNormalizeAlternativeFormat(content);
+    if (normalized) return parseDisplayFiles(normalized);
+    return null;
+  }
+
+  const files = [];
+  for (let i = 0; i < matches.length; i++) {
+    const name = matches[i][1].trim();
+    const start = matches[i].index + matches[i][0].length;
+    const end = i + 1 < matches.length ? matches[i + 1].index : content.length;
+    let fileContent = content.slice(start, end).trim();
+    fileContent = stripMarkdownFences(fileContent, name);
+    if (!fileContent) continue; // pula arquivo vazio — não aborta para fins de exibição
+    fileContent = prettyFormatByExtension(name, fileContent);
+    files.push({ name, content: fileContent });
+  }
+
+  return files.length > 0 ? files : null;
+}
+
+/**
  * Normaliza o conteúdo visível de uma resposta do Construtor para exibição no chat.
  *
- * Se o conteúdo for multi-file (contém delimitadores --- FILE: ---), remove fences
- * residuais dos blocos de cada arquivo, mantendo os delimitadores --- FILE: --- visíveis.
- * Se não for multi-file, retorna o conteúdo sem alteração.
+ * Se o conteúdo contiver delimitadores --- FILE: --- (1 ou mais), aplica:
+ * - remoção de fences markdown residuais por arquivo
+ * - formatação leve por extensão (pretty-print JSON, quebras em .js/.md)
+ * mantendo os delimitadores --- FILE: --- visíveis.
  *
- * Esta função é o ponto de sincronização entre o que o pipeline de artefatos entende
- * internamente e o que o usuário vê no chat.
+ * Se não houver nenhum delimitador, retorna o conteúdo sem alteração.
+ *
+ * Usa parseDisplayFiles (aceita >= 1 arquivo) em vez de parseMultiFileContent
+ * (que exige >= 2 para fins de ZIP). O pipeline de ZIP não é afetado.
  *
  * @param {string} content - resposta bruta do LLM
  * @returns {string} - conteúdo normalizado para exibição
  */
 export function normalizeVisibleContent(content) {
   if (!content || typeof content !== 'string') return content;
-  const files = parseMultiFileContent(content);
+  const files = parseDisplayFiles(content);
   if (!files) return content;
   return files.map((f) => `--- FILE: ${f.name} ---\n${f.content}`).join('\n\n');
 }
