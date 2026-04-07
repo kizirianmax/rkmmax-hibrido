@@ -49,7 +49,8 @@ const MIN_MULTI_FILE_COUNT = 2;
 export function prettyFormatByExtension(filename, content) {
   if (!content || typeof content !== 'string') return content;
 
-  const ext = filename.slice(filename.lastIndexOf('.')).toLowerCase();
+  const dotIndex = filename.lastIndexOf('.');
+  const ext = dotIndex === -1 ? '' : filename.slice(dotIndex).toLowerCase();
 
   if (ext === '.json') {
     try {
@@ -71,11 +72,15 @@ export function prettyFormatByExtension(filename, content) {
 
   if (ext === '.js' || ext === '.ts' || ext === '.mjs') {
     let out = content;
-    // Garante quebra de linha após `;` quando seguido diretamente por outro statement
-    out = out.replace(/;([^\n\s])/g, ';\n$1');
-    // Garante linha em branco entre blocos function/const arrow/class colados
+    // Garante quebra de linha após `;` quando seguido diretamente por um início de statement
+    // (heurística conservadora: apenas palavras-chave e identificadores comuns)
     out = out.replace(
-      /([^\n])\n((?:function |class |const \w+ = (?:async )?\())/g,
+      /;(?=(const |let |var |function |class |return |if |else |while |do |try |throw |import |export |new |console\.|process\.|module\.|require\())/g,
+      ';\n',
+    );
+    // Garante linha em branco entre blocos function/class/const colados
+    out = out.replace(
+      /([^\n])\n((?:function |class |const \w+ = ))/g,
       '$1\n\n$2',
     );
     return out;
