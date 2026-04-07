@@ -133,13 +133,37 @@ export function generatePreview(artifact, validationResult = null, executionResu
     : { files: [], contentPreview: '' };
 
   // Normalizar resultado de validação
-  const validation = validationResult
-    ? {
-        valid: validationResult.valid ?? true,
-        errorCount: (validationResult.errors || []).length,
-        warningCount: (validationResult.warnings || []).length,
-      }
-    : { valid: true, errorCount: 0, warningCount: 0 };
+  const validErrors = validationResult ? (validationResult.errors || []) : [];
+  const validWarnings = validationResult ? (validationResult.warnings || []) : [];
+  const validation = {
+    valid: validationResult ? (validationResult.valid ?? true) : true,
+    errorCount: validErrors.length,
+    warningCount: validWarnings.length,
+    errors: validErrors,
+    warnings: validWarnings,
+  };
+
+  // Calcular status geral legível
+  let status;
+  if (!validation.valid) {
+    status = {
+      level: 'incomplete',
+      label: '❌ Artefato incompleto',
+      description: `${validation.errorCount} erro(s) detectado(s). Revise o artefato antes de aprovar.`,
+    };
+  } else if (validation.warningCount > 0) {
+    status = {
+      level: 'attention',
+      label: '⚠️ Atenção: avisos detectados',
+      description: `${validation.warningCount} aviso(s) de possível truncamento ou incompletude.`,
+    };
+  } else {
+    status = {
+      level: 'ok',
+      label: '✅ Artefato completo',
+      description: 'Nenhum erro ou aviso detectado.',
+    };
+  }
 
   // Normalizar resultado de execução
   let execution = null;
@@ -152,12 +176,22 @@ export function generatePreview(artifact, validationResult = null, executionResu
     };
   }
 
+  // Calcular resumo dos arquivos
+  const fileNames = files.map((f) => f.path);
+  const filesSummary = {
+    totalFiles: files.length,
+    fileNames,
+    contentType: manifest?.contentType || null,
+  };
+
   const summary = {
     id: id || null,
     version: manifest?.version || '1.0.0',
     timestamp: manifest?.timestamp || new Date().toISOString(),
     origin: manifest?.origin || { specialist: 'hybrid', model: 'unknown', promptId: 'unknown' },
     validation,
+    status,
+    filesSummary,
     execution,
     files,
     contentPreview,

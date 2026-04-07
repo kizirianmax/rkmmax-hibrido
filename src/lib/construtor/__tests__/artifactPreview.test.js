@@ -96,6 +96,30 @@ describe('generatePreview', () => {
       expect(preview.summary.validation.errorCount).toBe(0);
       expect(preview.summary.validation.warningCount).toBe(1);
     });
+
+    test('summary.validation deve conter errors e warnings como arrays quando validationResult é fornecido', async () => {
+      const artifact = await buildValidArtifact();
+      const validationResult = {
+        valid: false,
+        errors: ['script.js: possível truncamento'],
+        warnings: ['data.json: JSON inválido ou truncado'],
+      };
+      const preview = generatePreview(artifact, validationResult, null);
+
+      expect(Array.isArray(preview.summary.validation.errors)).toBe(true);
+      expect(Array.isArray(preview.summary.validation.warnings)).toBe(true);
+      expect(preview.summary.validation.errors).toContain('script.js: possível truncamento');
+      expect(preview.summary.validation.warnings).toContain('data.json: JSON inválido ou truncado');
+    });
+
+    test('summary.validation.errors e warnings devem ser arrays vazios para validação limpa', async () => {
+      const artifact = await buildValidArtifact();
+      const validationResult = { valid: true, errors: [], warnings: [] };
+      const preview = generatePreview(artifact, validationResult, null);
+
+      expect(preview.summary.validation.errors).toEqual([]);
+      expect(preview.summary.validation.warnings).toEqual([]);
+    });
   });
 
   describe('execução', () => {
@@ -180,6 +204,68 @@ describe('generatePreview', () => {
     test('deve retornar previewAvailable: false para undefined', () => {
       const preview = generatePreview(undefined, null, null);
       expect(preview.previewAvailable).toBe(false);
+    });
+  });
+
+  describe('status geral', () => {
+    test('summary.status.level deve ser "ok" para artefato válido sem warnings', async () => {
+      const artifact = await buildValidArtifact();
+      const validationResult = { valid: true, errors: [], warnings: [] };
+      const preview = generatePreview(artifact, validationResult, null);
+
+      expect(preview.summary.status.level).toBe('ok');
+    });
+
+    test('summary.status.level deve ser "attention" para artefato válido com warnings', async () => {
+      const artifact = await buildValidArtifact();
+      const validationResult = { valid: true, errors: [], warnings: ['arquivo.js: possível truncamento'] };
+      const preview = generatePreview(artifact, validationResult, null);
+
+      expect(preview.summary.status.level).toBe('attention');
+    });
+
+    test('summary.status.level deve ser "incomplete" para artefato inválido', async () => {
+      const artifact = await buildValidArtifact();
+      const validationResult = { valid: false, errors: ['id is required'], warnings: [] };
+      const preview = generatePreview(artifact, validationResult, null);
+
+      expect(preview.summary.status.level).toBe('incomplete');
+    });
+
+    test('summary.status.label deve conter texto descritivo', async () => {
+      const artifact = await buildValidArtifact();
+      const validationResult = { valid: true, errors: [], warnings: [] };
+      const preview = generatePreview(artifact, validationResult, null);
+
+      expect(typeof preview.summary.status.label).toBe('string');
+      expect(preview.summary.status.label.length).toBeGreaterThan(0);
+    });
+
+    test('summary.status deve ser "ok" quando validationResult é null', async () => {
+      const artifact = await buildValidArtifact();
+      const preview = generatePreview(artifact, null, null);
+
+      expect(preview.summary.status.level).toBe('ok');
+    });
+  });
+
+  describe('filesSummary', () => {
+    test('summary.filesSummary.totalFiles deve refletir número de arquivos no ZIP', async () => {
+      const artifact = await buildValidArtifact();
+      const preview = generatePreview(artifact, null, null);
+
+      expect(typeof preview.summary.filesSummary.totalFiles).toBe('number');
+      expect(preview.summary.filesSummary.totalFiles).toBe(preview.summary.files.length);
+    });
+
+    test('summary.filesSummary.fileNames deve ser array com nomes dos arquivos', async () => {
+      const artifact = await buildValidArtifact();
+      const preview = generatePreview(artifact, null, null);
+
+      expect(Array.isArray(preview.summary.filesSummary.fileNames)).toBe(true);
+      expect(preview.summary.filesSummary.fileNames).toEqual(
+        preview.summary.files.map((f) => f.path)
+      );
     });
   });
 });
