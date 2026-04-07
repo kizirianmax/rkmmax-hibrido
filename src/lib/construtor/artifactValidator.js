@@ -41,7 +41,7 @@ const JS_EXTS = new Set(['.js', '.ts', '.mjs', '.cjs', '.tsx', '.jsx']);
 function countChar(str, ch) {
   let count = 0;
   for (let i = 0; i < str.length; i++) {
-    if (str[i] === '\\') { i++; continue; }
+    if (str[i] === '\\' && i + 1 < str.length) { i++; continue; }
     if (str[i] === ch) count++;
   }
   return count;
@@ -104,16 +104,17 @@ export function validateFileContent(filename, content) {
     const lastLine = content.trimEnd().split('\n').pop() ?? '';
     const trimmedLast = lastLine.trim();
 
-    // string aberta na última linha (aspas simples ou duplas ímpares)
-    const singleQuotes = (lastLine.match(/(?<!\\)'/g) || []).length;
-    const doubleQuotes = (lastLine.match(/(?<!\\)"/g) || []).length;
+    // string aberta na última linha — heurística simples: conta aspas (não processa escapes complexos)
+    const singleQuotes = (lastLine.match(/'/g) || []).length;
+    const doubleQuotes = (lastLine.match(/"/g) || []).length;
     if (singleQuotes % 2 !== 0 || doubleQuotes % 2 !== 0) {
       warnings.push(`${filename}: possível truncamento — última linha com string não fechada`);
     }
 
     // padrão de corte abrupto
+    const abruptPattern = /=>$/.test(trimmedLast) ? '=>' : trimmedLast.slice(-1);
     if (/[{,]$/.test(trimmedLast) || /=>$/.test(trimmedLast)) {
-      warnings.push(`${filename}: possível truncamento — última linha termina em "${trimmedLast.slice(-2)}" (padrão de corte abrupto)`);
+      warnings.push(`${filename}: possível truncamento — última linha termina em "${abruptPattern}" (padrão de corte abrupto)`);
     }
 
     return { errors, warnings };
