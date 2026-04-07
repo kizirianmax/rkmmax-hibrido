@@ -1371,3 +1371,80 @@ describe('HYBRID_GENIUS_PROMPT — modo compacto automático', () => {
     expect(specialistPrompt).not.toContain('MODO COMPACTO AUTOMÁTICO');
   });
 });
+
+// ─── Bloco: HYBRID_GENIUS_PROMPT — padrão de legibilidade para artefatos de código ─
+describe('HYBRID_GENIUS_PROMPT — padrão de legibilidade para artefatos de código', () => {
+  it('contém bloco PADRÃO DE LEGIBILIDADE PARA ARTEFATOS DE CÓDIGO', () => {
+    expect(HYBRID_GENIUS_PROMPT).toContain('PADRÃO DE LEGIBILIDADE PARA ARTEFATOS DE CÓDIGO');
+  });
+
+  it('instrui indentação consistente', () => {
+    expect(HYBRID_GENIUS_PROMPT).toContain('Indentação consistente');
+  });
+
+  it('instrui linha em branco entre funções e blocos lógicos', () => {
+    expect(HYBRID_GENIUS_PROMPT).toContain('Linha em branco entre funções');
+  });
+
+  it('instrui JSON pretty-printed', () => {
+    expect(HYBRID_GENIUS_PROMPT).toContain('JSON sempre pretty-printed');
+  });
+
+  it('instrui README.md com título e seções bem separadas', () => {
+    expect(HYBRID_GENIUS_PROMPT).toContain('título com #');
+  });
+
+  it('instrui código pronto para copiar/colar', () => {
+    expect(HYBRID_GENIUS_PROMPT).toContain('copiar/colar e executar sem reformatação');
+  });
+
+  it('bloco de legibilidade aparece DEPOIS do formato de código e ANTES de PROIBIÇÕES', () => {
+    const legibilidadeIdx = HYBRID_GENIUS_PROMPT.indexOf('PADRÃO DE LEGIBILIDADE PARA ARTEFATOS DE CÓDIGO');
+    const formatoCodigoIdx = HYBRID_GENIUS_PROMPT.indexOf('FORMATO DE SAÍDA PARA CÓDIGO');
+    const proibIdx = HYBRID_GENIUS_PROMPT.indexOf('PROIBIÇÕES:');
+    expect(legibilidadeIdx).toBeGreaterThan(formatoCodigoIdx);
+    expect(legibilidadeIdx).toBeLessThan(proibIdx);
+  });
+
+  it('legibilidade NÃO aparece no prompt do Serginho', () => {
+    const serginhoPrompt = buildGeniusPrompt('serginho');
+    expect(serginhoPrompt).not.toContain('PADRÃO DE LEGIBILIDADE PARA ARTEFATOS DE CÓDIGO');
+  });
+
+  it('legibilidade NÃO aparece no prompt de especialistas', () => {
+    const specialistPrompt = buildGeniusPrompt('specialist', {
+      name: 'Code',
+      description: 'Especialista em programação',
+      category: 'tech',
+      systemPrompt: 'Responda apenas questões de desenvolvimento.',
+    });
+    expect(specialistPrompt).not.toContain('PADRÃO DE LEGIBILIDADE PARA ARTEFATOS DE CÓDIGO');
+  });
+});
+
+// ─── Bloco: HYBRID_SELF_REFLECTION_SUFFIX — verificação de legibilidade de código ─
+describe('HYBRID_SELF_REFLECTION_SUFFIX — verificação de legibilidade de código', () => {
+  it('contém bloco LEGIBILIDADE DE CÓDIGO', () => {
+    expect(HYBRID_SELF_REFLECTION_SUFFIX).toContain('LEGIBILIDADE DE CÓDIGO');
+  });
+
+  it('verifica indentação consistente', () => {
+    expect(HYBRID_SELF_REFLECTION_SUFFIX).toContain('indentação consistente');
+  });
+
+  it('verifica espaçamento entre funções/blocos', () => {
+    expect(HYBRID_SELF_REFLECTION_SUFFIX).toContain('linhas em branco entre funções');
+  });
+
+  it('verifica JSON pretty-printed', () => {
+    expect(HYBRID_SELF_REFLECTION_SUFFIX).toContain('pretty-printed');
+  });
+
+  it('verifica legibilidade do README.md', () => {
+    expect(HYBRID_SELF_REFLECTION_SUFFIX).toContain('README.md');
+  });
+
+  it('instrui corrigir código denso antes de entregar', () => {
+    expect(HYBRID_SELF_REFLECTION_SUFFIX).toContain('copiar/colar');
+  });
+});
