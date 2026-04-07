@@ -196,5 +196,5 @@ export function normalizeVisibleContent(content) {
   if (!content || typeof content !== 'string') return content;
   const files = parseMultiFileContent(content);
   if (!files) return content;
-  return files.map((f) => `--- FILE: ${f.name} ---\n${prettyFormatByExtension(f.name, f.content)}`).join('\n\n');
+  return files.map((f) => `--- FILE: ${f.name} ---\n${f.content}`).join('\n\n');
 }
