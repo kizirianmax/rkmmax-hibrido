@@ -74,6 +74,7 @@ export default async function handler(req, res) {
       messages,
       agentType,
       specialistId,
+      forceProvider,
     } = req.body;
 
     if (!messages || !Array.isArray(messages) || messages.length === 0) {
@@ -190,10 +191,17 @@ export default async function handler(req, res) {
       }
 
       // Execute via Serginho Orchestrator
+      // forceProvider is optional — when absent, auto-routing applies (Groq-only).
+      // When present, the orchestrator's A5.7 guard validates the provider is enabled.
+      const orchOptions = {};
+      if (forceProvider) {
+        orchOptions.forceProvider = forceProvider;
+      }
       const result = await executeAITask(
         optimized.messages,
         optimized.systemPrompt,
-        { source: 'ai-api', type: promptType }
+        { source: 'ai-api', type: promptType },
+        orchOptions
       );
 
       const response = {
