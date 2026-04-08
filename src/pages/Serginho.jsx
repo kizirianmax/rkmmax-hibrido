@@ -49,6 +49,8 @@ export default function Serginho() {
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [isRecording, setIsRecording] = useState(false);
+  // Gemini test toggle — reversível: remover este useState e referências abaixo
+  const [useGemini, setUseGemini] = useState(false);
   const messagesEndRef = useRef(null);
   const mediaRecorderRef = useRef(null);
   const fileInputRef = useRef(null);
@@ -95,6 +97,8 @@ export default function Serginho() {
           messages: newMessages,
           agentType: "serginho", // Prompts de gênio do Serginho
           mode: "OTIMIZADO", // Otimização de custo ativada
+          // Gemini test toggle — quando ativo, força provider Gemini 2.5 Pro (reversível)
+          ...(useGemini ? { forceProvider: "gemini-pro" } : {}),
         }),
       });
 
@@ -406,6 +410,26 @@ export default function Serginho() {
                 }}
               >
                 ⚡ KIZI Flash
+              </span>
+              {/* Gemini test toggle — reversível: remover este <span> */}
+              <span
+                onClick={() => setUseGemini((prev) => !prev)}
+                style={{
+                  fontSize: "0.65rem",
+                  background: useGemini
+                    ? "linear-gradient(135deg, #4285f4, #34a853)"
+                    : "rgba(255,255,255,0.15)",
+                  color: "white",
+                  padding: "2px 6px",
+                  borderRadius: "10px",
+                  cursor: "pointer",
+                  opacity: useGemini ? 1 : 0.5,
+                  transition: "all 0.2s ease",
+                  border: useGemini ? "1px solid rgba(66,133,244,0.5)" : "1px solid transparent",
+                }}
+                title={useGemini ? "Gemini 2.5 Pro ATIVO — clique para desativar" : "Clique para testar Gemini 2.5 Pro"}
+              >
+                {useGemini ? "♊ Gemini ON" : "♊ Gemini"}
               </span>
             </div>
           </div>
