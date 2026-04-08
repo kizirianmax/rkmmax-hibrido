@@ -1136,3 +1136,22 @@ textarea:disabled {
   margin-left: auto;
   flex-shrink: 0;
 }
+
+/* ===== PASSO 8 — Badge de versão do artefato ===== */
+.artifact-version-badge {
+  padding: 1px 8px;
+  border-radius: 4px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  background: rgba(100, 116, 139, 0.2);
+  color: #94a3b8;
+  border: 1px solid rgba(100, 116, 139, 0.3);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.02em;
+}
+
+.artifact-version-revised {
+  background: rgba(168, 85, 247, 0.15);
+  color: #c084fc;
+  border-color: rgba(168, 85, 247, 0.4);
+}
