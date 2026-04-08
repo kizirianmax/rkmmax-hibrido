@@ -603,6 +603,28 @@ describe('SerginhoOrchestrator', () => {
       expect(result.execution.status).toBe('success');
     });
 
+    test('A5.7: throws explicit error when forceProvider is disabled (GEMINI_API_KEY absent)', async () => {
+      // Ensure GEMINI_API_KEY is NOT set
+      const savedKey = process.env.GEMINI_API_KEY;
+      delete process.env.GEMINI_API_KEY;
+      serginho.resetMetrics();
+      serginho.clearCache();
+      serginho.resetCircuitBreakers();
+      try {
+        await expect(
+          serginho.handleRequest({
+            message: 'Test Gemini disabled',
+            messages: [],
+            context: {},
+            options: { forceProvider: 'gemini-pro' }
+          })
+        ).rejects.toThrow('GEMINI_API_KEY');
+      } finally {
+        // Restore key if it was set
+        if (savedKey !== undefined) process.env.GEMINI_API_KEY = savedKey;
+      }
+    });
+
     test('clean shutdown — no pending handles after abort', async () => {
       global.fetch = createSlowFetch();
 
