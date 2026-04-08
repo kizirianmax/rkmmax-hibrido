@@ -1,18 +1,19 @@
 import { useState } from 'react';
 
 /**
- * ArtifactPreviewPanel — Fase 2D (PASSO 4: feedback estruturado)
+ * ArtifactPreviewPanel — Fase 2D (PASSO 5: continuidade visual do ciclo de revisão)
  *
  * Painel de decisão humana sobre o artefato gerado pelo Construtor.
  * Exibe summary, status de validação/execução, lista de arquivos,
  * preview do conteúdo e permite: aprovar, solicitar ajuste ou rejeitar.
  *
  * Props:
- *   preview     {object}   — objeto retornado por generatePreview() / /api/artifact-preview
- *   onDecision  {function} — callback(decision, feedback) chamado ao aprovar/rejeitar
- *   onRevision  {function} — callback({category, focusFile, comment}) chamado ao solicitar ajuste
- *   loading     {boolean}  — exibir estado de carregamento
- *   delivery    {object}   — { zipBase64 } retornado na aprovação (opcional)
+ *   preview        {object}   — objeto retornado por generatePreview() / /api/artifact-preview
+ *   onDecision     {function} — callback(decision, feedback) chamado ao aprovar/rejeitar
+ *   onRevision     {function} — callback({category, focusFile, comment}) chamado ao solicitar ajuste
+ *   loading        {boolean}  — exibir estado de carregamento
+ *   delivery       {object}   — { zipBase64 } retornado na aprovação (opcional)
+ *   lastAdjustment {object}   — último ajuste solicitado {category, focusFile, comment, timestamp} (opcional)
  */
 
 // PASSO 4 — Categorias de ajuste (opcionais)
@@ -24,7 +25,7 @@ const ADJUSTMENT_CATEGORIES = [
   { key: 'visual', label: '🎨 Visual', description: 'Apresentação e aparência' },
 ];
 
-export default function ArtifactPreviewPanel({ preview, onDecision, onRevision, loading = false, delivery }) {
+export default function ArtifactPreviewPanel({ preview, onDecision, onRevision, loading = false, delivery, lastAdjustment = null }) {
   const [rejectionFeedback, setRejectionFeedback] = useState('');
   const [showRejectionInput, setShowRejectionInput] = useState(false);
   const [adjustmentFeedback, setAdjustmentFeedback] = useState('');
@@ -124,6 +125,27 @@ export default function ArtifactPreviewPanel({ preview, onDecision, onRevision, 
       </div>
       {isPending && (
         <p className="artifact-preview-hint">Revise o artefato e escolha uma ação abaixo.</p>
+      )}
+
+      {/* PASSO 5 — Banner de continuidade: último ajuste solicitado */}
+      {lastAdjustment && (
+        <div className="artifact-last-adjustment">
+          <span className="artifact-last-adjustment-label">🔁 Ajuste em andamento:</span>
+          <div className="artifact-last-adjustment-details">
+            {lastAdjustment.category && (
+              <span className="artifact-last-adjustment-chip">{lastAdjustment.category}</span>
+            )}
+            {lastAdjustment.focusFile && (
+              <span className="artifact-last-adjustment-file">{lastAdjustment.focusFile}</span>
+            )}
+            {lastAdjustment.comment && (
+              <span className="artifact-last-adjustment-comment">{lastAdjustment.comment}</span>
+            )}
+            {!lastAdjustment.category && !lastAdjustment.focusFile && !lastAdjustment.comment && (
+              <span className="artifact-last-adjustment-comment">Revisão geral solicitada</span>
+            )}
+          </div>
+        </div>
       )}
 
       {/* Status Geral */}

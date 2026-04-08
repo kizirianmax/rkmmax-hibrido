@@ -116,6 +116,8 @@ export default function HybridAgentSimple() {
   const [previewLoading, setPreviewLoading] = useState({});
   const [previewErrors, setPreviewErrors] = useState({});
   const [deliveryData, setDeliveryData] = useState({});
+  // PASSO 5 — último ajuste solicitado (para continuidade visual)
+  const [lastAdjustment, setLastAdjustment] = useState(null);
   const messagesEndRef = useRef(null);
   const mediaRecorderRef = useRef(null);
 
@@ -234,6 +236,14 @@ export default function HybridAgentSimple() {
   const handleRequestRevision = (msgId, feedbackFromPanel) => {
     let revisionText;
 
+    // PASSO 5 — helper para criar o objeto lastAdjustment com timestamp
+    const buildLastAdjustment = (category, focusFile, comment) => ({
+      category: category || null,
+      focusFile: focusFile || null,
+      comment: comment || null,
+      timestamp: new Date().toISOString(),
+    });
+
     if (feedbackFromPanel && typeof feedbackFromPanel === 'object' && !Array.isArray(feedbackFromPanel)) {
       // PASSO 4 — feedback estruturado {category, focusFile, comment}
       const parts = ['[Revisão solicitada]'];
@@ -242,6 +252,8 @@ export default function HybridAgentSimple() {
       if (feedbackFromPanel.comment) parts.push(`Observação: ${feedbackFromPanel.comment}.`);
       parts.push('Por favor, revise e gere uma nova versão do artefato.');
       revisionText = parts.join(' ');
+      // PASSO 5 — preservar último ajuste para continuidade visual
+      setLastAdjustment(buildLastAdjustment(feedbackFromPanel.category, feedbackFromPanel.focusFile, feedbackFromPanel.comment));
     } else {
       // Compatibilidade com feedback string simples (legado)
       const currentPreview = previews[msgId];
@@ -249,6 +261,10 @@ export default function HybridAgentSimple() {
       revisionText = feedback
         ? `[Revisão solicitada] Feedback: ${feedback}. Por favor, revise e gere uma nova versão do artefato.`
         : "[Revisão solicitada] Por favor, revise e gere uma nova versão do artefato.";
+      // PASSO 5 — preservar apenas quando o usuário passou string explícita (não fallback do preview)
+      if (typeof feedbackFromPanel === 'string' && feedbackFromPanel.trim()) {
+        setLastAdjustment(buildLastAdjustment(null, null, feedbackFromPanel));
+      }
     }
     setPreviews((prev) => { const updated = { ...prev }; delete updated[msgId]; return updated; });
     setPreviewErrors((prev) => { const updated = { ...prev }; delete updated[msgId]; return updated; });
@@ -602,6 +618,7 @@ export default function HybridAgentSimple() {
                       }
                       onRevision={(fb) => handleRequestRevision(msg.id, fb)}
                       delivery={deliveryData[msg.id]}
+                      lastAdjustment={lastAdjustment}
                     />
                   )}
                   {previewErrors[msg.id] && previews[msg.id] && (
