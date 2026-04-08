@@ -1,7 +1,7 @@
 import { useState } from 'react';
 
 /**
- * ArtifactPreviewPanel — Fase 2D (PASSO 6: histórico local de revisão)
+ * ArtifactPreviewPanel — Fase 2D (PASSO 6: histórico local de revisão; PASSO 7: apresentação melhorada do histórico)
  *
  * Painel de decisão humana sobre o artefato gerado pelo Construtor.
  * Exibe summary, status de validação/execução, lista de arquivos,
@@ -388,10 +388,12 @@ export default function ArtifactPreviewPanel({ preview, onDecision, onRevision, 
         </div>
       )}
 
-      {/* PASSO 6 — Histórico de Revisão */}
+      {/* PASSO 6 + PASSO 7 — Histórico de Revisão (apresentação melhorada) */}
       {reviewHistory.length > 0 && (
         <div className="artifact-review-history">
-          <span className="artifact-review-history-title">📋 Histórico de Revisão</span>
+          <span className="artifact-review-history-title">
+            📋 Histórico de Revisão ({reviewHistory.length} {reviewHistory.length === 1 ? 'evento' : 'eventos'})
+          </span>
           <ul className="artifact-review-history-list">
             {reviewHistory.map((event, i) => {
               const iconMap = {
@@ -411,13 +413,18 @@ export default function ArtifactPreviewPanel({ preview, onDecision, onRevision, 
               const text = event.text && event.text.length > MAX_REVIEW_TEXT_LENGTH
                 ? `${event.text.slice(0, MAX_REVIEW_TEXT_LENGTH)}...`
                 : event.text;
+              const isLatest = i === reviewHistory.length - 1;
               return (
-                <li key={`${event.type}-${event.timestamp}`} className="artifact-review-history-item">
+                <li
+                  key={`${event.type}-${event.timestamp}`}
+                  className={`artifact-review-history-item${isLatest ? ' artifact-review-history-latest' : ''}`}
+                >
+                  <span className="artifact-review-history-seq">#{i + 1}</span>
                   <span className="artifact-review-history-icon">{icon}</span>
                   <span className="artifact-review-history-label">{label}</span>
                   {text && <span className="artifact-review-history-text">{text}</span>}
                   <span className="artifact-review-history-time">
-                    {new Date(event.timestamp).toLocaleString('pt-BR')}
+                    {formatReviewTime(event.timestamp)}
                   </span>
                 </li>
               );
@@ -439,6 +446,20 @@ export default function ArtifactPreviewPanel({ preview, onDecision, onRevision, 
       )}
     </div>
   );
+}
+
+/** PASSO 7 — Formata timestamp de revisão de forma compacta: "14:32 — 08/04" */
+function formatReviewTime(timestamp) {
+  try {
+    const d = new Date(timestamp);
+    const hh = String(d.getHours()).padStart(2, '0');
+    const mm = String(d.getMinutes()).padStart(2, '0');
+    const dd = String(d.getDate()).padStart(2, '0');
+    const mo = String(d.getMonth() + 1).padStart(2, '0');
+    return `${hh}:${mm} — ${dd}/${mo}`;
+  } catch {
+    return '—';
+  }
 }
 
 /** Formata bytes em unidade legível. */
