@@ -328,7 +328,7 @@ describe('HYBRID_GENIUS_PROMPT — padrão premium para artefatos web', () => {
   });
 });
 
-// ─── Bloco 5b: HYBRID_GENIUS_PROMPT — anti-padrões de copy e critérios de densidade ──
+// ─── Bloco 5b: HYBRID_GENIUS_PROMPT — anti-padrões e critérios de densidade ──
 
 describe('HYBRID_GENIUS_PROMPT — anti-padrões de copy e critérios de densidade', () => {
   it('contém bloco ANTI-PADRÕES DE COPY', () => {
@@ -337,10 +337,12 @@ describe('HYBRID_GENIUS_PROMPT — anti-padrões de copy e critérios de densida
 
   it('lista headlines vagas como anti-padrão', () => {
     expect(HYBRID_GENIUS_PROMPT).toContain('Headlines vagas');
+    expect(HYBRID_GENIUS_PROMPT).toContain('Bem-vindo');
   });
 
   it('lista CTAs fracos como anti-padrão', () => {
     expect(HYBRID_GENIUS_PROMPT).toContain('CTAs fracos');
+    expect(HYBRID_GENIUS_PROMPT).toContain('Clique aqui');
   });
 
   it('instrui teste de genericidade (trocar nome da marca)', () => {
@@ -359,7 +361,7 @@ describe('HYBRID_GENIUS_PROMPT — anti-padrões de copy e critérios de densida
     expect(HYBRID_GENIUS_PROMPT).toContain('não usar sempre roxo');
   });
 
-  it('exige classe .visible com opacity e transform reais no CSS', () => {
+  it('exige classe .visible com opacity e transform reais no CSS para fade-in', () => {
     expect(HYBRID_GENIUS_PROMPT).toContain('.visible');
   });
 });
@@ -407,7 +409,7 @@ describe('HYBRID_SELF_REFLECTION_SUFFIX — verificações de qualidade web', ()
   });
 });
 
-// ─── Bloco 6b: HYBRID_SELF_REFLECTION_SUFFIX — verificação anti-genérico ─────
+// ─── Bloco 6b: HYBRID_SELF_REFLECTION_SUFFIX — verificação anti-genérico ──
 
 describe('HYBRID_SELF_REFLECTION_SUFFIX — verificação anti-genérico', () => {
   it('contém bloco QUALIDADE DE CONTEÚDO', () => {
