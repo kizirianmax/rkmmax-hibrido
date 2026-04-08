@@ -243,7 +243,6 @@ Todos os erros seguem o formato: `{ "error": { "code": "...", "message": "...", 
 | [HYBRID_SYSTEM_DEPLOYMENT.md](HYBRID_SYSTEM_DEPLOYMENT.md) | Deploy do sistema híbrido |
 | [IMPLEMENTATION_COMPLETE.md](IMPLEMENTATION_COMPLETE.md) | Implementação completa do sistema |
 | [IMPLEMENTATION_SUMMARY.md](IMPLEMENTATION_SUMMARY.md) | Resumo das implementações |
-| [UPGRADE_GEMINI_2.5_PRO.md](UPGRADE_GEMINI_2.5_PRO.md) | Upgrade do modelo Gemini 2.5 Pro |
 
 ---
 
@@ -315,9 +314,7 @@ Todos os arquivos `.md` na raiz do repositório:
 | [ANALISE_REPOSITORIO_FINAL.md](ANALISE_REPOSITORIO_FINAL.md) | Análise final do repositório |
 | [CHANGELOG_CONSOLIDACAO.md](CHANGELOG_CONSOLIDACAO.md) | Consolidação do changelog |
 | [VALIDACAO_FINAL.md](VALIDACAO_FINAL.md) | Validação final |
-| [UPGRADE_GEMINI_2.5_PRO.md](UPGRADE_GEMINI_2.5_PRO.md) | Upgrade Gemini 2.5 Pro |
 | [REACT_NATIVE_SETUP.md](REACT_NATIVE_SETUP.md) | Setup React Native |
-| [RELATORIO_GEMINI_ERRO.md](RELATORIO_GEMINI_ERRO.md) | Relatório de erro do Gemini |
 | [auditoria_tecnica_rkmmax_hibrido.md](auditoria_tecnica_rkmmax_hibrido.md) | Auditoria técnica |
 | [TODO_MIGRATE_TESTS.md](TODO_MIGRATE_TESTS.md) | TODO migração de testes |
 | [PR_72_SUMMARY.md](PR_72_SUMMARY.md) | Resumo do PR #72 |

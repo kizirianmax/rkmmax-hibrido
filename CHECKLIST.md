@@ -1,4 +1,4 @@
-# ✅ Checklist Projeto RKMMax (Atualizado — 23/10/2025)
+# ✅ Checklist Projeto RKMMax (Atualizado — 08/04/2026)
 
 ## 2026-04-01 — fix(boot): causa residual #3 da tela branca — supabaseClient.js crasha com env vars ausentes
 
