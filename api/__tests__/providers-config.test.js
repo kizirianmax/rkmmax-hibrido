@@ -20,7 +20,7 @@ describe('providers-config', () => {
       expect(providerNames).toContain('llama-70b');
       expect(providerNames).toContain('llama-8b');
       expect(providerNames).toContain('groq-fallback');
-      expect(providerNames).toContain('gemini-flash');
+      expect(providerNames).toContain('gemini-pro');
     });
 
     test('each provider has required fields', () => {
@@ -116,7 +116,7 @@ describe('providers-config', () => {
       expect(names).toContain('llama-70b');
       expect(names).toContain('llama-8b');
       expect(names).toContain('groq-fallback');
-      expect(names).toContain('gemini-flash');
+      expect(names).toContain('gemini-pro');
     });
 
     test('returns correct number of providers', () => {
@@ -187,26 +187,26 @@ describe('providers-config', () => {
     });
 
     test('Gemini provider uses Google endpoint', () => {
-      const config = getProviderConfig('gemini-flash');
+      const config = getProviderConfig('gemini-pro');
       expect(config.endpoint).toContain('generativelanguage.googleapis.com');
     });
   });
 
   describe('Gemini provider', () => {
-    test('gemini-flash has correct type', () => {
-      expect(PROVIDERS['gemini-flash'].type).toBe('google');
+    test('gemini-pro has correct type', () => {
+      expect(PROVIDERS['gemini-pro'].type).toBe('google');
     });
 
-    test('gemini-flash has correct model', () => {
-      expect(PROVIDERS['gemini-flash'].model).toBe('gemini-2.0-flash');
+    test('gemini-pro has correct model', () => {
+      expect(PROVIDERS['gemini-pro'].model).toBe('gemini-2.5-pro');
     });
 
-    test('gemini-flash has simple tier', () => {
-      expect(PROVIDERS['gemini-flash'].tier).toBe('simple');
+    test('gemini-pro has complex tier', () => {
+      expect(PROVIDERS['gemini-pro'].tier).toBe('complex');
     });
 
-    test('gemini-flash has temperature and maxOutputTokens', () => {
-      const config = PROVIDERS['gemini-flash'];
+    test('gemini-pro has temperature and maxOutputTokens', () => {
+      const config = PROVIDERS['gemini-pro'];
       expect(config.defaultParams.temperature).toBeDefined();
       expect(config.defaultParams.maxOutputTokens).toBeDefined();
     });
@@ -247,25 +247,25 @@ describe('getEnabledProviders', () => {
     expect(enabled).toEqual([]);
   });
 
-  test('includes gemini-flash when GEMINI_API_KEY is set', () => {
+  test('includes gemini-pro when GEMINI_API_KEY is set', () => {
     process.env.GROQ_API_KEY = 'test-groq-key';
     process.env.GEMINI_API_KEY = 'test-gemini-key';
     const enabled = getEnabledProviders();
-    expect(enabled).toContain('gemini-flash');
+    expect(enabled).toContain('gemini-pro');
   });
 
-  test('excludes gemini-flash when GEMINI_API_KEY is absent', () => {
+  test('excludes gemini-pro when GEMINI_API_KEY is absent', () => {
     process.env.GROQ_API_KEY = 'test-groq-key';
     delete process.env.GEMINI_API_KEY;
     const enabled = getEnabledProviders();
-    expect(enabled).not.toContain('gemini-flash');
+    expect(enabled).not.toContain('gemini-pro');
   });
 
   test('returns only gemini providers when only GEMINI_API_KEY is set', () => {
     delete process.env.GROQ_API_KEY;
     process.env.GEMINI_API_KEY = 'test-gemini-key';
     const enabled = getEnabledProviders();
-    expect(enabled).toContain('gemini-flash');
+    expect(enabled).toContain('gemini-pro');
     enabled.forEach(name => {
       expect(PROVIDERS[name].type).toBe('google');
     });

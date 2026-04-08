@@ -245,7 +245,7 @@ class SerginhoOrchestrator {
     this.modelRegistry.registerModel('llama-3.1-8b-instant', 'simple', 0.00);
     this.modelRegistry.registerModel('mixtral-8x7b-32768', 'simple', 0.00);
     // Gemini models (new)
-    this.modelRegistry.registerModel('gemini-2.0-flash', 'simple', 0.00);
+    this.modelRegistry.registerModel('gemini-2.5-pro', 'complex', 0.00);
   }
 
   /**
