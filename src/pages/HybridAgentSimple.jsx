@@ -78,6 +78,35 @@ function MultiFileRenderer({ content }) {
   );
 }
 
+// PASSO 9 — helpers de persistência do ciclo de revisão em sessionStorage
+const REVIEW_CYCLE_STORAGE_KEY = 'construtor_review_cycle';
+
+const loadReviewCycle = () => {
+  try {
+    const raw = sessionStorage.getItem(REVIEW_CYCLE_STORAGE_KEY);
+    if (!raw) return null;
+    const parsed = JSON.parse(raw);
+    if (parsed && typeof parsed === 'object') return parsed;
+  } catch { /* ignorar dados corrompidos */ }
+  return null;
+};
+
+const saveReviewCycle = (history, version, adjustment) => {
+  try {
+    sessionStorage.setItem(REVIEW_CYCLE_STORAGE_KEY, JSON.stringify({
+      reviewHistory: history,
+      artifactVersion: version,
+      lastAdjustment: adjustment,
+    }));
+  } catch { /* sessionStorage indisponível ou cheio — falhar silenciosamente */ }
+};
+
+const clearReviewCycle = () => {
+  try {
+    sessionStorage.removeItem(REVIEW_CYCLE_STORAGE_KEY);
+  } catch { /* ignorar */ }
+};
+
 /**
  * RKMMAX HYBRID - CONSTRUTOR (KIZI)
  * Agente Construtor: geração e entrega de artefatos via orquestrador KIZI.
@@ -116,35 +145,6 @@ export default function HybridAgentSimple() {
   const [previewLoading, setPreviewLoading] = useState({});
   const [previewErrors, setPreviewErrors] = useState({});
   const [deliveryData, setDeliveryData] = useState({});
-  // PASSO 9 — chave de persistência em sessionStorage
-  const REVIEW_CYCLE_STORAGE_KEY = 'construtor_review_cycle';
-
-  const loadReviewCycle = () => {
-    try {
-      const raw = sessionStorage.getItem(REVIEW_CYCLE_STORAGE_KEY);
-      if (!raw) return null;
-      const parsed = JSON.parse(raw);
-      if (parsed && typeof parsed === 'object') return parsed;
-    } catch { /* ignorar dados corrompidos */ }
-    return null;
-  };
-
-  const saveReviewCycle = (history, version, adjustment) => {
-    try {
-      sessionStorage.setItem(REVIEW_CYCLE_STORAGE_KEY, JSON.stringify({
-        reviewHistory: history,
-        artifactVersion: version,
-        lastAdjustment: adjustment,
-      }));
-    } catch { /* sessionStorage indisponível ou cheio — falhar silenciosamente */ }
-  };
-
-  const clearReviewCycle = () => {
-    try {
-      sessionStorage.removeItem(REVIEW_CYCLE_STORAGE_KEY);
-    } catch { /* ignorar */ }
-  };
-
   // Carregar ciclo salvo (PASSO 9)
   const savedCycle = loadReviewCycle();
 
@@ -212,7 +212,7 @@ export default function HybridAgentSimple() {
   // PASSO 9 — persistir ciclo de revisão em sessionStorage
   useEffect(() => {
     saveReviewCycle(reviewHistory, artifactVersion, lastAdjustment);
-  }, [reviewHistory, artifactVersion, lastAdjustment]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [reviewHistory, artifactVersion, lastAdjustment]);
 
   // Fase 2D — gerar preview de um artefato (mensagem do agente)
   const handleGeneratePreview = async (msg) => {
