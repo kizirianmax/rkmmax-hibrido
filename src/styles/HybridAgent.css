@@ -707,6 +707,50 @@ textarea:disabled {
   margin: 0 0 0.75rem 0;
 }
 
+/* PASSO 5 — Banner de continuidade do ciclo de revisão */
+.artifact-last-adjustment {
+  background: rgba(168, 85, 247, 0.1);
+  border: 1px solid rgba(168, 85, 247, 0.35);
+  border-radius: 6px;
+  padding: 0.5rem 0.75rem;
+  margin-bottom: 0.75rem;
+  font-size: 0.75rem;
+}
+
+.artifact-last-adjustment-label {
+  display: block;
+  font-weight: 600;
+  color: #c084fc;
+  margin-bottom: 0.25rem;
+}
+
+.artifact-last-adjustment-details {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  align-items: center;
+}
+
+.artifact-last-adjustment-chip {
+  background: rgba(168, 85, 247, 0.25);
+  color: #e9d5ff;
+  border-radius: 4px;
+  padding: 0.1rem 0.45rem;
+  font-size: 0.72rem;
+  font-weight: 600;
+}
+
+.artifact-last-adjustment-file {
+  color: #94a3b8;
+  font-family: monospace;
+  font-size: 0.72rem;
+}
+
+.artifact-last-adjustment-comment {
+  color: #cbd5e1;
+  font-size: 0.72rem;
+}
+
 .artifact-preview-meta {
   display: flex;
   flex-direction: column;
