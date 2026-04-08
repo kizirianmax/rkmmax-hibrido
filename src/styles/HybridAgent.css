@@ -916,6 +916,60 @@ textarea:disabled {
   flex-wrap: wrap;
 }
 
+/* PASSO 4 — Feedback estruturado */
+.artifact-adjust-categories {
+  display: flex;
+  gap: 0.35rem;
+  flex-wrap: wrap;
+  margin-bottom: 0.4rem;
+}
+
+.artifact-category-chip {
+  padding: 3px 10px;
+  border-radius: 12px;
+  font-size: 0.72rem;
+  font-weight: 500;
+  cursor: pointer;
+  border: 1px solid rgba(255, 193, 7, 0.25);
+  background: rgba(255, 193, 7, 0.08);
+  color: #ffc107;
+  transition: background 0.15s, border-color 0.15s;
+  white-space: nowrap;
+}
+
+.artifact-category-chip:hover {
+  background: rgba(255, 193, 7, 0.18);
+  border-color: rgba(255, 193, 7, 0.45);
+}
+
+.artifact-category-chip.selected {
+  background: rgba(255, 193, 7, 0.28);
+  border-color: rgba(255, 193, 7, 0.7);
+  color: #fff;
+  font-weight: 600;
+}
+
+.artifact-adjust-file-select {
+  margin-bottom: 0.4rem;
+}
+
+.artifact-adjust-file-select select {
+  width: 100%;
+  background: rgba(15, 23, 42, 0.9);
+  border: 1px solid rgba(168, 85, 247, 0.3);
+  border-radius: 6px;
+  color: #e2e8f0;
+  padding: 0.3rem 0.5rem;
+  font-size: 0.78rem;
+  font-family: monospace;
+}
+
+.artifact-adjust-hint {
+  font-size: 0.68rem;
+  color: #64748b;
+  margin-bottom: 0.3rem;
+}
+
 .artifact-preview-entry {
   display: inline-flex;
   align-items: center;

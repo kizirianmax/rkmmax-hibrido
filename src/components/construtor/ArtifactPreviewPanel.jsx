@@ -1,7 +1,7 @@
 import { useState } from 'react';
 
 /**
- * ArtifactPreviewPanel — Fase 2D
+ * ArtifactPreviewPanel — Fase 2D (PASSO 4: feedback estruturado)
  *
  * Painel de decisão humana sobre o artefato gerado pelo Construtor.
  * Exibe summary, status de validação/execução, lista de arquivos,
@@ -10,15 +10,28 @@ import { useState } from 'react';
  * Props:
  *   preview     {object}   — objeto retornado por generatePreview() / /api/artifact-preview
  *   onDecision  {function} — callback(decision, feedback) chamado ao aprovar/rejeitar
- *   onRevision  {function} — callback(feedback) chamado ao solicitar ajuste ou revisão
+ *   onRevision  {function} — callback({category, focusFile, comment}) chamado ao solicitar ajuste
  *   loading     {boolean}  — exibir estado de carregamento
  *   delivery    {object}   — { zipBase64 } retornado na aprovação (opcional)
  */
+
+// PASSO 4 — Categorias de ajuste (opcionais)
+const ADJUSTMENT_CATEGORIES = [
+  { key: 'estrutura', label: '🏗️ Estrutura', description: 'Organização dos arquivos ou blocos' },
+  { key: 'conteudo', label: '📝 Conteúdo', description: 'Texto, dados ou lógica do código' },
+  { key: 'legibilidade', label: '👁️ Legibilidade', description: 'Clareza, formatação, separação' },
+  { key: 'incompletude', label: '⚠️ Incompletude', description: 'Partes faltando ou truncadas' },
+  { key: 'visual', label: '🎨 Visual', description: 'Apresentação e aparência' },
+];
+
 export default function ArtifactPreviewPanel({ preview, onDecision, onRevision, loading = false, delivery }) {
   const [rejectionFeedback, setRejectionFeedback] = useState('');
   const [showRejectionInput, setShowRejectionInput] = useState(false);
   const [adjustmentFeedback, setAdjustmentFeedback] = useState('');
   const [showAdjustInput, setShowAdjustInput] = useState(false);
+  // PASSO 4 — estados do feedback estruturado
+  const [selectedCategory, setSelectedCategory] = useState(null);
+  const [selectedFile, setSelectedFile] = useState(null);
 
   if (loading) {
     return (
@@ -76,8 +89,16 @@ export default function ArtifactPreviewPanel({ preview, onDecision, onRevision, 
   };
 
   const handleAdjustConfirm = () => {
-    onRevision?.(adjustmentFeedback || null);
+    // PASSO 4 — enviar objeto estruturado em vez de string crua
+    const structuredFeedback = {
+      category: selectedCategory || null,
+      focusFile: selectedFile || null,
+      comment: adjustmentFeedback || null,
+    };
+    onRevision?.(structuredFeedback);
     setAdjustmentFeedback('');
+    setSelectedCategory(null);
+    setSelectedFile(null);
     setShowAdjustInput(false);
   };
 
@@ -255,6 +276,36 @@ export default function ArtifactPreviewPanel({ preview, onDecision, onRevision, 
             </>
           ) : showAdjustInput ? (
             <div className="artifact-rejection-form">
+              {/* PASSO 4 — Chips de categoria (opcionais) */}
+              <div className="artifact-adjust-categories">
+                {ADJUSTMENT_CATEGORIES.map((cat) => (
+                  <button
+                    key={cat.key}
+                    className={`artifact-category-chip${selectedCategory === cat.key ? ' selected' : ''}`}
+                    title={cat.description}
+                    onClick={() => setSelectedCategory(selectedCategory === cat.key ? null : cat.key)}
+                    type="button"
+                  >
+                    {cat.label}
+                  </button>
+                ))}
+              </div>
+              {/* PASSO 4 — Seletor de arquivo-foco (aparece quando há arquivos) */}
+              {(summary.filesSummary?.fileNames?.length > 0 || summary.files?.length > 0) && (
+                <div className="artifact-adjust-file-select">
+                  <select
+                    value={selectedFile || ''}
+                    onChange={(e) => setSelectedFile(e.target.value || null)}
+                    aria-label="Arquivo-foco do ajuste"
+                  >
+                    <option value="">Arquivo-foco (opcional)</option>
+                    {(summary.filesSummary?.fileNames || summary.files?.map((f) => f.path) || []).map((name) => (
+                      <option key={name} value={name}>{name}</option>
+                    ))}
+                  </select>
+                </div>
+              )}
+              <p className="artifact-adjust-hint">Categoria e arquivo são opcionais — texto livre também funciona</p>
               <textarea
                 className="artifact-rejection-textarea"
                 placeholder="O que deve ser ajustado? (opcional)"
@@ -272,7 +323,11 @@ export default function ArtifactPreviewPanel({ preview, onDecision, onRevision, 
                 </button>
                 <button
                   className="artifact-btn artifact-btn-cancel"
-                  onClick={() => setShowAdjustInput(false)}
+                  onClick={() => {
+                    setShowAdjustInput(false);
+                    setSelectedCategory(null);
+                    setSelectedFile(null);
+                  }}
                 >
                   Cancelar
                 </button>

@@ -230,13 +230,26 @@ export default function HybridAgentSimple() {
     }
   };
 
-  // Fase 2D — solicitar revisão após rejeição
+  // Fase 2D — solicitar revisão após rejeição (PASSO 4: suporte a objeto estruturado)
   const handleRequestRevision = (msgId, feedbackFromPanel) => {
-    const currentPreview = previews[msgId];
-    const feedback = feedbackFromPanel ?? currentPreview?.feedback;
-    const revisionText = feedback
-      ? `[Revisão solicitada] Feedback: ${feedback}. Por favor, revise e gere uma nova versão do artefato.`
-      : "[Revisão solicitada] Por favor, revise e gere uma nova versão do artefato.";
+    let revisionText;
+
+    if (feedbackFromPanel && typeof feedbackFromPanel === 'object' && !Array.isArray(feedbackFromPanel)) {
+      // PASSO 4 — feedback estruturado {category, focusFile, comment}
+      const parts = ['[Revisão solicitada]'];
+      if (feedbackFromPanel.category) parts.push(`Tipo: ${feedbackFromPanel.category}.`);
+      if (feedbackFromPanel.focusFile) parts.push(`Arquivo-foco: ${feedbackFromPanel.focusFile}.`);
+      if (feedbackFromPanel.comment) parts.push(`Observação: ${feedbackFromPanel.comment}.`);
+      parts.push('Por favor, revise e gere uma nova versão do artefato.');
+      revisionText = parts.join(' ');
+    } else {
+      // Compatibilidade com feedback string simples (legado)
+      const currentPreview = previews[msgId];
+      const feedback = feedbackFromPanel ?? currentPreview?.feedback;
+      revisionText = feedback
+        ? `[Revisão solicitada] Feedback: ${feedback}. Por favor, revise e gere uma nova versão do artefato.`
+        : "[Revisão solicitada] Por favor, revise e gere uma nova versão do artefato.";
+    }
     setPreviews((prev) => { const updated = { ...prev }; delete updated[msgId]; return updated; });
     setPreviewErrors((prev) => { const updated = { ...prev }; delete updated[msgId]; return updated; });
     setInput(revisionText);
