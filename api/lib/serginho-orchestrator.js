@@ -1160,24 +1160,27 @@ class SerginhoOrchestrator {
       };
     }
 
-    const url = `${config.endpoint}?key=${apiKey}`;
+    const url = config.endpoint;
 
     const response = await fetch(url, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: {
+        'Content-Type': 'application/json',
+        'x-goog-api-key': apiKey,
+      },
       body: JSON.stringify(requestBody),
       ...(signal ? { signal } : {}),
     });
 
     if (!response.ok) {
-      const errorText = await response.text().catch(() => '');
+      const errorText = await response.text().catch((e) => `(unable to parse: ${e.message})`);
       throw new Error(`Gemini API error: ${response.status} ${errorText}`);
     }
 
     const data = await response.json();
 
     if (!data.candidates || !data.candidates[0]?.content?.parts?.[0]?.text) {
-      throw new Error('Invalid Gemini response structure');
+      throw new Error(`Invalid Gemini response structure: ${JSON.stringify(data)}`);
     }
 
     return {
