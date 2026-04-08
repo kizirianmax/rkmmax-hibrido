@@ -78,6 +78,35 @@ function MultiFileRenderer({ content }) {
   );
 }
 
+// PASSO 9 — helpers de persistência do ciclo de revisão em sessionStorage
+const REVIEW_CYCLE_STORAGE_KEY = 'construtor_review_cycle';
+
+const loadReviewCycle = () => {
+  try {
+    const raw = sessionStorage.getItem(REVIEW_CYCLE_STORAGE_KEY);
+    if (!raw) return null;
+    const parsed = JSON.parse(raw);
+    if (parsed && typeof parsed === 'object') return parsed;
+  } catch { /* ignorar dados corrompidos */ }
+  return null;
+};
+
+const saveReviewCycle = (history, version, adjustment) => {
+  try {
+    sessionStorage.setItem(REVIEW_CYCLE_STORAGE_KEY, JSON.stringify({
+      reviewHistory: history,
+      artifactVersion: version,
+      lastAdjustment: adjustment,
+    }));
+  } catch { /* sessionStorage indisponível ou cheio — falhar silenciosamente */ }
+};
+
+const clearReviewCycle = () => {
+  try {
+    sessionStorage.removeItem(REVIEW_CYCLE_STORAGE_KEY);
+  } catch { /* ignorar */ }
+};
+
 /**
  * RKMMAX HYBRID - CONSTRUTOR (KIZI)
  * Agente Construtor: geração e entrega de artefatos via orquestrador KIZI.
@@ -116,12 +145,15 @@ export default function HybridAgentSimple() {
   const [previewLoading, setPreviewLoading] = useState({});
   const [previewErrors, setPreviewErrors] = useState({});
   const [deliveryData, setDeliveryData] = useState({});
+  // Carregar ciclo salvo (PASSO 9)
+  const savedCycle = loadReviewCycle();
+
   // PASSO 5 — último ajuste solicitado (para continuidade visual)
-  const [lastAdjustment, setLastAdjustment] = useState(null);
+  const [lastAdjustment, setLastAdjustment] = useState(savedCycle?.lastAdjustment ?? null);
   // PASSO 6 — histórico local de revisão global (array linear, independente de msgId)
-  const [reviewHistory, setReviewHistory] = useState([]);
+  const [reviewHistory, setReviewHistory] = useState(savedCycle?.reviewHistory ?? []);
   // PASSO 8 — versão do artefato no ciclo de revisão
-  const [artifactVersion, setArtifactVersion] = useState(1);
+  const [artifactVersion, setArtifactVersion] = useState(savedCycle?.artifactVersion ?? 1);
   // PASSO 6 — sinaliza que o próximo preview é continuação de uma revisão (preservar histórico)
   const revisionPendingRef = useRef(false);
   const messagesEndRef = useRef(null);
@@ -177,6 +209,11 @@ export default function HybridAgentSimple() {
     }
   }, []);
 
+  // PASSO 9 — persistir ciclo de revisão em sessionStorage
+  useEffect(() => {
+    saveReviewCycle(reviewHistory, artifactVersion, lastAdjustment);
+  }, [reviewHistory, artifactVersion, lastAdjustment]);
+
   // Fase 2D — gerar preview de um artefato (mensagem do agente)
   const handleGeneratePreview = async (msg) => {
     const msgId = msg.id;
@@ -184,6 +221,8 @@ export default function HybridAgentSimple() {
     if (!revisionPendingRef.current) {
       setReviewHistory([]);
       setArtifactVersion(1);     // PASSO 8 — artefato novo → versão 1
+      setLastAdjustment(null);   // garantir reset completo
+      clearReviewCycle();        // PASSO 9 — limpar sessionStorage ao iniciar artefato novo
     } else {
       setArtifactVersion((v) => v + 1);  // PASSO 8 — revisão → incrementa versão
     }
