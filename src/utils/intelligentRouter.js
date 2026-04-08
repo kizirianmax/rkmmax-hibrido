@@ -359,6 +359,7 @@ export const FALLBACK_CHAIN = {
   "llama-70b": ["groq-fallback"], // Medium tier: Skip 8b, go directly to fallback
   "llama-8b": ["groq-fallback"], // Simple tier: Only fallback to groq
   "groq-fallback": [], // Último recurso
+  "gemini-pro": ["llama-120b", "llama-70b", "groq-fallback"], // Gemini test provider: fallback to Groq chain
 };
 
 /**
