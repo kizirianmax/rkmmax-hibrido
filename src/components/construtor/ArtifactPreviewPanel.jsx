@@ -391,7 +391,9 @@ export default function ArtifactPreviewPanel({ preview, onDecision, onRevision, 
       {/* PASSO 6 — Histórico de Revisão */}
       {reviewHistory.length > 0 && (
         <div className="artifact-review-history">
-          <span className="artifact-review-history-title">📋 Histórico de Revisão</span>
+          <span className="artifact-review-history-title">
+            📋 Histórico de Revisão ({reviewHistory.length} {reviewHistory.length === 1 ? 'evento' : 'eventos'})
+          </span>
           <ul className="artifact-review-history-list">
             {reviewHistory.map((event, i) => {
               const iconMap = {
@@ -411,8 +413,13 @@ export default function ArtifactPreviewPanel({ preview, onDecision, onRevision, 
               const text = event.text && event.text.length > MAX_REVIEW_TEXT_LENGTH
                 ? `${event.text.slice(0, MAX_REVIEW_TEXT_LENGTH)}...`
                 : event.text;
+              const isLatest = i === reviewHistory.length - 1;
               return (
-                <li key={`${event.type}-${event.timestamp}`} className="artifact-review-history-item">
+                <li
+                  key={`${event.type}-${event.timestamp}`}
+                  className={`artifact-review-history-item${isLatest ? ' artifact-review-history-item--latest' : ''}`}
+                >
+                  <span className="artifact-review-history-index">#{i + 1}</span>
                   <span className="artifact-review-history-icon">{icon}</span>
                   <span className="artifact-review-history-label">{label}</span>
                   {text && <span className="artifact-review-history-text">{text}</span>}
