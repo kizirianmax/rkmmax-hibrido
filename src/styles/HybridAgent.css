@@ -1155,3 +1155,20 @@ textarea:disabled {
   color: #c084fc;
   border-color: rgba(168, 85, 247, 0.4);
 }
+
+.artifact-btn-clear-cycle {
+  background: rgba(239, 68, 68, 0.15);
+  color: #f87171;
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  font-size: 0.72rem;
+  padding: 4px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  margin-top: 0.5rem;
+  transition: background 0.2s, border-color 0.2s;
+}
+
+.artifact-btn-clear-cycle:hover {
+  background: rgba(239, 68, 68, 0.25);
+  border-color: rgba(239, 68, 68, 0.5);
+}

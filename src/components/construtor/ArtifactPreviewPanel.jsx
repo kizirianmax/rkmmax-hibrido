@@ -16,6 +16,7 @@ import { useState } from 'react';
  *   lastAdjustment {object}   — último ajuste solicitado {category, focusFile, comment, timestamp} (opcional)
  *   reviewHistory  {Array}    — histórico de eventos de revisão [{type, text, timestamp}] (opcional)
  *   artifactVersion {number}  — versão atual do artefato no ciclo de revisão (opcional, padrão 1)
+ *   onClearCycle   {function} — callback chamado ao encerrar/limpar o ciclo de revisão (opcional)
  */
 
 // PASSO 4 — Categorias de ajuste (opcionais)
@@ -30,7 +31,7 @@ const ADJUSTMENT_CATEGORIES = [
 // PASSO 6 — Limite de caracteres para exibição de texto no histórico de revisão
 const MAX_REVIEW_TEXT_LENGTH = 120;
 
-export default function ArtifactPreviewPanel({ preview, onDecision, onRevision, loading = false, delivery, lastAdjustment = null, reviewHistory = [], artifactVersion = 1 }) {
+export default function ArtifactPreviewPanel({ preview, onDecision, onRevision, loading = false, delivery, lastAdjustment = null, reviewHistory = [], artifactVersion = 1, onClearCycle }) {
   const [rejectionFeedback, setRejectionFeedback] = useState('');
   const [showRejectionInput, setShowRejectionInput] = useState(false);
   const [adjustmentFeedback, setAdjustmentFeedback] = useState('');
@@ -434,6 +435,19 @@ export default function ArtifactPreviewPanel({ preview, onDecision, onRevision, 
               );
             })}
           </ul>
+          {/* PASSO 10 — Encerrar ciclo de revisão */}
+          {onClearCycle && (
+            <button
+              className="artifact-btn artifact-btn-clear-cycle"
+              onClick={() => {
+                if (window.confirm('Encerrar o ciclo de revisão atual? Isso limpará o histórico, versão e ajuste pendente.')) {
+                  onClearCycle();
+                }
+              }}
+            >
+              🧹 Encerrar ciclo
+            </button>
+          )}
         </div>
       )}
 
