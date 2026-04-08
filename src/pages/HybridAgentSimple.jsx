@@ -120,6 +120,8 @@ export default function HybridAgentSimple() {
   const [lastAdjustment, setLastAdjustment] = useState(null);
   // PASSO 6 — histórico local de revisão global (array linear, independente de msgId)
   const [reviewHistory, setReviewHistory] = useState([]);
+  // PASSO 6 — sinaliza que o próximo preview é continuação de uma revisão (preservar histórico)
+  const revisionPendingRef = useRef(false);
   const messagesEndRef = useRef(null);
   const mediaRecorderRef = useRef(null);
 
@@ -176,6 +178,11 @@ export default function HybridAgentSimple() {
   // Fase 2D — gerar preview de um artefato (mensagem do agente)
   const handleGeneratePreview = async (msg) => {
     const msgId = msg.id;
+    // PASSO 6 — resetar histórico ao abrir preview de artefato novo (não revisão)
+    if (!revisionPendingRef.current) {
+      setReviewHistory([]);
+    }
+    revisionPendingRef.current = false;
     setPreviewLoading((prev) => ({ ...prev, [msgId]: true }));
     setPreviewErrors((prev) => { const updated = { ...prev }; delete updated[msgId]; return updated; });
     try {
@@ -289,6 +296,8 @@ export default function HybridAgentSimple() {
     }
     setPreviews((prev) => { const updated = { ...prev }; delete updated[msgId]; return updated; });
     setPreviewErrors((prev) => { const updated = { ...prev }; delete updated[msgId]; return updated; });
+    // PASSO 6 — sinalizar que o próximo preview é continuação desta revisão
+    revisionPendingRef.current = true;
     setInput(revisionText);
   };
 
