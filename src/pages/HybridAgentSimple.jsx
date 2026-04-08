@@ -120,6 +120,8 @@ export default function HybridAgentSimple() {
   const [lastAdjustment, setLastAdjustment] = useState(null);
   // PASSO 6 — histórico local de revisão global (array linear, independente de msgId)
   const [reviewHistory, setReviewHistory] = useState([]);
+  // PASSO 8 — versão do artefato no ciclo de revisão
+  const [artifactVersion, setArtifactVersion] = useState(1);
   // PASSO 6 — sinaliza que o próximo preview é continuação de uma revisão (preservar histórico)
   const revisionPendingRef = useRef(false);
   const messagesEndRef = useRef(null);
@@ -181,6 +183,9 @@ export default function HybridAgentSimple() {
     // PASSO 6 — resetar histórico ao abrir preview de artefato novo (não revisão)
     if (!revisionPendingRef.current) {
       setReviewHistory([]);
+      setArtifactVersion(1);     // PASSO 8 — artefato novo → versão 1
+    } else {
+      setArtifactVersion((v) => v + 1);  // PASSO 8 — revisão → incrementa versão
     }
     revisionPendingRef.current = false;
     setPreviewLoading((prev) => ({ ...prev, [msgId]: true }));
@@ -650,6 +655,7 @@ export default function HybridAgentSimple() {
                       delivery={deliveryData[msg.id]}
                       lastAdjustment={lastAdjustment}
                       reviewHistory={reviewHistory}
+                      artifactVersion={artifactVersion}
                     />
                   )}
                   {previewErrors[msg.id] && previews[msg.id] && (
