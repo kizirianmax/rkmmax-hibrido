@@ -118,6 +118,8 @@ export default function HybridAgentSimple() {
   const [deliveryData, setDeliveryData] = useState({});
   // PASSO 5 — último ajuste solicitado (para continuidade visual)
   const [lastAdjustment, setLastAdjustment] = useState(null);
+  // PASSO 6 — histórico local de revisão por mensagem
+  const [reviewHistory, setReviewHistory] = useState({});
   const messagesEndRef = useRef(null);
   const mediaRecorderRef = useRef(null);
 
@@ -204,6 +206,14 @@ export default function HybridAgentSimple() {
     }
   };
 
+  // PASSO 6 — helper para append imutável de evento no histórico de revisão
+  const addReviewEvent = (msgId, event) => {
+    setReviewHistory((prev) => ({
+      ...prev,
+      [msgId]: [...(prev[msgId] || []), event],
+    }));
+  };
+
   // Fase 2D — aplicar decisão (aprovação/rejeição) ao preview
   const handlePreviewDecision = async (msgId, decision, feedback, content) => {
     const currentPreview = previews[msgId];
@@ -224,6 +234,12 @@ export default function HybridAgentSimple() {
         setPreviews((prev) => ({ ...prev, [msgId]: data.preview }));
         if (data.zipBase64) {
           setDeliveryData((prev) => ({ ...prev, [msgId]: { zipBase64: data.zipBase64 } }));
+        }
+        // PASSO 6 — registrar evento de aprovação ou rejeição no histórico
+        if (decision === 'approved') {
+          addReviewEvent(msgId, { type: 'approved', text: null, timestamp: new Date().toISOString() });
+        } else if (decision === 'rejected') {
+          addReviewEvent(msgId, { type: 'rejected', text: feedback || null, timestamp: new Date().toISOString() });
         }
       }
     } catch (err) {
@@ -254,6 +270,12 @@ export default function HybridAgentSimple() {
       revisionText = parts.join(' ');
       // PASSO 5 — preservar último ajuste para continuidade visual
       setLastAdjustment(buildLastAdjustment(feedbackFromPanel.category, feedbackFromPanel.focusFile, feedbackFromPanel.comment));
+      // PASSO 6 — registrar evento de ajuste solicitado no histórico
+      const eventParts = [];
+      if (feedbackFromPanel.category) eventParts.push(feedbackFromPanel.category);
+      if (feedbackFromPanel.focusFile) eventParts.push(feedbackFromPanel.focusFile);
+      if (feedbackFromPanel.comment) eventParts.push(feedbackFromPanel.comment);
+      addReviewEvent(msgId, { type: 'adjustment_requested', text: eventParts.join(' · ') || null, timestamp: new Date().toISOString() });
     } else {
       // Compatibilidade com feedback string simples (legado)
       const currentPreview = previews[msgId];
@@ -264,6 +286,8 @@ export default function HybridAgentSimple() {
       // PASSO 5 — preservar apenas quando o usuário passou string explícita (não fallback do preview)
       if (typeof feedbackFromPanel === 'string' && feedbackFromPanel.trim()) {
         setLastAdjustment(buildLastAdjustment(null, null, feedbackFromPanel));
+        // PASSO 6 — registrar evento de ajuste solicitado no histórico (string simples)
+        addReviewEvent(msgId, { type: 'adjustment_requested', text: feedbackFromPanel, timestamp: new Date().toISOString() });
       }
     }
     setPreviews((prev) => { const updated = { ...prev }; delete updated[msgId]; return updated; });
@@ -619,6 +643,7 @@ export default function HybridAgentSimple() {
                       onRevision={(fb) => handleRequestRevision(msg.id, fb)}
                       delivery={deliveryData[msg.id]}
                       lastAdjustment={lastAdjustment}
+                      reviewHistory={reviewHistory[msg.id] || []}
                     />
                   )}
                   {previewErrors[msg.id] && previews[msg.id] && (
