@@ -4,9 +4,15 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { initSentry } from "./lib/sentry.js";
 import { initAnalytics } from "./lib/analytics.js";
 
+import { AuthProvider } from "./auth/AuthProvider.jsx";
+import AuthGate from "./auth/AuthGate.jsx";
+
 import Header from "./components/Header.jsx";
 import BrandTitle from "./components/BrandTitle.jsx";
 import PlanGate from "./components/PlanGate.jsx";
+import OwnerGate from "./components/OwnerGate.jsx";
+import HybridSystemDashboard from "./components/HybridSystemDashboard.jsx";
+import AdvancedDashboard from "./components/AdvancedDashboard.jsx";
 
 import Home from "./pages/Home.jsx";
 import Serginho from "./pages/Serginho.jsx";
@@ -62,6 +68,8 @@ export default function App() {
 
   return (
     <BrowserRouter>
+      <AuthProvider>
+        <AuthGate>
       <BrandTitle />
       <Header />
 
@@ -144,7 +152,27 @@ export default function App() {
 
         {/* Fallback */}
         <Route path="*" element={<Navigate to="/" replace />} />
+
+        {/* Admin / Owner */}
+        <Route
+          path="/dashboard"
+          element={
+            <OwnerGate>
+              <HybridSystemDashboard />
+            </OwnerGate>
+          }
+        />
+        <Route
+          path="/advanced-dashboard"
+          element={
+            <OwnerGate>
+              <AdvancedDashboard />
+            </OwnerGate>
+          }
+        />
       </Routes>
+        </AuthGate>
+      </AuthProvider>
     </BrowserRouter>
   );
 }

@@ -73,7 +73,12 @@ function _hasGitHubReference(message) {
   // owner/repo pattern (e.g. "facebook/react", "de owner/repo")
   if (/[\w.-]+\/[\w.-]+/.test(message)) return true;
   // File path patterns (e.g. "package.json", ".js", ".ts", ".md", "/src/")
-  if (/\b\w+\.(json|js|ts|jsx|tsx|md|yaml|yml|txt|py|go|java|rb|rs)\b/i.test(message)) return true;
+  // Ignorados quando a mensagem é um pedido de criação/geração de código
+  // (e.g. "Node.js" e "README.md" em "Crie um script Node.js... com README.md" NÃO são sinais de repo)
+  if (
+    /\b\w+\.(json|js|ts|jsx|tsx|md|yaml|yml|txt|py|go|java|rb|rs)\b/i.test(message) &&
+    !/\b(crie|gere|cria|faça|desenvolva|implemente|escreva|construa|create|generate|build|make|write|implement)\b/i.test(message)
+  ) return true;
   // Branch references
   if (/\b(branch|branches|main|master|develop|feature\/|hotfix\/)\b/i.test(message)) return true;
   // GitHub action verbs with file/repo objects
@@ -234,6 +239,7 @@ class SerginhoOrchestrator {
    */
   _registerModels() {
     // Groq models (complex tier)
+    this.modelRegistry.registerModel('openai/gpt-oss-120b', 'complex', 0.00);
     this.modelRegistry.registerModel('llama-3.3-70b-versatile', 'complex', 0.00);
     this.modelRegistry.registerModel('llama-3.1-70b-versatile', 'complex', 0.00);
     this.modelRegistry.registerModel('llama-3.1-8b-instant', 'simple', 0.00);
@@ -244,11 +250,25 @@ class SerginhoOrchestrator {
    * Initialize circuit breakers for all providers
    */
   initializeCircuitBreakers() {
+    // Timeouts diferenciados por provider — TODOS devem ser menores que maxDuration (25s)
+    // Regra: timeout_circuit_breaker < maxDuration - 5s (margem para serialização + overhead)
+    const PROVIDER_TIMEOUTS = {
+      'llama-120b': 20000, // 20s — modelo complexo, tarefas do Híbrido (margem de 5s)
+      'llama-70b': 12000,  // 12s — tier médio
+      'llama-8b': 6000,    // 6s  — tier rápido
+      'groq-fallback': 6000, // 6s — fallback rápido
+    };
+    const PROVIDER_FAILURE_THRESHOLDS = {
+      'llama-120b': 5, // Mais tolerante a timeouts esporádicos; evita ciclo de fallback permanente
+    };
+    const DEFAULT_TIMEOUT = 8000; // 8s para providers não mapeados
+    const DEFAULT_FAILURE_THRESHOLD = 3;
+
     Object.keys(PROVIDERS).forEach(provider => {
       this.circuitBreakers.set(provider, new CircuitBreaker({
         name: provider,
-        timeout: 8000, // 8s per provider (safe for 12s serverless limit)
-        failureThreshold: 3,
+        timeout: PROVIDER_TIMEOUTS[provider] || DEFAULT_TIMEOUT,
+        failureThreshold: PROVIDER_FAILURE_THRESHOLDS[provider] || DEFAULT_FAILURE_THRESHOLD,
         resetTimeout: 30000, // 30s cooldown
       }));
     });
@@ -707,6 +727,7 @@ class SerginhoOrchestrator {
           context,
           analysis,
           signal,
+          maxTokens: options.maxTokens,
         });
         const modelExecutionTime = Date.now() - modelExecutionStartTime;
 
@@ -772,6 +793,11 @@ class SerginhoOrchestrator {
         this.modelRegistry.recordExecution(modelId, false, 0, isTimeout);
         
         this.metrics.recordRequest(currentProvider, modelExecutionTime, false, false);
+
+        // noFallback mode: caller manages its own fallback chain without automatic cascade
+        if (options.noFallback) {
+          throw error;
+        }
         
         // Get next fallback — use provider names for correct deduplication, skip disabled providers
         const enabledProviders = getEnabledProviders();
@@ -982,7 +1008,7 @@ class SerginhoOrchestrator {
    * Execute request with specific provider
    * @private
    */
-  async executeWithProvider(providerName, { message, messages, context, analysis, signal }) {
+  async executeWithProvider(providerName, { message, messages, context, analysis, signal, maxTokens }) {
     const config = getProviderConfig(providerName);
     const breaker = this.circuitBreakers.get(providerName);
 
@@ -993,7 +1019,7 @@ class SerginhoOrchestrator {
     return breaker.execute(async () => {
       switch (config.type) {
         case 'groq':
-          return this.callGroq(config, message, messages, context, signal);
+          return this.callGroq(config, message, messages, context, signal, maxTokens);
         default:
           throw new Error(`Unknown provider type: ${config.type}`);
       }
@@ -1013,13 +1039,16 @@ class SerginhoOrchestrator {
    * Call Groq API (OpenAI-compatible)
    * @private
    */
-  async callGroq(config, message, messages, context, signal) {
+  async callGroq(config, message, messages, context, signal, maxTokens) {
     const apiKey = process.env.GROQ_API_KEY;
     if (!apiKey) {
       throw new Error('GROQ_API_KEY environment variable is required');
     }
 
-    const formattedMessages = this.formatMessages(messages, message, 'openai', context?.systemPrompt);
+    const formattedMessages = this._limitMessagesForModel(
+      this.formatMessages(messages, message, 'openai', context?.systemPrompt),
+      config.model
+    );
 
     const RETRYABLE_STATUSES = new Set([429, 503]);
     const MAX_ATTEMPTS = 3;
@@ -1042,6 +1071,7 @@ class SerginhoOrchestrator {
             model: config.model,
             messages: formattedMessages,
             ...config.defaultParams,
+            ...(maxTokens ? { max_tokens: maxTokens } : {}),
           }),
           ...(signal ? { signal } : {}),
         });
@@ -1051,6 +1081,10 @@ class SerginhoOrchestrator {
       }
 
       if (!response.ok) {
+        if (response.status === 413) {
+          const errorText = await response.text().catch(() => '');
+          throw new Error(`Groq API error: 413 request_too_large ${errorText}`);
+        }
         if (RETRYABLE_STATUSES.has(response.status) && attempt < MAX_ATTEMPTS) {
           // Linear backoff: 1000ms on first retry, 2000ms on second retry
           const delayMs = attempt * 1000;
@@ -1078,6 +1112,65 @@ class SerginhoOrchestrator {
 
     // All attempts exhausted on retryable errors
     throw lastError;
+  }
+
+  /**
+   * Limita o histórico de mensagens antes de enviar ao Groq para evitar erro 413.
+   * Usa estimativa simples: ~4 chars = 1 token (aproximação; varia por idioma e tipo de conteúdo).
+   * Para o modelo 120B (openai/gpt-oss-120b), mantém o total abaixo de 5000 tokens de input.
+   * @private
+   */
+  _limitMessagesForModel(formattedMessages, model) {
+    // Tokens de input reservados por modelo; outros modelos usam limite mais generoso
+    const INPUT_TOKEN_BUDGET = model === 'openai/gpt-oss-120b' ? 5000 : 12000;
+    const CHARS_PER_TOKEN = 4; // estimativa simples para cálculo de truncamento
+
+    if (!formattedMessages || formattedMessages.length === 0) {
+      return formattedMessages;
+    }
+
+    const maxChars = INPUT_TOKEN_BUDGET * CHARS_PER_TOKEN;
+
+    const totalChars = formattedMessages.reduce((sum, m) => sum + (m.content?.length || 0), 0);
+    if (totalChars <= maxChars) {
+      return formattedMessages;
+    }
+
+    // Preserva system message (primeiro, se role === 'system') e última mensagem do usuário
+    const systemMsg = formattedMessages[0]?.role === 'system' ? formattedMessages[0] : null;
+    const lastUserMsg = formattedMessages[formattedMessages.length - 1];
+
+    if (!lastUserMsg) {
+      return formattedMessages;
+    }
+
+    const middle = formattedMessages.slice(systemMsg ? 1 : 0, -1);
+
+    // Remove mensagens mais antigas até caber no budget
+    const reserved = (systemMsg ? systemMsg.content.length : 0) + (lastUserMsg.content?.length || 0);
+    let budget = maxChars - reserved;
+    const kept = [];
+    for (let i = middle.length - 1; i >= 0; i--) {
+      const len = middle[i].content?.length || 0;
+      if (budget - len >= 0) {
+        kept.unshift(middle[i]);
+        budget -= len;
+      } else {
+        break;
+      }
+    }
+
+    const truncated = [
+      ...(systemMsg ? [systemMsg] : []),
+      ...kept,
+      lastUserMsg,
+    ];
+
+    const removed = formattedMessages.length - truncated.length;
+    if (removed > 0) {
+      console.log(`[Serginho] _limitMessagesForModel: truncou ${removed} mensagem(ns) do histórico para o modelo ${model} (total original: ~${Math.round(totalChars / CHARS_PER_TOKEN)} tokens estimados)`);
+    }
+    return truncated;
   }
 
   /**

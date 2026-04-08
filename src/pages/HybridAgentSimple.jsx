@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from "react";
 import "../styles/HybridAgent.css";
 import ArtifactPreviewPanel from "../components/construtor/ArtifactPreviewPanel";
+import { normalizeVisibleContent } from "../lib/construtor/artifactNormalizer";
 
 /**
  * Renders AI response text with basic markdown formatting.
@@ -34,6 +35,45 @@ function SimpleMarkdown({ text }) {
         });
         return <p key={pi}>{content}</p>;
       })}
+    </>
+  );
+}
+
+/** Detecta se o conteúdo é formato multi-file (contém pelo menos um --- FILE: --- ). */
+const MULTI_FILE_DELIMITER_PATTERN = /^---\s*FILE:\s*.+?---/m;
+function isMultiFileContent(text) {
+  return typeof text === "string" && MULTI_FILE_DELIMITER_PATTERN.test(text);
+}
+
+/**
+ * Renderiza conteúdo multi-file como cards visuais separados.
+ * Cada bloco --- FILE: nome.ext --- vira um card com header destacado e corpo <pre>.
+ * Fallback para <pre> monolítico se o parse falhar.
+ */
+function MultiFileRenderer({ content }) {
+  const FILE_DELIMITER = /^---\s*FILE:\s*(.+?)\s*---\s*$/gm;
+  const matches = [...content.matchAll(FILE_DELIMITER)];
+
+  if (matches.length === 0) {
+    return <pre className="artifact-code-block">{content}</pre>;
+  }
+
+  const files = matches.map((match, i) => {
+    const name = match[1].trim();
+    const start = match.index + match[0].length;
+    const end = i + 1 < matches.length ? matches[i + 1].index : content.length;
+    const body = content.slice(start, end).trim();
+    return { name, body };
+  });
+
+  return (
+    <>
+      {files.map((file, i) => (
+        <div key={`${i}-${file.name}`} className="artifact-file-card">
+          <div className="artifact-file-card-header">📄 {file.name}</div>
+          <pre className="artifact-file-card-body">{file.body}</pre>
+        </div>
+      ))}
     </>
   );
 }
@@ -74,6 +114,14 @@ export default function HybridAgentSimple() {
   // Fase 2D — estado de preview por mensagem
   const [previews, setPreviews] = useState({});
   const [previewLoading, setPreviewLoading] = useState({});
+  const [previewErrors, setPreviewErrors] = useState({});
+  const [deliveryData, setDeliveryData] = useState({});
+  // PASSO 5 — último ajuste solicitado (para continuidade visual)
+  const [lastAdjustment, setLastAdjustment] = useState(null);
+  // PASSO 6 — histórico local de revisão global (array linear, independente de msgId)
+  const [reviewHistory, setReviewHistory] = useState([]);
+  // PASSO 6 — sinaliza que o próximo preview é continuação de uma revisão (preservar histórico)
+  const revisionPendingRef = useRef(false);
   const messagesEndRef = useRef(null);
   const mediaRecorderRef = useRef(null);
 
@@ -130,7 +178,13 @@ export default function HybridAgentSimple() {
   // Fase 2D — gerar preview de um artefato (mensagem do agente)
   const handleGeneratePreview = async (msg) => {
     const msgId = msg.id;
+    // PASSO 6 — resetar histórico ao abrir preview de artefato novo (não revisão)
+    if (!revisionPendingRef.current) {
+      setReviewHistory([]);
+    }
+    revisionPendingRef.current = false;
     setPreviewLoading((prev) => ({ ...prev, [msgId]: true }));
+    setPreviewErrors((prev) => { const updated = { ...prev }; delete updated[msgId]; return updated; });
     try {
       const response = await fetch("/api/artifact-preview", {
         method: "POST",
@@ -153,20 +207,28 @@ export default function HybridAgentSimple() {
       }
     } catch (err) {
       console.error("❌ Erro ao gerar preview:", err);
+      setPreviewErrors((prev) => ({ ...prev, [msgId]: "⚠️ Não foi possível gerar o preview. Tente novamente." }));
     } finally {
       setPreviewLoading((prev) => ({ ...prev, [msgId]: false }));
     }
   };
 
+  // PASSO 6 — helper para append imutável de evento no histórico de revisão (array global)
+  const addReviewEvent = (event) => {
+    setReviewHistory((prev) => [...prev, event]);
+  };
+
   // Fase 2D — aplicar decisão (aprovação/rejeição) ao preview
-  const handlePreviewDecision = async (msgId, decision, feedback) => {
+  const handlePreviewDecision = async (msgId, decision, feedback, content) => {
     const currentPreview = previews[msgId];
     if (!currentPreview) return;
     try {
+      const body = { preview: currentPreview, decision, feedback };
+      if (decision === 'approved' && content) body.content = content;
       const response = await fetch("/api/artifact-preview", {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ preview: currentPreview, decision, feedback }),
+        body: JSON.stringify(body),
       });
       if (!response.ok) {
         throw new Error(`Preview API error: ${response.status}`);
@@ -174,10 +236,69 @@ export default function HybridAgentSimple() {
       const data = await response.json();
       if (data.success && data.preview) {
         setPreviews((prev) => ({ ...prev, [msgId]: data.preview }));
+        if (data.zipBase64) {
+          setDeliveryData((prev) => ({ ...prev, [msgId]: { zipBase64: data.zipBase64 } }));
+        }
+        // PASSO 6 — registrar evento de aprovação ou rejeição no histórico
+        if (decision === 'approved') {
+          addReviewEvent({ type: 'approved', text: null, timestamp: new Date().toISOString() });
+        } else if (decision === 'rejected') {
+          addReviewEvent({ type: 'rejected', text: feedback || null, timestamp: new Date().toISOString() });
+        }
       }
     } catch (err) {
       console.error("❌ Erro ao aplicar decisão:", err);
+      setPreviewErrors((prev) => ({ ...prev, [msgId]: "⚠️ Erro ao registrar decisão. Tente novamente." }));
     }
+  };
+
+  // Fase 2D — solicitar revisão após rejeição (PASSO 4: suporte a objeto estruturado)
+  const handleRequestRevision = (msgId, feedbackFromPanel) => {
+    let revisionText;
+
+    // PASSO 5 — helper para criar o objeto lastAdjustment com timestamp
+    const buildLastAdjustment = (category, focusFile, comment) => ({
+      category: category || null,
+      focusFile: focusFile || null,
+      comment: comment || null,
+      timestamp: new Date().toISOString(),
+    });
+
+    if (feedbackFromPanel && typeof feedbackFromPanel === 'object' && !Array.isArray(feedbackFromPanel)) {
+      // PASSO 4 — feedback estruturado {category, focusFile, comment}
+      const parts = ['[Revisão solicitada]'];
+      if (feedbackFromPanel.category) parts.push(`Tipo: ${feedbackFromPanel.category}.`);
+      if (feedbackFromPanel.focusFile) parts.push(`Arquivo-foco: ${feedbackFromPanel.focusFile}.`);
+      if (feedbackFromPanel.comment) parts.push(`Observação: ${feedbackFromPanel.comment}.`);
+      parts.push('Por favor, revise e gere uma nova versão do artefato.');
+      revisionText = parts.join(' ');
+      // PASSO 5 — preservar último ajuste para continuidade visual
+      setLastAdjustment(buildLastAdjustment(feedbackFromPanel.category, feedbackFromPanel.focusFile, feedbackFromPanel.comment));
+      // PASSO 6 — registrar evento de ajuste solicitado no histórico
+      const eventParts = [];
+      if (feedbackFromPanel.category) eventParts.push(feedbackFromPanel.category);
+      if (feedbackFromPanel.focusFile) eventParts.push(feedbackFromPanel.focusFile);
+      if (feedbackFromPanel.comment) eventParts.push(feedbackFromPanel.comment);
+      addReviewEvent({ type: 'adjustment_requested', text: eventParts.join(' · ') || null, timestamp: new Date().toISOString() });
+    } else {
+      // Compatibilidade com feedback string simples (legado)
+      const currentPreview = previews[msgId];
+      const feedback = feedbackFromPanel ?? currentPreview?.feedback;
+      revisionText = feedback
+        ? `[Revisão solicitada] Feedback: ${feedback}. Por favor, revise e gere uma nova versão do artefato.`
+        : "[Revisão solicitada] Por favor, revise e gere uma nova versão do artefato.";
+      // PASSO 5 — preservar apenas quando o usuário passou string explícita (não fallback do preview)
+      if (typeof feedbackFromPanel === 'string' && feedbackFromPanel.trim()) {
+        setLastAdjustment(buildLastAdjustment(null, null, feedbackFromPanel));
+        // PASSO 6 — registrar evento de ajuste solicitado no histórico (string simples)
+        addReviewEvent({ type: 'adjustment_requested', text: feedbackFromPanel, timestamp: new Date().toISOString() });
+      }
+    }
+    setPreviews((prev) => { const updated = { ...prev }; delete updated[msgId]; return updated; });
+    setPreviewErrors((prev) => { const updated = { ...prev }; delete updated[msgId]; return updated; });
+    // PASSO 6 — sinalizar que o próximo preview é continuação desta revisão
+    revisionPendingRef.current = true;
+    setInput(revisionText);
   };
 
   const handleSendMessage = async () => {
@@ -229,11 +350,17 @@ export default function HybridAgentSimple() {
       }
 
       const data = await response.json();
-      const aiResponse = data.text || data.response || data.message || "Sem resposta";
-      const provider = data.model?.displayName || data.model?.modelId || data.provider || "unknown";
-      const tier = data.routing?.selectedTier || data.tier || "standard";
-      const complexity = data.routing?.analyzedComplexity || data.complexity || 0;
+      const aiResponse = normalizeVisibleContent(data.text || data.response || data.message || "Sem resposta");
 
+      // Extrair informação do motor ativo (120B vs 70B) e status de fallback
+      const modelInfo = data.model || {};
+      const execution = data.execution || {};
+      const isFallback = (execution.fallbackLevel || 0) > 0;
+      const motorLabel = modelInfo.icon && modelInfo.displayName
+        ? `${modelInfo.icon} ${modelInfo.displayName}`
+        : modelInfo.displayName || modelInfo.modelId || data.provider || "Construtor";
+      const tier = data.routing?.selectedTier || modelInfo.logicalTier || data.tier || "standard";
+      const complexity = data.routing?.analyzedComplexity || data.complexity || 0;
 
       const agentName = "Construtor";
 
@@ -243,8 +370,9 @@ export default function HybridAgentSimple() {
         type: "agent",
         agent: agentName,
         content: aiResponse,
-        provider: provider,
+        provider: motorLabel,
         tier: tier,
+        isFallback: isFallback,
         complexity: complexity,
         timestamp: new Date(),
       };
@@ -458,7 +586,7 @@ export default function HybridAgentSimple() {
                     <span 
                       className="provider-badge"
                       style={{
-                        background: getTierColor(msg.tier || 'unknown'),
+                        background: msg.isFallback ? '#e67e22' : getTierColor(msg.tier || 'unknown'),
                         padding: '2px 8px',
                         borderRadius: '4px',
                         fontSize: '10px',
@@ -466,8 +594,9 @@ export default function HybridAgentSimple() {
                         fontWeight: 'bold',
                         marginLeft: '8px',
                       }}
+                      title={msg.isFallback ? 'Motor fallback ativo (120B indisponível)' : 'Motor principal ativo'}
                     >
-                      {msg.provider}{msg.tier ? ` (${msg.tier})` : ''}
+                      {msg.provider}{msg.isFallback ? ' ⚠️ fallback' : ''}
                     </span>
                   )}
                   <span className="timestamp">{msg.timestamp.toLocaleTimeString()}</span>
@@ -481,7 +610,11 @@ export default function HybridAgentSimple() {
               )}
               <div className="message-content">
                 {msg.type === "agent" ? (
-                  <SimpleMarkdown text={msg.content} />
+                  isMultiFileContent(msg.content) ? (
+                    <MultiFileRenderer content={msg.content} />
+                  ) : (
+                    <SimpleMarkdown text={msg.content} />
+                  )
                 ) : (
                   msg.content
                 )}
@@ -490,22 +623,37 @@ export default function HybridAgentSimple() {
               {msg.type === "agent" && (
                 <div>
                   {!previews[msg.id] && (
-                    <button
-                      className="artifact-preview-trigger-btn"
-                      onClick={() => handleGeneratePreview(msg)}
-                      disabled={previewLoading[msg.id]}
-                    >
-                      {previewLoading[msg.id] ? "⏳ Gerando preview..." : "📋 Preview do Artefato"}
-                    </button>
+                    <div className="artifact-preview-entry">
+                      <button
+                        className="artifact-preview-trigger-btn"
+                        onClick={() => handleGeneratePreview(msg)}
+                        disabled={previewLoading[msg.id]}
+                      >
+                        {previewLoading[msg.id] ? "⏳ Gerando preview..." : "🔍 Revisar artefato"}
+                      </button>
+                      {!previewLoading[msg.id] && (
+                        <span className="artifact-preview-entry-hint">Revisar · Aprovar · Solicitar ajuste</span>
+                      )}
+                    </div>
+                  )}
+                  {previewErrors[msg.id] && !previews[msg.id] && (
+                    <p className="artifact-preview-error">{previewErrors[msg.id]}</p>
                   )}
                   {previews[msg.id] && (
                     <ArtifactPreviewPanel
                       preview={previews[msg.id]}
                       loading={previewLoading[msg.id]}
                       onDecision={(decision, feedback) =>
-                        handlePreviewDecision(msg.id, decision, feedback)
+                        handlePreviewDecision(msg.id, decision, feedback, msg.content)
                       }
+                      onRevision={(fb) => handleRequestRevision(msg.id, fb)}
+                      delivery={deliveryData[msg.id]}
+                      lastAdjustment={lastAdjustment}
+                      reviewHistory={reviewHistory}
                     />
+                  )}
+                  {previewErrors[msg.id] && previews[msg.id] && (
+                    <p className="artifact-preview-error">{previewErrors[msg.id]}</p>
                   )}
                 </div>
               )}

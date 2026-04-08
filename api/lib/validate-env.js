@@ -9,7 +9,6 @@ const REQUIRED_VARS = [
 ];
 
 const RECOMMENDED_VARS = [
-  'GEMINI_API_KEY',
   'GROQ_API_KEY',
   'REACT_APP_SUPABASE_URL',
   'REACT_APP_SUPABASE_ANON_KEY',
@@ -44,7 +43,6 @@ export function validateEnv() {
 export function getEnvStatus() {
   return {
     // AI Providers
-    GEMINI_API_KEY: !!process.env.GEMINI_API_KEY || !!process.env.GERMINI_API_KEY,
     GROQ_API_KEY: !!process.env.GROQ_API_KEY,
     
     // Supabase

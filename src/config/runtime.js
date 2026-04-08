@@ -3,13 +3,17 @@
  * Configuração centralizada de runtime para separação estrutural entre PRODUÇÃO e TESTE
  * 
  * IMPORTANTE:
- * - Em PRODUÇÃO: timeout de 9s (sistema anti-timeout soberano)
+ * - Em PRODUÇÃO: timeout de 9s (padrão para CircuitBreaker e operações gerais)
  * - Em TESTE: timeout de 1s (testes rápidos e determinísticos)
  * 
  * Esta separação permite:
  * - Manter proteção anti-timeout em produção (9s)
  * - Executar testes rapidamente sem timeouts reais (1s)
  * - Separação limpa de ambiente via NODE_ENV
+ * 
+ * TETO DA PLATAFORMA: maxDuration Vercel = 25s
+ * Os circuit breakers por provider no serginho-orchestrator.js têm timeouts
+ * diferenciados (6s–20s), todos abaixo do teto de 25s.
  * 
  * NÃO ALTERAR valores de produção sem análise de impacto no plano.
  */
@@ -43,11 +47,13 @@ export function isProductionEnvironment() {
  */
 export const RUNTIME_CONFIG = {
   /**
-   * Timeout para CircuitBreaker e operações de IA
+   * Timeout para CircuitBreaker e operações de IA (uso geral)
    * 
-   * PRODUÇÃO: 9000ms (9s) - Sistema anti-timeout soberano
+   * PRODUÇÃO: 9000ms (9s) — padrão para providers não mapeados explicitamente
    * TESTE: 1000ms (1s) - Testes rápidos com mocks
    * 
+   * NOTA: Providers específicos do Híbrido têm timeouts diferenciados no
+   * serginho-orchestrator.js (6s–20s), todos abaixo do maxDuration da Vercel (25s).
    * CRÍTICO: Não alterar valor de produção sem análise de impacto
    */
   TIMEOUT_MS: isTestEnvironment() ? 1000 : 9000,

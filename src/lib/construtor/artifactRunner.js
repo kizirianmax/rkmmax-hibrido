@@ -84,8 +84,10 @@ function detectExecutable(manifest, zipBuffer) {
     return { executable: false, entryPath: null, runtime: null, reason: 'zip-read-error' };
   }
 
-  // Filtrar arquivos dentro de content/
-  const contentEntries = entries.filter((e) => e.startsWith('content/') && !e.endsWith('/'));
+  // Suportar tanto nova estrutura (raiz) quanto legada (content/)
+  const contentEntries = entries.filter(
+    (e) => !e.endsWith('/') && (e.startsWith('content/') || !e.includes('/')),
+  );
 
   for (const entry of contentEntries) {
     const ext = extOf(entry);

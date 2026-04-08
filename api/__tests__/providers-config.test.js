@@ -133,7 +133,7 @@ describe('providers-config', () => {
   describe('Provider models', () => {
     test('Llama 120B uses correct model', () => {
       const config = getProviderConfig('llama-120b');
-      expect(config.model).toBe('llama-3.3-70b-versatile');
+      expect(config.model).toBe('openai/gpt-oss-120b');
     });
 
     test('Llama 70B uses correct model', () => {
@@ -146,9 +146,9 @@ describe('providers-config', () => {
       expect(config.model).toBe('llama-3.1-8b-instant');
     });
 
-    test('Groq fallback uses Mixtral', () => {
+    test('Groq fallback uses Llama 3.1 8B', () => {
       const config = getProviderConfig('groq-fallback');
-      expect(config.model).toBe('mixtral-8x7b-32768');
+      expect(config.model).toBe('llama-3.1-8b-instant');
     });
   });
 

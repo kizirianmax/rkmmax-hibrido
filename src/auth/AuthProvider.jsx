@@ -18,19 +18,30 @@ export function AuthProvider({ children }) {
         data: { session },
       } = await supabase.auth.getSession();
       setUser(session?.user ?? null);
+      if (session?.user?.email) {
+        localStorage.setItem("user_email", session.user.email);
+      }
       setLoading(false);
     };
     init();
 
     const {
       data: { subscription },
-    } = supabase.auth.onAuthStateChange((_event, session) => setUser(session?.user ?? null));
+    } = supabase.auth.onAuthStateChange((_event, session) => {
+      setUser(session?.user ?? null);
+      if (session?.user?.email) {
+        localStorage.setItem("user_email", session.user.email);
+      } else {
+        localStorage.removeItem("user_email");
+      }
+    });
 
     return () => subscription.unsubscribe();
   }, []);
 
   const signOut = async () => {
     await supabase.auth.signOut();
+    localStorage.removeItem("user_email");
     setUser(null);
   };
 

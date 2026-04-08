@@ -15,17 +15,15 @@
  * - defaultParams: Default parameters for API calls
  */
 export const PROVIDERS = {
-  // Tier 1: Complex tasks - Llama 3.3 70B (via Groq)
-  // NOTE: openai/gpt-oss-120b is not yet available on Groq. Using llama-3.3-70b-versatile
-  // as a stand-in until the 120B model is released. Update this when available.
+  // Tier 1: Complex tasks - GPT-OSS 120B (via Groq)
   'llama-120b': {
     type: 'groq',
-    model: 'llama-3.3-70b-versatile',
+    model: 'openai/gpt-oss-120b',
     endpoint: 'https://api.groq.com/openai/v1/chat/completions',
     tier: 'complex',
     defaultParams: {
       temperature: 0.7,
-      max_tokens: 8192,
+      max_tokens: 2048, // reduzido de 4096 para mitigar estouro de TPM no free tier Groq (input profundo + output cabem dentro do limite)
     },
   },
 
@@ -37,7 +35,7 @@ export const PROVIDERS = {
     tier: 'medium',
     defaultParams: {
       temperature: 0.6,
-      max_tokens: 4096,
+      max_tokens: 2048, // reduzido de 4096 para mitigar estouro de TPM no free tier Groq
     },
   },
 
@@ -49,19 +47,19 @@ export const PROVIDERS = {
     tier: 'simple',
     defaultParams: {
       temperature: 0.5,
-      max_tokens: 2048,
+      max_tokens: 1024, // reduzido de 2048 para mitigar estouro de TPM no free tier Groq
     },
   },
 
-  // Groq fallback - Mixtral for high availability
+  // Groq fallback - Llama 3.1 8B for high availability
   'groq-fallback': {
     type: 'groq',
-    model: 'mixtral-8x7b-32768',
+    model: 'llama-3.1-8b-instant',
     endpoint: 'https://api.groq.com/openai/v1/chat/completions',
     tier: 'fallback',
     defaultParams: {
       temperature: 0.7,
-      max_tokens: 4096,
+      max_tokens: 1024, // reduzido de 4096 para garantir disponibilidade máxima no fallback (TPM free tier Groq)
     },
   },
 };
@@ -121,7 +119,7 @@ export function getEnabledProviders() {
 
 /**
  * Parse optional provider weights from env var.
- * Format: JSON string, e.g. '{"groq":100}' or '{"groq":70,"gemini":30}'
+ * Format: JSON string, e.g. '{"llama-120b":100}' or '{"llama-120b":70,"llama-70b":30}'
  * Returns null if not configured or invalid.
  * Phase A5.3 scaffolding — not used in routing yet.
  * @returns {object|null}
@@ -193,7 +191,7 @@ export function getWeightedProviders() {
  * Provides human-readable information about each model
  * 
  * Structure:
- * - infrastructure: Provider infrastructure (groq, gemini, openai)
+ * - infrastructure: Provider infrastructure (groq)
  * - displayName: Human-readable model name
  * - description: Brief description of model capabilities
  * - icon: Visual icon for UI
@@ -202,8 +200,8 @@ export function getWeightedProviders() {
 export const MODEL_METADATA = {
   'llama-120b': {
     infrastructure: 'groq',
-    displayName: 'Llama 3.3 70B (Complex)',
-    description: 'Raciocínio profundo e análise complexa (stand-in até 120B disponível)',
+    displayName: 'GPT-OSS 120B (Complex)',
+    description: 'Raciocínio profundo e análise complexa de alto nível',
     icon: '🧠',
     logicalTier: 'complex'
   },
@@ -223,7 +221,7 @@ export const MODEL_METADATA = {
   },
   'groq-fallback': {
     infrastructure: 'groq',
-    displayName: 'Mixtral 8x7B',
+    displayName: 'Llama 3.1 8B (Fallback)',
     description: 'Fallback de alta disponibilidade',
     icon: '🔄',
     logicalTier: 'fallback'

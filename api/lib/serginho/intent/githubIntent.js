@@ -84,6 +84,16 @@ const GET_FILE_PATTERNS = [
 export function detectGitHubIntent(message) {
   if (!message || typeof message !== 'string') return null;
 
+  // Se a mensagem é um pedido de criação/geração de código sem referência explícita a owner/repo,
+  // não é uma intenção GitHub — deve seguir para o fluxo normal de geração de artefatos do LLM.
+  // (e.g. "Crie um script Node.js que leia um arquivo JSON local..." NÃO deve pedir owner/repo)
+  if (
+    /\b(crie|gere|cria|faça|desenvolva|implemente|escreva|construa|create|generate|build|make|write|implement)\b/i.test(message) &&
+    !/[\w.-]+\/[\w.-]+/.test(message)
+  ) {
+    return null;
+  }
+
   // Intenção: listar repositórios
   if (LIST_REPOS_PATTERNS.some((p) => p.test(message))) {
     return { tool: 'github_list_repos', params: {} };

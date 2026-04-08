@@ -1,6 +1,7 @@
 /**
  * Groq Fallback Provider
- * Uses Mixtral as a reliable fallback when Llama models are unavailable
+ * Uses Llama 3.1 8B as a reliable fallback when primary models are unavailable
+ * (Mixtral 8x7B was deprecated by Groq in March 2025)
  * 
  * Now supports GENIUS PROMPTS for world-class responses with robust fallback
  */
@@ -49,7 +50,7 @@ export class GroqProvider {
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({
-        model: 'mixtral-8x7b-32768',
+        model: 'llama-3.1-8b-instant',
         messages: [
           { role: 'system', content: options.systemPrompt || buildGeniusPrompt('hybrid') },
           { role: 'user', content: prompt }

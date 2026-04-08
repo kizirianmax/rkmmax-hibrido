@@ -2,10 +2,24 @@
 import React, { useEffect, useState } from "react";
 import { supabase } from "../lib/supabaseClient.js";
 import { useNavigate } from "react-router-dom";
+import useOwner from "../hooks/useOwner.js";
 
 export default function Account() {
   const navigate = useNavigate();
+  const { isOwner } = useOwner();
   const [loading, setLoading] = useState(true);
+
+  // Estilo do badge de owner/admin
+  const ownerBadgeStyle = {
+    display: "inline-block",
+    marginTop: 6,
+    padding: "2px 10px",
+    borderRadius: 12,
+    background: "#fef3c7",
+    color: "#92400e",
+    fontSize: 12,
+    fontWeight: 600,
+  };
   const [saving, setSaving] = useState(false);
   const [user, setUser] = useState(null);
 
@@ -119,6 +133,9 @@ export default function Account() {
             readOnly
             className="w-full border rounded p-2 bg-gray-100 text-gray-700"
           />
+          {isOwner && (
+            <span style={ownerBadgeStyle}>🔑 Owner / Admin</span>
+          )}
         </div>
 
         {createdAt && (

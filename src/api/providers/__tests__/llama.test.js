@@ -24,7 +24,7 @@ describe('LlamaProvider', () => {
       const provider70b = new LlamaProvider(mockApiKey, '70b');
       const provider8b = new LlamaProvider(mockApiKey, '8b');
 
-      expect(provider120b.modelMap['120b']).toBe('llama-3.3-70b-versatile');
+      expect(provider120b.modelMap['120b']).toBe('openai/gpt-oss-120b');
       expect(provider70b.modelMap['70b']).toBe('llama-3.3-70b-versatile');
       expect(provider8b.modelMap['8b']).toBe('llama-3.1-8b-instant');
     });
@@ -252,7 +252,7 @@ describe('LlamaProvider', () => {
   describe('Model Selection', () => {
     test('120B uses correct model', () => {
       const provider120b = new LlamaProvider(mockApiKey, '120b');
-      expect(provider120b.modelMap['120b']).toBe('llama-3.3-70b-versatile');
+      expect(provider120b.modelMap['120b']).toBe('openai/gpt-oss-120b');
     });
 
     test('70B uses correct model', () => {

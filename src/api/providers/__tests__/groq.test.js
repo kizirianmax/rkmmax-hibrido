@@ -45,7 +45,7 @@ describe('GroqProvider', () => {
 
       const callArgs = global.fetch.mock.calls[0][1];
       const body = JSON.parse(callArgs.body);
-      expect(body.model).toBe('mixtral-8x7b-32768');
+      expect(body.model).toBe('llama-3.1-8b-instant');
     });
 
     test('Uses fixed temperature of 0.5', async () => {
@@ -175,7 +175,7 @@ describe('GroqProvider', () => {
       // Verify conservative settings for fallback reliability
       expect(body.temperature).toBe(0.5);
       expect(body.max_tokens).toBe(1500);
-      expect(body.model).toBe('mixtral-8x7b-32768');
+      expect(body.model).toBe('llama-3.1-8b-instant');
     });
   });
 });

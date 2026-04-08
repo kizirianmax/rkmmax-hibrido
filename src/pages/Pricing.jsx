@@ -1,76 +1,82 @@
 // src/pages/Pricing.jsx
-import React from "react";
+import React, { useState } from "react";
 
-/** Payment Links do Stripe via variáveis de ambiente */
-const LINKS = {
-  test: {
-    basic: "https://buy.stripe.com/test_14AbJ15EXbYz1S5bvn3oA01",
-    inter: "https://buy.stripe.com/test_dRmaEX0kD1jVgMZ2YR3oA02",
-    prem: null, // cai no basic
-  },
-  live: {
-    basic: "https://buy.stripe.com/cNi8wPaZh7IjfIVeHz3oA0i",
-    inter: process.env.REACT_APP_STRIPE_PAYMENT_LINK_INTERMEDIATE_BR || "",
-    prem: process.env.REACT_APP_STRIPE_PAYMENT_LINK_PREMIUM_BR || "",
-  },
-};
-
-const isProd = true; // forçar produção
-const getLink = (key) => {
-  const env = isProd ? LINKS.live : LINKS.test;
-  return env[key] || env.basic || "";
-};
-
+/** Planos públicos — Brasil */
 const PLANS = [
   {
-    key: "free",
-    name: "Gratuito",
-    price: "R$ 0,00/mês",
-    description: "Acesso completo durante a fase de testes beta.",
-    features: [
-      "✅ Todos os 47 especialistas",
-      "✅ Chat com Serginho ilimitado",
-      "✅ Study Lab completo",
-      "✅ Sem limite de uso",
-      "🎉 Fase Beta - Aproveite!",
-    ],
-    link: "/serginho", // Link direto para começar
-    isFree: true,
-  },
-  {
-    key: "basic",
+    planKey: "basic_br",
+    icon: "🔹",
     name: "Básico",
-    price: "R$ 25,00/mês",
-    description: "Acesso ao Serginho e funções essenciais.",
-    features: ["Serginho (orquestrador)", "Limite diário de tokens", "Suporte inicial"],
-    link: getLink("basic"),
+    price: "R$ 65,00/mês",
+    description: "Acesso ao Serginho e todas as ferramentas essenciais.",
+    features: [
+      "Serginho (orquestrador)",
+      "Todos os especialistas",
+      "ABNT e Study Lab",
+      "100 créditos/dia · 3.000/mês",
+      "Suporte inicial",
+    ],
+    examples: [
+      "100 perguntas comuns por dia",
+      "12 execuções pesadas + 4 perguntas",
+    ],
+    payLink: process.env.REACT_APP_STRIPE_PAYMENT_LINK_BASIC_BR || "",
+    cta: "Assinar Básico",
   },
   {
-    key: "inter",
+    planKey: "inter_br",
+    icon: "⚡",
     name: "Intermediário",
-    price: "R$ 50,00/mês",
-    description: "Mais tokens, voz e recursos avançados.",
-    features: ["Tudo do Básico", "Mais tokens/dia", "Whisper + TTS", "Suporte prioritário"],
-    link: getLink("inter"),
+    price: "R$ 119,00/mês",
+    description: "Mais créditos para uso intenso no dia a dia.",
+    features: [
+      "Tudo do Básico",
+      "200 créditos/dia · 6.000/mês",
+      "Voz (Whisper + TTS)",
+      "Suporte prioritário",
+    ],
+    examples: [
+      "200 perguntas comuns por dia",
+      "25 execuções pesadas por dia",
+    ],
+    payLink: process.env.REACT_APP_STRIPE_PAYMENT_LINK_INTERMEDIATE_BR || "",
+    cta: "Assinar Intermediário",
   },
   {
-    key: "prem",
+    planKey: "prem_br",
+    icon: "💎",
     name: "Premium",
-    price: "R$ 90,00/mês",
-    description: "Acesso total aos 12 especialistas e recursos premium.",
-    features: ["Tudo do Intermediário", "12 especialistas", "GPT-5 + 4.1 Mini", "Suporte 24/7"],
-    link: getLink("prem"),
+    price: "R$ 379,00/mês",
+    description: "Volume total para uso profissional e de agência.",
+    features: [
+      "Tudo do Intermediário",
+      "600 créditos/dia · 18.000/mês",
+      "Modelos avançados",
+      "Todos os especialistas",
+      "Suporte 24/7",
+    ],
+    examples: [
+      "600 perguntas comuns por dia",
+      "75 execuções pesadas por dia",
+      "50 execuções pesadas + 200 perguntas",
+    ],
+    payLink: process.env.REACT_APP_STRIPE_PAYMENT_LINK_PREMIUM_BR || "",
+    cta: "Assinar Premium",
   },
 ];
 
 const FAQ = [
   {
-    q: "Posso usar para estudo?",
-    a: "Sim! Acesse o Study Lab (opcional) para estudo acelerado com ABNT/APA, cronogramas e fontes verificadas.",
+    q: "O que é um crédito?",
+    a: "Crédito é a unidade de consumo da plataforma. Interações comuns (Serginho, especialistas, ABNT) consomem 1 crédito. Execuções pesadas (Construtor, Híbrido, fluxos multi-etapa) consomem 8 créditos.",
   },
   {
-    q: "Há desconto educacional?",
-    a: "Sim! Use o código EDU50 no checkout para 50% OFF nos primeiros 6 meses.",
+    q: "O saldo é separado por ferramenta?",
+    a: "Não. Você tem um saldo único de créditos e usa onde quiser — Serginho, Especialistas, Construtor ou ABNT. A plataforma desconta conforme a complexidade real da execução.",
+  },
+  {
+    q: "Posso usar para estudo?",
+    a: "Sim! Acesse o Study Lab para estudo acelerado com ABNT/APA, cronogramas e fontes verificadas.",
   },
   {
     q: "Como funciona o pagamento?",
@@ -78,11 +84,15 @@ const FAQ = [
   },
 ];
 
-function PlanCard({ plan }) {
-  const enabled = Boolean(plan.link);
-  const isFree = plan.isFree;
-  const borderColor = isFree ? "#10b981" : "#334155";
-  const bgGradient = isFree ? "linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%)" : "transparent";
+function planAccentColor(planKey) {
+  if (planKey.includes("prem")) return "#0f172a";
+  if (planKey.includes("inter")) return "#0070f3";
+  return "#334155";
+}
+
+function PlanCard({ plan, onCheckout, isLoading }) {
+  const hasLink = Boolean(plan.payLink);
+  const borderColor = planAccentColor(plan.planKey);
 
   return (
     <article
@@ -91,84 +101,53 @@ function PlanCard({ plan }) {
         borderRadius: 16,
         padding: 24,
         marginBottom: 24,
-        background: bgGradient,
+        background: "transparent",
         position: "relative",
       }}
     >
-      {isFree && (
-        <div
-          style={{
-            position: "absolute",
-            top: -12,
-            right: 20,
-            background: "linear-gradient(135deg, #10b981 0%, #059669 100%)",
-            color: "#fff",
-            padding: "4px 12px",
-            borderRadius: 999,
-            fontSize: 12,
-            fontWeight: 800,
-          }}
-        >
-          🎉 BETA GRATUITO
-        </div>
-      )}
-      <h2 style={{ fontWeight: 800, fontSize: 24, color: isFree ? "#065f46" : "inherit" }}>
-        {plan.name}
-      </h2>
-      <p
-        style={{
-          margin: "6px 0",
-          fontSize: 20,
-          fontWeight: 700,
-          color: isFree ? "#047857" : "inherit",
-        }}
-      >
-        {plan.price}
-      </p>
-      <p style={{ margin: "6px 0", color: isFree ? "#065f46" : "inherit" }}>{plan.description}</p>
+      <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 4 }}>
+        <span style={{ fontSize: 24 }} aria-hidden={true}>{plan.icon}</span>
+        <h2 style={{ fontWeight: 800, fontSize: 24, margin: 0 }}>{plan.name}</h2>
+      </div>
+      <p style={{ margin: "6px 0", fontSize: 20, fontWeight: 700 }}>{plan.price}</p>
+      <p style={{ margin: "6px 0", color: "#64748b" }}>{plan.description}</p>
       <ul style={{ marginTop: 12 }}>
         {plan.features.map((f, i) => (
-          <li key={i} style={{ color: isFree ? "#065f46" : "inherit" }}>
-            {f}
-          </li>
+          <li key={i}>{f}</li>
         ))}
       </ul>
+
+      {plan.examples && plan.examples.length > 0 && (
+        <div style={{ marginTop: 12, padding: "10px 14px", background: "rgba(0,0,0,0.04)", borderRadius: 10 }}>
+          <p style={{ margin: "0 0 6px", fontWeight: 700, fontSize: 13, color: "#334155" }}>
+            Exemplos de uso/dia:
+          </p>
+          <ul style={{ margin: 0, paddingLeft: 18 }}>
+            {plan.examples.map((ex, i) => (
+              <li key={i} style={{ fontSize: 13, color: "#475569" }}>{ex}</li>
+            ))}
+          </ul>
+        </div>
+      )}
+
       <div style={{ marginTop: 16 }}>
-        {enabled ? (
-          isFree ? (
-            <a
-              href={plan.link}
-              style={{
-                display: "inline-block",
-                padding: "12px 24px",
-                fontWeight: 800,
-                borderRadius: 12,
-                background: "linear-gradient(135deg, #10b981 0%, #059669 100%)",
-                color: "#fff",
-                textDecoration: "none",
-                boxShadow: "0 4px 12px rgba(16, 185, 129, 0.4)",
-              }}
-            >
-              🚀 Começar Agora Grátis
-            </a>
-          ) : (
-            <a
-              href={plan.link}
-              target="_blank"
-              rel="noopener noreferrer"
-              style={{
-                display: "inline-block",
-                padding: "10px 16px",
-                fontWeight: 800,
-                borderRadius: 12,
-                background: "#22d3ee",
-                color: "#000",
-                textDecoration: "none",
-              }}
-            >
-              Assinar
-            </a>
-          )
+        {hasLink ? (
+          <button
+            onClick={() => onCheckout(plan)}
+            disabled={isLoading}
+            style={{
+              display: "inline-block",
+              padding: "10px 16px",
+              fontWeight: 800,
+              borderRadius: 12,
+              background: "#22d3ee",
+              color: "#000",
+              border: "none",
+              cursor: isLoading ? "wait" : "pointer",
+            }}
+          >
+            {isLoading ? "Redirecionando..." : plan.cta}
+          </button>
         ) : (
           <button
             disabled
@@ -178,6 +157,8 @@ function PlanCard({ plan }) {
               borderRadius: 12,
               background: "#475569",
               color: "#cbd5e1",
+              border: "none",
+              cursor: "not-allowed",
             }}
           >
             Indisponível
@@ -189,33 +170,74 @@ function PlanCard({ plan }) {
 }
 
 export default function Pricing() {
+  const [loading, setLoading] = useState("");
+
+  async function startCheckout(plan) {
+    try {
+      setLoading(plan.planKey);
+
+      const res = await fetch("/api/checkout", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ planKey: plan.planKey }),
+      }).catch(() => null);
+
+      if (res && res.ok) {
+        const { url } = await res.json();
+        if (url) {
+          window.location.href = url;
+          return;
+        }
+      }
+
+      if (plan.payLink) {
+        window.location.href = plan.payLink;
+        return;
+      }
+
+      alert("Link de pagamento ainda não configurado para este plano.");
+    } catch (e) {
+      console.error(e);
+      alert("Não foi possível iniciar o checkout agora.");
+    } finally {
+      setLoading("");
+    }
+  }
+
   return (
     <main style={{ minHeight: "100vh", padding: "32px" }}>
-      <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 24 }}>
-        <h1 style={{ fontSize: 36, fontWeight: 800 }}>Planos RKMMAX</h1>
-        <span
-          style={{
-            marginLeft: "auto",
-            padding: "4px 10px",
-            borderRadius: 999,
-            fontWeight: 800,
-            border: "1px solid",
-            borderColor: isProd ? "#059669" : "#d97706",
-            color: isProd ? "#059669" : "#d97706",
-          }}
-        >
-          {isProd ? "PRODUÇÃO" : "TESTE"}
-        </span>
+      <h1 style={{ fontSize: 36, fontWeight: 800, marginBottom: 8 }}>Planos RKMMAX</h1>
+
+      {/* Como funciona o consumo */}
+      <div
+        style={{
+          marginBottom: 32,
+          padding: "16px 20px",
+          background: "rgba(0,112,243,0.06)",
+          borderRadius: 12,
+          maxWidth: 560,
+        }}
+      >
+        <p style={{ fontWeight: 700, margin: "0 0 8px" }}>Como funciona o consumo?</p>
+        <p style={{ margin: "0 0 4px", fontSize: 14 }}>
+          Você tem um saldo único de créditos — use onde quiser no sistema.
+        </p>
+        <ul style={{ margin: "8px 0 0", paddingLeft: 18, fontSize: 14 }}>
+          <li>Interações comuns (Serginho, Especialistas, ABNT) = 1 crédito</li>
+          <li>Execuções pesadas (Construtor, Híbrido, fluxos multi-etapa) = 8 créditos</li>
+        </ul>
+        <p style={{ margin: "8px 0 0", fontSize: 13, color: "#475569" }}>
+          Não existe limite separado por ferramenta. O peso depende da execução real.
+        </p>
       </div>
-      {!isProd && (
-        <div
-          style={{ marginBottom: 16, padding: 12, border: "1px solid #d97706", borderRadius: 12 }}
-        >
-          Modo de <strong>teste</strong> ativo.
-        </div>
-      )}
+
       {PLANS.map((p) => (
-        <PlanCard key={p.key} plan={p} />
+        <PlanCard
+          key={p.planKey}
+          plan={p}
+          onCheckout={startCheckout}
+          isLoading={loading === p.planKey}
+        />
       ))}
 
       {/* FAQ */}
@@ -235,3 +257,4 @@ export default function Pricing() {
     </main>
   );
 }
+

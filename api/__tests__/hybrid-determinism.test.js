@@ -173,7 +173,69 @@ describe('Test D — betinhoParallel() uses getWeightedProviders(), not getEnabl
   });
 });
 
-// ─── Test E: Phase A5.6 — Fallback uses providerName + skips disabled ─────────
+// ─── Test F: Strict Hybrid rule — 120B→70B only, no groq-fallback/8B ─────────
+describe('Test F — api/ai.js hybrid path enforces strict 120B→70B only', () => {
+  const aiFilePath = path.resolve(__dirname, '../ai.js');
+  let aiContent;
+
+  beforeAll(() => {
+    aiContent = fs.readFileSync(aiFilePath, 'utf8');
+  });
+
+  it('hybrid path uses noFallback:true for llama-120b call', () => {
+    // Find the hybrid block
+    const hybridBlockStart = aiContent.indexOf("TIPO: HYBRID");
+    expect(hybridBlockStart).toBeGreaterThan(-1);
+    const hybridBlock = aiContent.slice(hybridBlockStart, hybridBlockStart + 2500);
+    expect(hybridBlock).toContain("forceProvider: 'llama-120b'");
+    expect(hybridBlock).toContain('noFallback: true');
+  });
+
+  it('hybrid path uses noFallback:true for llama-70b fallback call', () => {
+    const hybridBlockStart = aiContent.indexOf("TIPO: HYBRID");
+    const hybridBlock = aiContent.slice(hybridBlockStart, hybridBlockStart + 2500);
+    expect(hybridBlock).toContain("forceProvider: 'llama-70b'");
+    // Both provider calls must have noFallback:true
+    const noFallbackCount = (hybridBlock.match(/noFallback: true/g) || []).length;
+    expect(noFallbackCount).toBeGreaterThanOrEqual(2);
+  });
+
+  it('hybrid path never references groq-fallback, mixtral, or 8b', () => {
+    const hybridBlockStart = aiContent.indexOf("TIPO: HYBRID");
+    // Bound the hybrid block so we don't scan the genius block
+    const nextBlockStart = aiContent.indexOf("TIPO: GENIUS", hybridBlockStart);
+    const hybridBlock = aiContent.slice(hybridBlockStart, nextBlockStart);
+    // Non-comment lines must not reference disallowed providers
+    const nonCommentLines = hybridBlock.split('\n').filter(l => !l.trimStart().startsWith('//'));
+    const forbidden = ['groq-fallback', 'mixtral', 'llama-8b', 'llama-3.1-8b'];
+    forbidden.forEach((term) => {
+      const found = nonCommentLines.some(l => l.includes(term));
+      expect(found).toBe(false);
+    });
+  });
+
+  it('orchestrator _handleStructured supports noFallback option', () => {
+    const orchFilePath = path.resolve(__dirname, '../lib/serginho-orchestrator.js');
+    const orchContent = fs.readFileSync(orchFilePath, 'utf8');
+    expect(orchContent).toContain('options.noFallback');
+  });
+
+  it('hybrid path passes maxTokens: 4096 on both provider calls', () => {
+    // Both 120b and 70b executeAITask calls in the hybrid block must include maxTokens: 4096
+    const hybridBlockStart = aiContent.indexOf("TIPO: HYBRID");
+    const hybridBlock = aiContent.slice(hybridBlockStart, hybridBlockStart + 2500);
+    const maxTokensMatches = (hybridBlock.match(/maxTokens: 4096/g) || []).length;
+    expect(maxTokensMatches).toBeGreaterThanOrEqual(2);
+  });
+
+  it('orchestrator callGroq overrides max_tokens when maxTokens param is provided', () => {
+    const orchFilePath = path.resolve(__dirname, '../lib/serginho-orchestrator.js');
+    const orchContent = fs.readFileSync(orchFilePath, 'utf8');
+    // callGroq must spread defaultParams and then conditionally override max_tokens
+    expect(orchContent).toContain('maxTokens ? { max_tokens: maxTokens }');
+  });
+});
+
 describe('Test E — _handleStructured fallback uses providerName and skips disabled providers', () => {
   it('attemptedModels entries contain providerName field', () => {
     const filePath = path.resolve(__dirname, '../lib/serginho-orchestrator.js');

@@ -37,7 +37,7 @@ export function resolveModelName(model, provider) {
 }
 
 /**
- * Gera o manifest.json mínimo obrigatório para um artefato do Construtor.
+ * Gera o manifest.json para um artefato do Construtor.
  *
  * @param {object} params
  * @param {string} params.id - UUID v4 do artefato
@@ -48,13 +48,15 @@ export function resolveModelName(model, provider) {
  * @param {string} [params.metadata.tier]
  * @param {string} [params.metadata.complexity]
  * @param {string} [params.metadata.promptId]
+ * @param {string} [params.contentType] - tipo detectado do conteúdo (ex: "html", "md")
+ * @param {Array<{path: string, description: string, type: string}>} [params.contents] - lista de arquivos do pacote
  * @returns {object} manifest
  */
-export function generateManifest({ id, content, metadata = {} }) {
+export function generateManifest({ id, content, metadata = {}, contentType, contents }) {
   const checksum = computeChecksum(content);
   const modelName = resolveModelName(metadata.model, metadata.provider);
 
-  return {
+  const manifest = {
     id,
     version: '1.0.0',
     timestamp: new Date().toISOString(),
@@ -65,4 +67,9 @@ export function generateManifest({ id, content, metadata = {} }) {
     },
     checksum,
   };
+
+  if (contentType) manifest.contentType = contentType;
+  if (contents && contents.length > 0) manifest.contents = contents;
+
+  return manifest;
 }
