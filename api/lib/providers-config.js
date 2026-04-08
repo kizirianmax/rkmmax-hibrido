@@ -8,7 +8,7 @@
 /**
  * Provider configurations
  * Each provider has:
- * - type: Provider implementation type (groq)
+ * - type: Provider implementation type (groq | google)
  * - model: Specific model identifier
  * - endpoint: API endpoint URL
  * - tier: Intelligence tier (complex, medium, simple, fallback)
@@ -62,6 +62,18 @@ export const PROVIDERS = {
       max_tokens: 1024, // reduzido de 4096 para garantir disponibilidade máxima no fallback (TPM free tier Groq)
     },
   },
+
+  // Google Gemini - provider adicional (requer GEMINI_API_KEY)
+  'gemini-flash': {
+    type: 'google',
+    model: 'gemini-2.0-flash',
+    endpoint: 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent',
+    tier: 'simple',
+    defaultParams: {
+      temperature: 0.7,
+      maxOutputTokens: 2048,
+    },
+  },
 };
 
 /**
@@ -104,14 +116,17 @@ export function getAllProviderNames() {
 /**
  * Get providers that have their required env vars configured.
  * Groq providers require GROQ_API_KEY.
+ * Google providers require GEMINI_API_KEY.
  * @returns {Array<string>} Array of enabled provider names
  */
 export function getEnabledProviders() {
   const groqKey = process.env.GROQ_API_KEY;
+  const geminiKey = process.env.GEMINI_API_KEY;
 
   return Object.entries(PROVIDERS)
     .filter(([_, config]) => {
       if (config.type === 'groq') return !!groqKey;
+      if (config.type === 'google') return !!geminiKey;
       return false;
     })
     .map(([name]) => name);
@@ -225,7 +240,14 @@ export const MODEL_METADATA = {
     description: 'Fallback de alta disponibilidade',
     icon: '🔄',
     logicalTier: 'fallback'
-  }
+  },
+  'gemini-flash': {
+    infrastructure: 'google',
+    displayName: 'Gemini 2.0 Flash',
+    description: 'Respostas rápidas via Google Gemini',
+    icon: '✨',
+    logicalTier: 'simple'
+  },
 };
 
 /**
