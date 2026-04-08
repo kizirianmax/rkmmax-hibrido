@@ -1,7 +1,7 @@
 import { useState } from 'react';
 
 /**
- * ArtifactPreviewPanel — Fase 2D (PASSO 5: continuidade visual do ciclo de revisão)
+ * ArtifactPreviewPanel — Fase 2D (PASSO 6: histórico local de revisão)
  *
  * Painel de decisão humana sobre o artefato gerado pelo Construtor.
  * Exibe summary, status de validação/execução, lista de arquivos,
@@ -14,6 +14,7 @@ import { useState } from 'react';
  *   loading        {boolean}  — exibir estado de carregamento
  *   delivery       {object}   — { zipBase64 } retornado na aprovação (opcional)
  *   lastAdjustment {object}   — último ajuste solicitado {category, focusFile, comment, timestamp} (opcional)
+ *   reviewHistory  {Array}    — histórico de eventos de revisão [{type, text, timestamp}] (opcional)
  */
 
 // PASSO 4 — Categorias de ajuste (opcionais)
@@ -25,7 +26,10 @@ const ADJUSTMENT_CATEGORIES = [
   { key: 'visual', label: '🎨 Visual', description: 'Apresentação e aparência' },
 ];
 
-export default function ArtifactPreviewPanel({ preview, onDecision, onRevision, loading = false, delivery, lastAdjustment = null }) {
+// PASSO 6 — Limite de caracteres para exibição de texto no histórico de revisão
+const MAX_REVIEW_TEXT_LENGTH = 120;
+
+export default function ArtifactPreviewPanel({ preview, onDecision, onRevision, loading = false, delivery, lastAdjustment = null, reviewHistory = [] }) {
   const [rejectionFeedback, setRejectionFeedback] = useState('');
   const [showRejectionInput, setShowRejectionInput] = useState(false);
   const [adjustmentFeedback, setAdjustmentFeedback] = useState('');
@@ -381,6 +385,44 @@ export default function ArtifactPreviewPanel({ preview, onDecision, onRevision, 
               </div>
             </div>
           )}
+        </div>
+      )}
+
+      {/* PASSO 6 — Histórico de Revisão */}
+      {reviewHistory.length > 0 && (
+        <div className="artifact-review-history">
+          <span className="artifact-review-history-title">📋 Histórico de Revisão</span>
+          <ul className="artifact-review-history-list">
+            {reviewHistory.map((event, i) => {
+              const iconMap = {
+                approved: '✅',
+                rejected: '❌',
+                adjustment_requested: '🔄',
+                revision_generated: '📝',
+              };
+              const labelMap = {
+                approved: 'Aprovado',
+                rejected: 'Rejeitado',
+                adjustment_requested: 'Ajuste solicitado',
+                revision_generated: 'Revisão gerada',
+              };
+              const icon = iconMap[event.type] || '•';
+              const label = labelMap[event.type] || event.type;
+              const text = event.text && event.text.length > MAX_REVIEW_TEXT_LENGTH
+                ? `${event.text.slice(0, MAX_REVIEW_TEXT_LENGTH)}...`
+                : event.text;
+              return (
+                <li key={`${event.type}-${event.timestamp}`} className="artifact-review-history-item">
+                  <span className="artifact-review-history-icon">{icon}</span>
+                  <span className="artifact-review-history-label">{label}</span>
+                  {text && <span className="artifact-review-history-text">{text}</span>}
+                  <span className="artifact-review-history-time">
+                    {new Date(event.timestamp).toLocaleString('pt-BR')}
+                  </span>
+                </li>
+              );
+            })}
+          </ul>
         </div>
       )}
 
