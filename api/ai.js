@@ -323,6 +323,14 @@ export default async function handler(req, res) {
   } catch (error) {
     console.error("❌ KIZI AI error:", error);
 
+    // Provider not available (e.g., GEMINI_API_KEY not configured)
+    if (error.message && error.message.includes('is not available:')) {
+      return res.status(503).json({
+        error: 'Provider not available',
+        message: error.message,
+      });
+    }
+
     // Circuit breaker error
     if (error.message && error.message.includes('Circuit breaker')) {
       return res.status(503).json({

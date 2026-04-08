@@ -259,6 +259,7 @@ class SerginhoOrchestrator {
       'llama-70b': 12000,  // 12s — tier médio
       'llama-8b': 6000,    // 6s  — tier rápido
       'groq-fallback': 6000, // 6s — fallback rápido
+      'gemini-pro': 20000, // 20s — Gemini 2.5 Pro é modelo de raciocínio; precisa de margem maior
     };
     const PROVIDER_FAILURE_THRESHOLDS = {
       'llama-120b': 5, // Mais tolerante a timeouts esporádicos; evita ciclo de fallback permanente
@@ -683,17 +684,17 @@ class SerginhoOrchestrator {
     let currentProvider = options.forceProvider || routing.provider;
     let fallbackLevel = 0;
 
-    // Phase A5.7: Guard against forcing a disabled provider (e.g., Gemini without GOOGLE_API_KEY)
+    // Phase A5.7: Guard against forcing a disabled provider (e.g., Gemini without GEMINI_API_KEY)
+    // IMPORTANT: When forceProvider is explicitly requested and the provider is disabled,
+    // we throw a clear error instead of silently falling back to another provider.
+    // This prevents confusing UX where toggle ON still shows Groq responses.
     const enabledProvidersList = getEnabledProviders();
     if (options.forceProvider && !enabledProvidersList.includes(options.forceProvider)) {
-      console.warn(`[Serginho] forceProvider "${options.forceProvider}" is disabled (missing API key). Falling back to auto-route: ${routing.provider}`);
-      warnings.push({
-        code: 'FORCED_PROVIDER_DISABLED',
-        message: `Requested provider "${options.forceProvider}" is disabled. Using ${routing.provider} instead.`,
-        severity: 'warning',
-        timestamp: new Date().toISOString()
-      });
-      currentProvider = routing.provider;
+      const isGemini = options.forceProvider === 'gemini-pro';
+      const missingKey = isGemini ? 'GEMINI_API_KEY' : 'required API key';
+      const errorMsg = `Provider "${options.forceProvider}" is not available: ${missingKey} is not configured in the environment.`;
+      console.error(`[Serginho] forceProvider "${options.forceProvider}" is disabled — ${missingKey} missing. Refusing silent fallback.`);
+      throw new Error(errorMsg);
     }
 
     while (currentProvider) {

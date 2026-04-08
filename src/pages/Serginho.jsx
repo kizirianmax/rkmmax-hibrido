@@ -101,7 +101,13 @@ export default function Serginho() {
       });
 
       if (!response.ok) {
-        throw new Error(`Erro na API: ${response.status}`);
+        // Tentar ler o body do erro para mensagem mais precisa
+        let errDetail = `${response.status}`;
+        try {
+          const errBody = await response.json();
+          errDetail = errBody?.error?.message || errBody?.message || errDetail;
+        } catch (_) { /* ignora parse error */ }
+        throw new Error(`Erro na API: ${errDetail}`);
       }
 
       const data = await response.json();
@@ -127,12 +133,17 @@ export default function Serginho() {
         },
       ]);
     } catch (error) {
-      const errorMsg = error?.message || "erro desconhecido";
+      const rawMsg = error?.message || "erro desconhecido";
+      // Mensagem amigável quando Gemini não está configurado no ambiente
+      const isGeminiEnvError = rawMsg.includes('GEMINI_API_KEY') || rawMsg.includes('not available');
+      const errorMsg = isGeminiEnvError
+        ? '⚠️ Gemini 2.5 Pro não está disponível: GEMINI_API_KEY não configurada no servidor. Configure a variável no Vercel e faça um novo deploy.'
+        : `❌ Erro ao processar: ${rawMsg}. Tente novamente.`;
       setMessages((prev) => [
         ...prev,
         {
           role: "assistant",
-          content: `❌ Erro ao processar: ${errorMsg}. Tente novamente.`,
+          content: errorMsg,
         },
       ]);
     } finally {
