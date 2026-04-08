@@ -118,8 +118,10 @@ export default function HybridAgentSimple() {
   const [deliveryData, setDeliveryData] = useState({});
   // PASSO 5 — último ajuste solicitado (para continuidade visual)
   const [lastAdjustment, setLastAdjustment] = useState(null);
-  // PASSO 6 — histórico local de revisão por mensagem
-  const [reviewHistory, setReviewHistory] = useState({});
+  // PASSO 6 — histórico local de revisão global (array linear, independente de msgId)
+  const [reviewHistory, setReviewHistory] = useState([]);
+  // PASSO 6 — sinaliza que o próximo preview é continuação de uma revisão (preservar histórico)
+  const revisionPendingRef = useRef(false);
   const messagesEndRef = useRef(null);
   const mediaRecorderRef = useRef(null);
 
@@ -176,6 +178,11 @@ export default function HybridAgentSimple() {
   // Fase 2D — gerar preview de um artefato (mensagem do agente)
   const handleGeneratePreview = async (msg) => {
     const msgId = msg.id;
+    // PASSO 6 — resetar histórico ao abrir preview de artefato novo (não revisão)
+    if (!revisionPendingRef.current) {
+      setReviewHistory([]);
+    }
+    revisionPendingRef.current = false;
     setPreviewLoading((prev) => ({ ...prev, [msgId]: true }));
     setPreviewErrors((prev) => { const updated = { ...prev }; delete updated[msgId]; return updated; });
     try {
@@ -206,12 +213,9 @@ export default function HybridAgentSimple() {
     }
   };
 
-  // PASSO 6 — helper para append imutável de evento no histórico de revisão
-  const addReviewEvent = (msgId, event) => {
-    setReviewHistory((prev) => ({
-      ...prev,
-      [msgId]: [...(prev[msgId] || []), event],
-    }));
+  // PASSO 6 — helper para append imutável de evento no histórico de revisão (array global)
+  const addReviewEvent = (event) => {
+    setReviewHistory((prev) => [...prev, event]);
   };
 
   // Fase 2D — aplicar decisão (aprovação/rejeição) ao preview
@@ -237,9 +241,9 @@ export default function HybridAgentSimple() {
         }
         // PASSO 6 — registrar evento de aprovação ou rejeição no histórico
         if (decision === 'approved') {
-          addReviewEvent(msgId, { type: 'approved', text: null, timestamp: new Date().toISOString() });
+          addReviewEvent({ type: 'approved', text: null, timestamp: new Date().toISOString() });
         } else if (decision === 'rejected') {
-          addReviewEvent(msgId, { type: 'rejected', text: feedback || null, timestamp: new Date().toISOString() });
+          addReviewEvent({ type: 'rejected', text: feedback || null, timestamp: new Date().toISOString() });
         }
       }
     } catch (err) {
@@ -275,7 +279,7 @@ export default function HybridAgentSimple() {
       if (feedbackFromPanel.category) eventParts.push(feedbackFromPanel.category);
       if (feedbackFromPanel.focusFile) eventParts.push(feedbackFromPanel.focusFile);
       if (feedbackFromPanel.comment) eventParts.push(feedbackFromPanel.comment);
-      addReviewEvent(msgId, { type: 'adjustment_requested', text: eventParts.join(' · ') || null, timestamp: new Date().toISOString() });
+      addReviewEvent({ type: 'adjustment_requested', text: eventParts.join(' · ') || null, timestamp: new Date().toISOString() });
     } else {
       // Compatibilidade com feedback string simples (legado)
       const currentPreview = previews[msgId];
@@ -287,11 +291,13 @@ export default function HybridAgentSimple() {
       if (typeof feedbackFromPanel === 'string' && feedbackFromPanel.trim()) {
         setLastAdjustment(buildLastAdjustment(null, null, feedbackFromPanel));
         // PASSO 6 — registrar evento de ajuste solicitado no histórico (string simples)
-        addReviewEvent(msgId, { type: 'adjustment_requested', text: feedbackFromPanel, timestamp: new Date().toISOString() });
+        addReviewEvent({ type: 'adjustment_requested', text: feedbackFromPanel, timestamp: new Date().toISOString() });
       }
     }
     setPreviews((prev) => { const updated = { ...prev }; delete updated[msgId]; return updated; });
     setPreviewErrors((prev) => { const updated = { ...prev }; delete updated[msgId]; return updated; });
+    // PASSO 6 — sinalizar que o próximo preview é continuação desta revisão
+    revisionPendingRef.current = true;
     setInput(revisionText);
   };
 
@@ -643,7 +649,7 @@ export default function HybridAgentSimple() {
                       onRevision={(fb) => handleRequestRevision(msg.id, fb)}
                       delivery={deliveryData[msg.id]}
                       lastAdjustment={lastAdjustment}
-                      reviewHistory={reviewHistory[msg.id] || []}
+                      reviewHistory={reviewHistory}
                     />
                   )}
                   {previewErrors[msg.id] && previews[msg.id] && (
