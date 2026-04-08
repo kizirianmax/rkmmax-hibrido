@@ -409,24 +409,7 @@ export default function Serginho() {
               >
                 ⚡ KIZI Flash
               </span>
-              <span
-                onClick={() => setUseGemini((v) => !v)}
-                style={{
-                  fontSize: "0.65rem",
-                  background: useGemini
-                    ? "linear-gradient(135deg, #4285f4, #34a853)"
-                    : "rgba(255,255,255,0.15)",
-                  color: "white",
-                  padding: "2px 6px",
-                  borderRadius: "10px",
-                  cursor: "pointer",
-                  opacity: useGemini ? 1 : 0.5,
-                  transition: "all 0.2s ease",
-                }}
-                title={useGemini ? "Gemini 2.5 Pro ativo — clique para desativar" : "Clique para testar Gemini 2.5 Pro"}
-              >
-                {useGemini ? "♊ Gemini ON" : "♊ Gemini"}
-              </span>
+
             </div>
           </div>
         </div>
@@ -515,6 +498,39 @@ export default function Serginho() {
 
       {/* Input fixo na parte inferior */}
       <div className="input-container">
+        {/* Gemini test toggle — reversível: remover este bloco */}
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "flex-end",
+            maxWidth: "900px",
+            margin: "0 auto 6px",
+            width: "100%",
+            boxSizing: "border-box",
+          }}
+        >
+          <span
+            onClick={() => setUseGemini((v) => !v)}
+            style={{
+              fontSize: "0.7rem",
+              background: useGemini
+                ? "linear-gradient(135deg, #4285f4, #34a853)"
+                : "#e2e8f0",
+              color: useGemini ? "white" : "#64748b",
+              padding: "3px 10px",
+              borderRadius: "12px",
+              cursor: "pointer",
+              transition: "all 0.2s ease",
+              border: useGemini ? "1px solid rgba(66,133,244,0.4)" : "1px solid #cbd5e1",
+              fontWeight: useGemini ? 600 : 400,
+              userSelect: "none",
+              WebkitTapHighlightColor: "transparent",
+            }}
+            title={useGemini ? "Gemini 2.5 Pro ativo — clique para desativar" : "Clique para testar Gemini 2.5 Pro"}
+          >
+            {useGemini ? "♊ Gemini ON" : "♊ Gemini"}
+          </span>
+        </div>
         <div className="input-wrapper">
           {/* Botões de ação */}
           <div className="action-buttons">
