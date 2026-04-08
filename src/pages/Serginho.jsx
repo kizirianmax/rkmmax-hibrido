@@ -49,6 +49,7 @@ export default function Serginho() {
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [isRecording, setIsRecording] = useState(false);
+  const [useGemini, setUseGemini] = useState(false);
   const messagesEndRef = useRef(null);
   const mediaRecorderRef = useRef(null);
   const fileInputRef = useRef(null);
@@ -95,6 +96,7 @@ export default function Serginho() {
           messages: newMessages,
           agentType: "serginho", // Prompts de gênio do Serginho
           mode: "OTIMIZADO", // Otimização de custo ativada
+          ...(useGemini ? { forceProvider: "gemini-pro" } : {}),
         }),
       });
 
@@ -406,6 +408,24 @@ export default function Serginho() {
                 }}
               >
                 ⚡ KIZI Flash
+              </span>
+              <span
+                onClick={() => setUseGemini((v) => !v)}
+                style={{
+                  fontSize: "0.65rem",
+                  background: useGemini
+                    ? "linear-gradient(135deg, #4285f4, #34a853)"
+                    : "rgba(255,255,255,0.15)",
+                  color: "white",
+                  padding: "2px 6px",
+                  borderRadius: "10px",
+                  cursor: "pointer",
+                  opacity: useGemini ? 1 : 0.5,
+                  transition: "all 0.2s ease",
+                }}
+                title={useGemini ? "Gemini 2.5 Pro ativo — clique para desativar" : "Clique para testar Gemini 2.5 Pro"}
+              >
+                {useGemini ? "♊ Gemini ON" : "♊ Gemini"}
               </span>
             </div>
           </div>
