@@ -244,6 +244,8 @@ class SerginhoOrchestrator {
     this.modelRegistry.registerModel('llama-3.1-70b-versatile', 'complex', 0.00);
     this.modelRegistry.registerModel('llama-3.1-8b-instant', 'simple', 0.00);
     this.modelRegistry.registerModel('mixtral-8x7b-32768', 'simple', 0.00);
+    // Gemini models (new)
+    this.modelRegistry.registerModel('gemini-2.5-pro', 'complex', 0.00);
   }
 
   /**
@@ -1020,6 +1022,8 @@ class SerginhoOrchestrator {
       switch (config.type) {
         case 'groq':
           return this.callGroq(config, message, messages, context, signal, maxTokens);
+        case 'google':
+          return this.callGemini(config, message, messages, context, signal, maxTokens);
         default:
           throw new Error(`Unknown provider type: ${config.type}`);
       }
@@ -1112,6 +1116,82 @@ class SerginhoOrchestrator {
 
     // All attempts exhausted on retryable errors
     throw lastError;
+  }
+
+  /**
+   * Call Google Gemini API (REST, no SDK)
+   * @private
+   */
+  async callGemini(config, message, messages, context, signal, maxTokens) {
+    const apiKey = process.env.GEMINI_API_KEY;
+    if (!apiKey) {
+      throw new Error('GEMINI_API_KEY environment variable is required');
+    }
+
+    // Build contents array from history + current message
+    const contents = [];
+
+    const systemPrompt = context?.systemPrompt;
+
+    for (const msg of messages) {
+      if (msg.role === 'system') continue; // handled via systemInstruction
+      contents.push({
+        role: msg.role === 'assistant' ? 'model' : 'user',
+        parts: [{ text: msg.content }],
+      });
+    }
+
+    contents.push({
+      role: 'user',
+      parts: [{ text: message }],
+    });
+
+    const requestBody = {
+      contents,
+      generationConfig: {
+        temperature: config.defaultParams.temperature,
+        maxOutputTokens: maxTokens || config.defaultParams.maxOutputTokens,
+      },
+    };
+
+    if (systemPrompt) {
+      requestBody.systemInstruction = {
+        parts: [{ text: systemPrompt }],
+      };
+    }
+
+    const url = config.endpoint;
+
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-goog-api-key': apiKey,
+      },
+      body: JSON.stringify(requestBody),
+      ...(signal ? { signal } : {}),
+    });
+
+    if (!response.ok) {
+      const errorText = await response.text().catch((e) => `(unable to parse: ${e.message})`);
+      throw new Error(`Gemini API error: ${response.status} ${errorText}`);
+    }
+
+    const data = await response.json();
+
+    if (!data.candidates || !data.candidates[0]?.content?.parts?.[0]?.text) {
+      throw new Error(`Invalid Gemini response structure: ${JSON.stringify(data)}`);
+    }
+
+    return {
+      text: data.candidates[0].content.parts[0].text,
+      model: config.model,
+      usage: data.usageMetadata ? {
+        promptTokens: data.usageMetadata.promptTokenCount || 0,
+        completionTokens: data.usageMetadata.candidatesTokenCount || 0,
+        totalTokens: data.usageMetadata.totalTokenCount || 0,
+      } : {},
+    };
   }
 
   /**

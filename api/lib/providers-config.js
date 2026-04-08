@@ -8,7 +8,7 @@
 /**
  * Provider configurations
  * Each provider has:
- * - type: Provider implementation type (groq)
+ * - type: Provider implementation type (groq | google)
  * - model: Specific model identifier
  * - endpoint: API endpoint URL
  * - tier: Intelligence tier (complex, medium, simple, fallback)
@@ -62,6 +62,19 @@ export const PROVIDERS = {
       max_tokens: 1024, // reduzido de 4096 para garantir disponibilidade máxima no fallback (TPM free tier Groq)
     },
   },
+
+  // Google Gemini 2.5 Pro — provider adicional (requer GEMINI_API_KEY)
+  // Projeto RKMMAX INFINITY no Google AI Studio
+  'gemini-pro': {
+    type: 'google',
+    model: 'gemini-2.5-pro',
+    endpoint: 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-pro:generateContent',
+    tier: 'complex',
+    defaultParams: {
+      temperature: 1.0,
+      maxOutputTokens: 8192,
+    },
+  },
 };
 
 /**
@@ -104,14 +117,17 @@ export function getAllProviderNames() {
 /**
  * Get providers that have their required env vars configured.
  * Groq providers require GROQ_API_KEY.
+ * Google providers require GEMINI_API_KEY.
  * @returns {Array<string>} Array of enabled provider names
  */
 export function getEnabledProviders() {
   const groqKey = process.env.GROQ_API_KEY;
+  const geminiKey = process.env.GEMINI_API_KEY;
 
   return Object.entries(PROVIDERS)
     .filter(([_, config]) => {
       if (config.type === 'groq') return !!groqKey;
+      if (config.type === 'google') return !!geminiKey;
       return false;
     })
     .map(([name]) => name);
@@ -119,7 +135,7 @@ export function getEnabledProviders() {
 
 /**
  * Parse optional provider weights from env var.
- * Format: JSON string, e.g. '{"llama-120b":100}' or '{"llama-120b":70,"llama-70b":30}'
+ * Format: JSON string, e.g. '{"llama-120b":100}' or '{"llama-120b":70,"gemini-pro":30}'
  * Returns null if not configured or invalid.
  * Phase A5.3 scaffolding — not used in routing yet.
  * @returns {object|null}
@@ -191,7 +207,7 @@ export function getWeightedProviders() {
  * Provides human-readable information about each model
  * 
  * Structure:
- * - infrastructure: Provider infrastructure (groq)
+ * - infrastructure: Provider infrastructure (groq | google)
  * - displayName: Human-readable model name
  * - description: Brief description of model capabilities
  * - icon: Visual icon for UI
@@ -225,7 +241,14 @@ export const MODEL_METADATA = {
     description: 'Fallback de alta disponibilidade',
     icon: '🔄',
     logicalTier: 'fallback'
-  }
+  },
+  'gemini-pro': {
+    infrastructure: 'google',
+    displayName: 'Gemini 2.5 Pro',
+    description: 'Raciocínio avançado via Google Gemini (RKMMAX INFINITY)',
+    icon: '♊',
+    logicalTier: 'complex'
+  },
 };
 
 /**
