@@ -2,6 +2,11 @@ import { useState, useRef, useEffect } from "react";
 import "../styles/HybridAgent.css";
 import ArtifactPreviewPanel from "../components/construtor/ArtifactPreviewPanel";
 import { normalizeVisibleContent } from "../lib/construtor/artifactNormalizer";
+import {
+  loadInputDraft,
+  saveInputDraft,
+  clearInputDraft,
+} from "../lib/construtor/inputDraftStorage";
 
 /**
  * Renders AI response text with basic markdown formatting.
@@ -147,6 +152,8 @@ const clearArtifactPreview = () => {
   } catch { /* ignorar */ }
 };
 
+// PASSO 12 — helpers de persistência importados de src/lib/construtor/inputDraftStorage.js
+
 /**
  * RKMMAX HYBRID - CONSTRUTOR (KIZI)
  * Agente Construtor: geração e entrega de artefatos via orquestrador KIZI.
@@ -156,7 +163,8 @@ const clearArtifactPreview = () => {
  */
 export default function HybridAgentSimple() {
   const [mode, setMode] = useState("manual");
-  const [input, setInput] = useState("");
+  // PASSO 12 — restaurar rascunho salvo ao montar o componente
+  const [input, setInput] = useState(() => loadInputDraft());
   // Versão do app para cache busting
   const APP_VERSION = "v3.1.0";
 
@@ -307,6 +315,11 @@ export default function HybridAgentSimple() {
     }
   }, [previews, deliveryData, messages]);
 
+  // PASSO 12 — persistir rascunho do campo de entrada em sessionStorage
+  useEffect(() => {
+    saveInputDraft(input);
+  }, [input]);
+
   // Fase 2D — gerar preview de um artefato (mensagem do agente)
   const handleGeneratePreview = async (msg) => {
     const msgId = msg.id;
@@ -367,6 +380,9 @@ export default function HybridAgentSimple() {
     setPreviews({});
     setDeliveryData({});
     clearArtifactPreview();
+    // PASSO 12 — limpar rascunho ao encerrar ciclo
+    setInput("");
+    clearInputDraft();
   };
 
   // Fase 2D — aplicar decisão (aprovação/rejeição) ao preview
@@ -466,6 +482,7 @@ export default function HybridAgentSimple() {
     setMessages((prev) => [...prev, userMessage]);
     const userInput = input;
     setInput("");
+    clearInputDraft(); // PASSO 12 — limpar rascunho salvo ao enviar
     setLoading(true);
 
     try {
