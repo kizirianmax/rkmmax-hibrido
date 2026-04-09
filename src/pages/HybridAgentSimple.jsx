@@ -123,7 +123,7 @@ const loadArtifactPreview = () => {
 const saveArtifactPreview = (activeMsgId, preview, delivery, agentMessage) => {
   try {
     sessionStorage.setItem(ARTIFACT_PREVIEW_STORAGE_KEY, JSON.stringify({
-      activeMsgId,
+      activeMsgId: Number(activeMsgId),
       preview,
       delivery: delivery || null,
       agentMessage: agentMessage ? {
@@ -160,8 +160,13 @@ export default function HybridAgentSimple() {
   // Versão do app para cache busting
   const APP_VERSION = "v3.1.0";
 
+  // PASSO 11 — carregar uma única vez para todos os lazy initializers
+  const savedArtifactPreview = loadArtifactPreview();
+  const restoredMsgId = savedArtifactPreview?.activeMsgId != null
+    ? Number(savedArtifactPreview.activeMsgId)
+    : null;
+
   const [messages, setMessages] = useState(() => {
-    const savedPreviewData = loadArtifactPreview();
     const initialMessages = [
       {
         id: 1,
@@ -180,15 +185,13 @@ export default function HybridAgentSimple() {
       },
     ];
     // PASSO 11 — restaurar mensagem do agente que gerou o artefato persistido
-    if (savedPreviewData?.agentMessage) {
+    if (savedArtifactPreview?.agentMessage && restoredMsgId && restoredMsgId > 2) {
       const restored = {
-        ...savedPreviewData.agentMessage,
-        timestamp: new Date(savedPreviewData.agentMessage.timestamp),
+        ...savedArtifactPreview.agentMessage,
+        id: restoredMsgId,
+        timestamp: new Date(savedArtifactPreview.agentMessage.timestamp || Date.now()),
       };
-      // Só injetar se o id não conflita com os iniciais
-      if (restored.id && restored.id !== 1 && restored.id !== 2) {
-        initialMessages.push(restored);
-      }
+      initialMessages.push(restored);
     }
     return initialMessages;
   });
@@ -197,18 +200,16 @@ export default function HybridAgentSimple() {
   const [githubToken, setGithubToken] = useState(localStorage.getItem("github_token") || null);
   // Fase 2D — estado de preview por mensagem
   const [previews, setPreviews] = useState(() => {
-    const savedPreview = loadArtifactPreview();
-    if (savedPreview?.activeMsgId && savedPreview?.preview) {
-      return { [savedPreview.activeMsgId]: savedPreview.preview };
+    if (restoredMsgId && savedArtifactPreview?.preview) {
+      return { [restoredMsgId]: savedArtifactPreview.preview };
     }
     return {};
   });
   const [previewLoading, setPreviewLoading] = useState({});
   const [previewErrors, setPreviewErrors] = useState({});
   const [deliveryData, setDeliveryData] = useState(() => {
-    const savedPreview = loadArtifactPreview();
-    if (savedPreview?.activeMsgId && savedPreview?.delivery) {
-      return { [savedPreview.activeMsgId]: savedPreview.delivery };
+    if (restoredMsgId && savedArtifactPreview?.delivery) {
+      return { [restoredMsgId]: savedArtifactPreview.delivery };
     }
     return {};
   });
@@ -290,12 +291,13 @@ export default function HybridAgentSimple() {
     }
     // Persistir apenas o último preview ativo (artefato mais recente)
     const lastMsgId = msgIds[msgIds.length - 1];
+    const numericMsgId = Number(lastMsgId);
     const activePreview = previews[lastMsgId];
-    const activeDelivery = deliveryData[lastMsgId] || null;
+    const activeDelivery = deliveryData[lastMsgId] || deliveryData[numericMsgId] || null;
     // Encontrar a mensagem do agente correspondente para persistir junto
-    const agentMsg = messages.find((m) => String(m.id) === String(lastMsgId));
+    const agentMsg = messages.find((m) => m.id === numericMsgId);
     if (activePreview) {
-      saveArtifactPreview(lastMsgId, activePreview, activeDelivery, agentMsg || null);
+      saveArtifactPreview(numericMsgId, activePreview, activeDelivery, agentMsg || null);
     }
   }, [previews, deliveryData, messages]);
 
