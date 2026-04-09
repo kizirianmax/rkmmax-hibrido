@@ -120,12 +120,23 @@ const loadArtifactPreview = () => {
   return null;
 };
 
-const saveArtifactPreview = (activeMsgId, preview, delivery) => {
+const saveArtifactPreview = (activeMsgId, preview, delivery, agentMessage) => {
   try {
     sessionStorage.setItem(ARTIFACT_PREVIEW_STORAGE_KEY, JSON.stringify({
       activeMsgId,
       preview,
       delivery: delivery || null,
+      agentMessage: agentMessage ? {
+        id: agentMessage.id,
+        type: agentMessage.type,
+        agent: agentMessage.agent,
+        content: agentMessage.content,
+        provider: agentMessage.provider,
+        tier: agentMessage.tier,
+        isFallback: agentMessage.isFallback,
+        complexity: agentMessage.complexity,
+        timestamp: agentMessage.timestamp ? (agentMessage.timestamp instanceof Date ? agentMessage.timestamp.toISOString() : agentMessage.timestamp) : new Date().toISOString(),
+      } : null,
     }));
   } catch { /* sessionStorage indisponível ou cheio — falhar silenciosamente */ }
 };
@@ -149,23 +160,38 @@ export default function HybridAgentSimple() {
   // Versão do app para cache busting
   const APP_VERSION = "v3.1.0";
 
-  const [messages, setMessages] = useState([
-    {
-      id: 1,
-      type: "system",
-      content: `⚙️ Construtor inicializado (${APP_VERSION})`,
-      timestamp: new Date(),
-    },
-    {
-      id: 2,
-      type: "agent",
-      agent: "Construtor",
-      content:
-        "Construtor pronto. Descreva o artefato ou tarefa que deseja gerar.",
-      provider: "kizi-primary",
-      timestamp: new Date(),
-    },
-  ]);
+  const [messages, setMessages] = useState(() => {
+    const savedPreviewData = loadArtifactPreview();
+    const initialMessages = [
+      {
+        id: 1,
+        type: "system",
+        content: `⚙️ Construtor inicializado (${APP_VERSION})`,
+        timestamp: new Date(),
+      },
+      {
+        id: 2,
+        type: "agent",
+        agent: "Construtor",
+        content:
+          "Construtor pronto. Descreva o artefato ou tarefa que deseja gerar.",
+        provider: "kizi-primary",
+        timestamp: new Date(),
+      },
+    ];
+    // PASSO 11 — restaurar mensagem do agente que gerou o artefato persistido
+    if (savedPreviewData?.agentMessage) {
+      const restored = {
+        ...savedPreviewData.agentMessage,
+        timestamp: new Date(savedPreviewData.agentMessage.timestamp),
+      };
+      // Só injetar se o id não conflita com os iniciais
+      if (restored.id && restored.id !== 1 && restored.id !== 2) {
+        initialMessages.push(restored);
+      }
+    }
+    return initialMessages;
+  });
   const [loading, setLoading] = useState(false);
   const [isRecording, setIsRecording] = useState(false);
   const [githubToken, setGithubToken] = useState(localStorage.getItem("github_token") || null);
@@ -266,10 +292,12 @@ export default function HybridAgentSimple() {
     const lastMsgId = msgIds[msgIds.length - 1];
     const activePreview = previews[lastMsgId];
     const activeDelivery = deliveryData[lastMsgId] || null;
+    // Encontrar a mensagem do agente correspondente para persistir junto
+    const agentMsg = messages.find((m) => String(m.id) === String(lastMsgId));
     if (activePreview) {
-      saveArtifactPreview(lastMsgId, activePreview, activeDelivery);
+      saveArtifactPreview(lastMsgId, activePreview, activeDelivery, agentMsg || null);
     }
-  }, [previews, deliveryData]);
+  }, [previews, deliveryData, messages]);
 
   // Fase 2D — gerar preview de um artefato (mensagem do agente)
   const handleGeneratePreview = async (msg) => {
