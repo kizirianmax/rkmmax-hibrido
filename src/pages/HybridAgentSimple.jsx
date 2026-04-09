@@ -84,6 +84,9 @@ const REVIEW_CYCLE_STORAGE_KEY = 'construtor_review_cycle';
 // PASSO 11 — helpers de persistência do preview atual do artefato em sessionStorage
 const ARTIFACT_PREVIEW_STORAGE_KEY = 'construtor_artifact_preview';
 
+// PASSO 12 — chave de persistência do rascunho do campo de entrada
+const INPUT_DRAFT_STORAGE_KEY = 'construtor_input_draft';
+
 const loadReviewCycle = () => {
   try {
     const raw = sessionStorage.getItem(REVIEW_CYCLE_STORAGE_KEY);
@@ -147,6 +150,29 @@ const clearArtifactPreview = () => {
   } catch { /* ignorar */ }
 };
 
+// PASSO 12 — helpers de persistência do rascunho do campo de entrada
+const loadInputDraft = () => {
+  try {
+    return sessionStorage.getItem(INPUT_DRAFT_STORAGE_KEY) || '';
+  } catch { return ''; }
+};
+
+const saveInputDraft = (text) => {
+  try {
+    if (text) {
+      sessionStorage.setItem(INPUT_DRAFT_STORAGE_KEY, text);
+    } else {
+      sessionStorage.removeItem(INPUT_DRAFT_STORAGE_KEY);
+    }
+  } catch { /* sessionStorage indisponível ou cheio — falhar silenciosamente */ }
+};
+
+const clearInputDraft = () => {
+  try {
+    sessionStorage.removeItem(INPUT_DRAFT_STORAGE_KEY);
+  } catch { /* ignorar */ }
+};
+
 /**
  * RKMMAX HYBRID - CONSTRUTOR (KIZI)
  * Agente Construtor: geração e entrega de artefatos via orquestrador KIZI.
@@ -156,7 +182,8 @@ const clearArtifactPreview = () => {
  */
 export default function HybridAgentSimple() {
   const [mode, setMode] = useState("manual");
-  const [input, setInput] = useState("");
+  // PASSO 12 — restaurar rascunho salvo ao montar o componente
+  const [input, setInput] = useState(() => loadInputDraft());
   // Versão do app para cache busting
   const APP_VERSION = "v3.1.0";
 
@@ -307,6 +334,11 @@ export default function HybridAgentSimple() {
     }
   }, [previews, deliveryData, messages]);
 
+  // PASSO 12 — persistir rascunho do campo de entrada em sessionStorage
+  useEffect(() => {
+    saveInputDraft(input);
+  }, [input]);
+
   // Fase 2D — gerar preview de um artefato (mensagem do agente)
   const handleGeneratePreview = async (msg) => {
     const msgId = msg.id;
@@ -367,6 +399,9 @@ export default function HybridAgentSimple() {
     setPreviews({});
     setDeliveryData({});
     clearArtifactPreview();
+    // PASSO 12 — limpar rascunho ao encerrar ciclo
+    setInput("");
+    clearInputDraft();
   };
 
   // Fase 2D — aplicar decisão (aprovação/rejeição) ao preview
@@ -466,6 +501,7 @@ export default function HybridAgentSimple() {
     setMessages((prev) => [...prev, userMessage]);
     const userInput = input;
     setInput("");
+    clearInputDraft(); // PASSO 12 — limpar rascunho salvo ao enviar
     setLoading(true);
 
     try {
