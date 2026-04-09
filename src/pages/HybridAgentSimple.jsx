@@ -2,6 +2,11 @@ import { useState, useRef, useEffect } from "react";
 import "../styles/HybridAgent.css";
 import ArtifactPreviewPanel from "../components/construtor/ArtifactPreviewPanel";
 import { normalizeVisibleContent } from "../lib/construtor/artifactNormalizer";
+import {
+  loadInputDraft,
+  saveInputDraft,
+  clearInputDraft,
+} from "../lib/construtor/inputDraftStorage";
 
 /**
  * Renders AI response text with basic markdown formatting.
@@ -84,9 +89,6 @@ const REVIEW_CYCLE_STORAGE_KEY = 'construtor_review_cycle';
 // PASSO 11 — helpers de persistência do preview atual do artefato em sessionStorage
 const ARTIFACT_PREVIEW_STORAGE_KEY = 'construtor_artifact_preview';
 
-// PASSO 12 — chave de persistência do rascunho do campo de entrada
-const INPUT_DRAFT_STORAGE_KEY = 'construtor_input_draft';
-
 const loadReviewCycle = () => {
   try {
     const raw = sessionStorage.getItem(REVIEW_CYCLE_STORAGE_KEY);
@@ -150,28 +152,7 @@ const clearArtifactPreview = () => {
   } catch { /* ignorar */ }
 };
 
-// PASSO 12 — helpers de persistência do rascunho do campo de entrada
-const loadInputDraft = () => {
-  try {
-    return sessionStorage.getItem(INPUT_DRAFT_STORAGE_KEY) || '';
-  } catch { return ''; }
-};
-
-const saveInputDraft = (text) => {
-  try {
-    if (text) {
-      sessionStorage.setItem(INPUT_DRAFT_STORAGE_KEY, text);
-    } else {
-      sessionStorage.removeItem(INPUT_DRAFT_STORAGE_KEY);
-    }
-  } catch { /* sessionStorage indisponível ou cheio — falhar silenciosamente */ }
-};
-
-const clearInputDraft = () => {
-  try {
-    sessionStorage.removeItem(INPUT_DRAFT_STORAGE_KEY);
-  } catch { /* ignorar */ }
-};
+// PASSO 12 — helpers de persistência importados de src/lib/construtor/inputDraftStorage.js
 
 /**
  * RKMMAX HYBRID - CONSTRUTOR (KIZI)
