@@ -123,7 +123,7 @@ const loadArtifactPreview = () => {
 const saveArtifactPreview = (activeMsgId, preview, delivery, agentMessage) => {
   try {
     sessionStorage.setItem(ARTIFACT_PREVIEW_STORAGE_KEY, JSON.stringify({
-      activeMsgId: Number(activeMsgId),
+      activeMsgId: activeMsgId != null ? Number(activeMsgId) : null,
       preview,
       delivery: delivery || null,
       agentMessage: agentMessage ? {
@@ -162,8 +162,11 @@ export default function HybridAgentSimple() {
 
   // PASSO 11 — carregar uma única vez para todos os lazy initializers
   const savedArtifactPreview = loadArtifactPreview();
-  const restoredMsgId = savedArtifactPreview?.activeMsgId != null
+  const _parsedMsgId = savedArtifactPreview?.activeMsgId != null
     ? Number(savedArtifactPreview.activeMsgId)
+    : null;
+  const restoredMsgId = (_parsedMsgId != null && !isNaN(_parsedMsgId) && _parsedMsgId > 0)
+    ? _parsedMsgId
     : null;
 
   const [messages, setMessages] = useState(() => {
@@ -189,7 +192,10 @@ export default function HybridAgentSimple() {
       const restored = {
         ...savedArtifactPreview.agentMessage,
         id: restoredMsgId,
-        timestamp: new Date(savedArtifactPreview.agentMessage.timestamp || Date.now()),
+        timestamp: (() => {
+          const d = new Date(savedArtifactPreview.agentMessage.timestamp || Date.now());
+          return isNaN(d.getTime()) ? new Date() : d;
+        })(),
       };
       initialMessages.push(restored);
     }
