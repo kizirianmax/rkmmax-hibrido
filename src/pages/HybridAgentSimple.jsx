@@ -81,6 +81,9 @@ function MultiFileRenderer({ content }) {
 // PASSO 9 — helpers de persistência do ciclo de revisão em sessionStorage
 const REVIEW_CYCLE_STORAGE_KEY = 'construtor_review_cycle';
 
+// PASSO 11 — helpers de persistência do preview atual do artefato em sessionStorage
+const ARTIFACT_PREVIEW_STORAGE_KEY = 'construtor_artifact_preview';
+
 const loadReviewCycle = () => {
   try {
     const raw = sessionStorage.getItem(REVIEW_CYCLE_STORAGE_KEY);
@@ -104,6 +107,32 @@ const saveReviewCycle = (history, version, adjustment) => {
 const clearReviewCycle = () => {
   try {
     sessionStorage.removeItem(REVIEW_CYCLE_STORAGE_KEY);
+  } catch { /* ignorar */ }
+};
+
+const loadArtifactPreview = () => {
+  try {
+    const raw = sessionStorage.getItem(ARTIFACT_PREVIEW_STORAGE_KEY);
+    if (!raw) return null;
+    const parsed = JSON.parse(raw);
+    if (parsed && typeof parsed === 'object') return parsed;
+  } catch { /* ignorar dados corrompidos */ }
+  return null;
+};
+
+const saveArtifactPreview = (activeMsgId, preview, delivery) => {
+  try {
+    sessionStorage.setItem(ARTIFACT_PREVIEW_STORAGE_KEY, JSON.stringify({
+      activeMsgId,
+      preview,
+      delivery: delivery || null,
+    }));
+  } catch { /* sessionStorage indisponível ou cheio — falhar silenciosamente */ }
+};
+
+const clearArtifactPreview = () => {
+  try {
+    sessionStorage.removeItem(ARTIFACT_PREVIEW_STORAGE_KEY);
   } catch { /* ignorar */ }
 };
 
@@ -141,10 +170,22 @@ export default function HybridAgentSimple() {
   const [isRecording, setIsRecording] = useState(false);
   const [githubToken, setGithubToken] = useState(localStorage.getItem("github_token") || null);
   // Fase 2D — estado de preview por mensagem
-  const [previews, setPreviews] = useState({});
+  const [previews, setPreviews] = useState(() => {
+    const savedPreview = loadArtifactPreview();
+    if (savedPreview?.activeMsgId && savedPreview?.preview) {
+      return { [savedPreview.activeMsgId]: savedPreview.preview };
+    }
+    return {};
+  });
   const [previewLoading, setPreviewLoading] = useState({});
   const [previewErrors, setPreviewErrors] = useState({});
-  const [deliveryData, setDeliveryData] = useState({});
+  const [deliveryData, setDeliveryData] = useState(() => {
+    const savedPreview = loadArtifactPreview();
+    if (savedPreview?.activeMsgId && savedPreview?.delivery) {
+      return { [savedPreview.activeMsgId]: savedPreview.delivery };
+    }
+    return {};
+  });
   // Carregar ciclo salvo (PASSO 9)
   const savedCycle = loadReviewCycle();
 
@@ -214,6 +255,22 @@ export default function HybridAgentSimple() {
     saveReviewCycle(reviewHistory, artifactVersion, lastAdjustment);
   }, [reviewHistory, artifactVersion, lastAdjustment]);
 
+  // PASSO 11 — persistir preview atual no sessionStorage
+  useEffect(() => {
+    const msgIds = Object.keys(previews);
+    if (msgIds.length === 0) {
+      clearArtifactPreview();
+      return;
+    }
+    // Persistir apenas o último preview ativo (artefato mais recente)
+    const lastMsgId = msgIds[msgIds.length - 1];
+    const activePreview = previews[lastMsgId];
+    const activeDelivery = deliveryData[lastMsgId] || null;
+    if (activePreview) {
+      saveArtifactPreview(lastMsgId, activePreview, activeDelivery);
+    }
+  }, [previews, deliveryData]);
+
   // Fase 2D — gerar preview de um artefato (mensagem do agente)
   const handleGeneratePreview = async (msg) => {
     const msgId = msg.id;
@@ -223,6 +280,7 @@ export default function HybridAgentSimple() {
       setArtifactVersion(1);     // PASSO 8 — artefato novo → versão 1
       setLastAdjustment(null);   // garantir reset completo
       clearReviewCycle();        // PASSO 9 — limpar sessionStorage ao iniciar artefato novo
+      clearArtifactPreview();    // PASSO 11 — limpar preview anterior ao gerar novo artefato
     } else {
       setArtifactVersion((v) => v + 1);  // PASSO 8 — revisão → incrementa versão
     }
@@ -269,6 +327,10 @@ export default function HybridAgentSimple() {
     setLastAdjustment(null);
     clearReviewCycle();
     revisionPendingRef.current = false;
+    // PASSO 11 — limpar preview persistido ao encerrar ciclo
+    setPreviews({});
+    setDeliveryData({});
+    clearArtifactPreview();
   };
 
   // Fase 2D — aplicar decisão (aprovação/rejeição) ao preview
