@@ -262,6 +262,15 @@ export default function HybridAgentSimple() {
     setReviewHistory((prev) => [...prev, event]);
   };
 
+  // PASSO 10 — encerrar/limpar o ciclo de revisão atual
+  const handleClearReviewCycle = () => {
+    setReviewHistory([]);
+    setArtifactVersion(1);
+    setLastAdjustment(null);
+    clearReviewCycle();
+    revisionPendingRef.current = false;
+  };
+
   // Fase 2D — aplicar decisão (aprovação/rejeição) ao preview
   const handlePreviewDecision = async (msgId, decision, feedback, content) => {
     const currentPreview = previews[msgId];
@@ -695,6 +704,7 @@ export default function HybridAgentSimple() {
                       lastAdjustment={lastAdjustment}
                       reviewHistory={reviewHistory}
                       artifactVersion={artifactVersion}
+                      onClearCycle={handleClearReviewCycle}
                     />
                   )}
                   {previewErrors[msg.id] && previews[msg.id] && (
