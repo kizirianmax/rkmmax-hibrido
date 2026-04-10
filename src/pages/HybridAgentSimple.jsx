@@ -2,6 +2,11 @@ import { useState, useRef, useEffect } from "react";
 import "../styles/HybridAgent.css";
 import ArtifactPreviewPanel from "../components/construtor/ArtifactPreviewPanel";
 import { normalizeVisibleContent } from "../lib/construtor/artifactNormalizer";
+import {
+  loadInputDraft,
+  saveInputDraft,
+  clearInputDraft,
+} from "../lib/construtor/inputDraftStorage";
 
 /**
  * Renders AI response text with basic markdown formatting.
@@ -78,6 +83,94 @@ function MultiFileRenderer({ content }) {
   );
 }
 
+// PASSO 9 — helpers de persistência do ciclo de revisão em sessionStorage
+const REVIEW_CYCLE_STORAGE_KEY = 'construtor_review_cycle';
+
+// PASSO 11 — helpers de persistência do preview atual do artefato em sessionStorage
+const ARTIFACT_PREVIEW_STORAGE_KEY = 'construtor_artifact_preview';
+
+const loadReviewCycle = () => {
+  try {
+    const raw = sessionStorage.getItem(REVIEW_CYCLE_STORAGE_KEY);
+    if (!raw) return null;
+    const parsed = JSON.parse(raw);
+    if (parsed && typeof parsed === 'object') return parsed;
+  } catch { /* ignorar dados corrompidos */ }
+  return null;
+};
+
+const saveReviewCycle = (history, version, adjustment) => {
+  try {
+    sessionStorage.setItem(REVIEW_CYCLE_STORAGE_KEY, JSON.stringify({
+      reviewHistory: history,
+      artifactVersion: version,
+      lastAdjustment: adjustment,
+    }));
+  } catch { /* sessionStorage indisponível ou cheio — falhar silenciosamente */ }
+};
+
+const clearReviewCycle = () => {
+  try {
+    sessionStorage.removeItem(REVIEW_CYCLE_STORAGE_KEY);
+  } catch { /* ignorar */ }
+};
+
+const loadArtifactPreview = () => {
+  try {
+    const raw = sessionStorage.getItem(ARTIFACT_PREVIEW_STORAGE_KEY);
+    if (!raw) return null;
+    const parsed = JSON.parse(raw);
+    if (parsed && typeof parsed === 'object') return parsed;
+  } catch { /* ignorar dados corrompidos */ }
+  return null;
+};
+
+const saveArtifactPreview = (activeMsgId, preview, delivery, agentMessage) => {
+  try {
+    sessionStorage.setItem(ARTIFACT_PREVIEW_STORAGE_KEY, JSON.stringify({
+      activeMsgId: activeMsgId != null ? Number(activeMsgId) : null,
+      preview,
+      delivery: delivery || null,
+      agentMessage: agentMessage ? {
+        id: agentMessage.id,
+        type: agentMessage.type,
+        agent: agentMessage.agent,
+        content: agentMessage.content,
+        provider: agentMessage.provider,
+        tier: agentMessage.tier,
+        isFallback: agentMessage.isFallback,
+        complexity: agentMessage.complexity,
+        timestamp: agentMessage.timestamp ? (agentMessage.timestamp instanceof Date ? agentMessage.timestamp.toISOString() : agentMessage.timestamp) : new Date().toISOString(),
+      } : null,
+    }));
+  } catch { /* sessionStorage indisponível ou cheio — falhar silenciosamente */ }
+};
+
+const clearArtifactPreview = () => {
+  try {
+    sessionStorage.removeItem(ARTIFACT_PREVIEW_STORAGE_KEY);
+  } catch { /* ignorar */ }
+};
+
+// PASSO 13 — chave de persistência do modo selecionado (Manual/Otimizado)
+const MODE_STORAGE_KEY = 'construtor_mode';
+
+const loadMode = () => {
+  try {
+    const saved = sessionStorage.getItem(MODE_STORAGE_KEY);
+    if (saved === 'manual' || saved === 'optimized') return saved;
+  } catch { /* ignorar */ }
+  return 'manual'; // padrão
+};
+
+const saveMode = (mode) => {
+  try {
+    sessionStorage.setItem(MODE_STORAGE_KEY, mode);
+  } catch { /* falhar silenciosamente */ }
+};
+
+// PASSO 12 — helpers de persistência importados de src/lib/construtor/inputDraftStorage.js
+
 /**
  * RKMMAX HYBRID - CONSTRUTOR (KIZI)
  * Agente Construtor: geração e entrega de artefatos via orquestrador KIZI.
@@ -86,40 +179,81 @@ function MultiFileRenderer({ content }) {
  * Sem seleção direta de especialista — orquestração é responsabilidade do Serginho.
  */
 export default function HybridAgentSimple() {
-  const [mode, setMode] = useState("manual");
-  const [input, setInput] = useState("");
+  // PASSO 13 — restaurar modo salvo ao montar o componente
+  const [mode, setMode] = useState(() => loadMode());
+  // PASSO 12 — restaurar rascunho salvo ao montar o componente
+  const [input, setInput] = useState(() => loadInputDraft());
   // Versão do app para cache busting
   const APP_VERSION = "v3.1.0";
 
-  const [messages, setMessages] = useState([
-    {
-      id: 1,
-      type: "system",
-      content: `⚙️ Construtor inicializado (${APP_VERSION})`,
-      timestamp: new Date(),
-    },
-    {
-      id: 2,
-      type: "agent",
-      agent: "Construtor",
-      content:
-        "Construtor pronto. Descreva o artefato ou tarefa que deseja gerar.",
-      provider: "kizi-primary",
-      timestamp: new Date(),
-    },
-  ]);
+  // PASSO 11 — carregar uma única vez para todos os lazy initializers
+  const savedArtifactPreview = loadArtifactPreview();
+  const _parsedMsgId = savedArtifactPreview?.activeMsgId != null
+    ? Number(savedArtifactPreview.activeMsgId)
+    : null;
+  const restoredMsgId = (_parsedMsgId != null && !isNaN(_parsedMsgId) && _parsedMsgId > 0)
+    ? _parsedMsgId
+    : null;
+
+  const [messages, setMessages] = useState(() => {
+    const initialMessages = [
+      {
+        id: 1,
+        type: "system",
+        content: `⚙️ Construtor inicializado (${APP_VERSION})`,
+        timestamp: new Date(),
+      },
+      {
+        id: 2,
+        type: "agent",
+        agent: "Construtor",
+        content:
+          "Construtor pronto. Descreva o artefato ou tarefa que deseja gerar.",
+        provider: "kizi-primary",
+        timestamp: new Date(),
+      },
+    ];
+    // PASSO 11 — restaurar mensagem do agente que gerou o artefato persistido
+    if (savedArtifactPreview?.agentMessage && restoredMsgId && restoredMsgId > 2) {
+      const restored = {
+        ...savedArtifactPreview.agentMessage,
+        id: restoredMsgId,
+        timestamp: (() => {
+          const d = new Date(savedArtifactPreview.agentMessage.timestamp || Date.now());
+          return isNaN(d.getTime()) ? new Date() : d;
+        })(),
+      };
+      initialMessages.push(restored);
+    }
+    return initialMessages;
+  });
   const [loading, setLoading] = useState(false);
   const [isRecording, setIsRecording] = useState(false);
   const [githubToken, setGithubToken] = useState(localStorage.getItem("github_token") || null);
   // Fase 2D — estado de preview por mensagem
-  const [previews, setPreviews] = useState({});
+  const [previews, setPreviews] = useState(() => {
+    if (restoredMsgId && savedArtifactPreview?.preview) {
+      return { [restoredMsgId]: savedArtifactPreview.preview };
+    }
+    return {};
+  });
   const [previewLoading, setPreviewLoading] = useState({});
   const [previewErrors, setPreviewErrors] = useState({});
-  const [deliveryData, setDeliveryData] = useState({});
+  const [deliveryData, setDeliveryData] = useState(() => {
+    if (restoredMsgId && savedArtifactPreview?.delivery) {
+      return { [restoredMsgId]: savedArtifactPreview.delivery };
+    }
+    return {};
+  });
+  // Carregar ciclo salvo (PASSO 9)
+  const savedCycle = loadReviewCycle();
+
   // PASSO 5 — último ajuste solicitado (para continuidade visual)
-  const [lastAdjustment, setLastAdjustment] = useState(null);
+  const [lastAdjustment, setLastAdjustment] = useState(savedCycle?.lastAdjustment ?? null);
   // PASSO 6 — histórico local de revisão global (array linear, independente de msgId)
-  const [reviewHistory, setReviewHistory] = useState([]);
+  const [reviewHistory, setReviewHistory] = useState(savedCycle?.reviewHistory ?? []);
+  // PASSO 8 — versão do artefato no ciclo de revisão
+  const [artifactVersion, setArtifactVersion] = useState(savedCycle?.artifactVersion ?? 1);
   // PASSO 6 — sinaliza que o próximo preview é continuação de uma revisão (preservar histórico)
   const revisionPendingRef = useRef(false);
   const messagesEndRef = useRef(null);
@@ -175,12 +309,52 @@ export default function HybridAgentSimple() {
     }
   }, []);
 
+  // PASSO 9 — persistir ciclo de revisão em sessionStorage
+  useEffect(() => {
+    saveReviewCycle(reviewHistory, artifactVersion, lastAdjustment);
+  }, [reviewHistory, artifactVersion, lastAdjustment]);
+
+  // PASSO 11 — persistir preview atual no sessionStorage
+  useEffect(() => {
+    const msgIds = Object.keys(previews);
+    if (msgIds.length === 0) {
+      clearArtifactPreview();
+      return;
+    }
+    // Persistir apenas o último preview ativo (artefato mais recente)
+    const lastMsgId = msgIds[msgIds.length - 1];
+    const numericMsgId = Number(lastMsgId);
+    const activePreview = previews[lastMsgId];
+    const activeDelivery = deliveryData[lastMsgId] || deliveryData[numericMsgId] || null;
+    // Encontrar a mensagem do agente correspondente para persistir junto
+    const agentMsg = messages.find((m) => m.id === numericMsgId);
+    if (activePreview) {
+      saveArtifactPreview(numericMsgId, activePreview, activeDelivery, agentMsg || null);
+    }
+  }, [previews, deliveryData, messages]);
+
+  // PASSO 12 — persistir rascunho do campo de entrada em sessionStorage
+  useEffect(() => {
+    saveInputDraft(input);
+  }, [input]);
+
+  // PASSO 13 — persistir modo selecionado em sessionStorage
+  useEffect(() => {
+    saveMode(mode);
+  }, [mode]);
+
   // Fase 2D — gerar preview de um artefato (mensagem do agente)
   const handleGeneratePreview = async (msg) => {
     const msgId = msg.id;
     // PASSO 6 — resetar histórico ao abrir preview de artefato novo (não revisão)
     if (!revisionPendingRef.current) {
       setReviewHistory([]);
+      setArtifactVersion(1);     // PASSO 8 — artefato novo → versão 1
+      setLastAdjustment(null);   // garantir reset completo
+      clearReviewCycle();        // PASSO 9 — limpar sessionStorage ao iniciar artefato novo
+      clearArtifactPreview();    // PASSO 11 — limpar preview anterior ao gerar novo artefato
+    } else {
+      setArtifactVersion((v) => v + 1);  // PASSO 8 — revisão → incrementa versão
     }
     revisionPendingRef.current = false;
     setPreviewLoading((prev) => ({ ...prev, [msgId]: true }));
@@ -216,6 +390,22 @@ export default function HybridAgentSimple() {
   // PASSO 6 — helper para append imutável de evento no histórico de revisão (array global)
   const addReviewEvent = (event) => {
     setReviewHistory((prev) => [...prev, event]);
+  };
+
+  // PASSO 10 — encerrar/limpar o ciclo de revisão atual
+  const handleClearReviewCycle = () => {
+    setReviewHistory([]);
+    setArtifactVersion(1);
+    setLastAdjustment(null);
+    clearReviewCycle();
+    revisionPendingRef.current = false;
+    // PASSO 11 — limpar preview persistido ao encerrar ciclo
+    setPreviews({});
+    setDeliveryData({});
+    clearArtifactPreview();
+    // PASSO 12 — limpar rascunho ao encerrar ciclo
+    setInput("");
+    clearInputDraft();
   };
 
   // Fase 2D — aplicar decisão (aprovação/rejeição) ao preview
@@ -315,6 +505,7 @@ export default function HybridAgentSimple() {
     setMessages((prev) => [...prev, userMessage]);
     const userInput = input;
     setInput("");
+    clearInputDraft(); // PASSO 12 — limpar rascunho salvo ao enviar
     setLoading(true);
 
     try {
@@ -650,6 +841,8 @@ export default function HybridAgentSimple() {
                       delivery={deliveryData[msg.id]}
                       lastAdjustment={lastAdjustment}
                       reviewHistory={reviewHistory}
+                      artifactVersion={artifactVersion}
+                      onClearCycle={handleClearReviewCycle}
                     />
                   )}
                   {previewErrors[msg.id] && previews[msg.id] && (

@@ -263,6 +263,7 @@ class SerginhoOrchestrator {
     };
     const PROVIDER_FAILURE_THRESHOLDS = {
       'llama-120b': 5, // Mais tolerante a timeouts esporádicos; evita ciclo de fallback permanente
+      'gemini-pro': 5, // Thinking model with variable latency; default 3 opens circuit too early
     };
     const DEFAULT_TIMEOUT = 8000; // 8s para providers não mapeados
     const DEFAULT_FAILURE_THRESHOLD = 3;
@@ -1152,6 +1153,9 @@ class SerginhoOrchestrator {
       generationConfig: {
         temperature: config.defaultParams.temperature,
         maxOutputTokens: maxTokens || config.defaultParams.maxOutputTokens,
+        thinkingConfig: {
+          thinkingBudget: 2048, // Limit internal reasoning tokens; reduces latency without removing thinking
+        },
       },
     };
 
