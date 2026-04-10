@@ -67,7 +67,7 @@ describe('IntelligentRouter - Internal Implementation Tests', () => {
       expect(result.tier).toBe('complex');
     });
 
-    test('should route very high complexity messages to llama-120b (complex tier)', () => {
+    test('should route very high complexity messages without code to gemini-pro (complex tier)', () => {
       const analysis = {
         hasCode: false,
         scores: { complexity: 10, speed: 0, simple: 0 },
@@ -76,12 +76,12 @@ describe('IntelligentRouter - Internal Implementation Tests', () => {
 
       const result = routeToProvider(analysis);
 
-      expect(result.provider).toBe('llama-120b');
+      expect(result.provider).toBe('gemini-pro');
       expect(result.confidence).toBeGreaterThanOrEqual(0.9);
       expect(result.tier).toBe('complex');
     });
 
-    test('should route high complexity messages to llama-70b (medium tier)', () => {
+    test('should route high complexity messages without code to gemini-pro (complex tier)', () => {
       const analysis = {
         hasCode: false,
         scores: { complexity: 6, speed: 0, simple: 0 },
@@ -90,9 +90,9 @@ describe('IntelligentRouter - Internal Implementation Tests', () => {
 
       const result = routeToProvider(analysis);
 
-      expect(result.provider).toBe('llama-70b');
+      expect(result.provider).toBe('gemini-pro');
       expect(result.confidence).toBeGreaterThanOrEqual(0.8);
-      expect(result.tier).toBe('medium');
+      expect(result.tier).toBe('complex');
     });
 
     test('should route very short messages to llama-8b (simple tier)', () => {
@@ -139,14 +139,14 @@ describe('IntelligentRouter - Internal Implementation Tests', () => {
   });
 
   describe('getNextFallback', () => {
-    test('should return llama-70b as first fallback for llama-120b (complex tier)', () => {
+    test('should return gemini-pro as first fallback for llama-120b (complex tier)', () => {
       const next = getNextFallback('llama-120b', []);
-      expect(next).toBe('llama-70b');
+      expect(next).toBe('gemini-pro');
     });
 
-    test('should return groq-fallback when llama-70b tried for llama-120b (NEVER llama-8b)', () => {
-      const next = getNextFallback('llama-120b', ['llama-70b']);
-      expect(next).toBe('groq-fallback');
+    test('should return llama-70b as fallback for llama-120b when gemini-pro tried (NEVER llama-8b)', () => {
+      const next = getNextFallback('llama-120b', ['gemini-pro']);
+      expect(next).toBe('llama-70b');
       // Critical: NEVER returns llama-8b for complex tier
     });
 
@@ -167,7 +167,7 @@ describe('IntelligentRouter - Internal Implementation Tests', () => {
     });
 
     test('should return null when all providers tried for llama-120b', () => {
-      const next = getNextFallback('llama-120b', ['llama-70b', 'groq-fallback']);
+      const next = getNextFallback('llama-120b', ['gemini-pro', 'llama-70b', 'groq-fallback']);
       expect(next).toBeNull();
     });
   });
