@@ -98,19 +98,32 @@ describe('Test 2 — getWeightedProviders defaults to llama-120b in Groq-only mo
 
 // ─── Test 3: getNextFallback returns only providers from FALLBACK_CHAIN ───────
 describe('Test 3 — getNextFallback returns providers from FALLBACK_CHAIN', () => {
-  it('getNextFallback("llama-120b", []) returns "llama-70b"', async () => {
+  // FALLBACK_CHAIN calibrado: llama-120b → gemini-pro → llama-70b → groq-fallback
+  // O primeiro fallback do 120B agora é o gemini-pro (intercâmbio Groq ↔ Google).
+  it('getNextFallback("llama-120b", []) returns "gemini-pro" (primeiro fallback do 120B)', async () => {
     const { getNextFallback } = await import('../../src/utils/intelligentRouter.js');
-    expect(getNextFallback('llama-120b', [])).toBe('llama-70b');
+    expect(getNextFallback('llama-120b', [])).toBe('gemini-pro');
   });
 
-  it('getNextFallback("llama-120b", ["llama-70b"]) returns "groq-fallback"', async () => {
+  it('getNextFallback("llama-120b", ["gemini-pro"]) returns "llama-70b" (gemini já tentado)', async () => {
     const { getNextFallback } = await import('../../src/utils/intelligentRouter.js');
-    expect(getNextFallback('llama-120b', ['llama-70b'])).toBe('groq-fallback');
+    expect(getNextFallback('llama-120b', ['gemini-pro'])).toBe('llama-70b');
+  });
+
+  it('getNextFallback("llama-120b", ["gemini-pro", "llama-70b"]) returns "groq-fallback"', async () => {
+    const { getNextFallback } = await import('../../src/utils/intelligentRouter.js');
+    expect(getNextFallback('llama-120b', ['gemini-pro', 'llama-70b'])).toBe('groq-fallback');
   });
 
   it('getNextFallback("groq-fallback", []) returns null (end of chain)', async () => {
     const { getNextFallback } = await import('../../src/utils/intelligentRouter.js');
     expect(getNextFallback('groq-fallback', [])).toBeNull();
+  });
+
+  // Testa o fallback do gemini-pro também
+  it('getNextFallback("gemini-pro", []) returns "llama-120b" (primeiro fallback do Gemini)', async () => {
+    const { getNextFallback } = await import('../../src/utils/intelligentRouter.js');
+    expect(getNextFallback('gemini-pro', [])).toBe('llama-120b');
   });
 });
 

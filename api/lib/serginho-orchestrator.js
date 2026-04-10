@@ -1202,12 +1202,15 @@ class SerginhoOrchestrator {
   /**
    * Limita o histórico de mensagens antes de enviar ao Groq para evitar erro 413.
    * Usa estimativa simples: ~4 chars = 1 token (aproximação; varia por idioma e tipo de conteúdo).
-   * Para o modelo 120B (openai/gpt-oss-120b), mantém o total abaixo de 5000 tokens de input.
+   * O budget de tokens é lido de providers-config.js (campo inputTokenBudget por provider),
+   * eliminando o hardcode anterior que verificava o nome do modelo diretamente.
    * @private
    */
   _limitMessagesForModel(formattedMessages, model) {
-    // Tokens de input reservados por modelo; outros modelos usam limite mais generoso
-    const INPUT_TOKEN_BUDGET = model === 'openai/gpt-oss-120b' ? 5000 : 12000;
+    // Resolve inputTokenBudget a partir do providers-config (single source of truth).
+    // Busca o provider cujo model === model passado; fallback para 12000 se não encontrado.
+    const providerEntry = Object.values(PROVIDERS).find((p) => p.model === model);
+    const INPUT_TOKEN_BUDGET = providerEntry?.inputTokenBudget ?? 12000;
     const CHARS_PER_TOKEN = 4; // estimativa simples para cálculo de truncamento
 
     if (!formattedMessages || formattedMessages.length === 0) {
