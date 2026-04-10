@@ -68,6 +68,28 @@ const KEYWORDS = {
     "algoritmo",
     "estrutura de dados",
     "design pattern",
+    // Tarefas de criação de conteúdo — exigem modelo capaz, não somente conversa rápida
+    "criar",
+    "crie",
+    "cria",
+    "escrever",
+    "escreva",
+    "escreve",
+    "redigir",
+    "redija",
+    "elaborar",
+    "elabore",
+    "desenvolver",
+    "desenvolva",
+    "prompt",
+    "redação",
+    "artigo",
+    "relatório",
+    "documento",
+    "proposta",
+    "roteiro",
+    "script",
+    "apresentação",
   ],
 
   // Tarefas que exigem processamento rápido (turbo)
@@ -366,7 +388,17 @@ export function routeToProvider(analysis, options = {}) {
 
   // TIER 3: Tarefas SIMPLES → llama-8b
   // REGRA 8: Mensagens muito curtas = Llama 8B (rápido e eficiente)
+  // EXCEPÇÃO: se a mensagem curta contém keywords de criação de conteúdo (score >= 2),
+  // usa 70B — "Faz um prompt" é curto mas exige modelo capaz, não apenas conversação.
   if (details.isVeryShort) {
+    if (scores.complexity >= 2) {
+      return {
+        provider: "llama-70b",
+        reason: "Mensagem curta com tarefa de criação/elaboração — Llama 70B: qualidade mínima para conteúdo",
+        confidence: 0.75,
+        tier: "medium",
+      };
+    }
     return {
       provider: "llama-8b",
       reason: "Mensagem curta - usando modelo rápido",
@@ -425,8 +457,9 @@ export const FALLBACK_CHAIN = {
   "llama-120b": ["gemini-pro", "llama-70b", "groq-fallback"],
   // Medium tier: skip Gemini (latência alta não justifica), vai direto para fallback
   "llama-70b": ["groq-fallback"],
-  // Simple tier: único fallback disponível
-  "llama-8b": ["groq-fallback"],
+  // Simple tier: fallback para 70B antes do groq-fallback (evita falha total quando 8B
+  // e groq-fallback usam o mesmo modelo llama-3.1-8b-instant e ambos recebem rate limit)
+  "llama-8b": ["llama-70b", "groq-fallback"],
   // Último recurso
   "groq-fallback": [],
 };

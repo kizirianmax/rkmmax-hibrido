@@ -95,7 +95,7 @@ describe('IntelligentRouter - Internal Implementation Tests', () => {
       expect(result.tier).toBe('complex');
     });
 
-    test('should route very short messages to llama-8b (simple tier)', () => {
+    test('should route very short messages with score 0 to llama-8b (simple tier)', () => {
       const analysis = {
         hasCode: false,
         scores: { complexity: 0, speed: 1, simple: 2 },
@@ -108,6 +108,21 @@ describe('IntelligentRouter - Internal Implementation Tests', () => {
       expect(result.confidence).toBe(0.8);
       expect(result.reason).toContain('curta');
       expect(result.tier).toBe('simple');
+    });
+
+    test('should route very short messages with score >= 2 to llama-70b (content creation)', () => {
+      // Mensagens curtas com keywords de criação ("prompt", "criar", etc.) não devem ir para o 8B.
+      // "Faz um prompt de tecnologia" tem score 2 e deve ir para o 70B.
+      const analysis = {
+        hasCode: false,
+        scores: { complexity: 2, speed: 0, simple: 0 },
+        analysis: { isVeryShort: true, isLong: false, hasTechnicalTerms: false },
+      };
+
+      const result = routeToProvider(analysis);
+
+      expect(result.provider).toBe('llama-70b');
+      expect(result.tier).toBe('medium');
     });
 
     test('should route medium complexity to llama-70b (medium tier)', () => {
@@ -156,8 +171,16 @@ describe('IntelligentRouter - Internal Implementation Tests', () => {
       // Medium tier skips llama-8b entirely
     });
 
-    test('should return groq-fallback for llama-8b (simple tier)', () => {
+    test('should return llama-70b as first fallback for llama-8b (resilience — avoids same-model double failure)', () => {
+      // llama-8b e groq-fallback usam o mesmo modelo (llama-3.1-8b-instant).
+      // Se o 8B falhar por rate limit, o groq-fallback também falharia com o mesmo erro.
+      // Portanto: 8B → 70B → groq-fallback garante resiliência real.
       const next = getNextFallback('llama-8b', []);
+      expect(next).toBe('llama-70b');
+    });
+
+    test('should return groq-fallback for llama-8b when llama-70b already tried', () => {
+      const next = getNextFallback('llama-8b', ['llama-70b']);
       expect(next).toBe('groq-fallback');
     });
 
