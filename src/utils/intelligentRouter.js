@@ -82,6 +82,8 @@ const KEYWORDS = {
     "desenvolver",
     "desenvolva",
     "prompt",
+    "prompet",  // variante de digitação frequente de 'prompt'
+    "prompts",
     "redação",
     "artigo",
     "relatório",
@@ -455,8 +457,9 @@ export const FALLBACK_CHAIN = {
   "gemini-pro": ["llama-120b", "llama-70b", "groq-fallback"],
   // Complex tier Groq: 120B falhou → tenta Gemini antes de degradar
   "llama-120b": ["gemini-pro", "llama-70b", "groq-fallback"],
-  // Medium tier: skip Gemini (latência alta não justifica), vai direto para fallback
-  "llama-70b": ["groq-fallback"],
+  // Medium tier: 70B falhou → tenta 120B (modelo diferente, evita double-fail no mesmo
+  // endpoint) antes do groq-fallback. Gemini é pulado aqui para manter latência aceitável.
+  "llama-70b": ["llama-120b", "groq-fallback"],
   // Simple tier: fallback para 70B antes do groq-fallback (evita falha total quando 8B
   // e groq-fallback usam o mesmo modelo llama-3.1-8b-instant e ambos recebem rate limit)
   "llama-8b": ["llama-70b", "groq-fallback"],

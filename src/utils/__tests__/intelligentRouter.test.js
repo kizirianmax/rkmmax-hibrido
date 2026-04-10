@@ -165,10 +165,18 @@ describe('IntelligentRouter - Internal Implementation Tests', () => {
       // Critical: NEVER returns llama-8b for complex tier
     });
 
-    test('should return groq-fallback as first fallback for llama-70b (medium tier, skip llama-8b)', () => {
+    test('should return llama-120b as first fallback for llama-70b (medium tier — avoids double-fail on same endpoint)', () => {
+      // 70B e groq-fallback usam endpoints diferentes, mas o 120B é um modelo mais
+      // robusto para continuar a tarefa. Se o 70B falha por rate limit, o 120B usa
+      // um endpoint diferente (openai/gpt-oss-120b) e não sofre o mesmo rate limit.
+      // Portanto: 70B → 120B → groq-fallback garante resiliência real.
       const next = getNextFallback('llama-70b', []);
+      expect(next).toBe('llama-120b');
+    });
+
+    test('should return groq-fallback for llama-70b when llama-120b already tried', () => {
+      const next = getNextFallback('llama-70b', ['llama-120b']);
       expect(next).toBe('groq-fallback');
-      // Medium tier skips llama-8b entirely
     });
 
     test('should return llama-70b as first fallback for llama-8b (resilience — avoids same-model double failure)', () => {
