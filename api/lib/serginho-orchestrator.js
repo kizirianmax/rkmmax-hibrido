@@ -673,11 +673,17 @@ class SerginhoOrchestrator {
     // 1. Analyze complexity
     const analysisStartTime = Date.now();
     const analysis = analyzeComplexity(message);
-    const routing = routeToProvider(analysis);
+    // Pass enabledProviders so the router knows Gemini availability BEFORE routing.
+    // Without this, geminiAvailable defaults to true and the router may select gemini-pro
+    // even when GEMINI_API_KEY is absent — causing a callGemini throw + silent fallback.
+    // With this, the router correctly degrades to llama-120b when Gemini is unavailable.
+    const enabledProvidersList = getEnabledProviders();
+    const routing = routeToProvider(analysis, { enabledProviders: enabledProvidersList });
     const analysisTime = Date.now() - analysisStartTime;
 
     console.log('[Serginho] Complexity:', analysis.scores.complexity, '→ Provider:', routing.provider);
     console.log('[Serginho] Trace ID:', traceId);
+    console.log('[Serginho] Enabled providers:', enabledProvidersList);
 
     // 2. Try primary provider (or forced provider)
     let attemptedModels = [];
@@ -689,7 +695,6 @@ class SerginhoOrchestrator {
     // IMPORTANT: When forceProvider is explicitly requested and the provider is disabled,
     // we throw a clear error instead of silently falling back to another provider.
     // This prevents confusing UX where toggle ON still shows Groq responses.
-    const enabledProvidersList = getEnabledProviders();
     if (options.forceProvider && !enabledProvidersList.includes(options.forceProvider)) {
       const isGemini = options.forceProvider === 'gemini-pro';
       const missingKey = isGemini ? 'GEMINI_API_KEY' : 'required API key';
