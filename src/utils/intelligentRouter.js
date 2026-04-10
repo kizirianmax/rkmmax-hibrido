@@ -68,7 +68,7 @@ const KEYWORDS = {
     "algoritmo",
     "estrutura de dados",
     "design pattern",
-    // Tarefas de criação de conteúdo — exigem modelo capaz, não apenas conversa rápida
+    // Tarefas de criação de conteúdo — exigem modelo capaz, não somente conversa rápida
     "criar",
     "crie",
     "cria",
