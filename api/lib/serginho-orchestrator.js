@@ -238,13 +238,12 @@ class SerginhoOrchestrator {
    * @private
    */
   _registerModels() {
-    // Groq models (complex tier)
+    // Groq models
     this.modelRegistry.registerModel('openai/gpt-oss-120b', 'complex', 0.00);
     this.modelRegistry.registerModel('llama-3.3-70b-versatile', 'complex', 0.00);
     this.modelRegistry.registerModel('llama-3.1-70b-versatile', 'complex', 0.00);
-    this.modelRegistry.registerModel('llama-3.1-8b-instant', 'simple', 0.00);
-    this.modelRegistry.registerModel('mixtral-8x7b-32768', 'simple', 0.00);
-    // Gemini models (new)
+    this.modelRegistry.registerModel('mixtral-8x7b-32768', 'complex', 0.00);
+    // Google models
     this.modelRegistry.registerModel('gemini-2.5-pro', 'complex', 0.00);
   }
 
@@ -255,14 +254,14 @@ class SerginhoOrchestrator {
     // Timeouts diferenciados por provider — TODOS devem ser menores que maxDuration (25s)
     // Regra: timeout_circuit_breaker < maxDuration - 5s (margem para serialização + overhead)
     const PROVIDER_TIMEOUTS = {
-      'llama-120b': 20000, // 20s — modelo complexo, tarefas do Híbrido (margem de 5s)
+      'llama-120b': 20000, // 20s — modelo complexo (margem de 5s abaixo do teto Vercel de 25s)
       'llama-70b': 12000,  // 12s — tier médio
-      'llama-8b': 6000,    // 6s  — tier rápido
-      'groq-fallback': 6000, // 6s — fallback rápido
+      'groq-fallback': 8000, // 8s — fallback rápido
       'gemini-pro': 20000, // 20s — Gemini 2.5 Pro é modelo de raciocínio; precisa de margem maior
     };
     const PROVIDER_FAILURE_THRESHOLDS = {
       'llama-120b': 5, // Mais tolerante a timeouts esporádicos; evita ciclo de fallback permanente
+      'llama-70b': 5,  // Alinhado com 120B — evita circuit aberto por rate limit transitório da Groq
       'gemini-pro': 5, // Thinking model with variable latency; default 3 opens circuit too early
     };
     const DEFAULT_TIMEOUT = 8000; // 8s para providers não mapeados
@@ -273,7 +272,7 @@ class SerginhoOrchestrator {
         name: provider,
         timeout: PROVIDER_TIMEOUTS[provider] || DEFAULT_TIMEOUT,
         failureThreshold: PROVIDER_FAILURE_THRESHOLDS[provider] || DEFAULT_FAILURE_THRESHOLD,
-        resetTimeout: 30000, // 30s cooldown
+        resetTimeout: 60000, // 60s cooldown — tempo suficiente para rate limit Groq resetar (janela de 1min)
       }));
     });
   }
