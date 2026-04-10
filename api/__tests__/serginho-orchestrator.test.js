@@ -412,8 +412,8 @@ describe('SerginhoOrchestrator', () => {
       const config = getProviderConfig('llama-70b');
       const promise = serginho.callGroq(config, 'Test retry 503', [], {}, undefined);
 
-      // Advance timers for the 2000ms backoff on attempt 1 (delay increased in PR #368)
-      await jest.advanceTimersByTimeAsync(2000);
+      // Advance timers for the 500ms backoff on attempt 1 (reduced in PR #371 to preserve Vercel 25s budget)
+      await jest.advanceTimersByTimeAsync(500);
 
       const result = await promise;
       expect(result.text).toBe('Retry success');
@@ -426,8 +426,8 @@ describe('SerginhoOrchestrator', () => {
       const config = getProviderConfig('llama-70b');
       const promise = serginho.callGroq(config, 'Test retry 429', [], {}, undefined);
 
-      // Advance timers for 2000ms + 4000ms backoffs (delay increased in PR #368)
-      await jest.advanceTimersByTimeAsync(6000);
+      // Advance timers for 500ms + 1000ms backoffs (reduced in PR #371 to preserve Vercel 25s budget)
+      await jest.advanceTimersByTimeAsync(1500);
 
       const result = await promise;
       expect(result.text).toBe('Retry success');
@@ -451,8 +451,8 @@ describe('SerginhoOrchestrator', () => {
       // Attach rejection expectation BEFORE advancing timers to avoid unhandled rejection
       const expectation = expect(promise).rejects.toThrow('Groq API error: 503');
 
-      // Advance timers for 2000ms + 4000ms backoffs (delay increased in PR #368)
-      await jest.advanceTimersByTimeAsync(6000);
+      // Advance timers for 500ms + 1000ms backoffs (reduced in PR #371 to preserve Vercel 25s budget)
+      await jest.advanceTimersByTimeAsync(1500);
 
       await expectation;
       expect(global.fetch).toHaveBeenCalledTimes(3);

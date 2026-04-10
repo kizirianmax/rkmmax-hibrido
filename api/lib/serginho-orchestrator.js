@@ -1096,10 +1096,12 @@ class SerginhoOrchestrator {
           throw new Error(`Groq API error: 413 request_too_large ${errorText}`);
         }
         if (RETRYABLE_STATUSES.has(response.status) && attempt < MAX_ATTEMPTS) {
-          // Linear backoff: 2000ms on first retry, 4000ms on second retry
-          // Groq rate limit (429) typically resets within 1-5s; 1s was too short,
-          // causing all 3 attempts to fail before the window resets.
-          const delayMs = attempt * 2000;
+          // Fast backoff: 500ms on first retry, 1000ms on second retry.
+          // Vercel maxDuration is 25s — the previous 2s/4s delay consumed the entire budget
+          // before the fallback chain could reach Gemini (a different provider with no shared rate limit).
+          // Groq rate limit (429) is per-model; failing fast and falling back to Gemini is better
+          // than waiting 6s inside the same rate-limited endpoint.
+          const delayMs = attempt * 500;
           const errorBody = await response.text().catch(() => '');
           lastError = new Error(`Groq API error: ${response.status} ${errorBody}`);
           await new Promise((resolve) => setTimeout(resolve, delayMs));
