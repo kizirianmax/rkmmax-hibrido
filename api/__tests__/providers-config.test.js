@@ -18,9 +18,10 @@ describe('providers-config', () => {
       const providerNames = Object.keys(PROVIDERS);
       expect(providerNames).toContain('llama-120b');
       expect(providerNames).toContain('llama-70b');
-      expect(providerNames).toContain('llama-8b');
       expect(providerNames).toContain('groq-fallback');
       expect(providerNames).toContain('gemini-pro');
+      // llama-8b removed — groq-fallback is the last-resort Groq provider
+      expect(providerNames).not.toContain('llama-8b');
     });
 
     test('each provider has required fields', () => {
@@ -33,7 +34,7 @@ describe('providers-config', () => {
     });
 
     test('Groq providers have correct configuration', () => {
-      const groqProviders = ['llama-120b', 'llama-70b', 'llama-8b', 'groq-fallback'];
+      const groqProviders = ['llama-120b', 'llama-70b', 'groq-fallback'];
       
       groqProviders.forEach(provider => {
         const config = PROVIDERS[provider];
@@ -48,26 +49,30 @@ describe('providers-config', () => {
     test('tiers are correctly assigned', () => {
       expect(PROVIDERS['llama-120b'].tier).toBe('complex');
       expect(PROVIDERS['llama-70b'].tier).toBe('medium');
-      expect(PROVIDERS['llama-8b'].tier).toBe('simple');
       expect(PROVIDERS['groq-fallback'].tier).toBe('fallback');
+      expect(PROVIDERS['gemini-pro'].tier).toBe('complex');
     });
   });
 
   describe('getProviderConfig', () => {
     test('returns provider config for valid provider', () => {
-      const config = getProviderConfig('llama-8b');
+      const config = getProviderConfig('llama-70b');
       expect(config).toBeDefined();
       expect(config.type).toBe('groq');
-      expect(config.model).toBe('llama-3.1-8b-instant');
+      expect(config.model).toBe('llama-3.3-70b-versatile');
     });
 
     test('throws error for unknown provider', () => {
       expect(() => getProviderConfig('unknown-provider')).toThrow('Unknown provider: unknown-provider');
     });
 
+    test('throws error for removed llama-8b provider', () => {
+      expect(() => getProviderConfig('llama-8b')).toThrow('Unknown provider: llama-8b');
+    });
+
     test('returns cloned config to prevent mutations', () => {
-      const config1 = getProviderConfig('llama-8b');
-      const config2 = getProviderConfig('llama-8b');
+      const config1 = getProviderConfig('llama-70b');
+      const config2 = getProviderConfig('llama-70b');
       
       config1.customField = 'test';
       expect(config2.customField).toBeUndefined();
@@ -78,6 +83,7 @@ describe('providers-config', () => {
     test('returns providers for complex tier', () => {
       const providers = getProvidersByTier('complex');
       expect(providers).toContain('llama-120b');
+      expect(providers).toContain('gemini-pro');
       expect(providers.length).toBeGreaterThan(0);
     });
 
@@ -86,9 +92,9 @@ describe('providers-config', () => {
       expect(providers).toContain('llama-70b');
     });
 
-    test('returns providers for simple tier', () => {
+    test('returns no providers for simple tier (llama-8b removed)', () => {
       const providers = getProvidersByTier('simple');
-      expect(providers).toContain('llama-8b');
+      expect(providers).toEqual([]);
     });
 
     test('returns providers for fallback tier', () => {
@@ -114,14 +120,14 @@ describe('providers-config', () => {
       const names = getAllProviderNames();
       expect(names).toContain('llama-120b');
       expect(names).toContain('llama-70b');
-      expect(names).toContain('llama-8b');
       expect(names).toContain('groq-fallback');
       expect(names).toContain('gemini-pro');
+      expect(names).not.toContain('llama-8b');
     });
 
     test('returns correct number of providers', () => {
       const names = getAllProviderNames();
-      expect(names.length).toBe(5);
+      expect(names.length).toBe(4);
     });
 
     test('returns only strings', () => {
@@ -143,11 +149,6 @@ describe('providers-config', () => {
       expect(config.model).toBe('llama-3.3-70b-versatile');
     });
 
-    test('Llama 8B uses correct model', () => {
-      const config = getProviderConfig('llama-8b');
-      expect(config.model).toBe('llama-3.1-8b-instant');
-    });
-
     test('Groq fallback uses Llama 3.1 8B', () => {
       const config = getProviderConfig('groq-fallback');
       expect(config.model).toBe('llama-3.1-8b-instant');
@@ -156,7 +157,7 @@ describe('providers-config', () => {
 
   describe('Default parameters', () => {
     test('each Groq provider has temperature', () => {
-      ['llama-120b', 'llama-70b', 'llama-8b', 'groq-fallback'].forEach(provider => {
+      ['llama-120b', 'llama-70b', 'groq-fallback'].forEach(provider => {
         const config = getProviderConfig(provider);
         expect(config.defaultParams.temperature).toBeDefined();
         expect(typeof config.defaultParams.temperature).toBe('number');
@@ -164,23 +165,29 @@ describe('providers-config', () => {
     });
 
     test('each Groq provider has max_tokens', () => {
-      ['llama-120b', 'llama-70b', 'llama-8b', 'groq-fallback'].forEach(provider => {
+      ['llama-120b', 'llama-70b', 'groq-fallback'].forEach(provider => {
         const config = getProviderConfig(provider);
         expect(config.defaultParams.max_tokens).toBeDefined();
         expect(typeof config.defaultParams.max_tokens).toBe('number');
       });
     });
 
-    test('complex tier has higher max_tokens than simple', () => {
+    test('complex tier has higher max_tokens than fallback', () => {
       const complex = getProviderConfig('llama-120b');
-      const simple = getProviderConfig('llama-8b');
-      expect(complex.defaultParams.max_tokens).toBeGreaterThan(simple.defaultParams.max_tokens);
+      const fallback = getProviderConfig('groq-fallback');
+      expect(complex.defaultParams.max_tokens).toBeGreaterThan(fallback.defaultParams.max_tokens);
+    });
+
+    test('max_tokens are set for maximum potential', () => {
+      expect(getProviderConfig('llama-120b').defaultParams.max_tokens).toBe(8192);
+      expect(getProviderConfig('llama-70b').defaultParams.max_tokens).toBe(8192);
+      expect(getProviderConfig('groq-fallback').defaultParams.max_tokens).toBe(4096);
     });
   });
 
   describe('Endpoints', () => {
     test('Groq providers use correct endpoint', () => {
-      ['llama-120b', 'llama-70b', 'llama-8b', 'groq-fallback'].forEach(provider => {
+      ['llama-120b', 'llama-70b', 'groq-fallback'].forEach(provider => {
         const config = getProviderConfig(provider);
         expect(config.endpoint).toBe('https://api.groq.com/openai/v1/chat/completions');
       });
@@ -210,6 +217,10 @@ describe('providers-config', () => {
       expect(config.defaultParams.temperature).toBeDefined();
       expect(config.defaultParams.maxOutputTokens).toBeDefined();
     });
+
+    test('gemini-pro maxOutputTokens is 8192', () => {
+      expect(PROVIDERS['gemini-pro'].defaultParams.maxOutputTokens).toBe(8192);
+    });
   });
 });
 
@@ -238,6 +249,16 @@ describe('getEnabledProviders', () => {
       expect(PROVIDERS[name].type).toBe('groq');
     });
     expect(enabled.length).toBeGreaterThan(0);
+  });
+
+  test('returns 3 groq providers when only GROQ_API_KEY is set', () => {
+    process.env.GROQ_API_KEY = 'test-key';
+    delete process.env.GEMINI_API_KEY;
+    const enabled = getEnabledProviders();
+    expect(enabled.length).toBe(3); // llama-120b, llama-70b, groq-fallback
+    expect(enabled).toContain('llama-120b');
+    expect(enabled).toContain('llama-70b');
+    expect(enabled).toContain('groq-fallback');
   });
 
   test('returns empty array when no API keys are set', () => {
@@ -322,9 +343,9 @@ describe('getWeightedProviders (Phase A5.4)', () => {
 
   test('valid weights sort correctly by weight descending', () => {
     process.env.GROQ_API_KEY = 'test-groq-key';
-    process.env.HYBRID_PROVIDER_WEIGHTS = '{"llama-8b":90,"llama-120b":50,"llama-70b":70}';
+    process.env.HYBRID_PROVIDER_WEIGHTS = '{"groq-fallback":90,"llama-120b":50,"llama-70b":70}';
     const result = getWeightedProviders();
-    expect(result[0]).toBe('llama-8b');
+    expect(result[0]).toBe('groq-fallback');
     expect(result[1]).toBe('llama-70b');
     expect(result[2]).toBe('llama-120b');
   });

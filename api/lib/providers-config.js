@@ -11,7 +11,7 @@
  * - type: Provider implementation type (groq | google)
  * - model: Specific model identifier
  * - endpoint: API endpoint URL
- * - tier: Intelligence tier (complex, medium, simple, fallback)
+ * - tier: Intelligence tier (complex, medium, fallback)
  * - defaultParams: Default parameters for API calls
  * - inputTokenBudget: Max input tokens before history truncation (chars = budget * 4)
  *   Moved here from orchestrator hardcode to keep config as single source of truth.
@@ -23,16 +23,11 @@ export const PROVIDERS = {
     model: 'openai/gpt-oss-120b',
     endpoint: 'https://api.groq.com/openai/v1/chat/completions',
     tier: 'complex',
-    // inputTokenBudget: limite de tokens de input antes do truncamento do histórico.
-    // Mantido em 5000 para evitar erro 413 no free tier Groq (modelo 120B tem custo alto de TPM).
-    inputTokenBudget: 5000,
+    inputTokenBudget: 16000,
     defaultParams: {
-      // Temperatura reduzida de 0.7 → 0.35: elimina alucinações arquiteturais e variações
-      // desnecessárias em código. Para lógica estrita e análise técnica, previsibilidade é crucial.
       temperature: 0.35,
-      // top_p: foca o espaço de amostragem nos tokens mais prováveis, reduzindo divagações.
       top_p: 0.85,
-      max_tokens: 2048, // mantido: limite real do Groq Free Tier
+      max_tokens: 8192,
     },
   },
 
@@ -42,27 +37,11 @@ export const PROVIDERS = {
     model: 'llama-3.3-70b-versatile',
     endpoint: 'https://api.groq.com/openai/v1/chat/completions',
     tier: 'medium',
-    inputTokenBudget: 12000,
+    inputTokenBudget: 16000,
     defaultParams: {
-      // Temperatura reduzida de 0.6 → 0.55: leve ajuste para manter foco técnico sem perder fluência.
       temperature: 0.55,
-      // top_p: equilíbrio entre coesão e naturalidade para tarefas técnicas cotidianas.
       top_p: 0.90,
-      max_tokens: 2048, // mantido: limite real do Groq Free Tier
-    },
-  },
-
-  // Tier 3: Simple/fast tasks - Llama 3.1 8B (via Groq)
-  'llama-8b': {
-    type: 'groq',
-    model: 'llama-3.1-8b-instant',
-    endpoint: 'https://api.groq.com/openai/v1/chat/completions',
-    tier: 'simple',
-    inputTokenBudget: 12000,
-    defaultParams: {
-      temperature: 0.5, // mantido: adequado para conversas simples e rápidas
-      top_p: 0.90,
-      max_tokens: 1024, // mantido: limite para conversas simples no free tier Groq
+      max_tokens: 8192,
     },
   },
 
@@ -72,11 +51,11 @@ export const PROVIDERS = {
     model: 'llama-3.1-8b-instant',
     endpoint: 'https://api.groq.com/openai/v1/chat/completions',
     tier: 'fallback',
-    inputTokenBudget: 12000,
+    inputTokenBudget: 16000,
     defaultParams: {
-      temperature: 0.5, // reduzido de 0.7: fallback deve ser previsível e estável
+      temperature: 0.5,
       top_p: 0.90,
-      max_tokens: 1024, // mantido: garantir disponibilidade máxima no fallback
+      max_tokens: 4096,
     },
   },
 
@@ -90,13 +69,9 @@ export const PROVIDERS = {
     tier: 'complex',
     // Gemini não usa inputTokenBudget: janela nativa é suficientemente grande para não truncar.
     defaultParams: {
-      // Temperatura reduzida de 1.0 → 0.50: elimina respostas prolixas e sem foco.
-      // 1.0 gerava 'tagarelice' incompatível com a estrutura analítica exigida pelo Serginho.
-      // 0.50 mantém a criatividade do modelo sem sacrificar objetividade.
       temperature: 0.50,
-      // top_p: aproveita o vocabulário rico do Gemini sem divagações.
       top_p: 0.95,
-      maxOutputTokens: 8192, // mantido: diferencial do Gemini vs. Groq (2048)
+      maxOutputTokens: 8192,
     },
   },
 };
@@ -121,7 +96,7 @@ export function getProviderConfig(providerName) {
 
 /**
  * Get all providers by tier
- * @param {string} tier - Tier name (complex, medium, simple, etc.)
+ * @param {string} tier - Tier name (complex, medium, fallback, etc.)
  * @returns {Array<string>} Array of provider names
  */
 export function getProvidersByTier(tier) {
@@ -235,7 +210,7 @@ export function getWeightedProviders() {
  * - displayName: Human-readable model name
  * - description: Brief description of model capabilities
  * - icon: Visual icon for UI
- * - logicalTier: Logical tier (complex, medium, simple, fallback, genius, optimized)
+ * - logicalTier: Logical tier (complex, medium, fallback, genius, optimized)
  */
 export const MODEL_METADATA = {
   'llama-120b': {
@@ -251,13 +226,6 @@ export const MODEL_METADATA = {
     description: 'Tarefas técnicas e desenvolvimento',
     icon: '⚙️',
     logicalTier: 'medium'
-  },
-  'llama-8b': {
-    infrastructure: 'groq',
-    displayName: 'Llama 3.1 8B',
-    description: 'Respostas rápidas e conversação casual',
-    icon: '⚡',
-    logicalTier: 'simple'
   },
   'groq-fallback': {
     infrastructure: 'groq',

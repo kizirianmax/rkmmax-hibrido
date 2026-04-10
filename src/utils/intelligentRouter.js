@@ -6,26 +6,23 @@
  * This file contains provider implementation details.
  * External code should use aiAdapter.js interfaces instead.
  * 
- * Provider names (llama-70b, llama-8b, etc.) are implementation details
+ * Provider names (llama-70b, llama-120b, gemini-pro, groq-fallback) are implementation details
  * and should NOT be used directly in business logic or tests.
  *
  * Providers with Strict Intelligence-Tier Isolation:
  * - Gemini 2.5 Pro: Análise profunda, estratégia, raciocínio abstrato, contexto longo (Tier 1 — Google)
  * - Llama 3.3 120B: Código complexo, lógica estrita, análise técnica profunda (Tier 1 — Groq)
- * - Llama 3.3 70B: Tarefas técnicas cotidianas, suporte a programação (Tier 2)
- * - Llama 3.1 8B: Conversas simples, rápidas (Tier 3)
- * - GROQ Fallback: Último recurso para alta disponibilidade
+ * - Llama 3.3 70B: Tarefas técnicas cotidianas, suporte a programação, conversas (Tier 2)
+ * - GROQ Fallback (Llama 3.1 8B): Último recurso para alta disponibilidade
  *
- * Routing Policy (calibrado):
+ * Routing Policy (potencial máximo):
  * - Alta complexidade SEM código → gemini-pro (janela maior, melhor para análise/estratégia)
  * - Alta complexidade COM código → llama-120b (velocidade + lógica estrita)
  * - Complexidade média → llama-70b
- * - Simples/curto → llama-8b
+ * - Simples/curto → llama-70b (sem downgrade para 8B; groq-fallback reservado para falhas)
  *
  * Critical Rules:
- * - NEVER downgrade complex tasks to llama-8b
- * - NEVER mix intelligence tiers in fallback chains
- * - Maintain strict quality boundaries
+ * - NEVER route to groq-fallback organically — it is reserved for failure recovery only
  * - gemini-pro is only routed organically when GEMINI_API_KEY is configured
  */
 
@@ -33,7 +30,7 @@
  * Palavras-chave por categoria
  */
 const KEYWORDS = {
-  // Tarefas que exigem Llama 70B (complexo)
+  // Tarefas que exigem modelo principal (Tier 1 ou Tier 2)
   complex: [
     "analisar",
     "análise",
@@ -62,7 +59,7 @@ const KEYWORDS = {
     "performance",
     "escalabilidade",
     "microserviços",
-    "microsserviços",  // variante com ss
+    "microsserviços",
     "api rest",
     "machine learning",
     "inteligência artificial",
@@ -92,7 +89,6 @@ const KEYWORDS = {
     "startup",
     "startups",
     "produto",
-    "estratégia",  // já existe mas reforça o score quando combinada
     "infraestrutura",
     "cloud",
     "kubernetes",
@@ -143,6 +139,13 @@ const KEYWORDS = {
     "roteiro",
     "script",
     "apresentação",
+    "faz",
+    "faça",
+    "gera",
+    "gere",
+    "gerar",
+    "montar",
+    "monte",
   ],
 
   // Tarefas que exigem processamento rápido (turbo)
@@ -177,25 +180,6 @@ const KEYWORDS = {
     "trecho",
     "pedaço",
   ],
-
-  // Tarefas simples (Llama 8B)
-  simple: [
-    "olá",
-    "oi",
-    "hey",
-    "e aí",
-    "como",
-    "o que é",
-    "qual",
-    "me conte",
-    "fale sobre",
-    "explique",
-    "defina",
-    "definição",
-    "diferença",
-    "comparar",
-    "versus",
-  ],
 };
 
 /**
@@ -226,7 +210,6 @@ export function analyzeComplexity(message) {
   // Scores
   let complexityScore = 0;
   let speedScore = 0;
-  let simpleScore = 0;
 
   // 1. Análise de palavras-chave
   KEYWORDS.complex.forEach((keyword) => {
@@ -235,10 +218,6 @@ export function analyzeComplexity(message) {
 
   KEYWORDS.fast.forEach((keyword) => {
     if (text.includes(keyword)) speedScore += 1.5;
-  });
-
-  KEYWORDS.simple.forEach((keyword) => {
-    if (text.includes(keyword)) simpleScore += 1;
   });
 
   // 2. Análise de código
@@ -283,9 +262,8 @@ export function analyzeComplexity(message) {
     if (text.includes(term)) complexityScore += 1;
   });
 
-  // 6. Mensagens muito curtas = simples ou rápidas
+  // 6. Mensagens muito curtas = leve redução de score (mas não downgrade automático)
   if (wordCount < 10) {
-    simpleScore += 2;
     speedScore += 1;
   }
 
@@ -298,7 +276,6 @@ export function analyzeComplexity(message) {
     scores: {
       complexity: complexityScore,
       speed: speedScore,
-      simple: simpleScore,
     },
     analysis: {
       isVeryShort: wordCount < 10,
@@ -344,9 +321,6 @@ export function routeToProvider(analysis, options = {}) {
   }
 
   // REGRA 2: Complexidade muito alta SEM código → Gemini 2.5 Pro
-  // Gemini tem janela de contexto massiva (8192 tokens output vs 2048 Groq) e é superior
-  // para análise estratégica, raciocínio abstrato e tarefas que exigem profundidade analítica.
-  // Fallback automático para llama-120b se Gemini não estiver disponível.
   if (scores.complexity >= 8 && geminiAvailable) {
     return {
       provider: "gemini-pro",
@@ -367,7 +341,6 @@ export function routeToProvider(analysis, options = {}) {
   }
 
   // REGRA 3: Mensagens longas com múltiplos termos técnicos SEM código → Gemini 2.5 Pro
-  // Contexto longo + análise técnica não-código é o ponto forte do Gemini.
   if (details.isLong && details.hasTechnicalTerms && scores.complexity >= 5 && !hasCode && geminiAvailable) {
     return {
       provider: "gemini-pro",
@@ -388,7 +361,6 @@ export function routeToProvider(analysis, options = {}) {
   }
 
   // REGRA 3.5: Alta complexidade analítica (score >= 6) sem código → Gemini 2.5 Pro
-  // Cobre perguntas estratégicas/analíticas complexas mas não longas o suficiente para REGRA 3.
   if (scores.complexity >= 6 && !hasCode && geminiAvailable) {
     return {
       provider: "gemini-pro",
@@ -439,33 +411,22 @@ export function routeToProvider(analysis, options = {}) {
     };
   }
 
-  // TIER 3: Tarefas SIMPLES → llama-8b
-  // REGRA 8: Mensagens muito curtas = Llama 8B (rápido e eficiente)
-  // EXCEPÇÃO: se a mensagem curta contém keywords de criação de conteúdo (score >= 2),
-  // usa 70B — "Faz um prompt" é curto mas exige modelo capaz, não apenas conversação.
-  if (details.isVeryShort) {
-    if (scores.complexity >= 2) {
-      return {
-        provider: "llama-70b",
-        reason: "Mensagem curta com tarefa de criação/elaboração — Llama 70B: qualidade mínima para conteúdo",
-        confidence: 0.75,
-        tier: "medium",
-      };
-    }
+  // REGRA 8: Mensagens curtas com keywords de criação/elaboração → llama-70b
+  if (details.isVeryShort && scores.complexity >= 2) {
     return {
-      provider: "llama-8b",
-      reason: "Mensagem curta - usando modelo rápido",
-      confidence: 0.8,
-      tier: "simple",
+      provider: "llama-70b",
+      reason: "Mensagem curta com tarefa de criação/elaboração — Llama 70B: qualidade mínima para conteúdo",
+      confidence: 0.75,
+      tier: "medium",
     };
   }
 
-  // REGRA 9: Padrão = Llama 8B (custo-benefício)
+  // REGRA 9: Padrão — llama-70b (potencial máximo; groq-fallback reservado para falhas)
   return {
-    provider: "llama-8b",
-    reason: "Conversa padrão - otimizando velocidade",
+    provider: "llama-70b",
+    reason: "Conversa padrão — Llama 70B: potencial máximo em todas as interações",
     confidence: 0.7,
-    tier: "simple",
+    tier: "medium",
   };
 }
 
@@ -487,33 +448,24 @@ export function intelligentRoute(message) {
 
 /**
  * Fallback chain with Strict Intelligence-Tier Isolation
- * NEVER downgrade complex tasks to llama-8b
- * NEVER mix intelligence tiers
+ * groq-fallback is NEVER used organically — only as last resort in failure recovery.
  *
- * Política de fallback (calibrada — intercâmbio Groq ↔ Google):
+ * Política de fallback (potencial máximo — intercâmbio Groq ↔ Google):
  * - gemini-pro: se falhar → llama-120b → llama-70b → groq-fallback
- *   (Gemini falhou? Cai para o melhor da Groq, nunca para o 8B diretamente)
  * - llama-120b: se falhar → gemini-pro → llama-70b → groq-fallback
- *   (120B falhou? Tenta Gemini antes de degradar para 70B)
- * - llama-70b: se falhar → groq-fallback
- *   (Sem intercâmbio com Gemini: tier médio não justifica latência do Gemini)
- * - llama-8b: se falhar → groq-fallback
+ * - llama-70b: se falhar → llama-120b → gemini-pro → groq-fallback
  * - groq-fallback: último recurso, sem fallback
  *
  * NOTA: providers desabilitados (sem API key) são automaticamente pulados
  * pelo orchestrator (getEnabledProviders() + while loop no _handleStructured).
  */
 export const FALLBACK_CHAIN = {
-  // Google tier: Gemini falhou → melhor da Groq, nunca direto para 8B
+  // Google tier: Gemini falhou → melhor da Groq, nunca direto para fallback
   "gemini-pro": ["llama-120b", "llama-70b", "groq-fallback"],
   // Complex tier Groq: 120B falhou → tenta Gemini antes de degradar
   "llama-120b": ["gemini-pro", "llama-70b", "groq-fallback"],
-  // Medium tier: 70B falhou → tenta 120B (modelo diferente, evita double-fail no mesmo
-  // endpoint) antes do groq-fallback. Gemini é pulado aqui para manter latência aceitável.
-  "llama-70b": ["llama-120b", "groq-fallback"],
-  // Simple tier: fallback para 70B antes do groq-fallback (evita falha total quando 8B
-  // e groq-fallback usam o mesmo modelo llama-3.1-8b-instant e ambos recebem rate limit)
-  "llama-8b": ["llama-70b", "groq-fallback"],
+  // Medium tier: 70B falhou → tenta 120B → Gemini (provider diferente, escapa rate limit Groq)
+  "llama-70b": ["llama-120b", "gemini-pro", "groq-fallback"],
   // Último recurso
   "groq-fallback": [],
 };

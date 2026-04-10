@@ -37,7 +37,7 @@ describe('SerginhoOrchestrator', () => {
       });
 
       // Verify response structure
-      expect(result.model.logicalTier).toBe('simple');
+      expect(['simple', 'medium']).toContain(result.model.logicalTier);
       expect(result.model.infrastructure).toBeDefined();
       expect(result.text).toBeTruthy();
       expect(result.routing.cacheHit).toBe(false);
@@ -157,9 +157,9 @@ describe('SerginhoOrchestrator', () => {
 
   describe('fallback mechanism', () => {
     test('falls back to next provider on failure', async () => {
-      // Mock llama-8b to fail, others succeed
+      // Mock llama-70b to fail, others succeed
       global.fetch = createMockFetch({
-        failProviders: { 'llama-8b': true }
+        failProviders: { 'llama-70b': true }
       });
 
       const result = await serginho.handleRequest({
@@ -214,7 +214,7 @@ describe('SerginhoOrchestrator', () => {
             message: 'Test',
             messages: [],
             context: {},
-            options: { forceProvider: 'llama-8b' }
+            options: { forceProvider: 'llama-70b' }
           });
         } catch (e) {
           // Expected to fail
@@ -239,7 +239,7 @@ describe('SerginhoOrchestrator', () => {
         message: 'Test Groq',
         messages: [],
         context: {},
-        options: { forceProvider: 'llama-8b' }
+        options: { forceProvider: 'llama-70b' }
       });
 
       expect(global.fetch).toHaveBeenCalled();
@@ -248,7 +248,7 @@ describe('SerginhoOrchestrator', () => {
       
       const options = callArgs[1];
       const body = JSON.parse(options.body);
-      expect(body.model).toBe('llama-3.1-8b-instant');
+      expect(body.model).toBe('llama-3.3-70b-versatile');
       expect(body.messages).toBeDefined();
     });
 
@@ -256,7 +256,7 @@ describe('SerginhoOrchestrator', () => {
 
   describe('message formatting', () => {
     test('formats messages for OpenAI/Groq correctly', () => {
-      const config = getProviderConfig('llama-8b');
+      const config = getProviderConfig('llama-70b');
       expect(config.type).toBe('groq');
       expect(config.defaultParams).toBeDefined();
     });
@@ -264,9 +264,9 @@ describe('SerginhoOrchestrator', () => {
 
   describe('cache management', () => {
     test('generates consistent cache keys', () => {
-      const key1 = serginho.getCacheKey('Test message', 'llama-8b');
-      const key2 = serginho.getCacheKey('Test message', 'llama-8b');
-      const key3 = serginho.getCacheKey('Test message', 'llama-70b');
+      const key1 = serginho.getCacheKey('Test message', 'llama-70b');
+      const key2 = serginho.getCacheKey('Test message', 'llama-70b');
+      const key3 = serginho.getCacheKey('Different message', 'llama-70b');
       
       expect(key1).toBe(key2);
       expect(key1).not.toBe(key3);
@@ -313,7 +313,7 @@ describe('SerginhoOrchestrator', () => {
         message: 'Test metrics',
         messages: [],
         context: {},
-        options: { forceProvider: 'llama-8b' }
+        options: { forceProvider: 'llama-70b' }
       });
 
       const metrics = serginho.getMetrics();
@@ -409,11 +409,11 @@ describe('SerginhoOrchestrator', () => {
     test('retries on 503 and succeeds on second attempt', async () => {
       global.fetch = createRetryMockFetch({ failStatus: 503, failTimes: 1 });
 
-      const config = getProviderConfig('llama-8b');
+      const config = getProviderConfig('llama-70b');
       const promise = serginho.callGroq(config, 'Test retry 503', [], {}, undefined);
 
-      // Advance timers for the 1000ms backoff on attempt 1
-      await jest.advanceTimersByTimeAsync(1000);
+      // Advance timers for the 2000ms backoff on attempt 1 (delay increased in PR #368)
+      await jest.advanceTimersByTimeAsync(2000);
 
       const result = await promise;
       expect(result.text).toBe('Retry success');
@@ -423,11 +423,11 @@ describe('SerginhoOrchestrator', () => {
     test('retries on 429 and succeeds on third attempt', async () => {
       global.fetch = createRetryMockFetch({ failStatus: 429, failTimes: 2 });
 
-      const config = getProviderConfig('llama-8b');
+      const config = getProviderConfig('llama-70b');
       const promise = serginho.callGroq(config, 'Test retry 429', [], {}, undefined);
 
-      // Advance timers for 1000ms + 2000ms backoffs
-      await jest.advanceTimersByTimeAsync(3000);
+      // Advance timers for 2000ms + 4000ms backoffs (delay increased in PR #368)
+      await jest.advanceTimersByTimeAsync(6000);
 
       const result = await promise;
       expect(result.text).toBe('Retry success');
@@ -443,7 +443,7 @@ describe('SerginhoOrchestrator', () => {
         json: jest.fn().mockResolvedValue({}),
       });
 
-      const config = getProviderConfig('llama-8b');
+      const config = getProviderConfig('llama-70b');
 
       // Call callGroq() directly so no orchestrator fallback interferes
       const promise = serginho.callGroq(config, 'Test exhausted', [], {}, undefined);
@@ -451,8 +451,8 @@ describe('SerginhoOrchestrator', () => {
       // Attach rejection expectation BEFORE advancing timers to avoid unhandled rejection
       const expectation = expect(promise).rejects.toThrow('Groq API error: 503');
 
-      // Advance timers for 1000ms + 2000ms backoffs
-      await jest.advanceTimersByTimeAsync(3000);
+      // Advance timers for 2000ms + 4000ms backoffs (delay increased in PR #368)
+      await jest.advanceTimersByTimeAsync(6000);
 
       await expectation;
       expect(global.fetch).toHaveBeenCalledTimes(3);
@@ -466,7 +466,7 @@ describe('SerginhoOrchestrator', () => {
         json: jest.fn().mockResolvedValue({}),
       });
 
-      const config = getProviderConfig('llama-8b');
+      const config = getProviderConfig('llama-70b');
 
       // Call callGroq() directly to isolate retry behavior
       await expect(
@@ -483,7 +483,7 @@ describe('SerginhoOrchestrator', () => {
 
       global.fetch = createRetryMockFetch({ failStatus: 503, failTimes: 1 });
 
-      const config = getProviderConfig('llama-8b');
+      const config = getProviderConfig('llama-70b');
 
       await expect(
         serginho.callGroq(config, 'Test aborted', [], {}, controller.signal)
@@ -533,7 +533,7 @@ describe('SerginhoOrchestrator', () => {
           message: 'Test timeout',
           messages: [],
           context: {},
-          options: { timeoutMs: 1, forceProvider: 'llama-8b' }
+          options: { timeoutMs: 1, forceProvider: 'llama-70b' }
         })
       ).rejects.toMatchObject({ name: 'AbortError' });
     });
@@ -553,7 +553,7 @@ describe('SerginhoOrchestrator', () => {
           message: 'Test timeout no metrics',
           messages: [],
           context: {},
-          options: { timeoutMs: 1, forceProvider: 'llama-8b' }
+          options: { timeoutMs: 1, forceProvider: 'llama-70b' }
         });
       } catch (e) {
         expect(e.name).toBe('AbortError');
@@ -581,7 +581,7 @@ describe('SerginhoOrchestrator', () => {
           message: 'Test external signal',
           messages: [],
           context: {},
-          options: { timeoutMs: 60000, signal: externalController.signal, forceProvider: 'llama-8b' }
+          options: { timeoutMs: 60000, signal: externalController.signal, forceProvider: 'llama-70b' }
         })
       ).rejects.toMatchObject({ name: 'AbortError' });
     });
@@ -596,7 +596,7 @@ describe('SerginhoOrchestrator', () => {
         message: 'Normal request without timeout',
         messages: [],
         context: {},
-        options: { forceProvider: 'llama-8b' }
+        options: { forceProvider: 'llama-70b' }
       });
 
       expect(result.text).toBeTruthy();
@@ -637,7 +637,7 @@ describe('SerginhoOrchestrator', () => {
           message: 'Test clean shutdown',
           messages: [],
           context: {},
-          options: { timeoutMs: 1, forceProvider: 'llama-8b' }
+          options: { timeoutMs: 1, forceProvider: 'llama-70b' }
         });
       } catch (e) {
         expect(e.name).toBe('AbortError');

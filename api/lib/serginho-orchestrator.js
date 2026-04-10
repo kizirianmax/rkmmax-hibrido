@@ -1097,8 +1097,10 @@ class SerginhoOrchestrator {
           throw new Error(`Groq API error: 413 request_too_large ${errorText}`);
         }
         if (RETRYABLE_STATUSES.has(response.status) && attempt < MAX_ATTEMPTS) {
-          // Linear backoff: 1000ms on first retry, 2000ms on second retry
-          const delayMs = attempt * 1000;
+          // Linear backoff: 2000ms on first retry, 4000ms on second retry
+          // Groq rate limit (429) typically resets within 1-5s; 1s was too short,
+          // causing all 3 attempts to fail before the window resets.
+          const delayMs = attempt * 2000;
           const errorBody = await response.text().catch(() => '');
           lastError = new Error(`Groq API error: ${response.status} ${errorBody}`);
           await new Promise((resolve) => setTimeout(resolve, delayMs));
