@@ -10,15 +10,23 @@
  * and should NOT be used directly in business logic or tests.
  *
  * Providers with Strict Intelligence-Tier Isolation:
- * - Llama 3.3 120B: Tarefas muito complexas, análise profunda (Tier 1)
- * - Llama 3.3 70B: Tarefas complexas e médias (Tier 2)
+ * - Gemini 2.5 Pro: Análise profunda, estratégia, raciocínio abstrato, contexto longo (Tier 1 — Google)
+ * - Llama 3.3 120B: Código complexo, lógica estrita, análise técnica profunda (Tier 1 — Groq)
+ * - Llama 3.3 70B: Tarefas técnicas cotidianas, suporte a programação (Tier 2)
  * - Llama 3.1 8B: Conversas simples, rápidas (Tier 3)
  * - GROQ Fallback: Último recurso para alta disponibilidade
+ *
+ * Routing Policy (calibrado):
+ * - Alta complexidade SEM código → gemini-pro (janela maior, melhor para análise/estratégia)
+ * - Alta complexidade COM código → llama-120b (velocidade + lógica estrita)
+ * - Complexidade média → llama-70b
+ * - Simples/curto → llama-8b
  *
  * Critical Rules:
  * - NEVER downgrade complex tasks to llama-8b
  * - NEVER mix intelligence tiers in fallback chains
  * - Maintain strict quality boundaries
+ * - gemini-pro is only routed organically when GEMINI_API_KEY is configured
  */
 
 /**
@@ -231,39 +239,86 @@ export function analyzeComplexity(message) {
 /**
  * Decide qual provider usar baseado na análise
  * Implementa isolamento estrito de níveis de inteligência
+ *
  * @param {object} analysis - Resultado de analyzeComplexity()
- * @returns {string} Provider escolhido
+ * @param {object} [options={}] - Opções de roteamento
+ * @param {string[]} [options.enabledProviders] - Lista de providers habilitados (env vars configuradas).
+ *   Se não fornecida, o Gemini é considerado disponível (o orchestrator filtra providers desabilitados).
+ * @returns {object} { provider, reason, confidence, tier }
  */
-export function routeToProvider(analysis) {
+export function routeToProvider(analysis, options = {}) {
   const { scores, hasCode, analysis: details } = analysis;
 
-  // TIER 1: Tarefas MUITO COMPLEXAS → llama-120b
-  // REGRA 1: Código sempre vai para Llama 120B (máxima capacidade)
+  // Determina se o Gemini está disponível para roteamento orgânico.
+  // Se enabledProviders não for fornecido (chamada sem contexto de env), assume disponível
+  // para não acoplar o router ao ambiente. O orchestrator filtra providers desabilitados.
+  const enabledProviders = options.enabledProviders || null;
+  const geminiAvailable = enabledProviders
+    ? enabledProviders.includes('gemini-pro')
+    : true;
+
+  // TIER 1: Tarefas MUITO COMPLEXAS
+  // REGRA 1: Código sempre vai para Llama 120B (velocidade + lógica estrita, sem latência do Gemini)
   if (hasCode) {
     return {
       provider: "llama-120b",
-      reason: "Mensagem contém código - requer análise máxima",
+      reason: "Mensagem contém código — Llama 120B: velocidade + lógica estrita",
       confidence: 0.95,
       tier: "complex",
     };
   }
 
-  // REGRA 2: Complexidade muito alta = Llama 120B
+  // REGRA 2: Complexidade muito alta SEM código → Gemini 2.5 Pro
+  // Gemini tem janela de contexto massiva (8192 tokens output vs 2048 Groq) e é superior
+  // para análise estratégica, raciocínio abstrato e tarefas que exigem profundidade analítica.
+  // Fallback automático para llama-120b se Gemini não estiver disponível.
+  if (scores.complexity >= 8 && geminiAvailable) {
+    return {
+      provider: "gemini-pro",
+      reason: "Complexidade muito alta sem código — Gemini 2.5 Pro: análise profunda e contexto longo",
+      confidence: 0.93,
+      tier: "complex",
+    };
+  }
+
+  // REGRA 2b: Complexidade muito alta, Gemini indisponível → Llama 120B
   if (scores.complexity >= 8) {
     return {
       provider: "llama-120b",
-      reason: "Complexidade muito alta detectada",
-      confidence: 0.95,
+      reason: "Complexidade muito alta detectada (Gemini indisponível, usando Llama 120B)",
+      confidence: 0.92,
       tier: "complex",
     };
   }
 
-  // REGRA 3: Mensagens longas com múltiplos termos técnicos = Llama 120B
+  // REGRA 3: Mensagens longas com múltiplos termos técnicos SEM código → Gemini 2.5 Pro
+  // Contexto longo + análise técnica não-código é o ponto forte do Gemini.
+  if (details.isLong && details.hasTechnicalTerms && scores.complexity >= 5 && !hasCode && geminiAvailable) {
+    return {
+      provider: "gemini-pro",
+      reason: "Mensagem longa e complexa sem código — Gemini 2.5 Pro: contexto longo e análise técnica",
+      confidence: 0.88,
+      tier: "complex",
+    };
+  }
+
+  // REGRA 3b: Mensagens longas com termos técnicos, Gemini indisponível → Llama 120B
   if (details.isLong && details.hasTechnicalTerms && scores.complexity >= 5) {
     return {
       provider: "llama-120b",
       reason: "Mensagem longa e complexa com contexto técnico profundo",
       confidence: 0.9,
+      tier: "complex",
+    };
+  }
+
+  // REGRA 3.5: Alta complexidade analítica (score >= 6) sem código → Gemini 2.5 Pro
+  // Cobre perguntas estratégicas/analíticas complexas mas não longas o suficiente para REGRA 3.
+  if (scores.complexity >= 6 && !hasCode && geminiAvailable) {
+    return {
+      provider: "gemini-pro",
+      reason: "Alta complexidade analítica sem código — Gemini 2.5 Pro: raciocínio e estratégia",
+      confidence: 0.85,
       tier: "complex",
     };
   }
@@ -349,16 +404,31 @@ export function intelligentRoute(message) {
  * Fallback chain with Strict Intelligence-Tier Isolation
  * NEVER downgrade complex tasks to llama-8b
  * NEVER mix intelligence tiers
- * 
- * Complex tier: llama-120b → llama-70b → groq-fallback (NEVER llama-8b)
- * Medium tier: llama-70b → groq-fallback
- * Simple tier: llama-8b → groq-fallback
+ *
+ * Política de fallback (calibrada — intercâmbio Groq ↔ Google):
+ * - gemini-pro: se falhar → llama-120b → llama-70b → groq-fallback
+ *   (Gemini falhou? Cai para o melhor da Groq, nunca para o 8B diretamente)
+ * - llama-120b: se falhar → gemini-pro → llama-70b → groq-fallback
+ *   (120B falhou? Tenta Gemini antes de degradar para 70B)
+ * - llama-70b: se falhar → groq-fallback
+ *   (Sem intercâmbio com Gemini: tier médio não justifica latência do Gemini)
+ * - llama-8b: se falhar → groq-fallback
+ * - groq-fallback: último recurso, sem fallback
+ *
+ * NOTA: providers desabilitados (sem API key) são automaticamente pulados
+ * pelo orchestrator (getEnabledProviders() + while loop no _handleStructured).
  */
 export const FALLBACK_CHAIN = {
-  "llama-120b": ["llama-70b", "groq-fallback"], // Complex tier: NEVER downgrade to 8b
-  "llama-70b": ["groq-fallback"], // Medium tier: Skip 8b, go directly to fallback
-  "llama-8b": ["groq-fallback"], // Simple tier: Only fallback to groq
-  "groq-fallback": [], // Último recurso
+  // Google tier: Gemini falhou → melhor da Groq, nunca direto para 8B
+  "gemini-pro": ["llama-120b", "llama-70b", "groq-fallback"],
+  // Complex tier Groq: 120B falhou → tenta Gemini antes de degradar
+  "llama-120b": ["gemini-pro", "llama-70b", "groq-fallback"],
+  // Medium tier: skip Gemini (latência alta não justifica), vai direto para fallback
+  "llama-70b": ["groq-fallback"],
+  // Simple tier: único fallback disponível
+  "llama-8b": ["groq-fallback"],
+  // Último recurso
+  "groq-fallback": [],
 };
 
 /**
