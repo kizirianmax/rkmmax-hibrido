@@ -16,7 +16,7 @@
  */
 export const AUTO_PRIORITY_ORDER = [
   { id: 'gemini-3-flash',  providerName: 'gemini-3-flash',  label: 'Gemini 3 Flash',  icon: '⚡' },
-  { id: 'gemini-3.1-pro',  providerName: 'gemini-3.1-pro',  label: 'Gemini 3.1 Pro',  icon: '♊' },
+  { id: 'gemini-3.1-pro',  providerName: 'gemini-3.1-pro',  label: 'Gemini 3.1 Pro',  icon: '🔮' },
   { id: 'gemini-pro',      providerName: 'gemini-pro',      label: 'Gemini 2.5 Pro',  icon: '♊' },
   { id: 'llama-70b',       providerName: 'llama-70b',       label: 'Groq 70B',        icon: '⚙️' },
   { id: 'llama-120b',      providerName: 'llama-120b',      label: 'Groq 120B',       icon: '🧠' },
