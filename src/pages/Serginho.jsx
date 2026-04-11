@@ -1,6 +1,6 @@
-// src/pages/Serginho.jsx
 import React, { useState, useRef, useEffect } from "react";
 import "./Serginho.css";
+import { MANUAL_MODEL_OPTIONS } from "../config/modelPriority.js";
 
 /**
  * Renders AI response text with basic markdown formatting.
@@ -49,7 +49,7 @@ export default function Serginho() {
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [isRecording, setIsRecording] = useState(false);
-  const [useGemini, setUseGemini] = useState(false);
+  const [selectedModel, setSelectedModel] = useState('auto');
   const messagesEndRef = useRef(null);
   const mediaRecorderRef = useRef(null);
   const fileInputRef = useRef(null);
@@ -96,7 +96,7 @@ export default function Serginho() {
           messages: newMessages,
           agentType: "serginho", // Prompts de gênio do Serginho
           mode: "OTIMIZADO", // Otimização de custo ativada
-          ...(useGemini ? { forceProvider: "gemini-pro" } : {}),
+          ...(selectedModel !== 'auto' ? { forceProvider: selectedModel } : {}),
         }),
       });
 
@@ -507,7 +507,7 @@ export default function Serginho() {
         <div ref={messagesEndRef} />
       </div>
 
-      {/* Gemini test toggle — reversível: remover este bloco */}
+      {/* Seletor de modelo — modo Automático e Manual (reversível: remover este bloco) */}
       {/* Positioned above input-container as a floating strip, not inside it */}
       <div
         style={{
@@ -517,28 +517,33 @@ export default function Serginho() {
           zIndex: 1001,
         }}
       >
-        <span
-          onClick={() => setUseGemini((v) => !v)}
+        <select
+          value={selectedModel}
+          onChange={(e) => setSelectedModel(e.target.value)}
           style={{
             fontSize: "0.65rem",
-            background: useGemini
+            background: selectedModel !== 'auto'
               ? "linear-gradient(135deg, #4285f4, #34a853)"
               : "rgba(0,0,0,0.06)",
-            color: useGemini ? "white" : "#94a3b8",
+            color: selectedModel !== 'auto' ? "white" : "#94a3b8",
             padding: "3px 8px",
             borderRadius: "10px",
             cursor: "pointer",
-            transition: "all 0.2s ease",
-            border: useGemini ? "1px solid rgba(66,133,244,0.4)" : "1px solid transparent",
-            fontWeight: useGemini ? 600 : 400,
-            userSelect: "none",
-            WebkitTapHighlightColor: "transparent",
-            boxShadow: useGemini ? "0 2px 8px rgba(66,133,244,0.3)" : "none",
+            border: selectedModel !== 'auto' ? "1px solid rgba(66,133,244,0.4)" : "1px solid transparent",
+            fontWeight: selectedModel !== 'auto' ? 600 : 400,
+            outline: "none",
+            appearance: "none",
+            WebkitAppearance: "none",
+            boxShadow: selectedModel !== 'auto' ? "0 2px 8px rgba(66,133,244,0.3)" : "none",
           }}
-          title={useGemini ? "Gemini 2.5 Pro ativo — clique para desativar" : "Clique para testar Gemini 2.5 Pro"}
+          title="Selecionar modelo de IA"
         >
-          {useGemini ? "♊ Gemini ON" : "♊ Gemini"}
-        </span>
+          {MANUAL_MODEL_OPTIONS.map((opt) => (
+            <option key={opt.id} value={opt.id} style={{ background: "#1e293b", color: "white" }}>
+              {opt.icon} {opt.label}
+            </option>
+          ))}
+        </select>
       </div>
 
       {/* Input fixo na parte inferior */}

@@ -122,12 +122,14 @@ describe('providers-config', () => {
       expect(names).toContain('llama-70b');
       expect(names).toContain('groq-fallback');
       expect(names).toContain('gemini-pro');
+      expect(names).toContain('gemini-3-flash');
+      expect(names).toContain('gemini-3.1-pro');
       expect(names).not.toContain('llama-8b');
     });
 
     test('returns correct number of providers', () => {
       const names = getAllProviderNames();
-      expect(names.length).toBe(4);
+      expect(names.length).toBe(6);
     });
 
     test('returns only strings', () => {
@@ -222,6 +224,50 @@ describe('providers-config', () => {
       expect(PROVIDERS['gemini-pro'].defaultParams.maxOutputTokens).toBe(8192);
     });
   });
+
+  describe('Gemini 3 Flash provider', () => {
+    test('gemini-3-flash has correct type', () => {
+      expect(PROVIDERS['gemini-3-flash'].type).toBe('google');
+    });
+
+    test('gemini-3-flash has correct model ID', () => {
+      expect(PROVIDERS['gemini-3-flash'].model).toBe('gemini-3-flash-preview');
+    });
+
+    test('gemini-3-flash has speed tier', () => {
+      expect(PROVIDERS['gemini-3-flash'].tier).toBe('speed');
+    });
+
+    test('gemini-3-flash endpoint contains correct model path', () => {
+      expect(PROVIDERS['gemini-3-flash'].endpoint).toContain('gemini-3-flash-preview');
+    });
+
+    test('gemini-3-flash maxOutputTokens is 8192', () => {
+      expect(PROVIDERS['gemini-3-flash'].defaultParams.maxOutputTokens).toBe(8192);
+    });
+  });
+
+  describe('Gemini 3.1 Pro provider', () => {
+    test('gemini-3.1-pro has correct type', () => {
+      expect(PROVIDERS['gemini-3.1-pro'].type).toBe('google');
+    });
+
+    test('gemini-3.1-pro has correct model ID', () => {
+      expect(PROVIDERS['gemini-3.1-pro'].model).toBe('gemini-3.1-pro-preview');
+    });
+
+    test('gemini-3.1-pro has complex tier', () => {
+      expect(PROVIDERS['gemini-3.1-pro'].tier).toBe('complex');
+    });
+
+    test('gemini-3.1-pro endpoint contains correct model path', () => {
+      expect(PROVIDERS['gemini-3.1-pro'].endpoint).toContain('gemini-3.1-pro-preview');
+    });
+
+    test('gemini-3.1-pro maxOutputTokens is 8192', () => {
+      expect(PROVIDERS['gemini-3.1-pro'].defaultParams.maxOutputTokens).toBe(8192);
+    });
+  });
 });
 
 describe('getEnabledProviders', () => {
@@ -273,6 +319,8 @@ describe('getEnabledProviders', () => {
     process.env.GEMINI_API_KEY = 'test-gemini-key';
     const enabled = getEnabledProviders();
     expect(enabled).toContain('gemini-pro');
+    expect(enabled).toContain('gemini-3-flash');
+    expect(enabled).toContain('gemini-3.1-pro');
   });
 
   test('excludes gemini-pro when GEMINI_API_KEY is absent', () => {
@@ -280,6 +328,8 @@ describe('getEnabledProviders', () => {
     delete process.env.GEMINI_API_KEY;
     const enabled = getEnabledProviders();
     expect(enabled).not.toContain('gemini-pro');
+    expect(enabled).not.toContain('gemini-3-flash');
+    expect(enabled).not.toContain('gemini-3.1-pro');
   });
 
   test('returns only gemini providers when only GEMINI_API_KEY is set', () => {
@@ -287,6 +337,8 @@ describe('getEnabledProviders', () => {
     process.env.GEMINI_API_KEY = 'test-gemini-key';
     const enabled = getEnabledProviders();
     expect(enabled).toContain('gemini-pro');
+    expect(enabled).toContain('gemini-3-flash');
+    expect(enabled).toContain('gemini-3.1-pro');
     enabled.forEach(name => {
       expect(PROVIDERS[name].type).toBe('google');
     });

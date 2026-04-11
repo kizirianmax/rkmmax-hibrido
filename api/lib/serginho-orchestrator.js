@@ -26,6 +26,7 @@ import { analyzeComplexity, routeToProvider, getNextFallback, FALLBACK_CHAIN } f
 import CircuitBreaker from './circuit-breaker.js';
 import { getProviderConfig, getModelMetadata, PROVIDERS, getEnabledProviders, getWeightedProviders } from './providers-config.js';
 import modelRegistry from './model-registry.js';
+import { AUTO_PRIORITY_ORDER } from '../../src/config/modelPriority.js';
 // GitHub intent detection — early-return sem chamada LLM (reversível: remover bloco abaixo)
 import { detectGitHubIntent } from './serginho/intent/githubIntent.js';
 import { getToolByName } from './serginho/tools/index.js';
@@ -84,6 +85,20 @@ function _hasGitHubReference(message) {
   // GitHub action verbs with file/repo objects
   if (/\b(abra|abre|abrir|liste|listar|mostre|mostrar|open|list|show|fetch|busque|buscar)\b.{0,50}\b(repo|arquivo|file|branch|package)\b/i.test(message)) return true;
   return false;
+}
+
+
+/**
+ * Retorna a cadeia de providers para o modo automático, filtrada pelos providers habilitados.
+ * A ordem segue AUTO_PRIORITY_ORDER — basta reordenar lá para mudar a prioridade.
+ *
+ * @param {string[]} enabledProviders - Lista de providers habilitados (getEnabledProviders())
+ * @returns {string[]} Lista ordenada de provider names disponíveis
+ */
+function getAutoProviderChain(enabledProviders) {
+  return AUTO_PRIORITY_ORDER
+    .map(m => m.providerName)
+    .filter(p => enabledProviders.includes(p));
 }
 
 
@@ -244,6 +259,8 @@ class SerginhoOrchestrator {
     this.modelRegistry.registerModel('llama-3.1-70b-versatile', 'complex', 0.00);
     this.modelRegistry.registerModel('mixtral-8x7b-32768', 'complex', 0.00);
     // Google models
+    this.modelRegistry.registerModel('gemini-3-flash-preview', 'speed', 0.00);
+    this.modelRegistry.registerModel('gemini-3.1-pro-preview', 'complex', 0.00);
     this.modelRegistry.registerModel('gemini-2.5-pro', 'complex', 0.00);
   }
 
@@ -257,11 +274,15 @@ class SerginhoOrchestrator {
       'llama-120b': 20000, // 20s — modelo complexo (margem de 5s abaixo do teto Vercel de 25s)
       'llama-70b': 12000,  // 12s — tier médio
       'groq-fallback': 8000, // 8s — fallback rápido
+      'gemini-3-flash': 12000, // 12s — modelo de velocidade (preview)
+      'gemini-3.1-pro': 20000, // 20s — modelo de raciocínio avançado (preview)
       'gemini-pro': 20000, // 20s — Gemini 2.5 Pro é modelo de raciocínio; precisa de margem maior
     };
     const PROVIDER_FAILURE_THRESHOLDS = {
       'llama-120b': 5, // Mais tolerante a timeouts esporádicos; evita ciclo de fallback permanente
       'llama-70b': 5,  // Alinhado com 120B — evita circuit aberto por rate limit transitório da Groq
+      'gemini-3-flash': 5, // Preview model — tolerância maior para instabilidades iniciais
+      'gemini-3.1-pro': 5, // Preview model — tolerância maior para instabilidades iniciais
       'gemini-pro': 5, // Thinking model with variable latency; default 3 opens circuit too early
     };
     const DEFAULT_TIMEOUT = 8000; // 8s para providers não mapeados
