@@ -25,6 +25,7 @@ import { randomUUID } from 'crypto';
 import { analyzeComplexity, routeToProvider, getNextFallback, FALLBACK_CHAIN } from '../../src/utils/intelligentRouter.js';
 import CircuitBreaker from './circuit-breaker.js';
 import { getProviderConfig, getModelMetadata, PROVIDERS, getEnabledProviders, getWeightedProviders } from './providers-config.js';
+import { AUTO_PRIORITY_ORDER } from '../../src/config/modelPriority.js';
 import modelRegistry from './model-registry.js';
 // GitHub intent detection — early-return sem chamada LLM (reversível: remover bloco abaixo)
 import { detectGitHubIntent } from './serginho/intent/githubIntent.js';
@@ -84,6 +85,18 @@ function _hasGitHubReference(message) {
   // GitHub action verbs with file/repo objects
   if (/\b(abra|abre|abrir|liste|listar|mostre|mostrar|open|list|show|fetch|busque|buscar)\b.{0,50}\b(repo|arquivo|file|branch|package)\b/i.test(message)) return true;
   return false;
+}
+
+/**
+ * Returns the auto-mode provider chain for Serginho generalista.
+ * Filters AUTO_PRIORITY_ORDER to only include enabled providers, in priority order.
+ * @param {string[]} enabledProviders - List of currently enabled provider names
+ * @returns {string[]} Ordered array of enabled provider names
+ */
+function getAutoProviderChain(enabledProviders) {
+  return AUTO_PRIORITY_ORDER
+    .map(m => m.providerName)
+    .filter(p => enabledProviders.includes(p));
 }
 
 
@@ -245,6 +258,8 @@ class SerginhoOrchestrator {
     this.modelRegistry.registerModel('mixtral-8x7b-32768', 'complex', 0.00);
     // Google models
     this.modelRegistry.registerModel('gemini-2.5-pro', 'complex', 0.00);
+    this.modelRegistry.registerModel('gemini-2.0-flash', 'speed', 0.00);
+    this.modelRegistry.registerModel('gemini-2.5-pro-preview-05-06', 'complex', 0.00);
   }
 
   /**
@@ -258,11 +273,15 @@ class SerginhoOrchestrator {
       'llama-70b': 12000,  // 12s — tier médio
       'groq-fallback': 8000, // 8s — fallback rápido
       'gemini-pro': 20000, // 20s — Gemini 2.5 Pro é modelo de raciocínio; precisa de margem maior
+      'gemini-flash': 15000,  // 15s — Gemini Flash é modelo de velocidade
+      'gemini-pro-31': 20000, // 20s — Gemini 2.5 Pro Preview é modelo de raciocínio
     };
     const PROVIDER_FAILURE_THRESHOLDS = {
       'llama-120b': 5, // Mais tolerante a timeouts esporádicos; evita ciclo de fallback permanente
       'llama-70b': 5,  // Alinhado com 120B — evita circuit aberto por rate limit transitório da Groq
       'gemini-pro': 5, // Thinking model with variable latency; default 3 opens circuit too early
+      'gemini-flash': 5,   // Mesma tolerância dos outros modelos Google
+      'gemini-pro-31': 5,  // Thinking model with variable latency
     };
     const DEFAULT_TIMEOUT = 8000; // 8s para providers não mapeados
     const DEFAULT_FAILURE_THRESHOLD = 3;
@@ -687,15 +706,22 @@ class SerginhoOrchestrator {
     // 2. Try primary provider (or forced provider)
     let attemptedModels = [];
     let warnings = [];
-    let currentProvider = options.forceProvider || routing.provider;
     let fallbackLevel = 0;
+
+    // Auto-mode chain for generalista — uses AUTO_PRIORITY_ORDER instead of intelligentRouter
+    const isGeneralistaAutoMode = !options.forceProvider &&
+      context.source === 'ai-api' &&
+      (!context.type || context.type === 'serginho' || context.type === 'genius');
+    const autoChain = isGeneralistaAutoMode ? getAutoProviderChain(enabledProvidersList) : null;
+
+    let currentProvider = options.forceProvider || (autoChain && autoChain.length > 0 ? autoChain[0] : routing.provider);
 
     // Phase A5.7: Guard against forcing a disabled provider (e.g., Gemini without GEMINI_API_KEY)
     // IMPORTANT: When forceProvider is explicitly requested and the provider is disabled,
     // we throw a clear error instead of silently falling back to another provider.
     // This prevents confusing UX where toggle ON still shows Groq responses.
     if (options.forceProvider && !enabledProvidersList.includes(options.forceProvider)) {
-      const isGemini = options.forceProvider === 'gemini-pro';
+      const isGemini = PROVIDERS[options.forceProvider]?.type === 'google';
       const missingKey = isGemini ? 'GEMINI_API_KEY' : 'required API key';
       const errorMsg = `Provider "${options.forceProvider}" is not available: ${missingKey} is not configured in the environment.`;
       console.error(`[Serginho] forceProvider "${options.forceProvider}" is disabled — ${missingKey} missing. Refusing silent fallback.`);
@@ -807,13 +833,20 @@ class SerginhoOrchestrator {
           throw error;
         }
         
-        // Get next fallback — use provider names for correct deduplication, skip disabled providers
-        const enabledProviders = getEnabledProviders();
-        let nextProvider = getNextFallback(currentProvider, attemptedModels.map(a => a.providerName));
-        // Skip disabled providers (e.g., Gemini when only GROQ_API_KEY is set)
-        while (nextProvider && !enabledProviders.includes(nextProvider)) {
-          console.log(`[Serginho] Skipping disabled provider: ${nextProvider}`);
-          nextProvider = getNextFallback(nextProvider, attemptedModels.map(a => a.providerName));
+        // Get next fallback — auto mode uses AUTO_PRIORITY_ORDER chain; otherwise use intelligentRouter
+        let nextProvider;
+        if (autoChain) {
+          // Auto-mode: pick next untried provider from the priority chain
+          const tried = new Set(attemptedModels.map(a => a.providerName));
+          nextProvider = autoChain.find(p => !tried.has(p)) || null;
+        } else {
+          // Manual/hybrid mode: use intelligentRouter fallback chain, skip disabled providers
+          const enabledProviders = getEnabledProviders();
+          nextProvider = getNextFallback(currentProvider, attemptedModels.map(a => a.providerName));
+          while (nextProvider && !enabledProviders.includes(nextProvider)) {
+            console.log(`[Serginho] Skipping disabled provider: ${nextProvider}`);
+            nextProvider = getNextFallback(nextProvider, attemptedModels.map(a => a.providerName));
+          }
         }
         
         if (!nextProvider) {

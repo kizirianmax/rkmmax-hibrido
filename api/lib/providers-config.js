@@ -74,6 +74,32 @@ export const PROVIDERS = {
       maxOutputTokens: 8192,
     },
   },
+
+  // Google Gemini Flash — modelo de velocidade, respostas rápidas
+  'gemini-flash': {
+    type: 'google',
+    model: 'gemini-2.0-flash',
+    endpoint: 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent',
+    tier: 'speed',
+    defaultParams: {
+      temperature: 0.50,
+      top_p: 0.95,
+      maxOutputTokens: 8192,
+    },
+  },
+
+  // Google Gemini 2.5 Pro Preview — variante preview para testes comparativos
+  'gemini-pro-31': {
+    type: 'google',
+    model: 'gemini-2.5-pro-preview-05-06',
+    endpoint: 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-pro-preview-05-06:generateContent',
+    tier: 'complex',
+    defaultParams: {
+      temperature: 0.50,
+      top_p: 0.95,
+      maxOutputTokens: 8192,
+    },
+  },
 };
 
 /**
@@ -238,6 +264,20 @@ export const MODEL_METADATA = {
     infrastructure: 'google',
     displayName: 'Gemini 2.5 Pro',
     description: 'Raciocínio avançado via Google Gemini (RKMMAX INFINITY)',
+    icon: '♊',
+    logicalTier: 'complex'
+  },
+  'gemini-flash': {
+    infrastructure: 'google',
+    displayName: 'Gemini Flash',
+    description: 'Respostas rápidas via Google Gemini Flash',
+    icon: '⚡',
+    logicalTier: 'speed'
+  },
+  'gemini-pro-31': {
+    infrastructure: 'google',
+    displayName: 'Gemini 2.5 Pro Preview',
+    description: 'Raciocínio avançado via Google Gemini 2.5 Pro Preview',
     icon: '♊',
     logicalTier: 'complex'
   },

@@ -127,7 +127,7 @@ describe('providers-config', () => {
 
     test('returns correct number of providers', () => {
       const names = getAllProviderNames();
-      expect(names.length).toBe(4);
+      expect(names.length).toBe(6);
     });
 
     test('returns only strings', () => {
