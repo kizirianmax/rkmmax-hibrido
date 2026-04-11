@@ -539,7 +539,7 @@ export default function Serginho() {
           title="Selecionar modelo de IA"
         >
           {MANUAL_MODEL_OPTIONS.map((opt) => (
-            <option key={opt.id} value={opt.id} style={{ background: "#1e293b", color: "white" }}>
+            <option key={opt.id} value={opt.id}>
               {opt.icon} {opt.label}
             </option>
           ))}
