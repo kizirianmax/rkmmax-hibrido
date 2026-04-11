@@ -759,8 +759,9 @@ export default function HybridAgentSimple() {
 
           {/* Seletor de motor para teste controlado */}
           <div className="mode-selector engine-selector">
-            <label>🔬 Motor:</label>
+            <label htmlFor="engine-select">🔬 Motor:</label>
             <select
+              id="engine-select"
               className="engine-select"
               value={selectedEngine}
               onChange={(e) => setSelectedEngine(e.target.value)}
