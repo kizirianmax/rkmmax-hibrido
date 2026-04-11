@@ -103,37 +103,49 @@ export default async function handler(req, res) {
         });
       }
 
-      // Híbrido: fluxo estrito 120B → 70B apenas. Nenhum outro fallback permitido.
       let result;
       let hybridFallbackUsed = false;
       let fallbackReason = null;
       let primaryProviderError = null;
-      try {
+
+      if (forceProvider && forceProvider !== 'auto') {
+        // Teste controlado: motor forçado manualmente pelo usuário
+        console.log(`🏗️ HYBRID: Motor forçado manualmente → ${forceProvider}`);
         result = await executeAITask(
           optimized.messages,
           optimized.systemPrompt,
-          { source: 'hybrid-api', type: 'hybrid' },
-          { forceProvider: 'llama-120b', noFallback: true, maxTokens: 4096 }
+          { source: 'hybrid-api', type: 'hybrid', manualEngine: forceProvider },
+          { forceProvider, noFallback: true, maxTokens: 4096 }
         );
-      } catch (err120b) {
-        // 120B indisponível — tentativa única com 70B (proibido qualquer outro fallback)
-        hybridFallbackUsed = true;
-        primaryProviderError = err120b.message;
-        fallbackReason = err120b.message?.includes('Timeout') ? 'timeout'
-          : err120b.message?.includes('Circuit breaker') ? 'circuit_breaker_open'
-          : err120b.message?.includes('429') ? 'rate_limit'
-          : err120b.message?.includes('503') ? 'service_unavailable'
-          : 'provider_error';
-        console.log('🏗️ HYBRID: 120B falhou → tentando 70B (único fallback permitido)', { reason: fallbackReason, error: err120b.message });
+      } else {
+        // Híbrido: fluxo estrito 120B → 70B apenas. Nenhum outro fallback permitido.
         try {
           result = await executeAITask(
             optimized.messages,
             optimized.systemPrompt,
             { source: 'hybrid-api', type: 'hybrid' },
-            { forceProvider: 'llama-70b', noFallback: true, maxTokens: 4096 }
+            { forceProvider: 'llama-120b', noFallback: true, maxTokens: 4096 }
           );
-        } catch (err70b) {
-          throw new Error(`All providers failed. Tried: llama-120b, llama-70b. ${err70b.message}`);
+        } catch (err120b) {
+          // 120B indisponível — tentativa única com 70B (proibido qualquer outro fallback)
+          hybridFallbackUsed = true;
+          primaryProviderError = err120b.message;
+          fallbackReason = err120b.message?.includes('Timeout') ? 'timeout'
+            : err120b.message?.includes('Circuit breaker') ? 'circuit_breaker_open'
+            : err120b.message?.includes('429') ? 'rate_limit'
+            : err120b.message?.includes('503') ? 'service_unavailable'
+            : 'provider_error';
+          console.log('🏗️ HYBRID: 120B falhou → tentando 70B (único fallback permitido)', { reason: fallbackReason, error: err120b.message });
+          try {
+            result = await executeAITask(
+              optimized.messages,
+              optimized.systemPrompt,
+              { source: 'hybrid-api', type: 'hybrid' },
+              { forceProvider: 'llama-70b', noFallback: true, maxTokens: 4096 }
+            );
+          } catch (err70b) {
+            throw new Error(`All providers failed. Tried: llama-120b, llama-70b. ${err70b.message}`);
+          }
         }
       }
 
@@ -151,6 +163,7 @@ export default async function handler(req, res) {
           status: hybridFallbackUsed ? 'fallback' : (result.execution?.status || 'success'),
           fallbackReason: hybridFallbackUsed ? fallbackReason : null,
           primaryProviderError: hybridFallbackUsed ? primaryProviderError : null,
+          ...(forceProvider && forceProvider !== 'auto' ? { manualEngine: forceProvider } : {}),
         },
         type: "hybrid",
         metadata: {
