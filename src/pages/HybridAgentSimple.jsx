@@ -758,20 +758,20 @@ export default function HybridAgentSimple() {
           </div>
 
           {/* Seletor de motor para teste controlado */}
-          <div className="mode-selector">
-            <label>🔬 Motor:</label>
-            <div className="mode-buttons">
+          <div className="mode-selector engine-selector">
+            <label htmlFor="engine-select">🔬 Motor:</label>
+            <select
+              id="engine-select"
+              className="engine-select"
+              value={selectedEngine}
+              onChange={(e) => setSelectedEngine(e.target.value)}
+            >
               {HYBRID_ENGINE_OPTIONS.map((engine) => (
-                <button
-                  key={engine.id}
-                  className={`mode-btn ${selectedEngine === engine.id ? "active" : ""}`}
-                  onClick={() => setSelectedEngine(engine.id)}
-                  title={engine.description}
-                >
+                <option key={engine.id} value={engine.id}>
                   {engine.icon} {engine.label}
-                </button>
+                </option>
               ))}
-            </div>
+            </select>
           </div>
 
           {/* Info Box */}
