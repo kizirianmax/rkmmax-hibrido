@@ -7,6 +7,7 @@ import {
   saveInputDraft,
   clearInputDraft,
 } from "../lib/construtor/inputDraftStorage";
+import { HYBRID_ENGINE_OPTIONS, DEFAULT_HYBRID_ENGINE } from "../config/hybridEngines";
 
 /**
  * Renders AI response text with basic markdown formatting.
@@ -181,6 +182,7 @@ const saveMode = (mode) => {
 export default function HybridAgentSimple() {
   // PASSO 13 — restaurar modo salvo ao montar o componente
   const [mode, setMode] = useState(() => loadMode());
+  const [selectedEngine, setSelectedEngine] = useState(DEFAULT_HYBRID_ENGINE);
   // PASSO 12 — restaurar rascunho salvo ao montar o componente
   const [input, setInput] = useState(() => loadInputDraft());
   // Versão do app para cache busting
@@ -528,6 +530,12 @@ export default function HybridAgentSimple() {
         mode: mode.toUpperCase(),
       };
 
+      // Seleção manual de motor para teste controlado
+      const engineOption = HYBRID_ENGINE_OPTIONS.find(e => e.id === selectedEngine);
+      if (engineOption && engineOption.providerName) {
+        body.forceProvider = engineOption.providerName;
+      }
+
       const response = await fetch("/api/ai", {
         method: "POST",
         headers: {
@@ -547,6 +555,7 @@ export default function HybridAgentSimple() {
       const modelInfo = data.model || {};
       const execution = data.execution || {};
       const isFallback = (execution.fallbackLevel || 0) > 0;
+      const isManualEngine = !!execution.manualEngine;
       const motorLabel = modelInfo.icon && modelInfo.displayName
         ? `${modelInfo.icon} ${modelInfo.displayName}`
         : modelInfo.displayName || modelInfo.modelId || data.provider || "Construtor";
@@ -564,6 +573,7 @@ export default function HybridAgentSimple() {
         provider: motorLabel,
         tier: tier,
         isFallback: isFallback,
+        isManualEngine: isManualEngine,
         complexity: complexity,
         timestamp: new Date(),
       };
@@ -747,6 +757,23 @@ export default function HybridAgentSimple() {
             </div>
           </div>
 
+          {/* Seletor de motor para teste controlado */}
+          <div className="mode-selector">
+            <label>🔬 Motor:</label>
+            <div className="mode-buttons">
+              {HYBRID_ENGINE_OPTIONS.map((engine) => (
+                <button
+                  key={engine.id}
+                  className={`mode-btn ${selectedEngine === engine.id ? "active" : ""}`}
+                  onClick={() => setSelectedEngine(engine.id)}
+                  title={engine.description}
+                >
+                  {engine.icon} {engine.label}
+                </button>
+              ))}
+            </div>
+          </div>
+
           {/* Info Box */}
           <div className="info-section">
             <div className="info-box">
@@ -785,9 +812,9 @@ export default function HybridAgentSimple() {
                         fontWeight: 'bold',
                         marginLeft: '8px',
                       }}
-                      title={msg.isFallback ? 'Motor fallback ativo (120B indisponível)' : 'Motor principal ativo'}
+                      title={msg.isFallback ? 'Motor fallback ativo (120B indisponível)' : msg.isManualEngine ? 'Motor selecionado manualmente para teste' : 'Motor principal ativo'}
                     >
-                      {msg.provider}{msg.isFallback ? ' ⚠️ fallback' : ''}
+                      {msg.provider}{msg.isFallback ? ' ⚠️ fallback' : ''}{msg.isManualEngine ? ' 🔬 teste' : ''}
                     </span>
                   )}
                   <span className="timestamp">{msg.timestamp.toLocaleTimeString()}</span>
