@@ -111,12 +111,16 @@ export default async function handler(req, res) {
       if (forceProvider && forceProvider !== 'auto') {
         // Teste controlado: motor forçado manualmente pelo usuário
         console.log(`🏗️ HYBRID: Motor forçado manualmente → ${forceProvider}`);
-        result = await executeAITask(
-          optimized.messages,
-          optimized.systemPrompt,
-          { source: 'hybrid-api', type: 'hybrid', manualEngine: forceProvider },
-          { forceProvider, noFallback: true, maxTokens: 4096 }
-        );
+        try {
+          result = await executeAITask(
+            optimized.messages,
+            optimized.systemPrompt,
+            { source: 'hybrid-api', type: 'hybrid', manualEngine: forceProvider },
+            { forceProvider, noFallback: true, maxTokens: 4096 }
+          );
+        } catch (errManual) {
+          throw new Error(`Manual engine "${forceProvider}" failed: ${errManual.message || 'unknown error'}`);
+        }
       } else {
         // Híbrido: fluxo estrito 120B → 70B apenas. Nenhum outro fallback permitido.
         try {
@@ -367,6 +371,29 @@ export default async function handler(req, res) {
       return res.status(503).json({
         error: 'Service unavailable',
         message: 'All AI providers are currently unavailable. Please try again later.',
+      });
+    }
+
+    // Token/payload limit exceeded
+    if (error.message && (
+      error.message.includes('maximum context length') ||
+      error.message.includes('too many tokens') ||
+      error.message.includes('Request too large') ||
+      error.message.includes('context_length_exceeded') ||
+      error.message.includes('413')
+    )) {
+      return res.status(413).json({
+        error: 'Payload too large',
+        message: 'A conversa ficou longa demais para este motor. Limpe o histórico ou use um motor com janela maior.',
+      });
+    }
+
+    // Manual engine failed (from the try/catch above)
+    if (error.message && error.message.includes('Manual engine')) {
+      return res.status(502).json({
+        error: 'Engine unavailable',
+        message: error.message,
+        hint: 'Tente outro motor ou volte para o modo Padrão (auto).',
       });
     }
 

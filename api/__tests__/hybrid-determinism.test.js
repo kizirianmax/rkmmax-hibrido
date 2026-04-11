@@ -193,7 +193,7 @@ describe('Test F — api/ai.js hybrid path enforces strict 120B→70B only', () 
 
   it('hybrid path uses noFallback:true for llama-70b fallback call', () => {
     const hybridBlockStart = aiContent.indexOf("TIPO: HYBRID");
-    const hybridBlock = aiContent.slice(hybridBlockStart, hybridBlockStart + 2500);
+    const hybridBlock = aiContent.slice(hybridBlockStart, hybridBlockStart + 3000);
     expect(hybridBlock).toContain("forceProvider: 'llama-70b'");
     // Both provider calls must have noFallback:true
     const noFallbackCount = (hybridBlock.match(/noFallback: true/g) || []).length;
