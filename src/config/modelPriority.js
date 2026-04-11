@@ -11,11 +11,11 @@
 
 // FASE DE TESTE ATUAL — ordem inicial de teste comparativo
 export const AUTO_PRIORITY_ORDER = [
-  { id: 'gemini-flash',  providerName: 'gemini-flash',  label: 'Gemini Flash',   icon: '⚡' },
-  { id: 'gemini-pro-31', providerName: 'gemini-pro-31', label: 'Gemini 2.5 Pro', icon: '♊' },
-  { id: 'gemini-pro',    providerName: 'gemini-pro',    label: 'Gemini 2.5 Pro', icon: '♊' },
-  { id: 'llama-70b',     providerName: 'llama-70b',     label: 'Groq 70B',       icon: '⚙️' },
-  { id: 'llama-120b',    providerName: 'llama-120b',    label: 'Groq 120B',      icon: '🧠' },
+  { id: 'gemini-flash',  providerName: 'gemini-flash',  label: 'Gemini Flash',       icon: '⚡' },
+  { id: 'gemini-pro-31', providerName: 'gemini-pro-31', label: 'Gemini 2.5 Pro Preview', icon: '♊' },
+  { id: 'gemini-pro',    providerName: 'gemini-pro',    label: 'Gemini 2.5 Pro',     icon: '♊' },
+  { id: 'llama-70b',     providerName: 'llama-70b',     label: 'Groq 70B',           icon: '⚙️' },
+  { id: 'llama-120b',    providerName: 'llama-120b',    label: 'Groq 120B',          icon: '🧠' },
 ];
 
 // Opções para o seletor manual (inclui "Automático" como primeira opção)

@@ -709,6 +709,9 @@ class SerginhoOrchestrator {
     let fallbackLevel = 0;
 
     // Auto-mode chain for generalista — uses AUTO_PRIORITY_ORDER instead of intelligentRouter
+    // context.source === 'ai-api' identifies requests from api/ai.js (Serginho endpoint)
+    // context.type 'serginho' = agentType "serginho" (default); 'genius' = explicit agentType "genius"
+    // Both represent the same Serginho generalista behavior path and use the configurable priority chain
     const isGeneralistaAutoMode = !options.forceProvider &&
       context.source === 'ai-api' &&
       (!context.type || context.type === 'serginho' || context.type === 'genius');
