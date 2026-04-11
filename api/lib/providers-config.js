@@ -59,6 +59,32 @@ export const PROVIDERS = {
     },
   },
 
+  // Google Gemini 3 Flash — velocidade máxima, modelo preview
+  'gemini-3-flash': {
+    type: 'google',
+    model: 'gemini-3-flash-preview',
+    endpoint: 'https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent',
+    tier: 'speed',
+    defaultParams: {
+      temperature: 0.50,
+      top_p: 0.95,
+      maxOutputTokens: 8192,
+    },
+  },
+
+  // Google Gemini 3.1 Pro — raciocínio avançado, modelo preview
+  'gemini-3.1-pro': {
+    type: 'google',
+    model: 'gemini-3.1-pro-preview',
+    endpoint: 'https://generativelanguage.googleapis.com/v1beta/models/gemini-3.1-pro-preview:generateContent',
+    tier: 'complex',
+    defaultParams: {
+      temperature: 0.50,
+      top_p: 0.95,
+      maxOutputTokens: 8192,
+    },
+  },
+
   // Google Gemini 2.5 Pro — provider principal para análise profunda e raciocínio abstrato
   // Projeto RKMMAX INFINITY no Google AI Studio
   // Janela de contexto massiva (1M tokens input, 8192 output) — sem truncamento agressivo como Groq.
@@ -234,7 +260,18 @@ export const MODEL_METADATA = {
     icon: '🔄',
     logicalTier: 'fallback'
   },
-  'gemini-pro': {
+  'gemini-3-flash': {
+    infrastructure: 'google',
+    displayName: 'Gemini 3 Flash',
+    description: 'Velocidade máxima com raciocínio leve (Google Preview)',
+    icon: '⚡',
+    logicalTier: 'speed'
+  },
+  'gemini-3.1-pro': {
+    infrastructure: 'google',
+    displayName: 'Gemini 3.1 Pro',
+    description: 'Raciocínio avançado de última geração (Google Preview)',
+    icon: '🔮',
     infrastructure: 'google',
     displayName: 'Gemini 2.5 Pro',
     description: 'Raciocínio avançado via Google Gemini (RKMMAX INFINITY)',
