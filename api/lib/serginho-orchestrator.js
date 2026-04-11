@@ -1162,7 +1162,9 @@ class SerginhoOrchestrator {
         temperature: config.defaultParams.temperature,
         maxOutputTokens: maxTokens || config.defaultParams.maxOutputTokens,
         thinkingConfig: {
-          thinkingBudget: 2048, // Limit internal reasoning tokens; reduces latency without removing thinking
+          thinkingBudget: 0, // Disable internal thinking to prevent timeout (Gemini 2.5 Pro thinking adds 10-20s)
+          // PR #372: reduced from 2048 to 0 — thinking was causing circuit breaker timeout (20s)
+          // before fallback chain could execute. Gemini responds in ~3-8s without thinking.
         },
       },
     };
