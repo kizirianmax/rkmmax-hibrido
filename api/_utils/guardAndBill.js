@@ -1,18 +1,65 @@
 // api/_utils/guardAndBill.js
+import { createClient } from '@supabase/supabase-js';
 import { capsByPlan } from "../../src/lib/planCaps.js";
 
-/** ===== Armazenamento simples (em memória) =====
- * Em serverless reinicia às vezes. Para produção, troque por um storage
- * (Vercel KV/Upstash, Redis, Supabase, etc.). A lógica é plugável: basta
- * substituir readCounter/writeCounter pelo seu storage.
- */
-const mem = globalThis.__USAGE_MEM__ || (globalThis.__USAGE_MEM__ = new Map());
-async function readCounter(key) {
-  return Number(mem.get(key) || 0);
+// ===== Storage persistente via Supabase =====
+// Tabela: usage_counters (key TEXT PRIMARY KEY, value BIGINT DEFAULT 0, updated_at TIMESTAMPTZ)
+// Fallback em memória SOMENTE quando Supabase não está configurado (dev local)
+
+const mem = new Map(); // fallback para dev local sem Supabase
+
+function getSupabaseClient() {
+  const url = process.env.SUPABASE_URL;
+  const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
+  if (!url || !key) return null;
+  return createClient(url, key);
 }
+
+async function readCounter(key) {
+  const supabase = getSupabaseClient();
+  if (!supabase) {
+    // Dev local sem Supabase — fallback memória
+    return Number(mem.get(key) || 0);
+  }
+  try {
+    const { data, error } = await supabase
+      .from('usage_counters')
+      .select('value')
+      .eq('key', key)
+      .maybeSingle();
+    if (error) {
+      console.error('[guardAndBill] readCounter error:', error.message);
+      return 0;
+    }
+    return Number(data?.value || 0);
+  } catch (err) {
+    console.error('[guardAndBill] readCounter exception:', err.message);
+    return 0;
+  }
+}
+
 async function writeCounter(key, value) {
-  mem.set(key, String(value));
-  return true;
+  const supabase = getSupabaseClient();
+  if (!supabase) {
+    mem.set(key, String(value));
+    return true;
+  }
+  try {
+    const { error } = await supabase
+      .from('usage_counters')
+      .upsert(
+        { key, value: Number(value), updated_at: new Date().toISOString() },
+        { onConflict: 'key' }
+      );
+    if (error) {
+      console.error('[guardAndBill] writeCounter error:', error.message);
+      return false;
+    }
+    return true;
+  } catch (err) {
+    console.error('[guardAndBill] writeCounter exception:', err.message);
+    return false;
+  }
 }
 
 /** Helpers de chave por dia/mês (UTC) */

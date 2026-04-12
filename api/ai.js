@@ -19,9 +19,60 @@ import serginho from "./lib/serginho-orchestrator.js";
 import { trackSpecialistUsage } from "./lib/specialist-usage.js";
 import { applyCorsRestricted } from "./lib/cors.js";
 import { verifyAuth } from "./lib/auth.js";
+import guardAndBill from "./_utils/guardAndBill.js";
 
 const { buildGeniusPrompt } = geniusPrompts;
 const { optimizeRequest, cacheResponse } = costOptimization;
+
+/** Fallback de tokens de saída quando a API não informa usage (estimativa conservadora). */
+const DEFAULT_OUTPUT_TOKENS = 800;
+
+/**
+ * Resolve o plano do usuário via Supabase subscriptions.
+ * Reutiliza a mesma lógica de api/admin.js handleMePlan.
+ * Retorna 'basic' como fallback seguro.
+ */
+async function resolveUserPlan(user) {
+  if (!user?.email) return 'basic';
+  // Dev local
+  if (user.id === 'dev-local') return 'dev';
+
+  const supabaseUrl = process.env.SUPABASE_URL;
+  const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+  if (!supabaseUrl || !supabaseKey) return 'basic';
+
+  try {
+    const { createClient } = await import('@supabase/supabase-js');
+    const supabase = createClient(supabaseUrl, supabaseKey);
+    const { data, error } = await supabase
+      .from('subscriptions')
+      .select('plan, stripe_price_id, status')
+      .eq('email', user.email.toLowerCase())
+      .order('current_period_end', { ascending: false })
+      .limit(1)
+      .maybeSingle();
+
+    if (error || !data) return 'basic';
+    if (!['active', 'trialing'].includes(data.status)) return 'basic';
+
+    // Mesmo mapeamento de api/admin.js
+    const VALID_PLANS = new Set(['basic', 'intermediate', 'premium', 'ultra', 'dev']);
+    if (data.plan && VALID_PLANS.has(data.plan)) return data.plan;
+
+    return 'basic';
+  } catch {
+    return 'basic';
+  }
+}
+
+/**
+ * Estimativa grosseira de tokens do prompt (1 token ≈ 4 chars).
+ */
+function estimatePromptSize(messages) {
+  if (!Array.isArray(messages)) return 100;
+  const totalChars = messages.reduce((sum, m) => sum + (m.content?.length || 0), 0);
+  return Math.ceil(totalChars / 4);
+}
 
 /**
  * Execute AI task via Serginho Orchestrator
@@ -82,6 +133,30 @@ export default async function handler(req, res) {
         : 'Invalid or expired token. Please log in again.',
       code: authError,
     });
+  }
+
+  // === Usage guard — controle persistente de consumo ===
+  // Resolve o plano do usuário e checa limites ANTES de consumir a IA
+  let usageBill = null;
+  try {
+    const userPlan = await resolveUserPlan(user);
+    const promptSize = estimatePromptSize(req.body.messages);
+    const guard = await guardAndBill({
+      user: { id: user.id },
+      plan: userPlan,
+      promptSize,
+    });
+    usageBill = guard.bill;
+  } catch (usageError) {
+    // Se o erro é de limite excedido, retornar 429
+    if (usageError.message && usageError.message.includes('Limite')) {
+      return res.status(429).json({
+        error: 'Usage limit exceeded',
+        message: usageError.message,
+      });
+    }
+    // Outros erros de usage (plano inválido, etc.) — logar mas não bloquear
+    console.error('[USAGE] guardAndBill error:', usageError.message);
   }
 
   try {
@@ -197,6 +272,12 @@ export default async function handler(req, res) {
 
       cacheResponse(messages, response);
 
+      // Registrar tokens reais após sucesso (non-blocking)
+      if (usageBill) {
+        const outputTokens = result.usage?.completion_tokens || result.usage?.output_tokens || DEFAULT_OUTPUT_TOKENS;
+        usageBill(outputTokens).catch(err => console.error('[USAGE] bill error:', err.message));
+      }
+
       return res.status(200).json({
         ...response,
         cached: false,
@@ -256,6 +337,12 @@ export default async function handler(req, res) {
       };
 
       cacheResponse(messages, response);
+
+      // Registrar tokens reais após sucesso (non-blocking)
+      if (usageBill) {
+        const outputTokens = result.usage?.completion_tokens || result.usage?.output_tokens || DEFAULT_OUTPUT_TOKENS;
+        usageBill(outputTokens).catch(err => console.error('[USAGE] bill error:', err.message));
+      }
 
       return res.status(200).json({
         ...response,
@@ -330,6 +417,12 @@ export default async function handler(req, res) {
         cached: false,
         source: "ai-api",
       });
+
+      // Registrar tokens reais após sucesso (non-blocking)
+      if (usageBill) {
+        const outputTokens = result.usage?.completion_tokens || result.usage?.output_tokens || DEFAULT_OUTPUT_TOKENS;
+        usageBill(outputTokens).catch(err => console.error('[USAGE] bill error:', err.message));
+      }
 
       return res.status(200).json({
         ...response,
