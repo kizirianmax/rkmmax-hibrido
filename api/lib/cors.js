@@ -12,7 +12,12 @@ const ALLOWED_ORIGINS = [
 
 // Em desenvolvimento, permitir localhost
 if (process.env.NODE_ENV !== 'production' && process.env.VERCEL_ENV !== 'production') {
-  ALLOWED_ORIGINS.push('http://localhost:3000', 'http://localhost:5173');
+  const devOrigins = ['http://localhost:3000', 'http://localhost:5173'];
+  for (const origin of devOrigins) {
+    if (!ALLOWED_ORIGINS.includes(origin)) {
+      ALLOWED_ORIGINS.push(origin);
+    }
+  }
 }
 
 /**
