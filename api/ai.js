@@ -17,6 +17,8 @@ import costOptimization from "../src/utils/costOptimization.js";
 import { specialists } from "../src/config/specialists.js";
 import serginho from "./lib/serginho-orchestrator.js";
 import { trackSpecialistUsage } from "./lib/specialist-usage.js";
+import { applyCorsRestricted } from "./lib/cors.js";
+import { verifyAuth } from "./lib/auth.js";
 
 const { buildGeniusPrompt } = geniusPrompts;
 const { optimizeRequest, cacheResponse } = costOptimization;
@@ -55,17 +57,31 @@ async function executeAITask(messages, systemPrompt, context = {}, options = {})
  * Handler principal
  */
 export default async function handler(req, res) {
-  // CORS
-  res.setHeader("Access-Control-Allow-Origin", "*");
-  res.setHeader("Access-Control-Allow-Methods", "POST, OPTIONS");
-  res.setHeader("Access-Control-Allow-Headers", "Content-Type");
-
-  if (req.method === "OPTIONS") {
-    return res.status(200).end();
-  }
+  // CORS restrito — substitui o antigo "*"
+  if (applyCorsRestricted(req, res)) return;
 
   if (req.method !== "POST") {
     return res.status(405).json({ error: "Method not allowed" });
+  }
+
+  // Auth guard — rejeitar requisições sem JWT válido
+  const { user, error: authError } = await verifyAuth(req);
+  if (authError) {
+    const statusMap = {
+      missing_token: 401,
+      invalid_token: 401,
+      auth_unavailable: 503,
+      auth_error: 503,
+    };
+    return res.status(statusMap[authError] || 401).json({
+      error: authError === 'auth_unavailable' ? 'Service configuration error' : 'Unauthorized',
+      message: authError === 'missing_token'
+        ? 'Authentication required. Send Authorization: Bearer <token> header.'
+        : authError === 'auth_unavailable'
+        ? 'Authentication service is not configured. Contact administrator.'
+        : 'Invalid or expired token. Please log in again.',
+      code: authError,
+    });
   }
 
   try {

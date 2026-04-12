@@ -2,6 +2,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { specialists } from "../config/specialists.js";
+import { supabase } from "../lib/supabaseClient.js";
 import "../pages/Serginho.css";
 import "../pages/SpecialistChat.css";
 
@@ -104,10 +105,14 @@ export default function SpecialistChat() {
 
     try {
       // Chamar API do especialista via endpoint unificado
+      const { data: sessionData } = await supabase.auth.getSession();
+      const accessToken = sessionData?.session?.access_token;
+
       const response = await fetch("/api/ai", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          ...(accessToken ? { "Authorization": `Bearer ${accessToken}` } : {}),
         },
         body: JSON.stringify({
           messages: newMessages,
