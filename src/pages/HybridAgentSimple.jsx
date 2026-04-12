@@ -8,6 +8,7 @@ import {
   clearInputDraft,
 } from "../lib/construtor/inputDraftStorage";
 import { HYBRID_ENGINE_OPTIONS, DEFAULT_HYBRID_ENGINE } from "../config/hybridEngines";
+import { supabase } from "../lib/supabaseClient";
 
 /**
  * Renders AI response text with basic markdown formatting.
@@ -536,10 +537,15 @@ export default function HybridAgentSimple() {
         body.forceProvider = engineOption.providerName;
       }
 
+      // Obter token JWT do Supabase
+      const { data: sessionData } = await supabase.auth.getSession();
+      const accessToken = sessionData?.session?.access_token;
+
       const response = await fetch("/api/ai", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          ...(accessToken ? { "Authorization": `Bearer ${accessToken}` } : {}),
         },
         body: JSON.stringify(body),
       });

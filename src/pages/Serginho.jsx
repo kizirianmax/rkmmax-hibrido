@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import "./Serginho.css";
 import { MANUAL_MODEL_OPTIONS } from "../config/modelPriority.js";
+import { supabase } from "../lib/supabaseClient.js";
 
 /**
  * Renders AI response text with basic markdown formatting.
@@ -88,9 +89,15 @@ export default function Serginho() {
 
     try {
       // Chamar API com Gemini Pro 2.5 (nível ChatGPT-5)
+      const { data: sessionData } = await supabase.auth.getSession();
+      const accessToken = sessionData?.session?.access_token;
+
       const response = await fetch("/api/ai", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          ...(accessToken ? { "Authorization": `Bearer ${accessToken}` } : {}),
+        },
         body: JSON.stringify({
           type: "genius", // Endpoint unificado
           messages: newMessages,
