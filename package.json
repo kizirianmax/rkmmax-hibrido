@@ -72,7 +72,7 @@
     "jest": "^30.3.0",
     "jest-environment-jsdom": "^30.3.0",
     "jest-junit": "^16.0.0",
-    "prettier": "^3.6.2",
+    "prettier": "^3.8.2",
     "source-map-explorer": "^2.5.3"
   },
   "overrides": {
