@@ -34,7 +34,7 @@
     "form-data": "^4.0.5",
     "openai": "^6.33.0",
     "posthog-js": "^1.367.0",
-    "react": "^18.3.1",
+    "react": "^19.2.5",
     "react-dom": "^18.3.1",
     "react-router-dom": "^7.13.2",
     "recharts": "^3.8.1",
