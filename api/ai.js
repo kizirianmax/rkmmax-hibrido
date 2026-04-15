@@ -310,6 +310,7 @@ export default async function handler(req, res) {
       const orchOptions = {};
       if (forceProvider) {
         orchOptions.forceProvider = forceProvider;
+        orchOptions.noFallback = true; // Modo manual: sem fallback silencioso
       }
       const result = await executeAITask(
         optimized.messages,
