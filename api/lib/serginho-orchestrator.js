@@ -1177,17 +1177,26 @@ class SerginhoOrchestrator {
       parts: [{ text: message }],
     });
 
+    // Models that only work in thinking mode reject thinkingBudget: 0.
+    // Omit thinkingConfig for these models so they use native thinking behavior.
+    const THINKING_ONLY_MODELS = ['gemini-3.1-pro-preview'];
+
+    const generationConfig = {
+      temperature: config.defaultParams.temperature,
+      maxOutputTokens: maxTokens || config.defaultParams.maxOutputTokens,
+    };
+
+    // Keep PR #372 behavior for models that support non-thinking mode:
+    // disable internal thinking to avoid timeout (Gemini 2.5 Pro thinking adds 10-20s).
+    if (!THINKING_ONLY_MODELS.includes(config.model)) {
+      generationConfig.thinkingConfig = {
+        thinkingBudget: 0,
+      };
+    }
+
     const requestBody = {
       contents,
-      generationConfig: {
-        temperature: config.defaultParams.temperature,
-        maxOutputTokens: maxTokens || config.defaultParams.maxOutputTokens,
-        thinkingConfig: {
-          thinkingBudget: 0, // Disable internal thinking to prevent timeout (Gemini 2.5 Pro thinking adds 10-20s)
-          // PR #372: reduced from 2048 to 0 — thinking was causing circuit breaker timeout (20s)
-          // before fallback chain could execute. Gemini responds in ~3-8s without thinking.
-        },
-      },
+      generationConfig,
     };
 
     if (systemPrompt) {
