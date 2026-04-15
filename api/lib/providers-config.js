@@ -272,6 +272,9 @@ export const MODEL_METADATA = {
     displayName: 'Gemini 3.1 Pro',
     description: 'Raciocínio avançado de última geração (Google Preview)',
     icon: '🔮',
+    logicalTier: 'complex'
+  },
+  'gemini-pro': {
     infrastructure: 'google',
     displayName: 'Gemini 2.5 Pro',
     description: 'Raciocínio avançado via Google Gemini (RKMMAX INFINITY)',
