@@ -1311,12 +1311,14 @@ class SerginhoOrchestrator {
       { role: 'user', content: currentMessage }
     ];
 
+    const sanitized = allMessages.map(({ role, content }) => ({ role, content }));
+
     // Formato OpenAI/Groq — injeta mensagem de sistema quando fornecida
     if (systemPrompt) {
-      const withoutSystem = allMessages.filter(msg => msg.role !== 'system');
+      const withoutSystem = sanitized.filter(msg => msg.role !== 'system');
       return [{ role: 'system', content: systemPrompt }, ...withoutSystem];
     }
-    return allMessages;
+    return sanitized;
   }
 
   // =========================================================
