@@ -294,8 +294,8 @@ export default async function handler(req, res) {
       const systemPrompt = buildGeniusPrompt(promptType);
       const optimized = optimizeRequest(messages, systemPrompt);
 
-      // Verificar cache
-      if (optimized.cached) {
+      // Verificar cache (modo manual força execução no provider selecionado)
+      if (optimized.cached && !forceProvider) {
         console.log("💰 CACHE HIT!");
         return res.status(200).json({
           ...optimized.response,
@@ -312,9 +312,11 @@ export default async function handler(req, res) {
         orchOptions.forceProvider = forceProvider;
         orchOptions.noFallback = true; // Modo manual: sem fallback silencioso
       }
+      const requestMessages = optimized.messages || messages;
+      const requestSystemPrompt = optimized.systemPrompt || systemPrompt;
       const result = await executeAITask(
-        optimized.messages,
-        optimized.systemPrompt,
+        requestMessages,
+        requestSystemPrompt,
         { source: 'ai-api', type: promptType },
         orchOptions
       );
