@@ -5,7 +5,7 @@
 
 # RKMMAX Híbrido
 
-RKMMAX Híbrido is an AI agent orchestration system with a React frontend and Vercel serverless backend. The sole AI provider is the **Groq API**, which drives a cascade of LLM models to handle requests of varying complexity. The system is organized around three conceptual layers: **Serginho** (sovereign orchestrator), **Specialists** (domain experts), and **Híbrido/Construtor** (artifact generation and hybrid interaction).
+RKMMAX Híbrido is an AI agent orchestration system with a React frontend and Vercel serverless backend. The orchestrator (Serginho) is sovereign and routes requests across a multi-provider setup currently in stabilization — Groq and Gemini are both active, with provider priority defined by `src/config/modelPriority.js`.
 
 > **Development policy:** This is an individual project by [@kizirianmax](https://github.com/kizirianmax). All merges to `main` require a passing CI run. See [DEVELOPMENT_GUIDELINES.md](DEVELOPMENT_GUIDELINES.md) for details.
 
@@ -21,8 +21,7 @@ The system is structured in three layers:
 | **Domain expertise** | Specialist Agents | 47 domain specialists across 9 categories, each with a focused capability set |
 | **Artifact generation** | Híbrido / Construtor | Handles artifact construction, hybrid chat, and multi-step generation tasks |
 
-**AI provider:** Groq API is the sole active AI runtime. The orchestrator uses a model cascade within Groq:
-`llama-3.3-70b-versatile` (complex tasks) → `llama-3.1-8b-instant` (simple/fast tasks) → `mixtral-8x7b-32768` (fallback)
+**AI providers (multi-provider, in stabilization):** The orchestrator uses a provider priority order defined as the single source of truth in `src/config/modelPriority.js`. At the time of writing the automatic order is: Gemini 3 Flash → Gemini 3.1 Pro → Gemini 2.5 Pro → Groq 70B → Groq 120B. Serginho remains the sovereign orchestrator — all provider calls flow through it. The Construtor layer exposes the same providers via `src/config/hybridEngines.js`.
 
 ```mermaid
 graph TD
@@ -33,9 +32,12 @@ graph TD
     Serginho --> Specialists[Specialist Agents<br/>domain experts]
     Serginho --> Hibrido[Híbrido / Construtor<br/>artifact generation]
 
-    Serginho --> Groq[Groq API<br/>llama-3.3-70b · llama-3.1-8b · mixtral-8x7b]
+    Serginho --> Groq[Groq API<br/>llama/mixtral cascade]
+    Serginho --> Gemini[Gemini API<br/>2.5 Pro · 3 Flash · 3.1 Pro]
     Specialists --> Groq
+    Specialists --> Gemini
     Hibrido --> Groq
+    Hibrido --> Gemini
 
     API --> Supabase[(Supabase<br/>PostgreSQL)]
     API --> Stripe[Stripe<br/>Payments]
@@ -46,7 +48,7 @@ graph TD
 **Cross-cutting concerns:**
 - **Circuit Breaker** — protects against serverless timeout cascades (8 s hard limit, 4 s margin within Vercel's 12 s cap)
 - **Security validation** — input sanitization and output filtering on every AI call
-- **Intelligent cache** — reduces redundant Groq calls for repeated prompts
+- **Intelligent cache** — reduces redundant provider calls for repeated prompts
 - **Observability** — Sentry (errors) + PostHog (analytics) + `/api/health` endpoint
 
 For a detailed architectural breakdown, see [docs/architecture.md](docs/architecture.md).
@@ -79,7 +81,7 @@ The system registers **47 domain specialists** across 9 categories. The canonica
 |-------|-----------|
 | Frontend | React 18.3.1, Vite, React Router |
 | Backend | Vercel Serverless Functions, Node.js 22.x |
-| AI | Groq API (model cascade within Groq — sole active provider) |
+| AI | Multi-provider (Groq + Gemini) — priority in src/config/modelPriority.js, orchestrated by Serginho |
 | Database | Supabase (PostgreSQL) |
 | Payments | Stripe |
 | Email | Resend |
@@ -104,7 +106,8 @@ npm install
 ```bash
 cp .env.example .env
 # Minimum required keys:
-# GROQ_API_KEY           — Sole active AI provider (mandatory)
+# GROQ_API_KEY           — Groq provider key (active provider)
+# GEMINI_API_KEY         — Gemini provider key (active provider, multi-provider stabilization)
 # REACT_APP_SUPABASE_URL & REACT_APP_SUPABASE_ANON_KEY
 # SUPABASE_SERVICE_ROLE_KEY
 # STRIPE_SECRET_KEY & STRIPE_WEBHOOK_SECRET
@@ -174,6 +177,7 @@ RKMMAX Híbrido is designed for Vercel. All serverless functions in `api/` are a
 ```bash
 # AI — mandatory
 GROQ_API_KEY=gsk_...
+GEMINI_API_KEY=...
 
 # Database
 REACT_APP_SUPABASE_URL=https://...
@@ -257,7 +261,7 @@ rkmmax-hibrido/
 
 ## Architecture Principles
 
-- **Groq-only runtime:** Groq is the sole active AI provider. No other LLM provider is called at runtime. Legacy packages in `package.json` (`@google/generative-ai`, `openai`) are not part of the active call path.
+- **Multi-provider runtime (in stabilization):** Groq and Gemini are both active AI providers at runtime. Provider priority is defined as the single source of truth in `src/config/modelPriority.js`. The Construtor layer exposes the same providers via `src/config/hybridEngines.js`. Serginho remains the sovereign orchestrator — all provider calls flow through it.
 - **CI-green merges only:** No PR is merged to `main` without a passing CI run. This is a hard rule enforced by convention; branch protection rules require GitHub Pro or a public repository and are not currently active on this private repository.
 - **Single-owner governance:** This is an individual project. External contributions are welcome but must pass all tests and comply with [DEVELOPMENT_GUIDELINES.md](DEVELOPMENT_GUIDELINES.md).
 - **Serverless-first resilience:** The circuit breaker pattern is the primary mechanism for handling downstream failures within Vercel's timeout constraints.
