@@ -612,6 +612,27 @@ describe('Orchestrator — analytical follow-up com contexto insuficiente', () =
     expect(result.provider).toBe('serginho-analysis');
     expect(result._meta.insufficientContext).toBe(true);
   });
+
+  test('com forceProvider, mensagem analítica NÃO retorna insuficiente e segue para fluxo LLM', async () => {
+    let analysisCalled = false;
+    mockAnalyzeComplexity.mockImplementation(() => {
+      analysisCalled = true;
+      return { scores: { complexity: 0.5 } };
+    });
+    mockGetEnabledProviders.mockReturnValue(['groq']);
+
+    try {
+      await serginho.handleRequest({
+        message: 'analise isso',
+        context: { githubContext: makeEmptyContext() },
+        options: { forceProvider: 'groq', noFallback: true },
+      });
+    } catch {
+      // sem provider real
+    }
+
+    expect(analysisCalled).toBe(true);
+  });
 });
 
 // ---------------------------------------------------------------------------
@@ -720,6 +741,29 @@ describe('Não-regressão — detectGitHubIntent ainda funciona', () => {
     // Deve ter ido pelo fluxo de tools (não analytical)
     expect(result.provider).toBe('serginho-tools');
     expect(mockSerginhoListRepos).toHaveBeenCalled();
+  });
+
+  test('com forceProvider, comando GitHub NÃO faz early-return de tool', async () => {
+    let analysisCalled = false;
+    mockAnalyzeComplexity.mockImplementation(() => {
+      analysisCalled = true;
+      return { scores: { complexity: 0.5 } };
+    });
+    mockGetEnabledProviders.mockReturnValue(['groq']);
+    mockSerginhoListRepos.mockClear();
+
+    try {
+      await serginho.handleRequest({
+        message: 'liste meus repositórios',
+        context: { githubContext: makeEmptyContext() },
+        options: { forceProvider: 'groq', noFallback: true },
+      });
+    } catch {
+      // sem provider real
+    }
+
+    expect(analysisCalled).toBe(true);
+    expect(mockSerginhoListRepos).not.toHaveBeenCalled();
   });
 });
 

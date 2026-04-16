@@ -362,6 +362,7 @@ class SerginhoOrchestrator {
     // Requisições de especialistas possuem systemPrompt próprio e não devem ser interceptadas
     // pelos blocos de follow-up GitHub, que causam false-positive early-returns.
     const isSpecialistRequest = !!(context.specialistId || context.source === 'specialist-api');
+    const isManualEngineRequest = !!options.forceProvider;
     // Fim do specialist bypass
 
     // GitHub conversation context — per-request, in-memory (reversível: remover bloco abaixo)
@@ -393,7 +394,7 @@ class SerginhoOrchestrator {
     // Fim do prompt intent guard
 
     // GitHub execution dependencies — sem re-fetch (reversível: remover este bloco)
-    if (githubCtx && !context._skipExecutionDependenciesCheck && isExecutionDependenciesFollowUp(message)) {
+    if (githubCtx && !isManualEngineRequest && !context._skipExecutionDependenciesCheck && isExecutionDependenciesFollowUp(message)) {
       if (hasEnoughContextForExecutionDependencies(githubCtx)) {
         const executionDepsPrompt = buildExecutionDependenciesPrompt(message, githubCtx);
         if (executionDepsPrompt) {
@@ -428,7 +429,7 @@ class SerginhoOrchestrator {
     // Fim do bloco execution dependencies
 
     // GitHub acceptance criteria — sem re-fetch (reversível: remover este bloco)
-    if (githubCtx && !context._skipAcceptanceCriteriaCheck && isAcceptanceCriteriaFollowUp(message)) {
+    if (githubCtx && !isManualEngineRequest && !context._skipAcceptanceCriteriaCheck && isAcceptanceCriteriaFollowUp(message)) {
       if (hasEnoughContextForAcceptanceCriteria(githubCtx)) {
         const acceptanceCriteriaPrompt = buildAcceptanceCriteriaPrompt(message, githubCtx);
         if (acceptanceCriteriaPrompt) {
@@ -463,7 +464,7 @@ class SerginhoOrchestrator {
     // Fim do bloco acceptance criteria
 
     // GitHub execution checklist — sem re-fetch (reversível: remover este bloco)
-    if (githubCtx && !context._skipExecutionChecklistCheck && isExecutionChecklistFollowUp(message)) {
+    if (githubCtx && !isManualEngineRequest && !context._skipExecutionChecklistCheck && isExecutionChecklistFollowUp(message)) {
       if (hasEnoughContextForChecklist(githubCtx)) {
         const checklistPrompt = buildChecklistPrompt(message, githubCtx);
         if (checklistPrompt) {
@@ -498,7 +499,7 @@ class SerginhoOrchestrator {
     // Fim do bloco execution checklist
 
     // GitHub action plan — sem re-fetch (reversível: remover este bloco)
-    if (githubCtx && !context._skipActionPlanCheck && isActionPlanFollowUp(message)) {
+    if (githubCtx && !isManualEngineRequest && !context._skipActionPlanCheck && isActionPlanFollowUp(message)) {
       if (hasEnoughContextForActionPlan(githubCtx)) {
         const actionPlanPrompt = buildActionPlanPrompt(message, githubCtx);
         if (actionPlanPrompt) {
@@ -533,7 +534,7 @@ class SerginhoOrchestrator {
     // Fim do bloco action plan
 
     // GitHub action recommendations — sem re-fetch (reversível: remover este bloco)
-    if (githubCtx && !context._skipRecommendationCheck && isActionRecommendationFollowUp(message)) {
+    if (githubCtx && !isManualEngineRequest && !context._skipRecommendationCheck && isActionRecommendationFollowUp(message)) {
       if (hasEnoughContextForRecommendations(githubCtx)) {
         const recommendationPrompt = buildRecommendationPrompt(message, githubCtx);
         if (recommendationPrompt) {
@@ -568,7 +569,7 @@ class SerginhoOrchestrator {
     // Fim do bloco action recommendations
 
     // GitHub comparative follow-up — sem re-fetch (reversível: remover este bloco)
-    if (githubCtx && !context._skipComparisonCheck && isComparativeFollowUp(message)) {
+    if (githubCtx && !isManualEngineRequest && !context._skipComparisonCheck && isComparativeFollowUp(message)) {
       if (hasEnoughContextForComparison(githubCtx)) {
         const comparisonPrompt = buildComparisonPrompt(message, githubCtx);
         if (comparisonPrompt) {
@@ -604,7 +605,7 @@ class SerginhoOrchestrator {
     // Fim do bloco comparative follow-up
 
     // GitHub analytical follow-up — sem re-fetch (reversível: remover este bloco)
-    if (githubCtx && !context._skipAnalyticalCheck && isAnalyticalFollowUp(message)) {
+    if (githubCtx && !isManualEngineRequest && !context._skipAnalyticalCheck && isAnalyticalFollowUp(message)) {
       if (hasEnoughContextForAnalysis(githubCtx)) {
         const analysisPrompt = buildAnalysisPrompt(message, githubCtx);
         if (analysisPrompt) {
@@ -640,7 +641,7 @@ class SerginhoOrchestrator {
     // Fim do bloco analytical follow-up
 
     // GitHub intent early-return — sem chamada LLM (reversível: remover este bloco)
-    const githubIntent = githubCtx ? detectGitHubIntent(message) : null;
+    const githubIntent = (githubCtx && !isManualEngineRequest) ? detectGitHubIntent(message) : null;
     if (githubIntent) {
       const tool = getToolByName(githubIntent.tool);
       if (tool) {
