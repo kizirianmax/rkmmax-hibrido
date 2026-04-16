@@ -12,6 +12,7 @@ export const HYBRID_ENGINE_OPTIONS = [
   { id: 'auto', providerName: null, label: 'Padrão (120B → 70B)', icon: '🔄', description: 'Fluxo padrão do Construtor' },
   { id: 'llama-120b', providerName: 'llama-120b', label: 'GPT-OSS 120B', icon: '🧠', description: 'Raciocínio profundo (Groq)' },
   { id: 'llama-70b', providerName: 'llama-70b', label: 'Llama 3.3 70B', icon: '⚙️', description: 'Tarefas técnicas (Groq)' },
+  { id: 'gemini-pro', providerName: 'gemini-pro', label: 'Gemini 2.5 Pro', icon: '♊', description: 'Raciocínio profundo (Google)' },
   { id: 'gemini-3-flash', providerName: 'gemini-3-flash', label: 'Gemini 3 Flash', icon: '⚡', description: 'Velocidade máxima (Google Preview)' },
   { id: 'gemini-3.1-pro', providerName: 'gemini-3.1-pro', label: 'Gemini 3.1 Pro', icon: '🔮', description: 'Raciocínio avançado (Google Preview)' },
 ];

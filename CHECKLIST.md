@@ -1,5 +1,33 @@
 # ✅ Checklist Projeto RKMMax (Atualizado — 08/04/2026)
 
+## 2026-04-16 — feat(construtor): expor Gemini 2.5 Pro no Construtor (com limpeza de redundância documental do PR #399)
+
+### O que foi feito
+- Mantida a correção funcional em `src/config/hybridEngines.js`: adicionada a entrada `gemini-pro` entre `llama-70b` e `gemini-3-flash`.
+- Removida a redundância documental deste PR: `README.md` voltou ao alinhamento já consolidado no PR #398 (sem reescrita adicional).
+- Registrado aqui apenas o complemento estritamente necessário desta entrega.
+
+### Sem bypass ao Serginho
+- O Construtor continua apenas enviando `forceProvider` para `/api/ai`.
+- O roteamento segue pelo Serginho (`handleStructured`), que permanece soberano.
+
+### Arquivos alterados nesta entrega
+
+| Arquivo | Mudança |
+|---|---|
+| `src/config/hybridEngines.js` | +1 entrada `gemini-pro` (Gemini 2.5 Pro) no seletor do Construtor |
+| `CHECKLIST.md` | Este registro resumido (sem duplicar o alinhamento do #398) |
+
+### Validação
+1. Construtor passa a listar `gemini-pro` em `HYBRID_ENGINE_OPTIONS` ✅
+2. `README.md` permanece no estado alinhado já entregue pelo PR #398, sem duplicação extra ✅
+3. Escopo preservado: sem mudanças em orchestrator/providers/billing/cache/UI além da config de motor ✅
+
+### Rollback
+```bash
+git revert <commit-sha>
+```
+
 ## 2026-04-16 — docs(align): README e CHECKLIST alinhados com realidade multi-provider em estabilização
 
 ### O que foi feito
