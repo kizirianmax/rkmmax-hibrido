@@ -5,7 +5,7 @@
 
 # RKMMAX Híbrido
 
-RKMMAX Híbrido is an AI agent orchestration system with a React frontend and Vercel serverless backend. The orchestrator (Serginho) is sovereign and routes requests across a multi-provider setup currently in stabilization — Groq and Gemini are both active, with provider priority defined by `src/config/modelPriority.js`.
+RKMMAX Híbrido is an AI agent orchestration system with a React frontend and Vercel serverless backend. The orchestrator (Serginho) is sovereign and routes requests across a multi-provider setup currently in stabilization — Groq and Gemini are both active in the codebase, with provider priority defined by `src/config/modelPriority.js`.
 
 > **Development policy:** This is an individual project by [@kizirianmax](https://github.com/kizirianmax). All merges to `main` require a passing CI run. See [DEVELOPMENT_GUIDELINES.md](DEVELOPMENT_GUIDELINES.md) for details.
 
@@ -21,7 +21,7 @@ The system is structured in three layers:
 | **Domain expertise** | Specialist Agents | 47 domain specialists across 9 categories, each with a focused capability set |
 | **Artifact generation** | Híbrido / Construtor | Handles artifact construction, hybrid chat, and multi-step generation tasks |
 
-**AI providers (multi-provider, in stabilization):** The orchestrator uses a provider priority order defined as the single source of truth in `src/config/modelPriority.js`. At the time of writing the automatic order is: Gemini 3 Flash → Gemini 3.1 Pro → Gemini 2.5 Pro → Groq 70B → Groq 120B. Serginho remains the sovereign orchestrator — all provider calls flow through it. The Construtor layer exposes the same providers via `src/config/hybridEngines.js`.
+**AI providers (multi-provider, in stabilization):** The orchestrator uses a provider priority order defined as the single source of truth in `src/config/modelPriority.js`. At the time of writing the automatic order is: Gemini 3 Flash → Gemini 3.1 Pro → Gemini 2.5 Pro → Groq 70B → Groq 120B. Serginho remains the sovereign orchestrator; all provider calls go through it.
 
 ```mermaid
 graph TD
@@ -81,7 +81,7 @@ The system registers **47 domain specialists** across 9 categories. The canonica
 |-------|-----------|
 | Frontend | React 18.3.1, Vite, React Router |
 | Backend | Vercel Serverless Functions, Node.js 22.x |
-| AI | Multi-provider (Groq + Gemini) — priority in src/config/modelPriority.js, orchestrated by Serginho |
+| AI | Multi-provider (Groq + Gemini) — priority in `src/config/modelPriority.js`, orchestrated by Serginho |
 | Database | Supabase (PostgreSQL) |
 | Payments | Stripe |
 | Email | Resend |
@@ -106,7 +106,7 @@ npm install
 ```bash
 cp .env.example .env
 # Minimum required keys:
-# GROQ_API_KEY           — Groq provider key (active provider)
+# GROQ_API_KEY           — Groq provider key (required; active provider)
 # GEMINI_API_KEY         — Gemini provider key (active provider, multi-provider stabilization)
 # REACT_APP_SUPABASE_URL & REACT_APP_SUPABASE_ANON_KEY
 # SUPABASE_SERVICE_ROLE_KEY
@@ -178,6 +178,7 @@ RKMMAX Híbrido is designed for Vercel. All serverless functions in `api/` are a
 # AI — mandatory
 GROQ_API_KEY=gsk_...
 GEMINI_API_KEY=...
+# Multi-provider (in stabilization)
 
 # Database
 REACT_APP_SUPABASE_URL=https://...
@@ -261,7 +262,7 @@ rkmmax-hibrido/
 
 ## Architecture Principles
 
-- **Multi-provider runtime (in stabilization):** Groq and Gemini are both active AI providers at runtime. Provider priority is defined as the single source of truth in `src/config/modelPriority.js`. The Construtor layer exposes the same providers via `src/config/hybridEngines.js`. Serginho remains the sovereign orchestrator — all provider calls flow through it.
+- **Multi-provider runtime (in stabilization):** Groq and Gemini are both active AI providers at runtime. Provider priority is defined as the single source of truth in `src/config/modelPriority.js`. Serginho remains the sovereign orchestrator — all provider calls flow through it. Consolidation and coherence review of provider usage across layers (Híbrido/Construtor in particular) is pending and tracked as an open observation.
 - **CI-green merges only:** No PR is merged to `main` without a passing CI run. This is a hard rule enforced by convention; branch protection rules require GitHub Pro or a public repository and are not currently active on this private repository.
 - **Single-owner governance:** This is an individual project. External contributions are welcome but must pass all tests and comply with [DEVELOPMENT_GUIDELINES.md](DEVELOPMENT_GUIDELINES.md).
 - **Serverless-first resilience:** The circuit breaker pattern is the primary mechanism for handling downstream failures within Vercel's timeout constraints.

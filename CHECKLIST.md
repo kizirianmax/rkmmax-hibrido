@@ -1,53 +1,74 @@
 # ✅ Checklist Projeto RKMMax (Atualizado — 08/04/2026)
 
-## 2026-04-16 — feat(construtor) + docs(align): incluir Gemini 2.5 Pro no Construtor + alinhar README/CHECKLIST à realidade multi-provider
+## 2026-04-16 — feat(construtor): expor Gemini 2.5 Pro no Construtor (com limpeza de redundância documental do PR #399)
 
 ### O que foi feito
-- Adicionada entrada `gemini-pro` (Gemini 2.5 Pro) em `src/config/hybridEngines.js`, entre `llama-70b` e `gemini-3-flash`.
-- Atualizadas no `README.md` as afirmações "Groq-only" / "sole active AI provider" para formulação fiel ao estado atual: **multi-provider em estabilização**, Groq + Gemini ativos, prioridade em `src/config/modelPriority.js`, Construtor usando `src/config/hybridEngines.js`, Serginho como orquestrador soberano.
-- Registrada neste CHECKLIST a memória viva dessa inclusão + alinhamento documental.
+- Mantida a correção funcional em `src/config/hybridEngines.js`: adicionada a entrada `gemini-pro` entre `llama-70b` e `gemini-3-flash`.
+- Removida a redundância documental deste PR: `README.md` voltou ao alinhamento já consolidado no PR #398 (sem reescrita adicional).
+- Registrado aqui apenas o complemento estritamente necessário desta entrega.
 
-### Causa objetiva de por que Gemini 2.5 Pro ainda não aparecia no Construtor
-- `src/config/hybridEngines.js` listava apenas `auto`, `llama-120b`, `llama-70b`, `gemini-3-flash` e `gemini-3.1-pro`. Faltava a entrada `gemini-pro`.
-- O provider `gemini-pro` (`model: 'gemini-2.5-pro'`) já existia e já era totalmente funcional em `api/lib/providers-config.js`, já era usado pelo Serginho via `src/config/modelPriority.js` (L20), e já era reconhecido por `getEnabledProviders()` quando `GEMINI_API_KEY` está presente.
-- Logo, a correção é **exclusivamente de exposição na camada Construtor**: uma linha na config — sem tocar em backend, orchestrator, provider ou UI.
+### Sem bypass ao Serginho
+- O Construtor continua apenas enviando `forceProvider` para `/api/ai`.
+- O roteamento segue pelo Serginho (`handleStructured`), que permanece soberano.
 
-### Por que não há bypass ao Serginho
-- `HYBRID_ENGINE_OPTIONS` é consumido por `src/pages/HybridAgentSimple.jsx`, que apenas mapeia `providerName` para `body.forceProvider` na chamada a `/api/ai`.
-- `/api/ai` roteia via `handleStructured` do Serginho — o orquestrador continua soberano.
-- O guard A5.7 em `api/lib/serginho-orchestrator.js` já trata o caso `GEMINI_API_KEY` ausente, recusando fallback silencioso.
-- Nenhuma chamada direta a provider foi introduzida.
+### Arquivos alterados nesta entrega
+
+| Arquivo | Mudança |
+|---|---|
+| `src/config/hybridEngines.js` | +1 entrada `gemini-pro` (Gemini 2.5 Pro) no seletor do Construtor |
+| `CHECKLIST.md` | Este registro resumido (sem duplicar o alinhamento do #398) |
+
+### Validação
+1. Construtor passa a listar `gemini-pro` em `HYBRID_ENGINE_OPTIONS` ✅
+2. `README.md` permanece no estado alinhado já entregue pelo PR #398, sem duplicação extra ✅
+3. Escopo preservado: sem mudanças em orchestrator/providers/billing/cache/UI além da config de motor ✅
+
+### Rollback
+```bash
+git revert <commit-sha>
+```
+
+## 2026-04-16 — docs(align): README e CHECKLIST alinhados com realidade multi-provider em estabilização
+
+### O que foi feito
+- Corrigidas no `README.md` as afirmações factualmente incorretas de "Groq-only" / "sole active AI provider". Substituídas por formulação fiel ao estado atual: **multi-provider em estabilização**, com Groq e Gemini ativos, prioridade definida em `src/config/modelPriority.js` e Serginho como orquestrador soberano.
+- Registrada neste CHECKLIST a memória viva desse alinhamento documental.
+
+### Por quê
+- `src/config/modelPriority.js` (Single Source of Truth) lista hoje: Gemini 3 Flash → Gemini 3.1 Pro → Gemini 2.5 Pro → Groq 70B → Groq 120B. O README, porém, ainda afirmava "Groq is the sole active AI provider", o que era uma contradição factual direta com o código ativo.
+- PRs recentes mergeados em `main` operam explicitamente sobre configuração Gemini (ajustes de modelo, thinking config, payload). O runtime é multi-provider.
+- O objetivo deste alinhamento é **puramente documental**: evitar que a documentação afirme algo que o código não faz. Nenhuma estratégia foi alterada, nenhum provider foi adicionado ou removido, nenhum código foi tocado.
+
+### Estado factual registrado
+- **Serginho** continua como orquestrador soberano (inalterado).
+- **Groq** e **Gemini** são os providers ativos no código atual.
+- **Serginho já expõe Gemini 2.5 Pro** na prioridade automática, conforme `src/config/modelPriority.js` (L20).
+- **Híbrido/Construtor** usa motores definidos em `src/config/hybridEngines.js`.
+- **Especialistas** e **ABNT** permanecem com suas fronteiras atuais; ABNT continua 100% local (sem IA).
+
+### Observação futura (NÃO implementada nesta PR)
+- Revisar coerência/necessidade de **Gemini 2.5 no Construtor** à luz da estabilização multi-provider. Esta observação é registrada aqui apenas como pendência de avaliação documental; **não há mudança de código associada**.
+- Revisar se os bullets de README ainda refletem a realidade após a próxima rodada de PRs de Gemini.
 
 ### Arquivos alterados
 
 | Arquivo | Mudança |
 |---|---|
-| `src/config/hybridEngines.js` | +1 entrada `gemini-pro` (Gemini 2.5 Pro) entre `llama-70b` e `gemini-3-flash` |
-| `README.md` | Remoção de afirmações "Groq-only" / "sole active AI provider"; formulação multi-provider; diagrama mermaid ajustado; bloco env com `GEMINI_API_KEY`; bullet "Multi-provider runtime (in stabilization)" em Architecture Principles |
+| `README.md` | Remoção de afirmações "Groq-only"/"sole active AI provider"; substituição por formulação multi-provider; ajuste do diagrama mermaid; ajuste dos blocos de env vars; reescrita do bullet "Groq-only runtime" em Architecture Principles |
 | `CHECKLIST.md` | Esta entrada |
 
-### Declaração explícita
-- **Serginho permanece o orquestrador soberano.** Sem bypass.
-- **Híbrido/Construtor = geração de artefatos.** Inalterado conceitualmente; só ganhou mais um motor exposto.
-- **Especialistas = especialistas de domínio.** Intocados.
-- **ABNT = validação/conformidade.** Intocado.
-- **Nenhum refactor**, nenhuma mudança em billing, guardAndBill, cache, fallback chain, providers-config, serginho-orchestrator, UI.
-
 ### Validação
-1. `src/config/hybridEngines.js` passa a listar 6 entradas (auto, llama-120b, llama-70b, gemini-pro, gemini-3-flash, gemini-3.1-pro) ✅
-2. `providerName: 'gemini-pro'` existe em `api/lib/providers-config.js` (`model: 'gemini-2.5-pro'`) — provado em arquivo ativo ✅
-3. Mesmo `providerName` já é usado por Serginho em `src/config/modelPriority.js` (L20) — provado em arquivo ativo ✅
-4. `README.md` não contém mais "sole active AI provider" ✅
-5. `README.md` não contém mais "Groq-only runtime" como princípio ✅
-6. Serginho continua descrito como orquestrador soberano ✅
-7. Nenhum outro arquivo tocado fora do escopo ✅
+1. README não contém mais "sole active AI provider" ✅
+2. README não contém mais "Groq-only runtime" como princípio ✅
+3. README aponta `src/config/modelPriority.js` como SSOT da prioridade ✅
+4. Serginho continua descrito como orquestrador soberano ✅
+5. Nenhum outro arquivo foi alterado — escopo estritamente documental ✅
+6. Nenhum código, provider, billing, cache, orchestrator, Híbrido, Especialistas ou ABNT foi tocado ✅
 
 ### Rollback
 ```bash
 git revert <commit-sha>
-# Remove a entrada gemini-pro de hybridEngines.js
-# Restaura README.md para a versão "Groq-only"
-# Remove esta entrada do CHECKLIST.md
+# Restaura README.md para a versão "Groq-only" e remove esta entrada do CHECKLIST.md
 ```
 
 ## 2026-04-01 — fix(boot): causa residual #3 da tela branca — supabaseClient.js crasha com env vars ausentes
