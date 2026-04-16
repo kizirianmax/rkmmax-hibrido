@@ -1179,17 +1179,25 @@ class SerginhoOrchestrator {
     });
 
     // Models that only work in thinking mode reject thinkingBudget: 0.
-    // Omit thinkingConfig for these models so they use native thinking behavior.
-    const THINKING_ONLY_MODELS = ['gemini-3.1-pro-preview', 'gemini-2.5-pro'];
+    // gemini-2.5-pro: use thinkingBudget: 1024 to cap internal reasoning to ~2-5s
+    // (unlimited thinking causes 20-40s latency on dense prompts, exceeding 20s circuit breaker).
+    // gemini-3.1-pro-preview: omit thinkingConfig entirely (native thinking only).
+    const THINKING_ONLY_MODELS = ['gemini-3.1-pro-preview'];
+    const CAPPED_THINKING_MODELS = ['gemini-2.5-pro'];
 
     const generationConfig = {
       temperature: config.defaultParams.temperature,
       maxOutputTokens: maxTokens || config.defaultParams.maxOutputTokens,
     };
 
-    // Keep PR #372 behavior for models that support non-thinking mode:
-    // disable internal thinking to avoid timeout (Gemini 2.5 Pro thinking adds 10-20s).
-    if (!THINKING_ONLY_MODELS.includes(config.model)) {
+    if (CAPPED_THINKING_MODELS.includes(config.model)) {
+      // Cap thinking budget to limit latency on dense prompts (PR #395)
+      generationConfig.thinkingConfig = {
+        thinkingBudget: 1024,
+      };
+    } else if (!THINKING_ONLY_MODELS.includes(config.model)) {
+      // Keep PR #372 behavior for models that support non-thinking mode:
+      // disable internal thinking to avoid timeout.
       generationConfig.thinkingConfig = {
         thinkingBudget: 0,
       };
