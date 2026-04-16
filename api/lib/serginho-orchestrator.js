@@ -1180,7 +1180,7 @@ class SerginhoOrchestrator {
 
     // Models that only work in thinking mode reject thinkingBudget: 0.
     // Omit thinkingConfig for these models so they use native thinking behavior.
-    const THINKING_ONLY_MODELS = ['gemini-3.1-pro-preview'];
+    const THINKING_ONLY_MODELS = ['gemini-3.1-pro-preview', 'gemini-2.5-pro'];
 
     const generationConfig = {
       temperature: config.defaultParams.temperature,
