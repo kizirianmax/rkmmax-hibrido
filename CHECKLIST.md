@@ -1,5 +1,48 @@
 # ✅ Checklist Projeto RKMMax (Atualizado — 08/04/2026)
 
+## 2026-04-16 — docs(align): README e CHECKLIST alinhados com realidade multi-provider em estabilização
+
+### O que foi feito
+- Corrigidas no `README.md` as afirmações factualmente incorretas de "Groq-only" / "sole active AI provider". Substituídas por formulação fiel ao estado atual: **multi-provider em estabilização**, com Groq e Gemini ativos, prioridade definida em `src/config/modelPriority.js` e Serginho como orquestrador soberano.
+- Registrada neste CHECKLIST a memória viva desse alinhamento documental.
+
+### Por quê
+- `src/config/modelPriority.js` (Single Source of Truth) lista hoje: Gemini 3 Flash → Gemini 3.1 Pro → Gemini 2.5 Pro → Groq 70B → Groq 120B. O README, porém, ainda afirmava "Groq is the sole active AI provider", o que era uma contradição factual direta com o código ativo.
+- PRs recentes mergeados em `main` operam explicitamente sobre configuração Gemini (ajustes de modelo, thinking config, payload). O runtime é multi-provider.
+- O objetivo deste alinhamento é **puramente documental**: evitar que a documentação afirme algo que o código não faz. Nenhuma estratégia foi alterada, nenhum provider foi adicionado ou removido, nenhum código foi tocado.
+
+### Estado factual registrado
+- **Serginho** continua como orquestrador soberano (inalterado).
+- **Groq** e **Gemini** são os providers ativos no código atual.
+- **Serginho já expõe Gemini 2.5 Pro** na prioridade automática, conforme `src/config/modelPriority.js` (L20).
+- **Híbrido/Construtor** usa motores definidos em `src/config/hybridEngines.js`.
+- **Especialistas** e **ABNT** permanecem com suas fronteiras atuais; ABNT continua 100% local (sem IA).
+
+### Observação futura (NÃO implementada nesta PR)
+- Revisar coerência/necessidade de **Gemini 2.5 no Construtor** à luz da estabilização multi-provider. Esta observação é registrada aqui apenas como pendência de avaliação documental; **não há mudança de código associada**.
+- Revisar se os bullets de README ainda refletem a realidade após a próxima rodada de PRs de Gemini.
+
+### Arquivos alterados
+
+| Arquivo | Mudança |
+|---|---|
+| `README.md` | Remoção de afirmações "Groq-only"/"sole active AI provider"; substituição por formulação multi-provider; ajuste do diagrama mermaid; ajuste dos blocos de env vars; reescrita do bullet "Groq-only runtime" em Architecture Principles |
+| `CHECKLIST.md` | Esta entrada |
+
+### Validação
+1. README não contém mais "sole active AI provider" ✅
+2. README não contém mais "Groq-only runtime" como princípio ✅
+3. README aponta `src/config/modelPriority.js` como SSOT da prioridade ✅
+4. Serginho continua descrito como orquestrador soberano ✅
+5. Nenhum outro arquivo foi alterado — escopo estritamente documental ✅
+6. Nenhum código, provider, billing, cache, orchestrator, Híbrido, Especialistas ou ABNT foi tocado ✅
+
+### Rollback
+```bash
+git revert <commit-sha>
+# Restaura README.md para a versão "Groq-only" e remove esta entrada do CHECKLIST.md
+```
+
 ## 2026-04-01 — fix(boot): causa residual #3 da tela branca — supabaseClient.js crasha com env vars ausentes
 
 ### O que foi feito
