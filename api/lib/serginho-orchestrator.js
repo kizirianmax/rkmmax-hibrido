@@ -1182,20 +1182,20 @@ class SerginhoOrchestrator {
     // gemini-2.5-pro: use thinkingBudget: 1024 to cap internal reasoning to ~2-5s
     // (unlimited thinking causes 20-40s latency on dense prompts, exceeding 20s circuit breaker).
     // gemini-3.1-pro-preview: omit thinkingConfig entirely (native thinking only).
-    const THINKING_ONLY_MODELS = ['gemini-3.1-pro-preview'];
-    const CAPPED_THINKING_MODELS = ['gemini-2.5-pro'];
+    const isThinkingOnlyModel = config.model === 'gemini-3.1-pro-preview';
+    const isCappedThinkingModel = config.model === 'gemini-2.5-pro';
 
     const generationConfig = {
       temperature: config.defaultParams.temperature,
       maxOutputTokens: maxTokens || config.defaultParams.maxOutputTokens,
     };
 
-    if (CAPPED_THINKING_MODELS.includes(config.model)) {
+    if (isCappedThinkingModel) {
       // Cap thinking budget to limit latency on dense prompts (PR #395)
       generationConfig.thinkingConfig = {
         thinkingBudget: 1024,
       };
-    } else if (!THINKING_ONLY_MODELS.includes(config.model)) {
+    } else if (!isThinkingOnlyModel) {
       // Keep PR #372 behavior for models that support non-thinking mode:
       // disable internal thinking to avoid timeout.
       generationConfig.thinkingConfig = {
