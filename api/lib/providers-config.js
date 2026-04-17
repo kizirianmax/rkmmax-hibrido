@@ -162,7 +162,7 @@ export function getEnabledProviders() {
  * Parse optional provider weights from env var.
  * Format: JSON string, e.g. '{"llama-120b":100}' or '{"llama-120b":70,"gemini-pro":30}'
  * Returns null if not configured or invalid.
- * Phase A5.3 scaffolding — not used in routing yet.
+ * Consumed by getWeightedProviders() for deterministic provider ordering.
  * @returns {object|null}
  */
 export function parseProviderWeights() {
