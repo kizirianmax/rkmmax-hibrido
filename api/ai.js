@@ -27,6 +27,65 @@ const { optimizeRequest, cacheResponse } = costOptimization;
 /** Fallback de tokens de saída quando a API não informa usage (estimativa conservadora). */
 const DEFAULT_OUTPUT_TOKENS = 800;
 
+// ─────────────────────────────────────────────────────────────────────────────
+// Guard de intenção trivial para o Construtor/Híbrido
+// Detecta entradas claramente conversacionais que NÃO devem gerar artefato.
+// Critério: whitelist explícita de saudações/triviais + ausência de verbo de construção.
+// Na dúvida (ambíguo), retorna { trivial: false } para preservar o fluxo normal.
+// ─────────────────────────────────────────────────────────────────────────────
+
+/** Saudações e entradas triviais conhecidas (normalizadas, sem acento, lowercase). */
+const TRIVIAL_EXACT = new Set([
+  'oi', 'ola', 'oi!', 'ola!', 'hey', 'hi', 'hello',
+  'bom dia', 'boa tarde', 'boa noite',
+  'bom dia!', 'boa tarde!', 'boa noite!',
+  'tudo bem', 'tudo bem?', 'tudo bom', 'tudo bom?',
+  'e ai', 'e ai?', 'e aí', 'e aí?', 'eai', 'eai?',
+  'teste', 'test', 'ok', 'ok!', 'beleza', 'beleza?',
+  'obrigado', 'obrigada', 'valeu', 'vlw', 'thanks', 'thank you',
+  'falou', 'tchau', 'bye', 'ate mais', 'ate logo',
+  'sim', 'nao', 'não', 'yes', 'no',
+]);
+
+/** Verbos de construção (PT-BR e EN) — se presentes, a entrada NÃO é trivial. */
+const BUILD_VERBS = /\b(crie|cria|gere|gera|faça|faz|construa|construir|desenvolva|implemente|escreva|monte|elabore|projete|desenhe|create|generate|build|make|write|implement|design|code|develop)\b/i;
+
+/**
+ * Classifica se uma entrada do usuário é trivial/conversacional.
+ * @param {string} raw - Mensagem bruta do usuário
+ * @returns {{ trivial: boolean, reason: string }}
+ */
+function _classifyTrivialInput(raw) {
+  if (!raw || typeof raw !== 'string') {
+    return { trivial: false, reason: 'empty_or_invalid' };
+  }
+
+  const normalized = raw
+    .toLowerCase()
+    .normalize('NFD').replace(/[\u0300-\u036f]/g, '') // remove acentos
+    .replace(/[.,;:!?]+$/g, '')                       // remove pontuação final
+    .trim();
+
+  // Se contém verbo de construção, NUNCA é trivial (mesmo que curto)
+  if (BUILD_VERBS.test(raw)) {
+    return { trivial: false, reason: 'has_build_verb' };
+  }
+
+  // Match exato na whitelist (com e sem pontuação)
+  if (TRIVIAL_EXACT.has(normalized)) {
+    return { trivial: true, reason: 'exact_match' };
+  }
+
+  // Saudação + nome (ex: "oi serginho", "boa tarde kizi")
+  const greetingPrefix = /^(oi|ola|hey|hi|hello|bom dia|boa tarde|boa noite|e ai|eai)\s+\w{1,20}[!?]?$/i;
+  if (greetingPrefix.test(normalized)) {
+    return { trivial: true, reason: 'greeting_with_name' };
+  }
+
+  // Na dúvida, preservar fluxo normal do Construtor
+  return { trivial: false, reason: 'not_trivial' };
+}
+
 /**
  * Resolve o plano do usuário via Supabase subscriptions.
  * Reutiliza a mesma lógica de api/admin.js handleMePlan.
@@ -182,6 +241,51 @@ export default async function handler(req, res) {
     // ========================================
     if (type === "hybrid" || (type === "genius" && agentType === "hybrid")) {
       console.log("🏗️ KIZI AI - Híbrido/Construtor ativado");
+
+      // ── Guard de intenção trivial ──────────────────────────────────────
+      // Entradas claramente conversacionais/triviais não devem acionar o
+      // pipeline pesado de geração de artefatos (120B → 70B, maxTokens 4096).
+      // Em vez disso, são redirecionadas ao Serginho (genius) para resposta
+      // leve e natural. Pedidos reais de construção passam intactos.
+      // Reversível: remover este bloco restaura o comportamento anterior.
+      const _lastMsg = (messages[messages.length - 1]?.content || '').trim();
+      const _isTrivial = _classifyTrivialInput(_lastMsg);
+      if (_isTrivial.trivial) {
+        console.log(`🏗️ HYBRID guard: entrada trivial detectada ("${_lastMsg.slice(0, 30)}") → redirecionando ao Serginho`);
+        const _sergPrompt = buildGeniusPrompt('serginho');
+        const _sergOpt = optimizeRequest(messages, _sergPrompt);
+        const _sergResult = await executeAITask(
+          _sergOpt.messages || messages,
+          _sergOpt.systemPrompt || _sergPrompt,
+          { source: 'hybrid-api', type: 'serginho', trivialGuard: true },
+          {} // auto-routing do Serginho, sem forceProvider
+        );
+        const _trivialResp = {
+          response: _sergResult.text,
+          model: _sergResult.model,
+          provider: _sergResult.provider,
+          tier: _sergResult.tier,
+          complexity: _sergResult.complexity,
+          routing: _sergResult.routing,
+          execution: { ...(_sergResult.execution || {}), trivialGuard: true },
+          type: 'hybrid',
+          metadata: {
+            provider: _sergResult.provider,
+            tier: _sergResult.tier,
+            complexity: _sergResult.complexity,
+          },
+          success: true,
+          usage: _sergResult.usage,
+        };
+        cacheResponse(messages, _trivialResp);
+        if (usageBill) {
+          const _ot = _sergResult.usage?.completion_tokens || _sergResult.usage?.output_tokens || DEFAULT_OUTPUT_TOKENS;
+          usageBill(_ot).catch(err => console.error('[USAGE] bill error:', err.message));
+        }
+        return res.status(200).json({ ..._trivialResp, cached: false, optimized: true, stats: _sergOpt.stats });
+      }
+      // ── Fim do guard de intenção trivial ────────────────────────────────
+
       const systemPrompt = buildGeniusPrompt("hybrid");
       const optimized = optimizeRequest(messages, systemPrompt);
 

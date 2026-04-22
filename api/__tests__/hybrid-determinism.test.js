@@ -186,14 +186,14 @@ describe('Test F — api/ai.js hybrid path enforces strict 120B→70B only', () 
     // Find the hybrid block
     const hybridBlockStart = aiContent.indexOf("TIPO: HYBRID");
     expect(hybridBlockStart).toBeGreaterThan(-1);
-    const hybridBlock = aiContent.slice(hybridBlockStart, hybridBlockStart + 2500);
+    const hybridBlock = aiContent.slice(hybridBlockStart, hybridBlockStart + 5000);
     expect(hybridBlock).toContain("forceProvider: 'llama-120b'");
     expect(hybridBlock).toContain('noFallback: true');
   });
 
   it('hybrid path uses noFallback:true for llama-70b fallback call', () => {
     const hybridBlockStart = aiContent.indexOf("TIPO: HYBRID");
-    const hybridBlock = aiContent.slice(hybridBlockStart, hybridBlockStart + 3000);
+    const hybridBlock = aiContent.slice(hybridBlockStart, hybridBlockStart + 5500);
     expect(hybridBlock).toContain("forceProvider: 'llama-70b'");
     // Both provider calls must have noFallback:true
     const noFallbackCount = (hybridBlock.match(/noFallback: true/g) || []).length;
@@ -223,7 +223,7 @@ describe('Test F — api/ai.js hybrid path enforces strict 120B→70B only', () 
   it('hybrid path passes maxTokens: 4096 on both provider calls', () => {
     // Both 120b and 70b executeAITask calls in the hybrid block must include maxTokens: 4096
     const hybridBlockStart = aiContent.indexOf("TIPO: HYBRID");
-    const hybridBlock = aiContent.slice(hybridBlockStart, hybridBlockStart + 2500);
+    const hybridBlock = aiContent.slice(hybridBlockStart, hybridBlockStart + 5000);
     const maxTokensMatches = (hybridBlock.match(/maxTokens: 4096/g) || []).length;
     expect(maxTokensMatches).toBeGreaterThanOrEqual(2);
   });
