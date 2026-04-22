@@ -6,23 +6,23 @@
  * This file contains provider implementation details.
  * External code should use aiAdapter.js interfaces instead.
  * 
- * Provider names (llama-70b, llama-120b, gemini-pro, groq-fallback) are implementation details
+ * Provider names (llama-70b, llama-120b, gemini-pro, gemini-3-flash) are implementation details
  * and should NOT be used directly in business logic or tests.
  *
  * Providers with Strict Intelligence-Tier Isolation:
  * - Gemini 2.5 Pro: Análise profunda, estratégia, raciocínio abstrato, contexto longo (Tier 1 — Google)
  * - Llama 3.3 120B: Código complexo, lógica estrita, análise técnica profunda (Tier 1 — Groq)
  * - Llama 3.3 70B: Tarefas técnicas cotidianas, suporte a programação, conversas (Tier 2)
- * - GROQ Fallback (Llama 3.1 8B): Último recurso para alta disponibilidade
+ * - Gemini 3 Flash: Fallback leve principal para alta disponibilidade (substitui Llama 3.1 8B)
  *
  * Routing Policy (potencial máximo):
  * - Alta complexidade SEM código → gemini-pro (janela maior, melhor para análise/estratégia)
  * - Alta complexidade COM código → llama-120b (velocidade + lógica estrita)
  * - Complexidade média → llama-70b
- * - Simples/curto → llama-70b (sem downgrade para 8B; groq-fallback reservado para falhas)
+ * - Simples/curto → llama-70b (sem downgrade; gemini-3-flash reservado para falhas)
  *
  * Critical Rules:
- * - NEVER route to groq-fallback organically — it is reserved for failure recovery only
+ * - NEVER route to gemini-3-flash organically — it is reserved for failure recovery only
  * - gemini-pro is only routed organically when GEMINI_API_KEY is configured
  */
 
@@ -439,7 +439,7 @@ export function routeToProvider(analysis, options = {}) {
     };
   }
 
-  // REGRA 9: Padrão — llama-70b (potencial máximo; groq-fallback reservado para falhas)
+  // REGRA 9: Padrão — llama-70b (potencial máximo; gemini-3-flash reservado para falhas)
   return {
     provider: "llama-70b",
     reason: "Conversa padrão — Llama 70B: potencial máximo em todas as interações",
@@ -466,26 +466,26 @@ export function intelligentRoute(message) {
 
 /**
  * Fallback chain with Strict Intelligence-Tier Isolation
- * groq-fallback is NEVER used organically — only as last resort in failure recovery.
+ * gemini-3-flash is NEVER used organically — only as last resort in failure recovery.
  *
  * Política de fallback (potencial máximo — intercâmbio Groq ↔ Google):
- * - gemini-pro: se falhar → llama-120b → llama-70b → groq-fallback
- * - llama-120b: se falhar → gemini-pro → llama-70b → groq-fallback
- * - llama-70b: se falhar → llama-120b → gemini-pro → groq-fallback
- * - groq-fallback: último recurso, sem fallback
+ * - gemini-pro: se falhar → llama-120b → llama-70b → gemini-3-flash
+ * - llama-120b: se falhar → gemini-pro → llama-70b → gemini-3-flash
+ * - llama-70b: se falhar → llama-120b → gemini-pro → gemini-3-flash
+ * - gemini-3-flash: último recurso, sem fallback
  *
  * NOTA: providers desabilitados (sem API key) são automaticamente pulados
  * pelo orchestrator (getEnabledProviders() + while loop no _handleStructured).
  */
 export const FALLBACK_CHAIN = {
-  // Google tier: Gemini falhou → melhor da Groq, nunca direto para fallback
-  "gemini-pro": ["llama-120b", "llama-70b", "groq-fallback"],
-  // Complex tier Groq: 120B falhou → tenta Gemini antes de degradar
-  "llama-120b": ["gemini-pro", "llama-70b", "groq-fallback"],
-  // Medium tier: 70B falhou → tenta 120B → Gemini (provider diferente, escapa rate limit Groq)
-  "llama-70b": ["llama-120b", "gemini-pro", "groq-fallback"],
-  // Último recurso
-  "groq-fallback": [],
+  // Google tier: Gemini Pro falhou → melhor da Groq, depois fallback leve
+  "gemini-pro": ["llama-120b", "llama-70b", "gemini-3-flash"],
+  // Complex tier Groq: 120B falhou → tenta Gemini Pro antes de degradar
+  "llama-120b": ["gemini-pro", "llama-70b", "gemini-3-flash"],
+  // Medium tier: 70B falhou → tenta 120B → Gemini Pro → fallback leve
+  "llama-70b": ["llama-120b", "gemini-pro", "gemini-3-flash"],
+  // Fallback leve principal (Gemini 3 Flash) — último recurso, sem fallback
+  "gemini-3-flash": [],
 };
 
 /**
