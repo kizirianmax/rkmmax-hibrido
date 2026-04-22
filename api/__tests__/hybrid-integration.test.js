@@ -96,11 +96,14 @@ describe('Hybrid Integration — api/ai.js fluxo real do Construtor', () => {
     expect(res._body.metadata).toHaveProperty('provider');
   });
 
-  it('buildGeniusPrompt("hybrid") contém marcadores CONSTRUTOR e FORMATO DE RESPOSTA OBRIGATÓRIO', async () => {
+  it('buildGeniusPrompt("hybrid") contém marcadores CONSTRUTOR e IDENTIDADE do v3.2', async () => {
     const { default: geniusPrompts } = await import('../../src/prompts/geniusPrompts.js');
     const prompt = geniusPrompts.buildGeniusPrompt('hybrid');
     expect(prompt).toContain('CONSTRUTOR');
-    expect(prompt).toContain('FORMATO DE RESPOSTA OBRIGATÓRIO');
+    expect(prompt).toContain('IDENTIDADE:');
+    expect(prompt).toContain('CLASSIFICAÇÃO DE INTENÇÃO');
+    expect(prompt).toContain('COMPORTAMENTO:');
+    expect(prompt).toContain('LIMITES:');
   });
 
   it('handler chama orchestrator com forceProvider llama-120b (não outro modelo)', async () => {
