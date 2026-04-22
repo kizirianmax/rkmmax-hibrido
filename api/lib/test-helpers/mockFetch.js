@@ -22,24 +22,25 @@ export function createMockFetch(options = {}) {
   return jest.fn().mockImplementation((url, requestOptions) => {
     // Parse request body to determine which provider is being called
     const body = JSON.parse(requestOptions.body);
-    const model = body.model;
+    const isGemini = url.includes('generativelanguage.googleapis.com');
+    const model = isGemini ? url.match(/models\/([^:]+)/)?.[1] : body.model;
 
     // Track call count per model
     modelCallCount[model] = (modelCallCount[model] || 0) + 1;
 
     // Map model to provider name
-    // Note: llama-3.1-8b-instant is used by both llama-8b (first call) and
-    // groq-fallback (subsequent calls). Use call count to distinguish.
     const providerMap = {
       'openai/gpt-oss-120b': 'llama-120b',
       'llama-3.3-70b-versatile': 'llama-70b',
       'llama-3.1-70b-versatile': 'llama-70b',
+      'gemini-3-flash-preview': 'gemini-3-flash',
+      'gemini-3.1-pro-preview': 'gemini-3.1-pro',
+      'gemini-2.5-pro': 'gemini-pro',
     };
 
     let providerName;
     if (model === 'llama-3.1-8b-instant') {
-      // First call maps to llama-8b; subsequent calls map to groq-fallback
-      providerName = modelCallCount[model] <= 1 ? 'llama-8b' : 'groq-fallback';
+      providerName = modelCallCount[model] <= 1 ? 'llama-8b' : 'llama-8b';
     } else {
       providerName = providerMap[model] || 'unknown';
     }
@@ -55,6 +56,29 @@ export function createMockFetch(options = {}) {
         ok: true,
         status: 200,
         json: jest.fn().mockResolvedValue(customResponses[providerName]),
+        text: jest.fn().mockResolvedValue('OK'),
+      });
+    }
+
+    // Return format based on provider type
+    if (isGemini) {
+      // Google Gemini response format
+      return Promise.resolve({
+        ok: true,
+        status: 200,
+        json: jest.fn().mockResolvedValue({
+          candidates: [{
+            content: {
+              parts: [{ text: `Mock response from ${providerName}` }],
+              role: 'model'
+            }
+          }],
+          usageMetadata: {
+            promptTokenCount: 10,
+            candidatesTokenCount: 20,
+            totalTokenCount: 30
+          }
+        }),
         text: jest.fn().mockResolvedValue('OK'),
       });
     }

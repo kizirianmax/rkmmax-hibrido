@@ -273,8 +273,7 @@ class SerginhoOrchestrator {
     const PROVIDER_TIMEOUTS = {
       'llama-120b': 20000, // 20s — modelo complexo (margem de 5s abaixo do teto Vercel de 25s)
       'llama-70b': 12000,  // 12s — tier médio
-      'groq-fallback': 8000, // 8s — fallback rápido
-      'gemini-3-flash': 12000, // 12s — modelo de velocidade (preview)
+      'gemini-3-flash': 10000, // 10s — fallback leve principal (Gemini 3 Flash)
       'gemini-3.1-pro': 20000, // 20s — modelo de raciocínio avançado (preview)
       'gemini-pro': 20000, // 20s — Gemini 2.5 Pro é modelo de raciocínio; precisa de margem maior
     };

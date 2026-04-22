@@ -45,26 +45,13 @@ export const PROVIDERS = {
     },
   },
 
-  // Groq fallback - Llama 3.1 8B for high availability
-  'groq-fallback': {
-    type: 'groq',
-    model: 'llama-3.1-8b-instant',
-    endpoint: 'https://api.groq.com/openai/v1/chat/completions',
-    tier: 'fallback',
-    inputTokenBudget: 16000,
-    defaultParams: {
-      temperature: 0.5,
-      top_p: 0.90,
-      max_tokens: 4096,
-    },
-  },
-
-  // Google Gemini 3 Flash — velocidade máxima, modelo preview
+  // Fallback leve principal — Gemini 3 Flash (substitui groq-fallback / Llama 3.1 8B)
+  // Mais capaz que o 8B antigo, mantém velocidade alta e custo baixo via Google.
   'gemini-3-flash': {
     type: 'google',
     model: 'gemini-3-flash-preview',
     endpoint: 'https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent',
-    tier: 'speed',
+    tier: 'fallback',
     defaultParams: {
       temperature: 0.50,
       top_p: 0.95,
@@ -183,7 +170,7 @@ export function parseProviderWeights() {
 /**
  * Get providers sorted by weight, deterministic and configurable.
  * - If HYBRID_PROVIDER_WEIGHTS is NOT set or invalid → returns ['llama-120b'] if enabled,
- *   otherwise falls back to getEnabledProviders() with groq-fallback sorted last.
+ *   otherwise falls back to getEnabledProviders() with gemini-3-flash sorted last.
  * - If weights are set and valid → considers only enabled providers, sorts by weight desc.
  *   Enabled providers not in the weights JSON are appended at weight 0.
  *   If all weighted providers are disabled, falls back to getEnabledProviders().
@@ -199,10 +186,10 @@ export function getWeightedProviders() {
     if (enabled.includes('llama-120b')) {
       return ['llama-120b'];
     }
-    // Fallback: enabled providers with groq-fallback sorted last
+    // Fallback: enabled providers with gemini-3-flash sorted last
     return [...enabled].sort((a, b) => {
-      if (a === 'groq-fallback') return 1;
-      if (b === 'groq-fallback') return -1;
+      if (a === 'gemini-3-flash') return 1;
+      if (b === 'gemini-3-flash') return -1;
       return 0;
     });
   }
@@ -253,19 +240,12 @@ export const MODEL_METADATA = {
     icon: '⚙️',
     logicalTier: 'medium'
   },
-  'groq-fallback': {
-    infrastructure: 'groq',
-    displayName: 'Llama 3.1 8B (Fallback)',
-    description: 'Fallback de alta disponibilidade',
-    icon: '🔄',
-    logicalTier: 'fallback'
-  },
   'gemini-3-flash': {
     infrastructure: 'google',
-    displayName: 'Gemini 3 Flash',
-    description: 'Velocidade máxima com raciocínio leve (Google Preview)',
+    displayName: 'Gemini 3 Flash (Fallback)',
+    description: 'Fallback leve principal — velocidade alta com raciocínio leve (Google)',
     icon: '⚡',
-    logicalTier: 'speed'
+    logicalTier: 'fallback'
   },
   'gemini-3.1-pro': {
     infrastructure: 'google',

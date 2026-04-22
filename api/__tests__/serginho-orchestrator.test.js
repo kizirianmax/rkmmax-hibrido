@@ -5,6 +5,7 @@ import { createMockFetch, createFailingMockFetch } from '../lib/test-helpers/moc
 
 // Mock environment variables
 process.env.GROQ_API_KEY = 'test-groq-key';
+process.env.GEMINI_API_KEY = 'test-gemini-key';
 
 describe('SerginhoOrchestrator', () => {
   let originalFetch;
@@ -72,7 +73,7 @@ describe('SerginhoOrchestrator', () => {
         message: 'Simple message',
         messages: [],
         context: {},
-        options: { forceProvider: 'groq-fallback' }
+        options: { forceProvider: 'gemini-3-flash' }
       });
 
       expect(result.routing.routingReason).toBe('forced');

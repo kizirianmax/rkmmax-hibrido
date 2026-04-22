@@ -144,7 +144,7 @@ describe('IntelligentRouter - Internal Implementation Tests', () => {
       };
 
       // Sem Gemini disponível
-      const result = routeToProvider(analysis, { enabledProviders: ['llama-120b', 'llama-70b', 'groq-fallback'] });
+      const result = routeToProvider(analysis, { enabledProviders: ['llama-120b', 'llama-70b', 'gemini-3-flash'] });
 
       expect(result.provider).toBe('llama-120b');
       expect(result.tier).toBe('complex');
@@ -215,23 +215,23 @@ describe('IntelligentRouter - Internal Implementation Tests', () => {
       expect(next).toBe('gemini-pro');
     });
 
-    test('should return groq-fallback for llama-70b when llama-120b and gemini-pro tried', () => {
+    test('should return gemini-3-flash for llama-70b when llama-120b and gemini-pro tried', () => {
       const next = getNextFallback('llama-70b', ['llama-120b', 'gemini-pro']);
-      expect(next).toBe('groq-fallback');
+      expect(next).toBe('gemini-3-flash');
     });
 
     test('should return null when no fallback available', () => {
-      const next = getNextFallback('groq-fallback', []);
+      const next = getNextFallback('gemini-3-flash', []);
       expect(next).toBeNull();
     });
 
     test('should return null when all providers tried for llama-120b', () => {
-      const next = getNextFallback('llama-120b', ['gemini-pro', 'llama-70b', 'groq-fallback']);
+      const next = getNextFallback('llama-120b', ['gemini-pro', 'llama-70b', 'gemini-3-flash']);
       expect(next).toBeNull();
     });
 
     test('should return null when all providers tried for llama-70b', () => {
-      const next = getNextFallback('llama-70b', ['llama-120b', 'gemini-pro', 'groq-fallback']);
+      const next = getNextFallback('llama-70b', ['llama-120b', 'gemini-pro', 'gemini-3-flash']);
       expect(next).toBeNull();
     });
   });
