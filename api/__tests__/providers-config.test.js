@@ -407,6 +407,9 @@ describe('getWeightedProviders (Phase A5.4)', () => {
 
   test('no providers enabled → returns []', () => {
     delete process.env.GROQ_API_KEY;
+    delete process.env.GOOGLE_API_KEY;
+    delete process.env.GEMINI_API_KEY;
+    delete process.env.GERMINI_API_KEY;
     delete process.env.HYBRID_PROVIDER_WEIGHTS;
     const result = getWeightedProviders();
     expect(result).toEqual([]);
