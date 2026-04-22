@@ -18,9 +18,10 @@ describe('providers-config', () => {
       const providerNames = Object.keys(PROVIDERS);
       expect(providerNames).toContain('llama-120b');
       expect(providerNames).toContain('llama-70b');
-      expect(providerNames).toContain('groq-fallback');
+      expect(providerNames).toContain('gemini-3-flash');
       expect(providerNames).toContain('gemini-pro');
-      // llama-8b removed — groq-fallback is the last-resort Groq provider
+      // groq-fallback removed — gemini-3-flash is the last-resort fallback provider
+      expect(providerNames).not.toContain('groq-fallback');
       expect(providerNames).not.toContain('llama-8b');
     });
 
@@ -34,7 +35,7 @@ describe('providers-config', () => {
     });
 
     test('Groq providers have correct configuration', () => {
-      const groqProviders = ['llama-120b', 'llama-70b', 'groq-fallback'];
+      const groqProviders = ['llama-120b', 'llama-70b'];
       
       groqProviders.forEach(provider => {
         const config = PROVIDERS[provider];
@@ -49,7 +50,7 @@ describe('providers-config', () => {
     test('tiers are correctly assigned', () => {
       expect(PROVIDERS['llama-120b'].tier).toBe('complex');
       expect(PROVIDERS['llama-70b'].tier).toBe('medium');
-      expect(PROVIDERS['groq-fallback'].tier).toBe('fallback');
+      expect(PROVIDERS['gemini-3-flash'].tier).toBe('fallback');
       expect(PROVIDERS['gemini-pro'].tier).toBe('complex');
     });
   });
@@ -99,7 +100,7 @@ describe('providers-config', () => {
 
     test('returns providers for fallback tier', () => {
       const providers = getProvidersByTier('fallback');
-      expect(providers).toContain('groq-fallback');
+      expect(providers).toContain('gemini-3-flash');
     });
 
     test('returns empty array for non-existent tier', () => {
@@ -120,7 +121,7 @@ describe('providers-config', () => {
       const names = getAllProviderNames();
       expect(names).toContain('llama-120b');
       expect(names).toContain('llama-70b');
-      expect(names).toContain('groq-fallback');
+      expect(names).not.toContain('groq-fallback');
       expect(names).toContain('gemini-pro');
       expect(names).toContain('gemini-3-flash');
       expect(names).toContain('gemini-3.1-pro');
@@ -129,7 +130,7 @@ describe('providers-config', () => {
 
     test('returns correct number of providers', () => {
       const names = getAllProviderNames();
-      expect(names.length).toBe(6);
+      expect(names.length).toBe(5);
     });
 
     test('returns only strings', () => {
@@ -151,15 +152,15 @@ describe('providers-config', () => {
       expect(config.model).toBe('llama-3.3-70b-versatile');
     });
 
-    test('Groq fallback uses Llama 3.1 8B', () => {
-      const config = getProviderConfig('groq-fallback');
-      expect(config.model).toBe('llama-3.1-8b-instant');
+    test('gemini-3-flash uses correct model', () => {
+      const config = getProviderConfig('gemini-3-flash');
+      expect(config.model).toBe('gemini-3-flash-preview');
     });
   });
 
   describe('Default parameters', () => {
     test('each Groq provider has temperature', () => {
-      ['llama-120b', 'llama-70b', 'groq-fallback'].forEach(provider => {
+      ['llama-120b', 'llama-70b'].forEach(provider => {
         const config = getProviderConfig(provider);
         expect(config.defaultParams.temperature).toBeDefined();
         expect(typeof config.defaultParams.temperature).toBe('number');
@@ -167,29 +168,22 @@ describe('providers-config', () => {
     });
 
     test('each Groq provider has max_tokens', () => {
-      ['llama-120b', 'llama-70b', 'groq-fallback'].forEach(provider => {
+      ['llama-120b', 'llama-70b'].forEach(provider => {
         const config = getProviderConfig(provider);
         expect(config.defaultParams.max_tokens).toBeDefined();
         expect(typeof config.defaultParams.max_tokens).toBe('number');
       });
     });
 
-    test('complex tier has higher max_tokens than fallback', () => {
-      const complex = getProviderConfig('llama-120b');
-      const fallback = getProviderConfig('groq-fallback');
-      expect(complex.defaultParams.max_tokens).toBeGreaterThan(fallback.defaultParams.max_tokens);
-    });
-
     test('max_tokens are set for maximum potential', () => {
       expect(getProviderConfig('llama-120b').defaultParams.max_tokens).toBe(8192);
       expect(getProviderConfig('llama-70b').defaultParams.max_tokens).toBe(8192);
-      expect(getProviderConfig('groq-fallback').defaultParams.max_tokens).toBe(4096);
     });
   });
 
   describe('Endpoints', () => {
     test('Groq providers use correct endpoint', () => {
-      ['llama-120b', 'llama-70b', 'groq-fallback'].forEach(provider => {
+      ['llama-120b', 'llama-70b'].forEach(provider => {
         const config = getProviderConfig(provider);
         expect(config.endpoint).toBe('https://api.groq.com/openai/v1/chat/completions');
       });
@@ -234,8 +228,8 @@ describe('providers-config', () => {
       expect(PROVIDERS['gemini-3-flash'].model).toBe('gemini-3-flash-preview');
     });
 
-    test('gemini-3-flash has speed tier', () => {
-      expect(PROVIDERS['gemini-3-flash'].tier).toBe('speed');
+    test('gemini-3-flash has fallback tier', () => {
+      expect(PROVIDERS['gemini-3-flash'].tier).toBe('fallback');
     });
 
     test('gemini-3-flash endpoint contains correct model path', () => {
@@ -301,10 +295,10 @@ describe('getEnabledProviders', () => {
     process.env.GROQ_API_KEY = 'test-key';
     delete process.env.GEMINI_API_KEY;
     const enabled = getEnabledProviders();
-    expect(enabled.length).toBe(3); // llama-120b, llama-70b, groq-fallback
+    expect(enabled.length).toBe(2); // llama-120b, llama-70b (groq-fallback removed)
     expect(enabled).toContain('llama-120b');
     expect(enabled).toContain('llama-70b');
-    expect(enabled).toContain('groq-fallback');
+    expect(enabled).not.toContain('groq-fallback');
   });
 
   test('returns empty array when no API keys are set', () => {
@@ -395,9 +389,11 @@ describe('getWeightedProviders (Phase A5.4)', () => {
 
   test('valid weights sort correctly by weight descending', () => {
     process.env.GROQ_API_KEY = 'test-groq-key';
-    process.env.HYBRID_PROVIDER_WEIGHTS = '{"groq-fallback":90,"llama-120b":50,"llama-70b":70}';
+    process.env.GROQ_API_KEY = 'test-groq-key';
+    process.env.GEMINI_API_KEY = 'test-gemini-key';
+    process.env.HYBRID_PROVIDER_WEIGHTS = '{"gemini-3-flash":90,"llama-120b":50,"llama-70b":70}';
     const result = getWeightedProviders();
-    expect(result[0]).toBe('groq-fallback');
+    expect(result[0]).toBe('gemini-3-flash');
     expect(result[1]).toBe('llama-70b');
     expect(result[2]).toBe('llama-120b');
   });

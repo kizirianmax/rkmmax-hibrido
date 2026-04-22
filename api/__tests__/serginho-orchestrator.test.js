@@ -72,7 +72,7 @@ describe('SerginhoOrchestrator', () => {
         message: 'Simple message',
         messages: [],
         context: {},
-        options: { forceProvider: 'groq-fallback' }
+        options: { forceProvider: 'gemini-3-flash' }
       });
 
       expect(result.routing.routingReason).toBe('forced');
