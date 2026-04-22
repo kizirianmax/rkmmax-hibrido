@@ -140,6 +140,37 @@ function _classifyTrivialInput(raw) {
 }
 
 /**
+ * Resposta leve para entradas triviais/conversacionais.
+ * Gerada localmente sem chamar LLM — custo zero de créditos.
+ * Permanece dentro do fluxo hybrid, sem bypass para genius.
+ * @param {string} raw - Mensagem bruta do usuário
+ * @returns {string}
+ */
+function _buildTrivialResponse(raw) {
+  const normalized = _normalize(raw);
+
+  // Saudações
+  if (/^(oi|ola|hey|hi|hello)/.test(normalized)) {
+    return 'Olá! Sou o Construtor do RKMMAX. Me diga o que você quer construir e eu crio para você.';
+  }
+  // Bom dia / Boa tarde / Boa noite
+  if (/^(bom dia|boa tarde|boa noite)/.test(normalized)) {
+    const periodo = /bom dia/.test(normalized) ? 'Bom dia' : /boa tarde/.test(normalized) ? 'Boa tarde' : 'Boa noite';
+    return `${periodo}! Sou o Construtor do RKMMAX. Me diga o que você quer construir e eu crio para você.`;
+  }
+  // Despedidas
+  if (/^(tchau|bye|falou|ate mais|ate logo)/.test(normalized)) {
+    return 'Até mais! Quando precisar construir algo, é só chamar.';
+  }
+  // Agradecimentos
+  if (/^(obrigado|obrigada|valeu|vlw|thanks|thank you)/.test(normalized)) {
+    return 'De nada! Se precisar construir algo, é só pedir.';
+  }
+  // Default genérico
+  return 'Sou o Construtor do RKMMAX. Me diga o que você quer construir — sites, apps, dashboards, formulários e mais.';
+}
+
+/**
  * Mensagem de clarificação para entradas ambíguas.
  * Gerada localmente sem chamar LLM — custo zero de créditos.
  * @param {string} userMsg
@@ -313,58 +344,51 @@ export default async function handler(req, res) {
       console.log("🏗️ KIZI AI - Híbrido/Construtor ativado");
 
       // ── Classificador de intenção (3 níveis) ──────────────────────────────
-      // trivial  → Serginho (resposta leve, sem artefato)
-      // ambiguous → clarificação local (custo zero, sem pipeline pesado)
-      // build    → pipeline normal do Construtor (120B → 70B)
+      // trivial   → resposta local leve do Construtor (custo zero, sem artefato)
+      // ambiguous → clarificação local do Construtor (custo zero, sem pipeline pesado)
+      // build     → pipeline normal do Construtor (120B → 70B)
+      // Tudo permanece dentro do fluxo hybrid, sem bypass para genius.
       // Reversível: remover este bloco restaura o comportamento anterior.
       const _lastMsg = (messages[messages.length - 1]?.content || '').trim();
       const _intent = _classifyHybridIntent(_lastMsg);
       console.log(`🏗️ HYBRID intent: "${_lastMsg.slice(0, 40)}" → ${_intent.intent} (${_intent.reason})`);
 
-      // ── Nível 1: TRIVIAL → Serginho ──
+      // ── Nível 1: TRIVIAL → resposta local leve do Construtor (custo zero) ──
       if (_intent.intent === 'trivial') {
-        const _sergPrompt = buildGeniusPrompt('serginho');
-        const _sergOpt = optimizeRequest(messages, _sergPrompt);
-        const _sergResult = await executeAITask(
-          _sergOpt.messages || messages,
-          _sergOpt.systemPrompt || _sergPrompt,
-          { source: 'hybrid-api', type: 'serginho', intentGuard: 'trivial' },
-          {} // auto-routing do Serginho, sem forceProvider
-        );
+        const _trivialText = _buildTrivialResponse(_lastMsg);
         const _trivialResp = {
-          response: _sergResult.text,
-          model: _sergResult.model,
-          provider: _sergResult.provider,
-          tier: _sergResult.tier,
-          complexity: _sergResult.complexity,
-          routing: _sergResult.routing,
-          execution: { ...(_sergResult.execution || {}), intentGuard: 'trivial' },
+          response: _trivialText,
+          model: 'local-guard',
+          provider: 'hybrid-intent-classifier',
+          tier: 'guard',
+          complexity: 'trivial',
+          routing: 'hybrid-intent-guard',
+          execution: { intentGuard: 'trivial', reason: _intent.reason },
           type: 'hybrid',
-          metadata: { provider: _sergResult.provider, tier: _sergResult.tier, complexity: _sergResult.complexity },
+          metadata: { provider: 'hybrid-intent-classifier', tier: 'guard', complexity: 'trivial' },
           success: true,
-          usage: _sergResult.usage,
+          usage: { prompt_tokens: 0, completion_tokens: 0, total_tokens: 0 },
         };
         cacheResponse(messages, _trivialResp);
         if (usageBill) {
-          const _ot = _sergResult.usage?.completion_tokens || _sergResult.usage?.output_tokens || DEFAULT_OUTPUT_TOKENS;
-          usageBill(_ot).catch(err => console.error('[USAGE] bill error:', err.message));
+          usageBill(0).catch(err => console.error('[USAGE] bill error:', err.message));
         }
-        return res.status(200).json({ ..._trivialResp, cached: false, optimized: true, stats: _sergOpt.stats });
+        return res.status(200).json({ ..._trivialResp, cached: false, optimized: true });
       }
 
-      // ── Nível 2: AMBIGUOUS → clarificação local (custo zero) ──
+      // ── Nível 2: AMBIGUOUS → clarificação local do Construtor (custo zero) ──
       if (_intent.intent === 'ambiguous') {
         const _clarification = _buildClarificationResponse(_lastMsg);
         const _ambigResp = {
           response: _clarification,
           model: 'local-guard',
-          provider: 'intent-classifier',
+          provider: 'hybrid-intent-classifier',
           tier: 'guard',
           complexity: 'trivial',
-          routing: 'intent-guard',
+          routing: 'hybrid-intent-guard',
           execution: { intentGuard: 'ambiguous', reason: _intent.reason },
           type: 'hybrid',
-          metadata: { provider: 'intent-classifier', tier: 'guard', complexity: 'trivial' },
+          metadata: { provider: 'hybrid-intent-classifier', tier: 'guard', complexity: 'trivial' },
           success: true,
           usage: { prompt_tokens: 0, completion_tokens: 0, total_tokens: 0 },
         };

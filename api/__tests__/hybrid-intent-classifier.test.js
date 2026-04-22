@@ -29,9 +29,9 @@ const classifierBlock = aiContent.slice(classifierStart, classifierEnd);
 // Avaliar o bloco isoladamente para obter as funções
 const fn = new Function(
   `${classifierBlock}\n` +
-  `return { _classifyHybridIntent, _classifyTrivialInput, _buildClarificationResponse, _normalize };`
+  `return { _classifyHybridIntent, _classifyTrivialInput, _buildTrivialResponse, _buildClarificationResponse, _normalize };`
 );
-const { _classifyHybridIntent, _classifyTrivialInput, _buildClarificationResponse, _normalize } = fn();
+const { _classifyHybridIntent, _classifyTrivialInput, _buildTrivialResponse, _buildClarificationResponse, _normalize } = fn();
 
 // ── Testes ──
 
@@ -189,6 +189,63 @@ describe('_classifyTrivialInput (alias de compatibilidade)', () => {
 
   test('"landing page" → trivial: false (é ambíguo, não trivial)', () => {
     expect(_classifyTrivialInput('landing page').trivial).toBe(false);
+  });
+});
+
+// ═══════════════════════════════════════════════════════════════════════════
+// _buildTrivialResponse (resposta local leve do Construtor)
+// ═══════════════════════════════════════════════════════════════════════════
+
+describe('_buildTrivialResponse', () => {
+  test('saudação "Oi" → resposta do Construtor (sem bypass para genius)', () => {
+    const resp = _buildTrivialResponse('Oi');
+    expect(resp).toContain('Construtor');
+    expect(resp).toContain('construir');
+    expect(resp).not.toContain('Serginho');
+  });
+
+  test('"Bom dia" → resposta com período correto', () => {
+    expect(_buildTrivialResponse('Bom dia')).toMatch(/^Bom dia/);
+  });
+
+  test('"Boa tarde" → resposta com período correto', () => {
+    expect(_buildTrivialResponse('Boa tarde')).toMatch(/^Boa tarde/);
+  });
+
+  test('"Boa noite" → resposta com período correto', () => {
+    expect(_buildTrivialResponse('Boa noite')).toMatch(/^Boa noite/);
+  });
+
+  test('despedida "Tchau" → resposta de despedida do Construtor', () => {
+    const resp = _buildTrivialResponse('Tchau');
+    expect(resp).toContain('Até mais');
+    expect(resp).toContain('construir');
+  });
+
+  test('agradecimento "Obrigado" → resposta de agradecimento do Construtor', () => {
+    const resp = _buildTrivialResponse('Obrigado');
+    expect(resp).toContain('De nada');
+    expect(resp).toContain('construir');
+  });
+
+  test('entrada genérica "hm" → resposta default do Construtor', () => {
+    const resp = _buildTrivialResponse('hm');
+    expect(resp).toContain('Construtor');
+    expect(resp).toContain('RKMMAX');
+  });
+
+  test('todas as respostas mencionam "construir" (identidade do Construtor)', () => {
+    const inputs = ['Oi', 'Bom dia', 'Tchau', 'Obrigado', 'hm'];
+    for (const input of inputs) {
+      expect(_buildTrivialResponse(input)).toContain('construir');
+    }
+  });
+
+  test('nenhuma resposta menciona "Serginho" (sem bypass entre camadas)', () => {
+    const inputs = ['Oi', 'Bom dia', 'Boa tarde', 'Boa noite', 'Tchau', 'Obrigado', 'teste'];
+    for (const input of inputs) {
+      expect(_buildTrivialResponse(input)).not.toContain('Serginho');
+    }
   });
 });
 
