@@ -28,62 +28,132 @@ const { optimizeRequest, cacheResponse } = costOptimization;
 const DEFAULT_OUTPUT_TOKENS = 800;
 
 // ─────────────────────────────────────────────────────────────────────────────
-// Guard de intenção trivial para o Construtor/Híbrido
-// Detecta entradas claramente conversacionais que NÃO devem gerar artefato.
-// Critério: whitelist explícita de saudações/triviais + ausência de verbo de construção.
-// Na dúvida (ambíguo), retorna { trivial: false } para preservar o fluxo normal.
+// Classificador de intenção do Construtor/Híbrido (3 níveis)
+//
+// Nível 1 — TRIVIAL:  saudações, cortesias, testes → resposta curta, sem artefato
+// Nível 2 — AMBIGUOUS: pedido vago/incompleto sem verbo de construção
+//                       → clarificação curta, sem pipeline pesado
+// Nível 3 — BUILD:     pedido concreto com intenção clara de gerar artefato
+//                       → pipeline normal do Construtor
+//
+// Critério conservador: na dúvida entre ambíguo e build, escolhe BUILD
+// para nunca bloquear pedidos reais. Reversível: remover este bloco
+// restaura o comportamento anterior.
 // ─────────────────────────────────────────────────────────────────────────────
 
 /** Saudações e entradas triviais conhecidas (normalizadas, sem acento, lowercase). */
 const TRIVIAL_EXACT = new Set([
-  'oi', 'ola', 'oi!', 'ola!', 'hey', 'hi', 'hello',
+  'oi', 'ola', 'hey', 'hi', 'hello',
   'bom dia', 'boa tarde', 'boa noite',
-  'bom dia!', 'boa tarde!', 'boa noite!',
   'tudo bem', 'tudo bem?', 'tudo bom', 'tudo bom?',
-  'e ai', 'e ai?', 'e aí', 'e aí?', 'eai', 'eai?',
-  'teste', 'test', 'ok', 'ok!', 'beleza', 'beleza?',
+  'e ai', 'e ai?', 'eai', 'eai?',
+  'teste', 'test', 'ok', 'beleza', 'beleza?',
   'obrigado', 'obrigada', 'valeu', 'vlw', 'thanks', 'thank you',
   'falou', 'tchau', 'bye', 'ate mais', 'ate logo',
-  'sim', 'nao', 'não', 'yes', 'no',
+  'sim', 'nao', 'yes', 'no',
 ]);
 
-/** Verbos de construção (PT-BR e EN) — se presentes, a entrada NÃO é trivial. */
-const BUILD_VERBS = /\b(crie|cria|gere|gera|faça|faz|construa|construir|desenvolva|implemente|escreva|monte|elabore|projete|desenhe|create|generate|build|make|write|implement|design|code|develop)\b/i;
+/** Verbos de construção (PT-BR e EN) — presença indica intenção BUILD. */
+const BUILD_VERBS = /\b(crie|cria|gere|gera|faça|faz|construa|construir|desenvolva|implemente|escreva|monte|elabore|projete|desenhe|refatore|otimize|adicione|remova|corrija|atualize|configure|integre|create|generate|build|make|write|implement|design|code|develop|refactor|optimize|add|remove|fix|update|configure|integrate)\b/i;
+
+/** Substantivos de artefato — presença SEM verbo indica pedido AMBÍGUO. */
+const ARTIFACT_NOUNS = /\b(site|pagina|página|landing|page|app|aplicativo|sistema|dashboard|painel|formulario|formulário|portfolio|portfólio|blog|loja|ecommerce|e-commerce|api|crud|login|cadastro|checkout|layout|componente|tabela|grafico|gráfico|modal|menu|navbar|header|footer|sidebar|card|botao|botão|input|tela|interface|website|webpage|homepage)\b/i;
+
+/** Qualificadores de contexto — indicam que o pedido tem especificidade (favorece BUILD). */
+const CONTEXT_QUALIFIERS = /\b(com|usando|para|que|onde|incluindo|contendo|estilo|tipo|como|responsivo|moderno|minimalista|profissional|completo|simples|bonito|escuro|claro|dark|light|react|html|css|tailwind|bootstrap|next|vue|angular)\b/i;
 
 /**
- * Classifica se uma entrada do usuário é trivial/conversacional.
- * @param {string} raw - Mensagem bruta do usuário
- * @returns {{ trivial: boolean, reason: string }}
+ * Normaliza a entrada removendo acentos, pontuação final e espaços extras.
+ * @param {string} raw
+ * @returns {string}
  */
-function _classifyTrivialInput(raw) {
-  if (!raw || typeof raw !== 'string') {
-    return { trivial: false, reason: 'empty_or_invalid' };
-  }
-
-  const normalized = raw
+function _normalize(raw) {
+  return raw
     .toLowerCase()
-    .normalize('NFD').replace(/[\u0300-\u036f]/g, '') // remove acentos
-    .replace(/[.,;:!?]+$/g, '')                       // remove pontuação final
+    .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+    .replace(/[.,;:!?]+$/g, '')
     .trim();
+}
 
-  // Se contém verbo de construção, NUNCA é trivial (mesmo que curto)
-  if (BUILD_VERBS.test(raw)) {
-    return { trivial: false, reason: 'has_build_verb' };
+/**
+ * Classifica a intenção de uma entrada do usuário no contexto do Construtor.
+ *
+ * @param {string} raw - Mensagem bruta do usuário
+ * @returns {{ intent: 'trivial'|'ambiguous'|'build', reason: string }}
+ */
+function _classifyHybridIntent(raw) {
+  if (!raw || typeof raw !== 'string') {
+    return { intent: 'build', reason: 'empty_or_invalid_fallback_to_build' };
   }
 
-  // Match exato na whitelist (com e sem pontuação)
+  const normalized = _normalize(raw);
+  const hasBuildVerb = BUILD_VERBS.test(raw);
+  const hasArtifactNoun = ARTIFACT_NOUNS.test(raw);
+  const hasQualifier = CONTEXT_QUALIFIERS.test(raw);
+
+  // ── Nível 3: BUILD — verbo de construção presente → sempre Construtor ──
+  if (hasBuildVerb) {
+    return { intent: 'build', reason: 'has_build_verb' };
+  }
+
+  // ── Nível 1: TRIVIAL — match exato na whitelist ──
   if (TRIVIAL_EXACT.has(normalized)) {
-    return { trivial: true, reason: 'exact_match' };
+    return { intent: 'trivial', reason: 'exact_match' };
   }
 
   // Saudação + nome (ex: "oi serginho", "boa tarde kizi")
-  const greetingPrefix = /^(oi|ola|hey|hi|hello|bom dia|boa tarde|boa noite|e ai|eai)\s+\w{1,20}[!?]?$/i;
-  if (greetingPrefix.test(normalized)) {
-    return { trivial: true, reason: 'greeting_with_name' };
+  const greetingWithName = /^(oi|ola|hey|hi|hello|bom dia|boa tarde|boa noite|e ai|eai)\s+\w{1,20}[!?]?$/i;
+  if (greetingWithName.test(normalized)) {
+    return { intent: 'trivial', reason: 'greeting_with_name' };
   }
 
-  // Na dúvida, preservar fluxo normal do Construtor
-  return { trivial: false, reason: 'not_trivial' };
+  // ── Nível 2: AMBIGUOUS — substantivo de artefato SEM verbo e SEM qualificador ──
+  // Ex: "landing page", "app de agenda", "sistema para clínica"
+  if (hasArtifactNoun && !hasQualifier) {
+    return { intent: 'ambiguous', reason: 'artifact_noun_without_context' };
+  }
+
+  // Substantivo de artefato COM qualificador mas SEM verbo → ainda ambíguo,
+  // porém com mais contexto. Na dúvida, pedir clarificação.
+  // Ex: "landing page moderna", "dashboard com gráficos"
+  if (hasArtifactNoun && hasQualifier) {
+    // Se a mensagem é longa (>80 chars) e tem qualificador, provavelmente é build
+    if (raw.length > 80) {
+      return { intent: 'build', reason: 'artifact_with_qualifier_long_input' };
+    }
+    return { intent: 'ambiguous', reason: 'artifact_noun_with_qualifier_short' };
+  }
+
+  // Mensagem muito curta (<15 chars) sem verbo e sem substantivo → trivial
+  if (normalized.length < 15 && !hasArtifactNoun && !hasBuildVerb) {
+    return { intent: 'trivial', reason: 'very_short_no_intent' };
+  }
+
+  // ── Default: BUILD — na dúvida, preservar fluxo normal do Construtor ──
+  return { intent: 'build', reason: 'default_build' };
+}
+
+// Alias de compatibilidade com o guard anterior
+function _classifyTrivialInput(raw) {
+  const result = _classifyHybridIntent(raw);
+  return { trivial: result.intent === 'trivial', reason: result.reason };
+}
+
+/**
+ * Mensagem de clarificação para entradas ambíguas.
+ * Gerada localmente sem chamar LLM — custo zero de créditos.
+ * @param {string} userMsg
+ * @returns {string}
+ */
+function _buildClarificationResponse(userMsg) {
+  return (
+    `Entendi que você quer algo relacionado a "${userMsg.slice(0, 60).trim()}". ` +
+    'Para eu construir exatamente o que você precisa, me diga com mais detalhes:\n\n' +
+    '- **O que** deve ser criado? (ex: landing page, dashboard, formulário)\n' +
+    '- **Para quem** é? (ex: clínica, loja, portfólio pessoal)\n' +
+    '- **Alguma preferência** de estilo ou funcionalidade?\n\n' +
+    'Quanto mais detalhes, melhor o resultado!'
+  );
 }
 
 /**
@@ -242,22 +312,23 @@ export default async function handler(req, res) {
     if (type === "hybrid" || (type === "genius" && agentType === "hybrid")) {
       console.log("🏗️ KIZI AI - Híbrido/Construtor ativado");
 
-      // ── Guard de intenção trivial ──────────────────────────────────────
-      // Entradas claramente conversacionais/triviais não devem acionar o
-      // pipeline pesado de geração de artefatos (120B → 70B, maxTokens 4096).
-      // Em vez disso, são redirecionadas ao Serginho (genius) para resposta
-      // leve e natural. Pedidos reais de construção passam intactos.
+      // ── Classificador de intenção (3 níveis) ──────────────────────────────
+      // trivial  → Serginho (resposta leve, sem artefato)
+      // ambiguous → clarificação local (custo zero, sem pipeline pesado)
+      // build    → pipeline normal do Construtor (120B → 70B)
       // Reversível: remover este bloco restaura o comportamento anterior.
       const _lastMsg = (messages[messages.length - 1]?.content || '').trim();
-      const _isTrivial = _classifyTrivialInput(_lastMsg);
-      if (_isTrivial.trivial) {
-        console.log(`🏗️ HYBRID guard: entrada trivial detectada ("${_lastMsg.slice(0, 30)}") → redirecionando ao Serginho`);
+      const _intent = _classifyHybridIntent(_lastMsg);
+      console.log(`🏗️ HYBRID intent: "${_lastMsg.slice(0, 40)}" → ${_intent.intent} (${_intent.reason})`);
+
+      // ── Nível 1: TRIVIAL → Serginho ──
+      if (_intent.intent === 'trivial') {
         const _sergPrompt = buildGeniusPrompt('serginho');
         const _sergOpt = optimizeRequest(messages, _sergPrompt);
         const _sergResult = await executeAITask(
           _sergOpt.messages || messages,
           _sergOpt.systemPrompt || _sergPrompt,
-          { source: 'hybrid-api', type: 'serginho', trivialGuard: true },
+          { source: 'hybrid-api', type: 'serginho', intentGuard: 'trivial' },
           {} // auto-routing do Serginho, sem forceProvider
         );
         const _trivialResp = {
@@ -267,13 +338,9 @@ export default async function handler(req, res) {
           tier: _sergResult.tier,
           complexity: _sergResult.complexity,
           routing: _sergResult.routing,
-          execution: { ...(_sergResult.execution || {}), trivialGuard: true },
+          execution: { ...(_sergResult.execution || {}), intentGuard: 'trivial' },
           type: 'hybrid',
-          metadata: {
-            provider: _sergResult.provider,
-            tier: _sergResult.tier,
-            complexity: _sergResult.complexity,
-          },
+          metadata: { provider: _sergResult.provider, tier: _sergResult.tier, complexity: _sergResult.complexity },
           success: true,
           usage: _sergResult.usage,
         };
@@ -284,7 +351,31 @@ export default async function handler(req, res) {
         }
         return res.status(200).json({ ..._trivialResp, cached: false, optimized: true, stats: _sergOpt.stats });
       }
-      // ── Fim do guard de intenção trivial ────────────────────────────────
+
+      // ── Nível 2: AMBIGUOUS → clarificação local (custo zero) ──
+      if (_intent.intent === 'ambiguous') {
+        const _clarification = _buildClarificationResponse(_lastMsg);
+        const _ambigResp = {
+          response: _clarification,
+          model: 'local-guard',
+          provider: 'intent-classifier',
+          tier: 'guard',
+          complexity: 'trivial',
+          routing: 'intent-guard',
+          execution: { intentGuard: 'ambiguous', reason: _intent.reason },
+          type: 'hybrid',
+          metadata: { provider: 'intent-classifier', tier: 'guard', complexity: 'trivial' },
+          success: true,
+          usage: { prompt_tokens: 0, completion_tokens: 0, total_tokens: 0 },
+        };
+        // Não cachear clarificações — o usuário vai reformular
+        if (usageBill) {
+          usageBill(0).catch(err => console.error('[USAGE] bill error:', err.message));
+        }
+        return res.status(200).json({ ..._ambigResp, cached: false, optimized: true });
+      }
+      // ── Nível 3: BUILD → segue para o pipeline normal abaixo ──
+      // ── Fim do classificador de intenção ─────────────────────────────────
 
       const systemPrompt = buildGeniusPrompt("hybrid");
       const optimized = optimizeRequest(messages, systemPrompt);
