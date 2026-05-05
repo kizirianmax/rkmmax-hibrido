@@ -31,7 +31,7 @@ export default function Header() {
           🤖 Híbrido
         </NavLink>
         <NavLink to="/specialists">Especialistas</NavLink>
-        <NavLink to="/projects">Projetos</NavLink>
+        <NavLink to="/projects">Startup</NavLink>
         <NavLink to="/study">Study Lab</NavLink>
         {isOwner && (
           <NavLink to="/dashboard" title="Painel do administrador">
