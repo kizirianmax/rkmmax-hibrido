@@ -1,5 +1,10 @@
 # ✅ Checklist Projeto RKMMax (Atualizado — 08/04/2026)
 
+## 2026-05-05 — chore(deploy): validação de deploy automático Vercel para /startup
+
+- Adicionado comentário interno em `src/pages/Projects.css` para disparar novo build automático da Vercel (ref PR #414).
+- Verifica que a Vercel usa o commit mais recente (não o antigo `2d11ef8`) após a configuração de build ser revertida para **Automatic**.
+
 ## 2026-05-05 — chore(deploy): registrar PR #414 e disparar novo deploy da página Startup
 
 ### O que foi feito

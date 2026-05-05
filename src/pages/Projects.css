@@ -1,4 +1,5 @@
 /* src/pages/Projects.css */
+/* startup: trigger redeploy after Vercel auto-build re-enabled (ref PR #414) */
 
 .startup-page {
   max-width: 860px;
