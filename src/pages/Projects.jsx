@@ -148,8 +148,8 @@ export default function Projects() {
         <h2>{c.verify}</h2>
         <table className="startup-verify-table">
           <tbody>
-            {c.verifyRows.map(([label, value]) => (
-              <tr key={label}>
+            {c.verifyRows.map(([label, value], index) => (
+              <tr key={index}>
                 <td>{label}</td>
                 <td>{value}</td>
               </tr>
@@ -188,8 +188,8 @@ export default function Projects() {
       <section className="startup-section">
         <h2>{c.arch}</h2>
         <ul className="startup-arch-list">
-          {c.archItems.map((item) => (
-            <li key={item.badge} className="startup-arch-item">
+          {c.archItems.map((item, index) => (
+            <li key={index} className="startup-arch-item">
               <span className="startup-arch-badge">{item.badge}</span>
               <span className="startup-arch-text">{item.text}</span>
             </li>
@@ -213,8 +213,8 @@ export default function Projects() {
       <section className="startup-section">
         <h2>{c.validation}</h2>
         <div className="startup-validation-grid">
-          {c.validationCards.map((card) => (
-            <div key={card.title} className="startup-validation-card">
+          {c.validationCards.map((card, index) => (
+            <div key={index} className="startup-validation-card">
               <div className="startup-validation-card-title">{card.title}</div>
               <div className="startup-validation-card-status">{card.status}</div>
             </div>
