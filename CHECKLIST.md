@@ -1,5 +1,42 @@
 # ✅ Checklist Projeto RKMMax (Atualizado — 08/04/2026)
 
+## 2026-05-05 — chore(deploy): registrar PR #414 e disparar novo deploy da página Startup
+
+### O que foi feito
+- Registrado neste CHECKLIST que o PR #414 foi mergeado na `main`.
+- Registrado que a página institucional **Startup** (`/startup`, bilíngue PT/EN) foi criada e precisa entrar em produção.
+- Realizado um commit mínimo e estritamente documental no `CHECKLIST.md` para disparar um novo deploy da `main` na Vercel.
+
+### Por quê
+- Após o merge do PR #414, a Vercel continuou publicando o commit antigo `2d11ef8`, e a rota `/startup` ainda não está disponível em produção.
+- As configurações de Build Machine já foram ajustadas para **Standard**.
+- Este commit serve como **gatilho de deploy** — um push novo na `main` força a Vercel a iniciar um novo build a partir do commit mais recente.
+
+### Escopo
+- Alteração **estritamente documental**: apenas esta entrada no `CHECKLIST.md`.
+- Nenhum arquivo de código de aplicação foi tocado.
+- Serginho, Híbrido/Construtor, Especialistas, ABNT, API, auth, Supabase, Stripe, billing e providers permanecem **inalterados**.
+
+### Arquivos alterados
+
+| Arquivo | Mudança |
+|---|---|
+| `CHECKLIST.md` | Esta entrada (gatilho de deploy + registro do PR #414 e da página Startup) |
+
+### Critério de sucesso
+1. Novo commit aparece na `main` ✅
+2. Vercel detecta o push e dispara um novo deploy de produção a partir do commit mais recente da `main` — A VALIDAR
+3. Após o deploy, a rota `/startup` abre a página institucional bilíngue em produção — A VALIDAR
+4. Nenhum arquivo de código foi tocado — escopo estritamente documental ✅
+
+### Rollback
+```bash
+git revert <commit-sha>
+# Remove apenas esta entrada do CHECKLIST.md; nenhum efeito em código.
+```
+
+---
+
 ## 2026-04-16 — feat(construtor): expor Gemini 2.5 Pro no Construtor (com limpeza de redundância documental do PR #399)
 
 ### O que foi feito
