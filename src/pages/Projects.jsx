@@ -157,7 +157,7 @@ export default function Projects() {
         <h2>Business Model / Usage Model</h2>
         <p className="startup-body">
           Users will use Serginho IA to create, validate, preview, and export artifacts. User
-          projects are not intended to be hosted permanently on the founder&apos;s Vercel, GitHub,
+          projects are not intended to be hosted permanently on the founder's Vercel, GitHub,
           domain, or private infrastructure. The goal is to provide a controlled creation and
           validation environment, then allow users to export and own their outputs.
         </p>
