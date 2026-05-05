@@ -1,5 +1,18 @@
 # ✅ Checklist Projeto RKMMax (Atualizado — 08/04/2026)
 
+## 2026-05-05 — fix(startup): SciBiz 2026 atualizado de "em avaliação" para "selecionado para Feira de Startups"
+
+| Item | Detalhe |
+|------|---------|
+| **O quê** | Status da validação externa SciBiz / USP atualizado de "em avaliação / candidatura em andamento" para "selecionado para a Feira de Startups do SciBiz 2026 no CDI USP, Campus Butantã, São Paulo". Corrigidas também três ocorrências da frase PT-BR "desenvolvimento e validação ativos" → "desenvolvimento ativo e validação". |
+| **Por quê** | SciBiz 2026 enviou e-mail (assunto "Aprovação Feira de Startups - Scibiz") confirmando que a equipe RKMMAX INFINITY MATRIX STUDY foi selecionada para participar da FEIRA DE STARTUPS do SciBiz 2026 no CDI USP, Campus Butantã, São Paulo. A página pública deve refletir esse estado correto. |
+| **Arquivos** | `src/pages/Projects.jsx` (EN + PT-BR), `CHECKLIST.md` |
+| **Escopo** | Alteração limitada à página institucional pública (`/startup`, `/projects`). Nenhuma camada interna (Serginho, Híbrido, Especialistas, ABNT, API, auth, Supabase, Stripe) foi alterada. |
+| **Validação** | 1) Acessar `/startup` → seção "External Validation / Validações Externas" deve mostrar SciBiz/USP com ✅ e texto de seleção. 2) Alternar para Português → mesmo conteúdo em PT-BR. 3) Build e testes passam sem erros. |
+| **Rollback** | `git revert <commit-sha>` — restaura status anterior de SciBiz/USP e frases em PT-BR. |
+
+---
+
 ## 2026-05-05 — chore(deploy): validação de deploy automático Vercel para /startup
 
 - Adicionado comentário interno em `src/pages/Projects.css` para disparar novo build automático da Vercel (ref PR #414).

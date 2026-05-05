@@ -38,7 +38,7 @@ const CONTENT = {
         { title: "Ginga Prototipa / Startup SC / Sebrae Startups", status: "✅ Approved / Selected" },
         { title: "Start Digital 2026 — Sebrae SP + ABStartups", status: "✅ Approved" },
         { title: "Founders Club", status: "✅ Application approved by their team" },
-        { title: "SciBiz / USP", status: "🔄 Application / evaluation in progress" },
+        { title: "SciBiz / USP", status: "✅ Selected to participate in the SciBiz 2026 Startup Fair at CDI USP, Campus Butantã, São Paulo" },
         {
           title: "Sebrae Startups Benefits",
           status:
@@ -59,13 +59,13 @@ const CONTENT = {
   },
   pt: {
     heroSubtitle:
-      "Startup de IA em desenvolvimento e validação ativos, focada em criar, validar, revisar, visualizar e exportar artefatos digitais com governança, controle de custos e propriedade do usuário.",
+      "Startup de IA em desenvolvimento ativo e validação, focada em criar, validar, revisar, visualizar e exportar artefatos digitais com governança, controle de custos e propriedade do usuário.",
     sections: {
       verify: "Verificação Institucional",
       verifyRows: [
         ["Startup / Projeto", "RKMMAX INFINITY MATRIX STUDY / Serginho IA"],
         ["Fundador", "Roberto Kizirian Max"],
-        ["Status", "Startup em estágio inicial / protótipo funcional em desenvolvimento e validação ativos"],
+        ["Status", "Startup em estágio inicial / protótipo funcional em desenvolvimento ativo e validação"],
         [
           "Contexto de desenvolvimento",
           "Construído 100% pelo celular com auxílio de IA, GitHub, Vercel, checklists operacionais, revisão manual e governança estruturada",
@@ -83,7 +83,7 @@ const CONTENT = {
       ],
       stage: "Estágio Atual",
       stageText:
-        "O produto ainda não é uma plataforma comercialmente finalizada. É um protótipo funcional em desenvolvimento e validação ativos, sendo preparado para os primeiros usuários reais e programas externos de startups.",
+        "O produto ainda não é uma plataforma comercialmente finalizada. É um protótipo funcional em desenvolvimento ativo e validação, sendo preparado para os primeiros usuários reais e programas externos de startups.",
       security: "Segurança e Acesso",
       securityText:
         "A aplicação principal pode estar protegida por login por razões de segurança. Esta página pública existe especificamente para ajudar parceiros a verificar a empresa, o fundador, o produto, o domínio e o contexto de validação da startup, sem expor sistemas privados, usuários, tokens, código ou infraestrutura sensível.",
@@ -92,7 +92,7 @@ const CONTENT = {
         { title: "Ginga Prototipa / Startup SC / Sebrae Startups", status: "✅ Aprovado / Selecionado" },
         { title: "Start Digital 2026 — Sebrae SP + ABStartups", status: "✅ Aprovado" },
         { title: "Founders Club", status: "✅ Candidatura aprovada pelo time deles" },
-        { title: "SciBiz / USP", status: "🔄 Candidatura / avaliação em andamento" },
+        { title: "SciBiz / USP", status: "✅ Selecionado para participar da Feira de Startups do SciBiz 2026 no CDI USP, Campus Butantã, São Paulo" },
         {
           title: "Benefícios Sebrae Startups",
           status:
