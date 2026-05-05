@@ -9,6 +9,37 @@
   line-height: 1.7;
 }
 
+/* Language selector */
+.startup-lang-bar {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+  margin-bottom: 20px;
+}
+
+.startup-lang-btn {
+  background: #f1f5f9;
+  border: 1px solid #e2e8f0;
+  border-radius: 20px;
+  padding: 5px 16px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: #475569;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s, border-color 0.15s;
+}
+
+.startup-lang-btn:hover {
+  background: #e2e8f0;
+}
+
+.startup-lang-btn.active {
+  background: #0f172a;
+  color: #38bdf8;
+  border-color: #0f172a;
+  font-weight: 700;
+}
+
 /* Hero */
 .startup-hero {
   text-align: center;
