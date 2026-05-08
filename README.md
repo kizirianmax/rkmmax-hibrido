@@ -38,6 +38,7 @@ graph TD
     Specialists --> Gemini
     Hibrido --> Groq
     Hibrido --> Gemini
+    Hibrido --> ArtifactPipeline[Artifact Pipeline<br/>/api/artifact · /api/artifact-preview]
 
     API --> Supabase[(Supabase<br/>PostgreSQL)]
     API --> Stripe[Stripe<br/>Payments]
@@ -52,6 +53,36 @@ graph TD
 - **Observability** — Sentry (errors) + PostHog (analytics) + `/api/health` endpoint
 
 For a detailed architectural breakdown, see [docs/architecture.md](docs/architecture.md).
+
+---
+
+## Construtor/Híbrido — Artifact Pipeline
+
+The Híbrido / Construtor layer is **not a chatbot**. It is a generation, validation, preview, and export pipeline that produces structured artefacts from AI-generated content.
+
+### Pipeline
+
+```
+gerar → empacotar → validar → executar/preview → revisar → aprovar → exportar
+```
+
+| Step | Endpoint | Description |
+|------|----------|-------------|
+| **Gerar** | `POST /api/ai` (`agentType: "hybrid"`) | Serginho routes the request to the Construtor, which generates the content under sovereign orchestration |
+| **Empacotar** | `POST /api/artifact` | Wraps the generated content in a ZIP with a UUID, manifest, and logs |
+| **Validar** | `POST /api/artifact-preview` | Runs structural validation on the packaged artefact (Fase 2B) |
+| **Executar/Preview** | `POST /api/artifact-preview` | Optionally executes the artefact (if JS) and produces a preview report with `summary`, `decision`, and `feedback` (Fase 2C–2D) |
+| **Revisar** | *(client)* | The preview result is displayed to the user with a suggested decision |
+| **Aprovar** | `PATCH /api/artifact-preview` | Applies `decision: "approved" | "rejected"` and consolidates the review cycle |
+| **Exportar** | `PATCH /api/artifact-preview` | When `decision: "approved"` and `content` is supplied, the endpoint returns a `zipBase64` ready for download |
+
+### Por que não é apenas um chat
+
+- The Construtor/Híbrido is an **artefact generation and validation layer**, not a chatbot — it produces a structured deliverable with every request.
+- It outputs **packaged artefacts** (ZIP with UUID, manifest, content, and execution logs) that can be exported and audited.
+- There is a **review and approval cycle** (`approved | rejected`) with a `decisionTimestamp` field recorded in the preview object for traceability.
+- Generated content passes through **structural validation** before it is delivered to the user.
+- The entire layer operates **under Serginho's sovereign orchestration** — no call to `/api/artifact` or `/api/artifact-preview` bypasses the orchestrator.
 
 ---
 
@@ -163,6 +194,9 @@ All endpoints are Vercel serverless functions under `/api/`.
 | `/api/github-oauth` | GET | GitHub OAuth callback |
 | `/api/github` | GET/POST | GitHub API integration |
 | `/api/admin` | POST | Admin operations |
+| `/api/artifact` | POST | Packages generated content into a ZIP (base64) with manifest and UUID — called after `/api/ai` |
+| `/api/artifact-preview` | POST | Full preview pipeline: package → validate → execute → return summary with suggested decision |
+| `/api/artifact-preview` | PATCH | Apply review decision (`approved` | `rejected`); if approved and `content` is supplied, returns `zipBase64` for export |
 
 See [docs/api.md](docs/api.md) for complete request/response documentation.
 
