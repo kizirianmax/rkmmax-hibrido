@@ -1,0 +1,230 @@
+.demo-page {
+  min-height: calc(100vh - 80px);
+  padding: 24px 16px 56px;
+  background: radial-gradient(circle at top, #16213b 0%, #0b1220 46%, #070d18 100%);
+  color: #e2e8f0;
+}
+
+.demo-page__hero {
+  max-width: 980px;
+  margin: 0 auto 24px;
+  padding: 24px 20px;
+  border: 1px solid #1f2a44;
+  border-radius: 16px;
+  background: rgba(15, 23, 42, 0.88);
+}
+
+.demo-page__title {
+  margin: 0 0 10px;
+  font-size: clamp(1.7rem, 5vw, 2.4rem);
+  font-weight: 800;
+  line-height: 1.2;
+  color: #f8fafc;
+}
+
+.demo-page__subtitle {
+  margin: 0;
+  color: #cbd5e1;
+  line-height: 1.55;
+}
+
+.demo-page__notice {
+  display: inline-block;
+  margin: 14px 0 0;
+  padding: 6px 10px;
+  border: 1px solid #2a3d60;
+  border-radius: 999px;
+  background: rgba(14, 165, 233, 0.12);
+  color: #bae6fd;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.demo-page__cta {
+  display: inline-flex;
+  margin-top: 16px;
+  padding: 10px 16px;
+  border: 1px solid #38bdf8;
+  border-radius: 10px;
+  text-decoration: none;
+  font-weight: 700;
+  color: #082f49;
+  background: #38bdf8;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.demo-page__cta:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 8px 22px rgba(56, 189, 248, 0.35);
+}
+
+.demo-page__section {
+  max-width: 980px;
+  margin: 0 auto;
+}
+
+.demo-page__grid {
+  display: grid;
+  gap: 14px;
+}
+
+.demo-card {
+  border: 1px solid #1f2a44;
+  border-radius: 14px;
+  padding: 16px;
+  background: rgba(15, 23, 42, 0.74);
+  transition: border-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.demo-card:hover {
+  border-color: #2d4368;
+  transform: translateY(-2px);
+  box-shadow: 0 10px 24px rgba(2, 6, 23, 0.45);
+}
+
+.demo-card__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.demo-card__type {
+  display: inline-flex;
+  padding: 4px 9px;
+  border-radius: 999px;
+  font-size: 0.74rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.demo-card__type--landing {
+  background: #1f3a8a;
+  color: #bfdbfe;
+}
+
+.demo-card__type--dashboard {
+  background: #134e4a;
+  color: #99f6e4;
+}
+
+.demo-card__type--form {
+  background: #5b21b6;
+  color: #ddd6fe;
+}
+
+.demo-card__type--commerce {
+  background: #7c2d12;
+  color: #fed7aa;
+}
+
+.demo-card__type--institutional {
+  background: #312e81;
+  color: #c7d2fe;
+}
+
+.demo-card__status {
+  display: inline-flex;
+  padding: 4px 9px;
+  border-radius: 999px;
+  border: 1px solid #166534;
+  background: rgba(22, 163, 74, 0.18);
+  color: #86efac;
+  font-size: 0.74rem;
+  font-weight: 700;
+}
+
+.demo-card__title {
+  margin: 0;
+  color: #f8fafc;
+  font-size: 1.1rem;
+}
+
+.demo-card__description {
+  margin: 8px 0 0;
+  color: #cbd5e1;
+  line-height: 1.5;
+  min-height: 2.8em;
+}
+
+.demo-card__footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-top: 16px;
+}
+
+.demo-card__hint {
+  color: #94a3b8;
+  font-size: 0.8rem;
+}
+
+.demo-card__action {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 92px;
+  padding: 8px 12px;
+  border-radius: 9px;
+  border: 1px solid #2b3959;
+  text-decoration: none;
+  font-weight: 600;
+  color: #dbeafe;
+  background: #142237;
+}
+
+.demo-card__action:hover {
+  border-color: #38bdf8;
+  color: #bae6fd;
+}
+
+.demo-page__footer {
+  max-width: 980px;
+  margin: 30px auto 0;
+  padding: 16px;
+  border: 1px solid #1f2a44;
+  border-radius: 12px;
+  background: rgba(15, 23, 42, 0.84);
+  color: #cbd5e1;
+}
+
+.demo-page__footer p {
+  margin: 0;
+}
+
+.demo-page__footer a {
+  display: inline-flex;
+  margin-top: 10px;
+  color: #38bdf8;
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.demo-page__footer a:hover {
+  text-decoration: underline;
+}
+
+@media (min-width: 720px) {
+  .demo-page {
+    padding: 36px 22px 64px;
+  }
+
+  .demo-page__hero {
+    margin-bottom: 30px;
+    padding: 30px 28px;
+  }
+
+  .demo-page__grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .demo-page__grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
