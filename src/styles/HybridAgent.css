@@ -7,10 +7,15 @@
 .hybrid-container {
   display: flex;
   flex-direction: column;
-  /* fix(mobile): viewport fixo — sem pulo ao abrir teclado */
-  /* inset:0 já define top/right/bottom/left=0, height explícita causaria relayout com dvh */
+  /* fix(mobile): usar viewport dinâmica para evitar área vazia com teclado Android */
   position: fixed;
-  inset: 0;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 100vh;
+  height: 100dvh;
+  max-height: 100vh;
+  max-height: 100dvh;
   width: 100%;
   max-width: 100%;
   box-sizing: border-box;

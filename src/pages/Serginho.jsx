@@ -61,6 +61,12 @@ export default function Serginho() {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   };
 
+  const handleInputFocus = () => {
+    requestAnimationFrame(() => {
+      messagesEndRef.current?.scrollIntoView({ block: "nearest" });
+    });
+  };
+
   useEffect(() => {
     const prevBody = document.body.style.overflow;
     const prevHtml = document.documentElement.style.overflow;
@@ -585,6 +591,7 @@ export default function Serginho() {
             value={input}
             onChange={(e) => setInput(e.target.value)}
             onKeyPress={(e) => e.key === "Enter" && handleSend()}
+            onFocus={handleInputFocus}
             placeholder="Digite sua mensagem..."
             disabled={isLoading}
             className="message-input"
