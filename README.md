@@ -84,6 +84,20 @@ gerar → empacotar → validar → executar/preview → revisar → aprovar →
 - Generated content passes through **structural validation** before it is delivered to the user.
 - The entire layer operates **under Serginho's sovereign orchestration** — no call to `/api/artifact` or `/api/artifact-preview` bypasses the orchestrator.
 
+### Arquivos-fonte
+
+| Arquivo | Responsabilidade |
+|---------|-----------------|
+| [`api/artifact.js`](api/artifact.js) | Endpoint `POST /api/artifact` — empacota conteúdo gerado em ZIP com UUID, manifest e logs |
+| [`api/artifact-preview.js`](api/artifact-preview.js) | Endpoint `POST /api/artifact-preview` (validar/executar/preview) e `PATCH` (aprovar/rejeitar/exportar) |
+| [`src/lib/construtor/artifactPackager.js`](src/lib/construtor/artifactPackager.js) | Empacotamento — gera ZIP base64 com manifest e UUID |
+| [`src/lib/construtor/artifactNormalizer.js`](src/lib/construtor/artifactNormalizer.js) | Normalização — extrai e limpa o conteúdo visível do artefato |
+| [`src/lib/construtor/artifactValidator.js`](src/lib/construtor/artifactValidator.js) | Validação estrutural do artefato antes da entrega |
+| [`src/lib/construtor/artifactRunner.js`](src/lib/construtor/artifactRunner.js) | Execução controlada de artefatos JS no ciclo de preview |
+| [`src/lib/construtor/artifactPreview.js`](src/lib/construtor/artifactPreview.js) | Orquestração do ciclo completo de preview (validar → executar → sumarizar) |
+| [`src/pages/HybridAgentSimple.jsx`](src/pages/HybridAgentSimple.jsx) | Interface React do Construtor — gerencia ciclo de geração, revisão e exportação |
+| [`src/components/construtor/ArtifactPreviewPanel.jsx`](src/components/construtor/ArtifactPreviewPanel.jsx) | Painel de revisão — exibe preview, decisão (aprovar/rejeitar) e download do ZIP |
+
 ---
 
 ## Specialist Agents
