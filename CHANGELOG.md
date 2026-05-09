@@ -7,6 +7,9 @@ e este projeto adere ao [Semantic Versioning](https://semver.org/lang/pt-BR/).
 
 ## [Unreleased] — v3.1.0-kizi
 
+### 🐛 Corrigido
+- **Mobile keyboard Android (/serginho e /hybrid):** containers principais de chat migrados de `inset: 0` para `top/left/right + height: 100vh; height: 100dvh` (com `max-height` equivalente), evitando sobra de área vazia quando o teclado virtual abre; inputs também passam a acionar `scrollIntoView({ block: "nearest" })` no foco para manter o campo visível sem jump.
+
 ### 📋 Governança — Absorção Funcional do Rkmmax-app
 
 **Fase funcional de absorção concluída em 2026-03-15.**
@@ -186,4 +189,3 @@ Esta é a primeira versão estável do RKMMax, resultado de uma auditoria comple
 - **Removido** para funcionalidades removidas
 - **Corrigido** para correções de bugs
 - **Segurança** para vulnerabilidades corrigidas
-

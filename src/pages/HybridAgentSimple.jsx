@@ -283,6 +283,12 @@ export default function HybridAgentSimple() {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   };
 
+  const handleInputFocus = () => {
+    requestAnimationFrame(() => {
+      messagesEndRef.current?.scrollIntoView({ block: "nearest" });
+    });
+  };
+
   useEffect(() => {
     scrollToBottom();
   }, [messages]);
@@ -930,6 +936,7 @@ export default function HybridAgentSimple() {
           value={input}
           onChange={(e) => setInput(e.target.value)}
           onKeyPress={handleKeyPress}
+          onFocus={handleInputFocus}
           placeholder="Descreva a tarefa que deseja executar..."
           disabled={loading}
           rows="3"

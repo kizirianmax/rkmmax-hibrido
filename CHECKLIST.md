@@ -1,5 +1,17 @@
 # ✅ Checklist Projeto RKMMax (Atualizado — 08/04/2026)
 
+## 2026-05-09 — fix(mobile): teclado virtual Android sem área vazia em /serginho e /hybrid
+
+| Item | Detalhe |
+|------|---------|
+| **O quê** | Ajuste cirúrgico de layout mobile nas telas de chat do Serginho e Construtor/Híbrido para evitar quebra ao abrir teclado virtual no Android |
+| **Causa provável** | Containers full-screen estavam em `position: fixed` com `inset: 0`, mantendo viewport "grande" no Android quando o teclado abre |
+| **Arquivos** | `src/pages/Serginho.css`, `src/styles/HybridAgent.css`, `src/pages/Serginho.jsx`, `src/pages/HybridAgentSimple.jsx`, `CHECKLIST.md`, `CHANGELOG.md` |
+| **Validação** | 1) `npm run build` sem erros. 2) `npm test -- --runInBand` com 57 suítes / 2368 testes passando. 3) Viewport mobile (Pixel 7) com screenshots em `/tmp/serginho-mobile.png` e `/tmp/hybrid-mobile.png` |
+| **Rollback** | `git revert <commit-sha>` — restaura o comportamento anterior de viewport/layout mobile |
+
+---
+
 ## 2026-05-09 — docs(readme): referenciar arquivos-fonte do Construtor/Híbrido — P1 Sebrae Startups 2026
 
 | Item | Detalhe |

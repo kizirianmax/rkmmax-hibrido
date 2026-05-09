@@ -4,7 +4,13 @@
   display: flex;
   flex-direction: column;
   position: fixed;
-  inset: 0;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 100vh;
+  height: 100dvh;
+  max-height: 100vh;
+  max-height: 100dvh;
   background: linear-gradient(to bottom, #f8fafc 0%, #e2e8f0 100%);
   overflow: hidden;
   width: 100%;
