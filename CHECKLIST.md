@@ -1,5 +1,18 @@
 # ✅ Checklist Projeto RKMMax (Atualizado — 08/04/2026)
 
+## 2026-05-09 — docs(readme): referenciar arquivos-fonte do Construtor/Híbrido — P1 Sebrae Startups 2026
+
+| Item | Detalhe |
+|------|---------|
+| **O quê** | Adicionada subseção `### Arquivos-fonte` na seção `## Construtor/Híbrido — Artifact Pipeline` do `README.md`, com links relativos para os 9 arquivos-fonte verificados do Construtor/Híbrido |
+| **Por quê** | P1 da auditoria competitiva Prêmio Sebrae Startups 2026 — o README já documentava a pipeline e os endpoints, mas não referenciava os arquivos-fonte reais; avaliadores externos não conseguiam verificar a profundidade técnica do produto |
+| **Arquivos** | `README.md` (subseção adicionada), `CHECKLIST.md` (esta entrada) |
+| **Escopo** | Alteração estritamente documental. Nenhuma camada interna (Serginho, pipeline de geração, Especialistas, ABNT, API, auth, Supabase, Stripe) foi alterada |
+| **Validação** | 1) Seção `## Construtor/Híbrido — Artifact Pipeline` no README exibe subseção `### Arquivos-fonte` com 9 arquivos. 2) Todos os links relativos apontam para arquivos existentes no repositório. 3) Nenhum outro arquivo tocado. 4) `npm run build` → sem erros |
+| **Rollback** | `git revert <commit-sha>` — remove a subseção do README.md e esta entrada do CHECKLIST.md |
+
+---
+
 ## 2026-05-09 — feat(demo): vitrine pública /demo — P2 Sebrae Startups 2026
 
 | Item | Detalhe |
