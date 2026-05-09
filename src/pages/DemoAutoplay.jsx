@@ -99,7 +99,7 @@ export default function DemoAutoplay() {
 
   useEffect(() => {
     if (!isAutoMode || isPaused) {
-      return undefined;
+      return;
     }
 
     const timer = window.setTimeout(() => {
@@ -170,7 +170,7 @@ export default function DemoAutoplay() {
           </strong>
           <span>{isAutoMode ? "Modo Automático / Gravação" : "Modo Manual / Avaliador"}</span>
         </div>
-        <div className="demo-autoplay-page__progress-bar" role="progressbar" aria-valuemin={1} aria-valuemax={totalSteps} aria-valuenow={currentStepIndex + 1}>
+        <div className="demo-autoplay-page__progress-bar" role="progressbar" aria-label="Progresso das etapas da demonstração" aria-valuemin={0} aria-valuemax={totalSteps} aria-valuenow={currentStepIndex + 1}>
           <span style={{ width: `${progressPercent}%` }} />
         </div>
         <p className="demo-autoplay-page__duration">Ritmo automático estimado: ~{autoplayDurationSeconds}s totais</p>
@@ -182,16 +182,16 @@ export default function DemoAutoplay() {
 
         {Array.isArray(currentStep.bullets) && (
           <ul>
-            {currentStep.bullets.map((bullet) => (
-              <li key={`${currentStep.id}-${bullet}`}>{bullet}</li>
+            {currentStep.bullets.map((bullet, index) => (
+              <li key={`${currentStep.id}-bullet-${index}-${bullet}`}>{bullet}</li>
             ))}
           </ul>
         )}
 
         {Array.isArray(currentStep.orderedBullets) && (
           <ol>
-            {currentStep.orderedBullets.map((bullet) => (
-              <li key={`${currentStep.id}-${bullet}`}>{bullet}</li>
+            {currentStep.orderedBullets.map((bullet, index) => (
+              <li key={`${currentStep.id}-ordered-${index}-${bullet}`}>{bullet}</li>
             ))}
           </ol>
         )}
