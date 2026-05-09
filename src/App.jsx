@@ -50,6 +50,7 @@ import Subscribe from "./pages/Subscribe.jsx";
 import PlansScreen from "./pages/PlansScreen.jsx";
 import AgentDetail from "./pages/AgentDetail.jsx";
 import Chat from "./pages/Chat.jsx";
+import Demo from "./pages/Demo.jsx";
 
 export default function App() {
   const [showOnboarding, setShowOnboarding] = React.useState(false);
@@ -91,6 +92,8 @@ export default function App() {
         <Route path="/specialists" element={<Specialists />} />
         <Route path="/specialist/:specialistId" element={<SpecialistChat />} />
         <Route path="/study-lab" element={<Navigate to="/study" replace />} />
+        <Route path="/demo" element={<Demo />} />
+        <Route path="/showcase" element={<Navigate to="/demo" replace />} />
 
         {/* Área Premium */}
         <Route

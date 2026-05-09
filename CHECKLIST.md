@@ -1,5 +1,18 @@
 # ✅ Checklist Projeto RKMMax (Atualizado — 08/04/2026)
 
+## 2026-05-09 — feat(demo): vitrine pública /demo — P2 Sebrae Startups 2026
+
+| Item | Detalhe |
+|------|---------|
+| **O quê** | Criada página pública `/demo` com vitrine estática de 5 artefatos demonstrativos do Construtor/Híbrido |
+| **Por quê** | P2 da auditoria competitiva Prêmio Sebrae Startups 2026 — reduz risco de depender de geração ao vivo durante avaliação |
+| **Arquivos** | `src/pages/Demo.jsx` (NOVO), `src/pages/Demo.css` (NOVO), `src/App.jsx` (rota adicionada), `CHECKLIST.md` |
+| **Escopo** | Frontend estático puro. Nenhuma camada interna (Serginho, pipeline de geração, Especialistas, ABNT, API, auth, Supabase, Stripe) foi alterada |
+| **Validação** | 1) Acessar `/demo` sem login → página carrega com 5 cards. 2) `/showcase` → redireciona para `/demo`. 3) Rotas existentes intactas. 4) `npm run build` → sem erros |
+| **Rollback** | `git revert <commit-sha>` — remove Demo.jsx, Demo.css e as rotas adicionadas em App.jsx |
+
+---
+
 ## 2026-05-05 — fix(startup): SciBiz 2026 atualizado de "em avaliação" para "selecionado para Feira de Startups"
 
 | Item | Detalhe |
