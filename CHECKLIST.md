@@ -1,5 +1,19 @@
 # ✅ Checklist Projeto RKMMax (Atualizado — 08/04/2026)
 
+## 2026-05-09 — feat(demo): rota pública estática /demo-autoplay para preparação do P3 (Sebrae Top 30)
+
+| Item | Detalhe |
+|------|---------|
+| **O quê** | Criada a rota pública estática `/demo-autoplay` com apresentação guiada da vitrine do Construtor/Híbrido em dois modos: **Automático/Gravação** (padrão) e **Manual/Avaliador** |
+| **Por quê** | Preparar o P3 (gravação do vídeo demo 60–90s) com fluxo estável e profissional para celular e avaliação manual, **sem concluir o P3 neste PR** |
+| **Arquivos** | `src/App.jsx`, `src/auth/AuthGate.jsx`, `src/pages/DemoAutoplay.jsx` (NOVO), `src/pages/DemoAutoplay.css` (NOVO), `src/__tests__/DemoAutoplay.test.js` (NOVO), `CHECKLIST.md` |
+| **Escopo** | Frontend estático puro. Sem chamadas de IA, sem backend, sem consumo de créditos, sem alteração de pipeline interno (Serginho, Construtor/Híbrido, Especialistas, ABNT) |
+| **Validação** | 1) `npm run build`. 2) `npm test -- src/__tests__/DemoAutoplay.test.js --runInBand`. 3) `npm test -- --runInBand`. 4) Verificação manual das rotas `/demo-autoplay`, `/demo` e `/showcase` |
+| **Rollback** | Remover rota `/demo-autoplay` de `src/App.jsx`; remover `/demo-autoplay` de `src/auth/AuthGate.jsx`; remover `src/pages/DemoAutoplay.jsx` e `src/pages/DemoAutoplay.css`; remover `src/__tests__/DemoAutoplay.test.js`; reverter esta entrada do `CHECKLIST.md`; ou executar `git revert <commit-sha>` |
+| **Aviso oficial** | **P3 continua pendente** até o vídeo ser gravado, publicado e linkado em `README.md` / `docs/DEMO.md` |
+
+---
+
 ## 2026-05-09 — fix(mobile): teclado virtual Android sem área vazia em /serginho e /hybrid
 
 | Item | Detalhe |

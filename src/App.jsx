@@ -51,6 +51,7 @@ import PlansScreen from "./pages/PlansScreen.jsx";
 import AgentDetail from "./pages/AgentDetail.jsx";
 import Chat from "./pages/Chat.jsx";
 import Demo from "./pages/Demo.jsx";
+import DemoAutoplay from "./pages/DemoAutoplay.jsx";
 
 export default function App() {
   const [showOnboarding, setShowOnboarding] = React.useState(false);
@@ -93,6 +94,7 @@ export default function App() {
         <Route path="/specialist/:specialistId" element={<SpecialistChat />} />
         <Route path="/study-lab" element={<Navigate to="/study" replace />} />
         <Route path="/demo" element={<Demo />} />
+        <Route path="/demo-autoplay" element={<DemoAutoplay />} />
         <Route path="/showcase" element={<Navigate to="/demo" replace />} />
 
         {/* Área Premium */}

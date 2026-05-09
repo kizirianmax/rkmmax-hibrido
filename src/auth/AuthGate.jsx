@@ -19,6 +19,7 @@ const PUBLIC_ROUTES = [
   "/status",         // status page
   "/info",           // info page
   "/demo",           // construtor showcase
+  "/demo-autoplay",  // construtor showcase autoplay
   "/showcase",       // alias to /demo
   "/privacy",        // privacy policy
   "/terms",          // terms of service
