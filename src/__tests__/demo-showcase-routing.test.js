@@ -20,18 +20,46 @@ describe("Demo showcase integration (static checks)", () => {
   });
 
   test("Demo page includes the required 5 mocked artifacts", () => {
-    const demoSource = fs.readFileSync(path.join(repoRoot, "src/pages/Demo.jsx"), "utf8");
+    const artifactsSource = fs.readFileSync(path.join(repoRoot, "src/data/demoArtifacts.js"), "utf8");
 
     const expectedArtifacts = [
-      "Landing Page SaaS",
-      "Dashboard Analytics",
-      "Formulário de Cadastro",
-      "Página de Produto",
-      "Página Institucional Startup",
+      "Landing Page de Conversão",
+      "Dashboard Operacional Essencial",
+      "Formulário de Cadastro Inteligente",
+      "Página SaaS de Produto",
+      "Mini App de Simulação",
     ];
 
     expectedArtifacts.forEach((artifactName) => {
-      expect(demoSource).toContain(artifactName);
+      expect(artifactsSource).toContain(artifactName);
+    });
+  });
+
+  test("Demo page includes mandatory evaluator sections and CTA", () => {
+    const demoSource = fs.readFileSync(path.join(repoRoot, "src/pages/Demo.jsx"), "utf8");
+
+    expect(demoSource).toContain("Demonstração do Construtor / Serginho IA");
+    expect(demoSource).toContain("Por que isso não é apenas um chat?");
+    expect(demoSource).toContain("Como avaliar em 5 minutos");
+    expect(demoSource).toContain("https://kizirianmax.site/startup");
+    expect(demoSource).toContain("O Construtor entrega artefatos digitais estruturados");
+    expect(demoSource).toContain("Compare os 5 tipos de artefatos");
+  });
+
+  test("Demo artifacts include mandatory card fields", () => {
+    const artifactsSource = fs.readFileSync(path.join(repoRoot, "src/data/demoArtifacts.js"), "utf8");
+
+    [
+      "category",
+      "description",
+      "problemSolved",
+      "technologies",
+      "status",
+      "qualityScore",
+      "previewAnchor",
+      "structureAnchor",
+    ].forEach((fieldName) => {
+      expect(artifactsSource).toContain(fieldName);
     });
   });
 });

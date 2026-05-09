@@ -40,27 +40,15 @@
   font-weight: 600;
 }
 
-.demo-page__cta {
-  display: inline-flex;
-  margin-top: 16px;
-  padding: 10px 16px;
-  border: 1px solid #38bdf8;
-  border-radius: 10px;
-  text-decoration: none;
-  font-weight: 700;
-  color: #082f49;
-  background: #38bdf8;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
-}
-
-.demo-page__cta:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 8px 22px rgba(56, 189, 248, 0.35);
-}
-
 .demo-page__section {
   max-width: 980px;
-  margin: 0 auto;
+  margin: 0 auto 18px;
+}
+
+.demo-page__section-title {
+  margin: 0 0 12px;
+  color: #f8fafc;
+  font-size: 1.1rem;
 }
 
 .demo-page__grid {
@@ -98,31 +86,8 @@
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.03em;
-}
-
-.demo-card__type--landing {
   background: #1f3a8a;
   color: #bfdbfe;
-}
-
-.demo-card__type--dashboard {
-  background: #134e4a;
-  color: #99f6e4;
-}
-
-.demo-card__type--form {
-  background: #5b21b6;
-  color: #ddd6fe;
-}
-
-.demo-card__type--commerce {
-  background: #7c2d12;
-  color: #fed7aa;
-}
-
-.demo-card__type--institutional {
-  background: #312e81;
-  color: #c7d2fe;
 }
 
 .demo-card__status {
@@ -146,7 +111,14 @@
   margin: 8px 0 0;
   color: #cbd5e1;
   line-height: 1.5;
-  min-height: 2.8rem;
+}
+
+.demo-card__problem,
+.demo-card__stack,
+.demo-card__score {
+  margin: 8px 0 0;
+  color: #cbd5e1;
+  line-height: 1.45;
 }
 
 .demo-card__footer {
@@ -160,6 +132,11 @@
 .demo-card__hint {
   color: #94a3b8;
   font-size: 0.8rem;
+}
+
+.demo-card__actions {
+  display: flex;
+  gap: 8px;
 }
 
 .demo-card__action {
@@ -176,9 +153,54 @@
   background: #142237;
 }
 
+.demo-card__action--secondary {
+  color: #bae6fd;
+}
+
 .demo-card__action:hover {
   border-color: #38bdf8;
   color: #bae6fd;
+}
+
+.demo-page__list {
+  margin: 0;
+  padding-left: 20px;
+  color: #cbd5e1;
+  line-height: 1.55;
+}
+
+.demo-page__list li + li {
+  margin-top: 6px;
+}
+
+.demo-preview {
+  border: 1px solid #1f2a44;
+  border-radius: 12px;
+  background: rgba(15, 23, 42, 0.74);
+  padding: 14px;
+  margin-bottom: 10px;
+}
+
+.demo-preview h3 {
+  margin: 0;
+  color: #f8fafc;
+}
+
+.demo-preview p {
+  margin: 8px 0 0;
+  color: #cbd5e1;
+}
+
+.demo-preview__structure {
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px solid #1f2a44;
+}
+
+.demo-preview__structure ul {
+  margin: 8px 0 0;
+  padding-left: 20px;
+  color: #cbd5e1;
 }
 
 .demo-page__footer {
@@ -198,6 +220,7 @@
 .demo-page__footer a {
   display: inline-flex;
   margin-top: 10px;
+  margin-right: 14px;
   color: #38bdf8;
   text-decoration: none;
   font-weight: 600;
