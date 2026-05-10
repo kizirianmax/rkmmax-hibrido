@@ -13,9 +13,17 @@
 /* Language selector */
 .startup-lang-bar {
   display: flex;
-  gap: 8px;
-  justify-content: flex-end;
+  gap: 12px;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
   margin-bottom: 20px;
+}
+
+.startup-lang-buttons {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
 }
 
 .startup-lang-btn {
@@ -39,6 +47,42 @@
   color: #38bdf8;
   border-color: #0f172a;
   font-weight: 700;
+}
+
+.startup-demo-cta-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 4px;
+}
+
+.startup-demo-cta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 40px;
+  padding: 8px 16px;
+  border-radius: 999px;
+  border: 1px solid #0ea5e9;
+  background: linear-gradient(135deg, #0f172a 0%, #1d4ed8 100%);
+  color: #e0f2fe;
+  font-size: 0.9rem;
+  font-weight: 700;
+  text-decoration: none;
+  box-shadow: 0 8px 18px rgba(15, 23, 42, 0.22);
+  transition: transform 0.15s ease, box-shadow 0.15s ease, filter 0.15s ease;
+}
+
+.startup-demo-cta:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 10px 22px rgba(15, 23, 42, 0.26);
+  filter: brightness(1.04);
+}
+
+.startup-demo-cta-support {
+  margin: 0;
+  font-size: 0.78rem;
+  color: #334155;
 }
 
 /* Hero */
@@ -213,4 +257,19 @@
   font-size: 0.9rem;
   color: #78350f;
   margin-top: 12px;
+}
+
+@media (max-width: 640px) {
+  .startup-lang-bar {
+    align-items: stretch;
+  }
+
+  .startup-demo-cta-wrap {
+    width: 100%;
+    align-items: flex-start;
+  }
+
+  .startup-demo-cta {
+    width: 100%;
+  }
 }

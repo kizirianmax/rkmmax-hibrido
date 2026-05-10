@@ -1,5 +1,6 @@
 // src/pages/Projects.jsx
 import React, { useState } from "react";
+import { Link } from "react-router-dom";
 import "./Projects.css";
 
 const CONTENT = {
@@ -55,6 +56,8 @@ const CONTENT = {
       contactLabel: "For institutional verification, partnerships, or startup program review:",
       notice:
         "This page is intended solely for institutional verification by program partners. It does not expose private systems, user data, tokens, or sensitive infrastructure.",
+      demoCta: "▶ Watch guided demo",
+      demoCtaSupport: "Automatic or manual Construtor presentation.",
     },
   },
   pt: {
@@ -109,6 +112,8 @@ const CONTENT = {
       contactLabel: "Para verificação institucional, parcerias ou análise de programa de startups:",
       notice:
         "Esta página destina-se exclusivamente à verificação institucional por parceiros de programas. Não expõe sistemas privados, dados de usuários, tokens ou infraestrutura sensível.",
+      demoCta: "▶ Ver demo guiada",
+      demoCtaSupport: "Apresentação automática ou manual do Construtor.",
     },
   },
 };
@@ -121,20 +126,36 @@ export default function Projects() {
     <main className="startup-page">
       {/* Language selector */}
       <div className="startup-lang-bar">
-        <button
-          className={`startup-lang-btn${lang === "en" ? " active" : ""}`}
-          onClick={() => setLang("en")}
-          aria-pressed={lang === "en"}
-        >
-          🇺🇸 English
-        </button>
-        <button
-          className={`startup-lang-btn${lang === "pt" ? " active" : ""}`}
-          onClick={() => setLang("pt")}
-          aria-pressed={lang === "pt"}
-        >
-          🇧🇷 Português
-        </button>
+        <div className="startup-lang-buttons">
+          <button
+            className={`startup-lang-btn${lang === "en" ? " active" : ""}`}
+            onClick={() => setLang("en")}
+            aria-pressed={lang === "en"}
+          >
+            🇺🇸 English
+          </button>
+          <button
+            className={`startup-lang-btn${lang === "pt" ? " active" : ""}`}
+            onClick={() => setLang("pt")}
+            aria-pressed={lang === "pt"}
+          >
+            🇧🇷 Português
+          </button>
+        </div>
+        <div className="startup-demo-cta-wrap">
+          <Link
+            className="startup-demo-cta"
+            to="/demo-autoplay"
+            aria-label={
+              lang === "en"
+                ? "Open guided demo in automatic or manual mode"
+                : "Abrir demo guiada em modo automático ou manual"
+            }
+          >
+            {CONTENT[lang].demoCta}
+          </Link>
+          <p className="startup-demo-cta-support">{CONTENT[lang].demoCtaSupport}</p>
+        </div>
       </div>
 
       {/* Hero */}

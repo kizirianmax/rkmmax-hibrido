@@ -15,6 +15,13 @@ export default function Demo() {
         <p className="demo-page__notice">
           Exemplos demonstrativos do pipeline (não são dados de produção)
         </p>
+        <Link
+          className="demo-page__autoplay-cta"
+          to="/demo-autoplay"
+          aria-label="Assistir apresentação guiada do Construtor em modo automático ou manual"
+        >
+          Assistir apresentação automática / modo avaliador
+        </Link>
       </section>
 
       <section className="demo-page__section">

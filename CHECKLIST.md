@@ -1,5 +1,33 @@
 # ✅ Checklist Projeto RKMMax (Atualizado — 08/04/2026)
 
+## 2026-05-10 — feat(startup/demo): destaque premium de descobribilidade para /demo-autoplay (preparação P3)
+
+| Item | Detalhe |
+|------|---------|
+| **O quê** | Adicionado CTA premium para `/demo-autoplay` na faixa visual dos botões de idioma da página institucional `/startup` e CTA adicional na própria `/demo` |
+| **Por quê** | Melhorar descobribilidade imediata da demo guiada para avaliadores externos, mantendo foco na preparação do P3 sem alterar menu global |
+| **Arquivos** | `src/pages/Projects.jsx`, `src/pages/Projects.css`, `src/pages/Demo.jsx`, `src/pages/Demo.css`, `src/__tests__/demo-showcase-routing.test.js`, `CHECKLIST.md` |
+| **Escopo** | Ajuste visual e de navegação local em páginas públicas. Header/menu global, fluxos internos do produto e camadas de backend/IA permanecem inalterados |
+| **Validação** | 1) `npm test -- src/__tests__/demo-showcase-routing.test.js --runInBand`. 2) `npm run build`. 3) `npm test -- --runInBand`. 4) Verificação manual das rotas `/startup`, `/demo`, `/demo-autoplay` |
+| **Rollback** | Remover CTA de `/startup` (`Projects.jsx`/`Projects.css`), remover CTA de `/demo` (`Demo.jsx`/`Demo.css`), reverter teste e esta entrada; ou executar `git revert <commit-sha>` |
+| **Aviso oficial** | **P3 continua pendente** até vídeo gravado, publicado e linkado em `README.md` / `docs/DEMO.md` |
+
+---
+
+## 2026-05-09 — feat(demo): rota pública estática /demo-autoplay para preparação do P3 (Sebrae Top 30)
+
+| Item | Detalhe |
+|------|---------|
+| **O quê** | Criada a rota pública estática `/demo-autoplay` com apresentação guiada da vitrine do Construtor/Híbrido em dois modos: **Automático/Gravação** (padrão) e **Manual/Avaliador** |
+| **Por quê** | Preparar o P3 (gravação do vídeo demo 60–90s) com fluxo estável e profissional para celular e avaliação manual, **sem concluir o P3 neste PR** |
+| **Arquivos** | `src/App.jsx`, `src/auth/AuthGate.jsx`, `src/pages/DemoAutoplay.jsx` (NOVO), `src/pages/DemoAutoplay.css` (NOVO), `src/__tests__/DemoAutoplay.test.js` (NOVO), `CHECKLIST.md` |
+| **Escopo** | Frontend estático puro. Sem chamadas de IA, sem backend, sem consumo de créditos, sem alteração de pipeline interno (Serginho, Construtor/Híbrido, Especialistas, ABNT) |
+| **Validação** | 1) `npm run build`. 2) `npm test -- src/__tests__/DemoAutoplay.test.js --runInBand`. 3) `npm test -- --runInBand`. 4) Verificação manual das rotas `/demo-autoplay`, `/demo` e `/showcase` |
+| **Rollback** | Remover rota `/demo-autoplay` de `src/App.jsx`; remover `/demo-autoplay` de `src/auth/AuthGate.jsx`; remover `src/pages/DemoAutoplay.jsx` e `src/pages/DemoAutoplay.css`; remover `src/__tests__/DemoAutoplay.test.js`; reverter esta entrada do `CHECKLIST.md`; ou executar `git revert <commit-sha>` |
+| **Aviso oficial** | **P3 continua pendente** até o vídeo ser gravado, publicado e linkado em `README.md` / `docs/DEMO.md` |
+
+---
+
 ## 2026-05-09 — fix(mobile): teclado virtual Android sem área vazia em /serginho e /hybrid
 
 | Item | Detalhe |

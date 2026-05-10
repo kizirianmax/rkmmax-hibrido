@@ -40,6 +40,26 @@
   font-weight: 600;
 }
 
+.demo-page__autoplay-cta {
+  display: inline-flex;
+  margin-top: 14px;
+  align-items: center;
+  justify-content: center;
+  min-height: 42px;
+  padding: 8px 14px;
+  border-radius: 999px;
+  border: 1px solid #38bdf8;
+  text-decoration: none;
+  font-weight: 700;
+  color: #e0f2fe;
+  background: linear-gradient(135deg, #0f172a 0%, #1d4ed8 100%);
+  box-shadow: 0 8px 20px rgba(2, 6, 23, 0.35);
+}
+
+.demo-page__autoplay-cta:hover {
+  filter: brightness(1.05);
+}
+
 .demo-page__section {
   max-width: 980px;
   margin: 0 auto 18px;

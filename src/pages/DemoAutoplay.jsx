@@ -1,0 +1,264 @@
+import React, { useEffect, useMemo, useState } from "react";
+import { Link } from "react-router-dom";
+import { demoArtifacts } from "../data/demoArtifacts.js";
+import "./DemoAutoplay.css";
+
+const STEP_DURATION_MS = 6500;
+
+export default function DemoAutoplay() {
+  const [currentStepIndex, setCurrentStepIndex] = useState(0);
+  const [isAutoMode, setIsAutoMode] = useState(true);
+  const [isPaused, setIsPaused] = useState(false);
+
+  const steps = useMemo(() => {
+    const artifactOverview = {
+      id: "artifacts-overview",
+      title: "Visão geral dos 5 artefatos demonstráveis",
+      description:
+        "A vitrine pública apresenta 5 entregas estruturadas para avaliação rápida, sem geração ao vivo.",
+      bullets: demoArtifacts.map((artifact) => `${artifact.name} — ${artifact.problemSolved}`),
+    };
+
+    const artifactSteps = demoArtifacts.map((artifact) => ({
+      id: `artifact-${artifact.id}`,
+      title: artifact.name,
+      description: artifact.description,
+      artifact,
+      bullets: [
+        `Categoria: ${artifact.category}`,
+        `Problema resolvido: ${artifact.problemSolved}`,
+        `Pipeline: geração, validação, preview, revisão e empacotamento`,
+      ],
+    }));
+
+    return [
+      {
+        id: "opening",
+        title: "Demonstração do Construtor / Serginho IA",
+        description:
+          "Apresentação pública premium para gravação de vídeo e avaliação técnica em poucos minutos.",
+      },
+      {
+        id: "public-showcase",
+        title: "Vitrine pública estática do Construtor/Híbrido",
+        description:
+          "Esta página é estática e demonstrativa: não usa backend, não chama IA e não consome créditos.",
+      },
+      artifactOverview,
+      ...artifactSteps,
+      {
+        id: "why-not-chat",
+        title: "Por que isso não é apenas um chat?",
+        description:
+          "O Construtor/Híbrido entrega artefatos digitais estruturados, com lógica de validação e revisão.",
+        bullets: [
+          "Não é apenas conversa: existe entrega técnica verificável.",
+          "Há pipeline com geração, validação, preview e empacotamento.",
+          "A avaliação pode ser feita sem risco operacional e sem dados reais.",
+        ],
+      },
+      {
+        id: "how-to-evaluate",
+        title: "Como avaliar em 5 minutos",
+        description: "Roteiro objetivo para avaliadores e especialistas externos.",
+        orderedBullets: [
+          "Veja o panorama dos 5 artefatos demonstráveis.",
+          "Navegue pelos destaques individuais e problema resolvido.",
+          "Observe status, qualidade e estrutura resumida.",
+          "Valide que tudo é estático e seguro para demonstração.",
+          "Finalize pela vitrine pública completa em /demo.",
+        ],
+      },
+      {
+        id: "preview-structure",
+        title: "Preview / estrutura resumida",
+        description:
+          "Cada entrega demonstra lógica de geração, validação, preview, revisão e empacotamento com clareza institucional.",
+        bullets: demoArtifacts.flatMap((artifact) => [
+          `${artifact.name}: ${artifact.technologies[0]}`,
+        ]),
+      },
+      {
+        id: "closing",
+        title: "Fechamento da apresentação",
+        description:
+          "Para análise completa da vitrine, acesse /demo. Esta experiência prepara o P3, mas não conclui o P3.",
+        bullets: [
+          "Exemplos demonstrativos (não são dados reais de produção).",
+          "Não há geração ao vivo nesta página.",
+          "P3 continua pendente até vídeo gravado, publicado e linkado.",
+        ],
+      },
+    ];
+  }, []);
+
+  const totalSteps = steps.length;
+  const progressPercent = ((currentStepIndex + 1) / totalSteps) * 100;
+  const autoplayDurationSeconds = Math.round((STEP_DURATION_MS * totalSteps) / 1000);
+  const currentStep = steps[currentStepIndex];
+
+  useEffect(() => {
+    if (!isAutoMode || isPaused) {
+      return;
+    }
+
+    const timer = window.setTimeout(() => {
+      setCurrentStepIndex((previousIndex) =>
+        previousIndex + 1 >= totalSteps ? 0 : previousIndex + 1,
+      );
+    }, STEP_DURATION_MS);
+
+    return () => window.clearTimeout(timer);
+  }, [currentStepIndex, isAutoMode, isPaused, totalSteps]);
+
+  const goToNextStep = () => {
+    setCurrentStepIndex((previousIndex) =>
+      previousIndex + 1 >= totalSteps ? 0 : previousIndex + 1,
+    );
+  };
+
+  const goToPreviousStep = () => {
+    setCurrentStepIndex((previousIndex) =>
+      previousIndex - 1 < 0 ? totalSteps - 1 : previousIndex - 1,
+    );
+  };
+
+  const restartDemo = () => {
+    setCurrentStepIndex(0);
+    if (isAutoMode) {
+      setIsPaused(false);
+    }
+  };
+
+  const activateAutoMode = () => {
+    setIsAutoMode(true);
+    setIsPaused(false);
+  };
+
+  const activateManualMode = () => {
+    setIsAutoMode(false);
+    setIsPaused(true);
+  };
+
+  const togglePause = () => {
+    if (!isAutoMode) {
+      return;
+    }
+
+    setIsPaused((previousPaused) => !previousPaused);
+  };
+
+  return (
+    <main className="demo-autoplay-page" aria-live="polite">
+      <section className="demo-autoplay-page__hero">
+        <p className="demo-autoplay-page__eyebrow">Roteiro para gravação e avaliação</p>
+        <h1 className="demo-autoplay-page__title">Demonstração do Construtor / Serginho IA</h1>
+        <p className="demo-autoplay-page__subtitle">
+          Apresentação pública estática com foco em clareza, segurança e valor técnico do
+          Construtor/Híbrido.
+        </p>
+        <p className="demo-autoplay-page__notice">
+          Exemplos demonstrativos. Não são dados reais de produção. Não há geração ao vivo nesta
+          página.
+        </p>
+      </section>
+
+      <section className="demo-autoplay-page__status" aria-label="Progresso da apresentação">
+        <div className="demo-autoplay-page__status-row">
+          <strong>
+            Etapa {currentStepIndex + 1} / {totalSteps}
+          </strong>
+          <span>{isAutoMode ? "Modo Automático / Gravação" : "Modo Manual / Avaliador"}</span>
+        </div>
+        <div className="demo-autoplay-page__progress-bar" role="progressbar" aria-label="Progresso das etapas da demonstração" aria-valuemin={0} aria-valuemax={totalSteps} aria-valuenow={currentStepIndex + 1}>
+          <span style={{ width: `${progressPercent}%` }} />
+        </div>
+        <p className="demo-autoplay-page__duration">Ritmo automático estimado: ~{autoplayDurationSeconds}s totais</p>
+      </section>
+
+      <section className="demo-autoplay-page__slide" key={currentStep.id}>
+        <h2>{currentStep.title}</h2>
+        <p>{currentStep.description}</p>
+
+        {Array.isArray(currentStep.bullets) && (
+          <ul>
+            {currentStep.bullets.map((bullet, index) => (
+              <li key={`${currentStep.id}-bullet-${index}-${bullet}`}>{bullet}</li>
+            ))}
+          </ul>
+        )}
+
+        {Array.isArray(currentStep.orderedBullets) && (
+          <ol>
+            {currentStep.orderedBullets.map((bullet, index) => (
+              <li key={`${currentStep.id}-ordered-${index}-${bullet}`}>{bullet}</li>
+            ))}
+          </ol>
+        )}
+
+        {currentStep.artifact && (
+          <article className="demo-autoplay-page__artifact-card" aria-label={`Destaque do artefato ${currentStep.artifact.name}`}>
+            <header>
+              <span>{currentStep.artifact.category}</span>
+              <span>{currentStep.artifact.status}</span>
+            </header>
+            <p className="demo-autoplay-page__artifact-score">{currentStep.artifact.qualityScore}</p>
+            <p>
+              <strong>Estrutura sugerida:</strong> {currentStep.artifact.technologies.join(" • ")}
+            </p>
+          </article>
+        )}
+      </section>
+
+      <section className="demo-autoplay-page__controls" aria-label="Controles da demonstração">
+        <div className="demo-autoplay-page__control-group" role="group" aria-label="Modo de apresentação">
+          <button
+            type="button"
+            aria-label="Ativar modo automático"
+            className={isAutoMode ? "is-active" : ""}
+            onClick={activateAutoMode}
+          >
+            Automático
+          </button>
+          <button
+            type="button"
+            aria-label="Ativar modo manual"
+            className={!isAutoMode ? "is-active" : ""}
+            onClick={activateManualMode}
+          >
+            Manual
+          </button>
+        </div>
+
+        <div className="demo-autoplay-page__control-group" role="group" aria-label="Navegação da apresentação">
+          <button type="button" aria-label="Etapa anterior" onClick={goToPreviousStep}>
+            Anterior
+          </button>
+          <button
+            type="button"
+            aria-label={isPaused ? "Continuar apresentação automática" : "Pausar apresentação automática"}
+            onClick={togglePause}
+            disabled={!isAutoMode}
+          >
+            {isPaused ? "Continuar" : "Pausar"}
+          </button>
+          <button type="button" aria-label="Próxima etapa" onClick={goToNextStep}>
+            Próximo
+          </button>
+          <button type="button" aria-label="Reiniciar demonstração" onClick={restartDemo}>
+            Reiniciar demo
+          </button>
+        </div>
+      </section>
+
+      <footer className="demo-autoplay-page__footer">
+        <p>
+          Avaliação completa da vitrine pública em <Link to="/demo">/demo</Link>.
+        </p>
+        <p>
+          P3 continua pendente até vídeo gravado, publicado e linkado em README.md / docs/DEMO.md.
+        </p>
+      </footer>
+    </main>
+  );
+}
