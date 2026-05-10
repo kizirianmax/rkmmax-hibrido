@@ -7,10 +7,10 @@ export default function Demo() {
   return (
     <main className="demo-page">
       <section className="demo-page__hero">
-        <h1 className="demo-page__title">Demonstração do Construtor / Serginho IA</h1>
+        <h1 className="demo-page__title">Serginho IA — Construtor de artefatos digitais</h1>
         <p className="demo-page__subtitle">
-          Esta vitrine pública apresenta exemplos estáticos de artefatos gerados no pipeline do
-          Construtor/Híbrido, com foco em geração, validação, preview e empacotamento.
+          Esta vitrine pública apresenta exemplos estáticos do Construtor/Híbrido do Serginho IA,
+          com foco em geração, validação, preview e empacotamento.
         </p>
         <p className="demo-page__notice">
           Exemplos demonstrativos do pipeline (não são dados de produção)
@@ -18,9 +18,9 @@ export default function Demo() {
         <Link
           className="demo-page__autoplay-cta"
           to="/demo-autoplay"
-          aria-label="Assistir apresentação guiada do Construtor em modo automático ou manual"
+          aria-label="Assistir demo guiada do Serginho IA em modo automático ou manual"
         >
-          Assistir apresentação automática / modo avaliador
+          Assistir demo guiada do Serginho IA
         </Link>
       </section>
 

@@ -56,8 +56,8 @@ const CONTENT = {
       contactLabel: "For institutional verification, partnerships, or startup program review:",
       notice:
         "This page is intended solely for institutional verification by program partners. It does not expose private systems, user data, tokens, or sensitive infrastructure.",
-      demoCta: "▶ Watch guided demo",
-      demoCtaSupport: "Automatic or manual Construtor presentation.",
+      demoCta: "▶ Watch Serginho IA guided demo",
+      demoCtaSupport: "Automatic or manual presentation of the Builder.",
     },
   },
   pt: {
@@ -112,7 +112,7 @@ const CONTENT = {
       contactLabel: "Para verificação institucional, parcerias ou análise de programa de startups:",
       notice:
         "Esta página destina-se exclusivamente à verificação institucional por parceiros de programas. Não expõe sistemas privados, dados de usuários, tokens ou infraestrutura sensível.",
-      demoCta: "▶ Ver demo guiada",
+      demoCta: "▶ Ver demo guiada do Serginho IA",
       demoCtaSupport: "Apresentação automática ou manual do Construtor.",
     },
   },
@@ -152,9 +152,9 @@ export default function Projects() {
                 : "Abrir demo guiada em modo automático ou manual"
             }
           >
-            {CONTENT[lang].demoCta}
+            {c.demoCta}
           </Link>
-          <p className="startup-demo-cta-support">{CONTENT[lang].demoCtaSupport}</p>
+          <p className="startup-demo-cta-support">{c.demoCtaSupport}</p>
         </div>
       </div>
 

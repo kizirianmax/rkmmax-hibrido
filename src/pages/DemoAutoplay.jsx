@@ -3,7 +3,21 @@ import { Link } from "react-router-dom";
 import { demoArtifacts } from "../data/demoArtifacts.js";
 import "./DemoAutoplay.css";
 
-const STEP_DURATION_MS = 6500;
+const DEFAULT_STEP_DURATION_MS = 7400;
+const STEP_DURATIONS_MS = {
+  opening: 8200,
+  "public-showcase": 7600,
+  "artifacts-overview": 8000,
+  "artifact-landing": 7000,
+  "artifact-dashboard": 7000,
+  "artifact-signup": 7000,
+  "artifact-saas": 7000,
+  "artifact-miniapp": 7000,
+  "why-not-chat": 8200,
+  "how-to-evaluate": 8200,
+  "preview-structure": 7800,
+  closing: 8600,
+};
 
 export default function DemoAutoplay() {
   const [currentStepIndex, setCurrentStepIndex] = useState(0);
@@ -13,7 +27,7 @@ export default function DemoAutoplay() {
   const steps = useMemo(() => {
     const artifactOverview = {
       id: "artifacts-overview",
-      title: "Visão geral dos 5 artefatos demonstráveis",
+      title: "Visão geral dos 5 artefatos demonstráveis do Serginho IA",
       description:
         "A vitrine pública apresenta 5 entregas estruturadas para avaliação rápida, sem geração ao vivo.",
       bullets: demoArtifacts.map((artifact) => `${artifact.name} — ${artifact.problemSolved}`),
@@ -34,15 +48,23 @@ export default function DemoAutoplay() {
     return [
       {
         id: "opening",
-        title: "Demonstração do Construtor / Serginho IA",
+        title: "Serginho IA — Construtor de artefatos digitais",
         description:
-          "Apresentação pública premium para gravação de vídeo e avaliação técnica em poucos minutos.",
+          "Apresentação pública guiada para gravação e avaliação técnica rápida, mesmo sem áudio.",
+        bullets: [
+          "Nome principal para público e avaliadores: Serginho IA.",
+          "Demonstração do Construtor/Híbrido com narrativa visual curta.",
+        ],
       },
       {
         id: "public-showcase",
-        title: "Vitrine pública estática do Construtor/Híbrido",
+        title: "Vitrine pública estática do Serginho IA",
         description:
           "Esta página é estática e demonstrativa: não usa backend, não chama IA e não consome créditos.",
+        bullets: [
+          "Sem login e sem dados reais de produção.",
+          "Somente fluxo visual para análise segura do avaliador.",
+        ],
       },
       artifactOverview,
       ...artifactSteps,
@@ -73,7 +95,7 @@ export default function DemoAutoplay() {
         id: "preview-structure",
         title: "Preview / estrutura resumida",
         description:
-          "Cada entrega demonstra lógica de geração, validação, preview, revisão e empacotamento com clareza institucional.",
+          "Cada entrega demonstra geração, validação, preview, revisão e empacotamento de forma clara e auditável.",
         bullets: demoArtifacts.flatMap((artifact) => [
           `${artifact.name}: ${artifact.technologies[0]}`,
         ]),
@@ -82,7 +104,7 @@ export default function DemoAutoplay() {
         id: "closing",
         title: "Fechamento da apresentação",
         description:
-          "Para análise completa da vitrine, acesse /demo. Esta experiência prepara o P3, mas não conclui o P3.",
+          "Para análise completa, acesse /demo. Esta experiência prepara o P3, mas não conclui o P3.",
         bullets: [
           "Exemplos demonstrativos (não são dados reais de produção).",
           "Não há geração ao vivo nesta página.",
@@ -94,8 +116,15 @@ export default function DemoAutoplay() {
 
   const totalSteps = steps.length;
   const progressPercent = ((currentStepIndex + 1) / totalSteps) * 100;
-  const autoplayDurationSeconds = Math.round((STEP_DURATION_MS * totalSteps) / 1000);
+  const autoplayDurationSeconds = Math.round(
+    steps.reduce(
+      (totalDuration, step) =>
+        totalDuration + (STEP_DURATIONS_MS[step.id] ?? DEFAULT_STEP_DURATION_MS),
+      0,
+    ) / 1000,
+  );
   const currentStep = steps[currentStepIndex];
+  const currentStepDurationMs = STEP_DURATIONS_MS[currentStep.id] ?? DEFAULT_STEP_DURATION_MS;
 
   useEffect(() => {
     if (!isAutoMode || isPaused) {
@@ -106,10 +135,10 @@ export default function DemoAutoplay() {
       setCurrentStepIndex((previousIndex) =>
         previousIndex + 1 >= totalSteps ? 0 : previousIndex + 1,
       );
-    }, STEP_DURATION_MS);
+    }, currentStepDurationMs);
 
     return () => window.clearTimeout(timer);
-  }, [currentStepIndex, isAutoMode, isPaused, totalSteps]);
+  }, [currentStepDurationMs, currentStepIndex, isAutoMode, isPaused, totalSteps]);
 
   const goToNextStep = () => {
     setCurrentStepIndex((previousIndex) =>
@@ -152,10 +181,10 @@ export default function DemoAutoplay() {
     <main className="demo-autoplay-page" aria-live="polite">
       <section className="demo-autoplay-page__hero">
         <p className="demo-autoplay-page__eyebrow">Roteiro para gravação e avaliação</p>
-        <h1 className="demo-autoplay-page__title">Demonstração do Construtor / Serginho IA</h1>
+        <h1 className="demo-autoplay-page__title">Serginho IA — demo guiada do Construtor</h1>
         <p className="demo-autoplay-page__subtitle">
           Apresentação pública estática com foco em clareza, segurança e valor técnico do
-          Construtor/Híbrido.
+          Construtor/Híbrido do Serginho IA.
         </p>
         <p className="demo-autoplay-page__notice">
           Exemplos demonstrativos. Não são dados reais de produção. Não há geração ao vivo nesta
@@ -173,7 +202,9 @@ export default function DemoAutoplay() {
         <div className="demo-autoplay-page__progress-bar" role="progressbar" aria-label="Progresso das etapas da demonstração" aria-valuemin={0} aria-valuemax={totalSteps} aria-valuenow={currentStepIndex + 1}>
           <span style={{ width: `${progressPercent}%` }} />
         </div>
-        <p className="demo-autoplay-page__duration">Ritmo automático estimado: ~{autoplayDurationSeconds}s totais</p>
+        <p className="demo-autoplay-page__duration">
+          Ritmo automático estimado: ~{autoplayDurationSeconds}s totais
+        </p>
       </section>
 
       <section className="demo-autoplay-page__slide" key={currentStep.id}>

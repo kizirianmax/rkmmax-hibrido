@@ -38,21 +38,24 @@ describe("Demo showcase integration (static checks)", () => {
   test("Demo page includes mandatory evaluator sections and CTA", () => {
     const demoSource = fs.readFileSync(path.join(repoRoot, "src/pages/Demo.jsx"), "utf8");
 
-    expect(demoSource).toContain("Demonstração do Construtor / Serginho IA");
+    expect(demoSource).toContain("Serginho IA — Construtor de artefatos digitais");
     expect(demoSource).toContain("Por que isso não é apenas um chat?");
     expect(demoSource).toContain("Como avaliar em 5 minutos");
     expect(demoSource).toContain("https://kizirianmax.site/startup");
     expect(demoSource).toContain("O Construtor entrega artefatos digitais estruturados");
     expect(demoSource).toContain("Compare os 5 tipos de artefatos");
     expect(demoSource).toContain('to="/demo-autoplay"');
-    expect(demoSource).toContain("Assistir apresentação automática / modo avaliador");
+    expect(demoSource).toContain("Assistir demo guiada do Serginho IA");
   });
 
   test("Startup page includes highlighted CTA to /demo-autoplay", () => {
     const startupSource = fs.readFileSync(path.join(repoRoot, "src/pages/Projects.jsx"), "utf8");
 
     expect(startupSource).toContain('to="/demo-autoplay"');
-    expect(startupSource).toContain("▶ Ver demo guiada");
+    expect(startupSource).toContain("▶ Ver demo guiada do Serginho IA");
+    expect(startupSource).toContain("▶ Watch Serginho IA guided demo");
+    expect(startupSource).toContain("Apresentação automática ou manual do Construtor.");
+    expect(startupSource).toContain("Automatic or manual presentation of the Builder.");
   });
 
   test("Demo artifacts include mandatory card fields", () => {
