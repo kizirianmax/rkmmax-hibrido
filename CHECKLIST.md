@@ -1,5 +1,19 @@
 # ✅ Checklist Projeto RKMMax (Atualizado — 08/04/2026)
 
+## 2026-05-10 — fix(demo): clarear CTA da demo do Serginho IA e ajustar ritmo do autoplay
+
+| Item | Detalhe |
+|------|---------|
+| **O quê** | Corrigido CTA da `/startup` (texto visível e autoexplicativo PT/EN), padronizado CTA da `/demo` para Serginho IA e refinados textos/ritmo da `/demo-autoplay` para melhor compreensão pública sem áudio |
+| **Por quê** | Em validação real no celular, o CTA da `/startup` parecia barra decorativa e o autoplay estava acelerado para gravação/compreensão do vídeo P3 |
+| **Arquivos** | `src/pages/Projects.jsx`, `src/pages/Projects.css`, `src/pages/Demo.jsx`, `src/pages/DemoAutoplay.jsx`, `src/__tests__/demo-showcase-routing.test.js`, `src/__tests__/DemoAutoplay.test.js`, `CHECKLIST.md` |
+| **Validação** | 1) `npm test -- src/__tests__/demo-showcase-routing.test.js src/__tests__/DemoAutoplay.test.js --runInBand`. 2) `npm run build`. 3) `npm test -- --runInBand`. 4) Verificação manual das rotas `/startup`, `/demo`, `/demo-autoplay` |
+| **Ritmo autoplay** | Antes: `6500ms` por etapa (~78s em 12 etapas). Depois: duração por etapa (`STEP_DURATIONS_MS`) totalizando ~`90s` |
+| **Rollback** | Reverter ajustes de CTA/texto em `/startup` e `/demo`, reverter `DemoAutoplay.jsx` (ritmo + legendas), reverter testes e esta entrada; ou executar `git revert <commit-sha>` |
+| **Aviso oficial** | **P3 continua pendente** até vídeo gravado, publicado e linkado em `README.md` / `docs/DEMO.md` |
+
+---
+
 ## 2026-05-10 — feat(startup/demo): destaque premium de descobribilidade para /demo-autoplay (preparação P3)
 
 | Item | Detalhe |

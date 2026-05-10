@@ -51,9 +51,13 @@ describe("DemoAutoplay route and content (static checks)", () => {
       "utf8",
     );
 
-    expect(demoAutoplaySource).toContain("Demonstração do Construtor / Serginho IA");
+    expect(demoAutoplaySource).toContain("Serginho IA — demo guiada do Construtor");
+    expect(demoAutoplaySource).toContain("Serginho IA — Construtor de artefatos digitais");
     expect(demoAutoplaySource).toContain("Por que isso não é apenas um chat?");
     expect(demoAutoplaySource).toContain("Como avaliar em 5 minutos");
+    expect(demoAutoplaySource).toContain("não usa backend, não chama IA e não consome créditos");
+    expect(demoAutoplaySource).toContain("Ritmo automático estimado");
+    expect(demoAutoplaySource).toContain("STEP_DURATIONS_MS");
     expect(demoAutoplaySource).toContain("/demo");
 
     expect(demoAutoplaySource).toContain("Automático");
