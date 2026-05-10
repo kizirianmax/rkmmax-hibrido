@@ -44,6 +44,15 @@ describe("Demo showcase integration (static checks)", () => {
     expect(demoSource).toContain("https://kizirianmax.site/startup");
     expect(demoSource).toContain("O Construtor entrega artefatos digitais estruturados");
     expect(demoSource).toContain("Compare os 5 tipos de artefatos");
+    expect(demoSource).toContain('to="/demo-autoplay"');
+    expect(demoSource).toContain("Assistir apresentação automática / modo avaliador");
+  });
+
+  test("Startup page includes highlighted CTA to /demo-autoplay", () => {
+    const startupSource = fs.readFileSync(path.join(repoRoot, "src/pages/Projects.jsx"), "utf8");
+
+    expect(startupSource).toContain('to="/demo-autoplay"');
+    expect(startupSource).toContain("▶ Ver demo guiada");
   });
 
   test("Demo artifacts include mandatory card fields", () => {

@@ -1,5 +1,19 @@
 # ✅ Checklist Projeto RKMMax (Atualizado — 08/04/2026)
 
+## 2026-05-10 — feat(startup/demo): destaque premium de descobribilidade para /demo-autoplay (preparação P3)
+
+| Item | Detalhe |
+|------|---------|
+| **O quê** | Adicionado CTA premium para `/demo-autoplay` na faixa visual dos botões de idioma da página institucional `/startup` e CTA adicional na própria `/demo` |
+| **Por quê** | Melhorar descobribilidade imediata da demo guiada para avaliadores externos, mantendo foco na preparação do P3 sem alterar menu global |
+| **Arquivos** | `src/pages/Projects.jsx`, `src/pages/Projects.css`, `src/pages/Demo.jsx`, `src/pages/Demo.css`, `src/__tests__/demo-showcase-routing.test.js`, `CHECKLIST.md` |
+| **Escopo** | Ajuste visual e de navegação local em páginas públicas. Header/menu global, fluxos internos do produto e camadas de backend/IA permanecem inalterados |
+| **Validação** | 1) `npm test -- src/__tests__/demo-showcase-routing.test.js --runInBand`. 2) `npm run build`. 3) `npm test -- --runInBand`. 4) Verificação manual das rotas `/startup`, `/demo`, `/demo-autoplay` |
+| **Rollback** | Remover CTA de `/startup` (`Projects.jsx`/`Projects.css`), remover CTA de `/demo` (`Demo.jsx`/`Demo.css`), reverter teste e esta entrada; ou executar `git revert <commit-sha>` |
+| **Aviso oficial** | **P3 continua pendente** até vídeo gravado, publicado e linkado em `README.md` / `docs/DEMO.md` |
+
+---
+
 ## 2026-05-09 — feat(demo): rota pública estática /demo-autoplay para preparação do P3 (Sebrae Top 30)
 
 | Item | Detalhe |
