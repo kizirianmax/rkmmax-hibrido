@@ -3,6 +3,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { supabase } from "../lib/supabaseClient.js";
 
 const COOLDOWN_SECONDS = 60;
+const RATE_LIMIT_COOLDOWN_SECONDS = 300;
 const LS_KEY_PREFIX = "rkmmax:magiclink:cooldown:";
 
 function getCooldownKey(email) {
@@ -22,10 +23,10 @@ function getRemainingCooldown(email) {
   }
 }
 
-function setCooldownExpiry(email) {
+function setCooldownExpiry(email, seconds = COOLDOWN_SECONDS) {
   if (typeof window === "undefined") return;
   try {
-    const expiresAt = Date.now() + COOLDOWN_SECONDS * 1000;
+    const expiresAt = Date.now() + seconds * 1000;
     window.localStorage.setItem(getCooldownKey(email), String(expiresAt));
   } catch {
     // localStorage not available — no persistence
@@ -85,6 +86,8 @@ export default function Auth() {
         const lowerMsg = msg.toLowerCase();
         if (lowerMsg.includes("email rate limit exceeded") || lowerMsg.includes("rate limit")) {
           setMessage("Muitas tentativas de envio. Aguarde alguns minutos antes de pedir outro link.");
+          setCooldownExpiry(normalizedEmail, RATE_LIMIT_COOLDOWN_SECONDS);
+          setCooldown(RATE_LIMIT_COOLDOWN_SECONDS);
         } else {
           setMessage(`Erro: ${msg}`);
         }
