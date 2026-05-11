@@ -22,7 +22,7 @@ O Construtor/Híbrido é apresentado como:
 
 - **Vitrine pública** — acesso aberto, sem autenticação ou dados de conta real
 - **Estática** — conteúdo fixo, demonstrativo, sem geração ao vivo
-- **Segura** — sem dados reais de produção, sem integração ativa com Supabase, Stripe, Groq, Gemini ou qualquer provider
+- **Segura** — sem dados reais de produção, sem integração ativa com serviços sensíveis, banco de dados, autenticação, billing ou providers durante a gravação
 - **Sem geração ao vivo** — os artefatos exibidos são exemplos demonstrativos, não gerados em tempo real durante a gravação
 
 ---
@@ -31,7 +31,7 @@ O Construtor/Híbrido é apresentado como:
 
 - ❌ Não é um chat
 - ❌ Não é ambiente de produção
-- ❌ Não expõe o **Serginho IA** (orquestrador soberano), os **Especialistas** (especialistas de domínio) ou a camada **ABNT** (validação/conformidade)
+- ❌ Não expõe a camada interna do **Serginho IA** (orquestrador soberano), os **Especialistas** (especialistas de domínio) ou a camada **ABNT** (validação/conformidade)
 - ❌ Não expõe auth, Supabase, Stripe, billing, Vercel ou providers
 - ❌ Não reflete o comportamento real do sistema em produção
 
