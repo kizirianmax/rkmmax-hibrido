@@ -8,7 +8,7 @@
 | **Por quê** | P4 do roadmap após conclusão documental do P3 (vídeo demo público do Serginho IA) |
 | **Arquivos** | `docs/audits/P4-artifactRunner-audit.md` (NOVO), `CHECKLIST.md` (esta entrada) |
 | **Escopo** | Estritamente documental. Nenhum código foi alterado. Nenhuma camada interna (Serginho, Especialistas, ABNT, API, auth, Supabase, Stripe, billing, Vercel, providers) foi tocada |
-| **Principais achados** | Sem risco crítico imediato. RT-02 (path traversal no ZIP) e RS-03 (módulos Node no subprocess) identificados para hardening em P5/P6. Arquivo pode continuar como está até P13 |
+| **Principais achados** | Sem risco crítico imediato. RT-02 (path traversal no ZIP) e RS-03 (módulos Node no subprocess) identificados para hardening futuro em P13, sem risco crítico imediato para o P4. Arquivo pode continuar como está até P13 |
 | **Validação** | 1) Arquivo `docs/audits/P4-artifactRunner-audit.md` criado e legível. 2) Nenhum arquivo de código alterado. 3) `npm test -- --runInBand` → sem regressão |
 | **Rollback** | `git revert <commit-sha>` — remove o arquivo de auditoria e esta entrada do CHECKLIST.md |
 

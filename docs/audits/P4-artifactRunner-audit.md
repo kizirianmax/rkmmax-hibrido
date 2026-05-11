@@ -176,11 +176,11 @@ Scripts `.js` executados via `node` têm acesso completo à API do Node.js. Um s
 
 **HARD-01 — Validar entries do ZIP contra path traversal antes de `extractAllTo`**  
 Antes de `zip.extractAllTo(tmpDir, true)`, iterar sobre `zip.getEntries()` e rejeitar qualquer entry cujo `entryName` contenha `..` ou seja um caminho absoluto.  
-Candidato para P5 ou P6.
+Candidato para P13 — hardening condicional do runner.
 
 **HARD-02 — Limit de tamanho do ZIP antes da extração**  
 Verificar `zipBuffer.length` contra um limite máximo configurável (ex.: 5 MB) antes de qualquer extração, para evitar zip bomb ou DoS por disco.  
-Candidato para P5 ou P6.
+Candidato para P13 — hardening condicional do runner.
 
 ### 🟡 Média prioridade
 
@@ -196,7 +196,7 @@ Candidato para P7.
 
 **HARD-05 — Documentar contrato de `options.command` como internal-only**  
 Garantir que `options.command` nunca seja exposto como parâmetro de request HTTP em nenhum endpoint futuro.  
-Candidato para P5 (documental).
+Candidato para P13 — hardening condicional do runner (item documental).
 
 **HARD-06 — Revisitar `maxBuffer` quando artefatos de maior volume forem suportados**  
 1 MB é adequado hoje. Se o roadmap incluir artefatos com output volumoso, aumentar proporcionalmente.  
@@ -223,7 +223,7 @@ O `artifactRunner.js` está tecnicamente bem construído para o estágio atual d
 1. `options.command` nunca seja exposto como parâmetro de request HTTP externo (RS-01)
 2. Os artefatos gerados pelo LLM continuem sendo conteúdo controlado (RS-03 latente)
 
-**O único risco que merece atenção antes do P13** é o **RT-02 (path traversal no ZIP)**, que deveria ser endereçado no **P5 ou P6** como hardening preventivo antes de qualquer uso em produção com artefatos gerados por usuários externos.
+**RT-02 (path traversal no ZIP) e RS-03 (módulos Node no subprocess)** estão registrados para hardening condicional no **P13**, sem risco crítico imediato para o P4.
 
 ### Veredicto
 
@@ -233,7 +233,7 @@ O `artifactRunner.js` está tecnicamente bem construído para o estágio atual d
 | Segurança para uso interno/controlado | ✅ adequada |
 | Segurança para artefatos de usuários externos | ⚠️ condicional — RT-02 e RS-03 devem ser endereçados |
 | Risco crítico imediato | ❌ nenhum identificado |
-| Pode aguardar até P13 | ✅ sim, com hardening de RT-02 recomendado no P5/P6 |
+| Pode aguardar até P13 | ✅ sim, com hardening de RT-02 e RS-03 registrado para P13 |
 
 ---
 
