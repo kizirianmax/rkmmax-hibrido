@@ -354,3 +354,9 @@
     white-space: nowrap;
   }
 }
+
+@media (max-width: 520px) {
+  .pstatus-hero__cta {
+    width: 100%;
+  }
+}

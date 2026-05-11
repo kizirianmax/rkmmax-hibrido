@@ -119,7 +119,10 @@ export default function App() {
 
         {/* Help & Status */}
         <Route path="/help" element={<Help />} />
-        <Route path="/status" element={<PublicStatus />} />
+        <Route
+          path="/status"
+          element={<PublicStatus />}
+        />
         <Route path="/info" element={<Info />} />
 
         {/* Settings */}

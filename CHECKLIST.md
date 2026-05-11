@@ -2,16 +2,8 @@
 
 ## 2026-05-11 — feat(status): P5 — página pública /status do Construtor/Híbrido
 
-| Item | Detalhe |
-|------|---------|
-| **O quê** | Criada página pública `/status` (`Serginho IA — Status público do Construtor`) com métricas/status demonstrativos do Construtor/Híbrido, sem login, sem dados sensíveis |
-| **Por quê** | P5 do roadmap Sebrae/USP/SciBiz — avaliadores externos precisam entender rapidamente o estado público do Construtor sem expor dados reais de produção |
-| **Arquivos** | `src/pages/PublicStatus.jsx` (NOVO), `src/pages/PublicStatus.css` (NOVO), `src/App.jsx` (rota `/status` → `<PublicStatus />`), `CHECKLIST.md` (esta entrada) |
-| **Conteúdo da página** | 1) status da demo pública; 2) link para `/demo`; 3) link para vídeo demo em `docs/DEMO.md`; 4) resumo dos 5 artefatos demonstráveis; 5) status do pipeline (geração, validação, preview, revisão, empacotamento); 6) status documental P1–P4 concluídos; 7) aviso público/demonstrativo; 8) seção "O que não é exposto" |
-| **Escopo** | Frontend estático puro. Nenhuma camada interna (Serginho, Especialistas, ABNT, API, auth, Supabase, Stripe, billing, Vercel, providers) foi alterada. `artifactRunner.js` intocado. Nenhuma dependência adicionada |
-| **Conformidade** | Não cita providers específicos; usa "Providers de IA, configurações de modelo ou chaves de integração". Linguagem demonstrativa, não de validação em tempo real |
-| **Validação** | 1) Acessar `/status` sem login → página carrega. 2) Links para `/demo` e vídeo YouTube funcionais. 3) Rotas existentes intactas. 4) `npm run build` → sem erros. 5) `npm test -- --runInBand` → sem regressão |
-| **Rollback** | `git revert <commit-sha>` — remove `PublicStatus.jsx`, `PublicStatus.css`, reverte `App.jsx` e remove esta entrada do CHECKLIST.md |
+- Página pública `/status` publicada para avaliadores externos, com métricas/status demonstrativos e sem login.
+- Escopo do P5: `src/pages/PublicStatus.jsx`, `src/pages/PublicStatus.css`, rota `/status` em `src/App.jsx` e registro desta entrada.
 
 
 ## 2026-05-11 — docs(P4): auditoria técnica documental de artifactRunner.js
