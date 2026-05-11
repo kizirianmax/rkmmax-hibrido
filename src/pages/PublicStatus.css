@@ -1,0 +1,356 @@
+/* PublicStatus.css — P5: página pública de métricas/status do Construtor/Híbrido */
+/* Padrão visual alinhado ao Demo.css. Sem exposição de dados sensíveis. */
+
+.pstatus-page {
+  min-height: calc(100vh - 80px);
+  padding: 24px 16px 56px;
+  background: radial-gradient(circle at top, #16213b 0%, #0b1220 46%, #070d18 100%);
+  color: #e2e8f0;
+}
+
+/* Aviso */
+.pstatus-notice {
+  max-width: 860px;
+  margin: 0 auto 20px;
+  padding: 14px 18px;
+  border: 1px solid #2a3d60;
+  border-radius: 12px;
+  background: rgba(14, 165, 233, 0.08);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.pstatus-notice__badge {
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: rgba(14, 165, 233, 0.18);
+  border: 1px solid #2a3d60;
+  color: #bae6fd;
+  font-size: 0.82rem;
+  font-weight: 700;
+  align-self: flex-start;
+}
+
+.pstatus-notice__text {
+  margin: 0;
+  color: #94a3b8;
+  font-size: 0.9rem;
+  line-height: 1.5;
+}
+
+/* Hero */
+.pstatus-hero {
+  max-width: 860px;
+  margin: 0 auto 24px;
+  padding: 24px 20px;
+  border: 1px solid #1f2a44;
+  border-radius: 16px;
+  background: rgba(15, 23, 42, 0.88);
+}
+
+.pstatus-hero__title {
+  margin: 0 0 10px;
+  font-size: clamp(1.5rem, 4.5vw, 2.1rem);
+  font-weight: 800;
+  line-height: 1.2;
+  color: #f8fafc;
+}
+
+.pstatus-hero__subtitle {
+  margin: 0 0 16px;
+  color: #cbd5e1;
+  line-height: 1.55;
+}
+
+.pstatus-hero__links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.pstatus-hero__cta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 40px;
+  padding: 8px 16px;
+  border-radius: 999px;
+  border: 1px solid #38bdf8;
+  text-decoration: none;
+  font-weight: 700;
+  color: #e0f2fe;
+  background: linear-gradient(135deg, #0f172a 0%, #1d4ed8 100%);
+  font-size: 0.9rem;
+}
+
+.pstatus-hero__cta--secondary {
+  background: linear-gradient(135deg, #0f172a 0%, #0f4c75 100%);
+  border-color: #7dd3fc;
+}
+
+.pstatus-hero__cta:hover {
+  filter: brightness(1.08);
+}
+
+/* Sections */
+.pstatus-section {
+  max-width: 860px;
+  margin: 0 auto 18px;
+  padding: 18px 20px;
+  border: 1px solid #1f2a44;
+  border-radius: 14px;
+  background: rgba(15, 23, 42, 0.74);
+}
+
+.pstatus-section--notexposed {
+  border-color: #3b1d1d;
+  background: rgba(30, 10, 10, 0.55);
+}
+
+.pstatus-section__title {
+  margin: 0 0 10px;
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #f8fafc;
+}
+
+.pstatus-section__lead {
+  margin: 0 0 12px;
+  color: #94a3b8;
+  font-size: 0.88rem;
+}
+
+/* Badges */
+.pstatus-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 9px;
+  border-radius: 999px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.pstatus-badge--ok {
+  background: rgba(22, 163, 74, 0.18);
+  border: 1px solid #166534;
+  color: #86efac;
+}
+
+.pstatus-badge--no {
+  background: rgba(185, 28, 28, 0.18);
+  border: 1px solid #7f1d1d;
+  color: #fca5a5;
+}
+
+/* Status rows */
+.pstatus-status-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 8px 0;
+  border-bottom: 1px solid #1f2a44;
+}
+
+.pstatus-status-row:last-child {
+  border-bottom: none;
+}
+
+.pstatus-status-label {
+  color: #cbd5e1;
+  font-size: 0.92rem;
+  line-height: 1.5;
+}
+
+.pstatus-status-label a {
+  color: #38bdf8;
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.pstatus-status-label a:hover {
+  text-decoration: underline;
+}
+
+.pstatus-status-label code {
+  background: rgba(15, 23, 42, 0.9);
+  border: 1px solid #2a3d60;
+  border-radius: 4px;
+  padding: 1px 5px;
+  font-size: 0.85em;
+  color: #bae6fd;
+}
+
+/* Artifacts */
+.pstatus-artifacts {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.pstatus-artifact {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 10px;
+  border: 1px solid #1f2a44;
+  border-radius: 10px;
+  background: rgba(15, 23, 42, 0.5);
+}
+
+.pstatus-artifact__name {
+  font-weight: 600;
+  color: #f1f5f9;
+  font-size: 0.92rem;
+  flex: 1 1 160px;
+}
+
+.pstatus-artifact__category {
+  padding: 3px 9px;
+  border-radius: 999px;
+  background: #1f3a8a;
+  color: #bfdbfe;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.pstatus-artifact__status {
+  margin-left: auto;
+}
+
+/* Pipeline */
+.pstatus-pipeline {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.pstatus-pipeline__step {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.pstatus-pipeline__step div {
+  flex: 1;
+}
+
+.pstatus-pipeline__step strong {
+  display: block;
+  color: #f1f5f9;
+  font-size: 0.95rem;
+  margin-bottom: 2px;
+}
+
+.pstatus-pipeline__step p {
+  margin: 0;
+  color: #94a3b8;
+  font-size: 0.87rem;
+  line-height: 1.45;
+}
+
+/* Docs */
+.pstatus-docs {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.pstatus-docs__item {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+}
+
+.pstatus-docs__desc {
+  color: #94a3b8;
+  font-size: 0.88rem;
+  line-height: 1.45;
+  flex: 1 1 200px;
+}
+
+/* Not exposed */
+.pstatus-notexposed {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.pstatus-notexposed li {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #fca5a5;
+  font-size: 0.9rem;
+}
+
+/* Footer */
+.pstatus-footer {
+  max-width: 860px;
+  margin: 20px auto 0;
+  padding: 16px 20px;
+  border: 1px solid #1f2a44;
+  border-radius: 12px;
+  background: rgba(15, 23, 42, 0.84);
+  color: #94a3b8;
+  font-size: 0.88rem;
+}
+
+.pstatus-footer p {
+  margin: 0 0 12px;
+  line-height: 1.5;
+}
+
+.pstatus-footer__links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.pstatus-footer__links a {
+  color: #38bdf8;
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.pstatus-footer__links a:hover {
+  text-decoration: underline;
+}
+
+@media (min-width: 720px) {
+  .pstatus-page {
+    padding: 36px 22px 64px;
+  }
+
+  .pstatus-hero {
+    padding: 28px 28px;
+  }
+
+  .pstatus-notice {
+    flex-direction: row;
+    align-items: flex-start;
+  }
+
+  .pstatus-notice__badge {
+    align-self: center;
+    white-space: nowrap;
+  }
+}

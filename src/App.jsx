@@ -52,6 +52,7 @@ import AgentDetail from "./pages/AgentDetail.jsx";
 import Chat from "./pages/Chat.jsx";
 import Demo from "./pages/Demo.jsx";
 import DemoAutoplay from "./pages/DemoAutoplay.jsx";
+import PublicStatus from "./pages/PublicStatus.jsx";
 
 export default function App() {
   const [showOnboarding, setShowOnboarding] = React.useState(false);
@@ -118,7 +119,7 @@ export default function App() {
 
         {/* Help & Status */}
         <Route path="/help" element={<Help />} />
-        <Route path="/status" element={<Help />} />
+        <Route path="/status" element={<PublicStatus />} />
         <Route path="/info" element={<Info />} />
 
         {/* Settings */}
