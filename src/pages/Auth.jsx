@@ -28,7 +28,7 @@ function setCooldownExpiry(email) {
     const expiresAt = Date.now() + COOLDOWN_SECONDS * 1000;
     window.localStorage.setItem(getCooldownKey(email), String(expiresAt));
   } catch {
-    // localStorage não disponível — sem persistência
+    // localStorage not available — no persistence
   }
 }
 
@@ -66,7 +66,7 @@ export default function Auth() {
       });
     }, 1000);
     return () => clearInterval(intervalRef.current);
-  }, [cooldown > 0]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [cooldown]);
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -82,7 +82,8 @@ export default function Auth() {
 
       if (error) {
         const msg = error.message || "";
-        if (msg.toLowerCase().includes("email rate limit exceeded") || msg.toLowerCase().includes("rate limit")) {
+        const lowerMsg = msg.toLowerCase();
+        if (lowerMsg.includes("email rate limit exceeded") || lowerMsg.includes("rate limit")) {
           setMessage("Muitas tentativas de envio. Aguarde alguns minutos antes de pedir outro link.");
         } else {
           setMessage(`Erro: ${msg}`);
