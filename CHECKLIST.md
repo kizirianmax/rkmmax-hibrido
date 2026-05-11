@@ -4,6 +4,7 @@
 
 - Página pública `/status` publicada para avaliadores externos, com métricas/status demonstrativos e sem login.
 - Escopo do P5: `src/pages/PublicStatus.jsx`, `src/pages/PublicStatus.css`, rota `/status` em `src/App.jsx` e registro desta entrada.
+- Validação: `/status` abre sem login e links de `/demo` + vídeo P3 funcionam. Rollback: `git revert <commit-sha>`.
 
 
 ## 2026-05-11 — docs(P4): auditoria técnica documental de artifactRunner.js

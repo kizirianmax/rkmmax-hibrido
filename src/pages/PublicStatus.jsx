@@ -18,7 +18,7 @@ const DOCS_STEPS = [
   { id: "p2", label: "P2", desc: "Vitrine pública /demo com 5 artefatos demonstráveis criada." },
   { id: "p3", label: "P3", desc: "Vídeo demo público do Serginho IA gravado e publicado." },
   { id: "p4", label: "P4", desc: "Auditoria técnica documental de artifactRunner.js concluída." },
-  { id: "p5", label: "P5", desc: "Página pública /status publicada para visão demonstrativa dos avaliadores." },
+  { id: "p5", label: "P5", desc: "Página pública /status publicada para visualização demonstrativa dos avaliadores." },
 ];
 
 const NOT_EXPOSED = [
