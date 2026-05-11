@@ -1,5 +1,19 @@
 # ✅ Checklist Projeto RKMMax (Atualizado — 08/04/2026)
 
+## 2026-05-11 — fix(auth): cooldown e mensagens amigáveis no login por magic link
+
+| Item | Detalhe |
+|------|---------|
+| **O quê** | Correção mínima do fluxo de login por magic link em `src/pages/Auth.jsx` |
+| **Por quê** | Usuário conseguia clicar várias vezes em "Entrar", disparando múltiplas solicitações e atingindo o rate limit do Supabase com erro cru "email rate limit exceeded" |
+| **Arquivos** | `src/pages/Auth.jsx` (único arquivo de código alterado), `CHECKLIST.md` |
+| **O que mudou** | 1) Estado `loading` bloqueia re-envio durante requisição em andamento. 2) Cooldown local de 60s após envio bem-sucedido. 3) Cooldown persistido em `localStorage` por e-mail (`rkmmax:magiclink:cooldown:<email>`), restaurado ao montar/digitar e-mail. 4) Contagem regressiva visível no botão. 5) Mensagem de sucesso clara. 6) Erro "rate limit" traduzido para mensagem amigável. 7) E-mail normalizado (lowercase + trim) antes de usar como chave e enviar para Supabase. 8) Guard `typeof window` para ambiente sem localStorage (SSR) |
+| **Validação manual** | 1) Digitar e-mail e clicar "Entrar" repetidamente — somente uma requisição é disparada. 2) Após envio, botão mostra contagem regressiva e fica desabilitado por 60s. 3) Recarregar a página com o mesmo e-mail preenchido — cooldown é restaurado do localStorage. 4) Simular erro de rate limit — mensagem amigável exibida, sem texto técnico cru. 5) Após cooldown, botão volta ao normal e novo envio funciona |
+| **Testes** | `npm test -- --runInBand` — sem regressão |
+| **Rollback** | `git revert <commit-sha>` — reverte `Auth.jsx` e esta entrada do CHECKLIST |
+
+---
+
 ## 2026-05-11 — docs(P4): auditoria técnica documental de artifactRunner.js
 
 | Item | Detalhe |
