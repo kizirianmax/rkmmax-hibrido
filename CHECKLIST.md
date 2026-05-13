@@ -1,5 +1,19 @@
 # ✅ Checklist Projeto RKMMax (Atualizado — 08/04/2026)
 
+## 2026-05-13 — docs(verify): registrar auditoria UI/UX premium da demo
+
+| Item | Detalhe |
+|------|---------|
+| **O quê** | Registro documental da verificação estrutural sobre evolução premium da camada UI/UX / Demo / Mídia avançada do `rkmmax-hibrido`, antes de qualquer implementação técnica. |
+| **Por quê** | Tornar rastreável, no repositório, o mapa de oportunidades e restrições para próximos PRs pequenos e aditivos, sem violar a soberania do Serginho nem misturar camadas. |
+| **Arquivos** | `docs/audits/uiux-demo-media-premium-verification-2026-05-13.md` (NOVO), `CHECKLIST.md` (esta entrada). |
+| **Escopo** | Estritamente documental. Nenhum arquivo de código alterado. Nenhuma camada interna (Serginho, Construtor/Híbrido, Especialistas, ABNT, Auth, Supabase, Stripe, Asaas, billing, Vercel, providers) foi tocada. |
+| **Validação** | 1) Apenas 2 arquivos alterados (o de auditoria criado e esta entrada no CHECKLIST.md). 2) Nenhum arquivo `.js`/`.jsx`/`.css`/`.json` modificado. 3) `npm test -- --runInBand` permanece sem regressão (não é necessário rodar pois nenhum código mudou). |
+| **Rollback** | `git revert <commit-sha>` — remove apenas o arquivo de auditoria e esta entrada do `CHECKLIST.md`. Sem impacto no produto. |
+| **Aviso oficial** | Qualquer evolução técnica derivada desta auditoria deve acontecer em PRs pequenos, separados e registrados no `CHECKLIST.md`. P3 (vídeo demo com narração) continua pendente até vídeo gravado, publicado e linkado em `README.md` / `docs/DEMO.md`. |
+
+---
+
 ## 2026-05-11 — fix(auth): cooldown e mensagens amigáveis no login por magic link
 
 | Item | Detalhe |
