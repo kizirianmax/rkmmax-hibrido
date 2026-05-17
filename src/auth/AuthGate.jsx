@@ -8,6 +8,7 @@ import { useAuth } from "./AuthProvider.jsx";
 // Rotas que NÃO exigem login
 const PUBLIC_ROUTES = [
   "/",               // landing page
+  "/startup",        // institutional startup page
   "/login",          // login page (magic link)
   "/reset-password", // password reset
   "/pricing",        // pricing page
@@ -58,3 +59,4 @@ export default function AuthGate({ children }) {
   // Autenticado em rota privada
   return <>{children}</>;
 }
+
