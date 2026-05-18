@@ -27,7 +27,7 @@
     "@sentry/react": "^10.50.0",
     "@stripe/stripe-js": "^9.2.0",
     "@supabase/supabase-js": "^2.105.4",
-    "@vitejs/plugin-react": "^6.0.1",
+    "@vitejs/plugin-react": "^6.0.2",
     "adm-zip": "^0.5.17",
     "archiver": "^7.0.1",
     "busboy": "^1.6.0",
