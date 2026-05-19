@@ -33,7 +33,7 @@
     "busboy": "^1.6.0",
     "form-data": "^4.0.5",
     "openai": "^6.37.0",
-    "posthog-js": "^1.372.10",
+    "posthog-js": "^1.374.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-router-dom": "^7.15.0",
