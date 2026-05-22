@@ -228,6 +228,43 @@ describe('/api/artifact-preview — auth guard', () => {
   });
 });
 
+// ── CORS — sem wildcard "*" (contraprova final P0) ───────────────────────────
+describe('artifact endpoints — CORS restrito (no wildcard)', () => {
+  test('/api/artifact NUNCA define Access-Control-Allow-Origin: *', async () => {
+    verifyAuthMock.mockResolvedValueOnce({ user: { id: 'u1' }, error: null });
+    // Origin não confiável → helper deve omitir o header (não setar "*")
+    const { req, res } = makeReqRes(
+      'POST',
+      { content: '# x', metadata: {} },
+      { authorization: '******', origin: 'https://attacker.example.com' },
+    );
+    await artifactHandler(req, res);
+    expect(res._headers['Access-Control-Allow-Origin']).not.toBe('*');
+    // Origin não confiável → header simplesmente não é setado
+    expect(res._headers['Access-Control-Allow-Origin']).toBeUndefined();
+  });
+
+  test('/api/artifact-preview NUNCA define Access-Control-Allow-Origin: *', async () => {
+    verifyAuthMock.mockResolvedValueOnce({ user: { id: 'u1' }, error: null });
+    const { req, res } = makeReqRes(
+      'POST',
+      { content: '# x', metadata: {} },
+      { authorization: '******', origin: 'https://attacker.example.com' },
+    );
+    await previewHandler(req, res);
+    expect(res._headers['Access-Control-Allow-Origin']).not.toBe('*');
+    expect(res._headers['Access-Control-Allow-Origin']).toBeUndefined();
+  });
+
+  test('/api/artifact-preview OPTIONS de origem confiável retorna 204 e origem específica (nunca *)', async () => {
+    const { req, res } = makeReqRes('OPTIONS', null, { origin: 'https://kizirianmax.site' });
+    await previewHandler(req, res);
+    expect(res._status).toBe(204);
+    expect(res._headers['Access-Control-Allow-Origin']).toBe('https://kizirianmax.site');
+    expect(res._headers['Access-Control-Allow-Origin']).not.toBe('*');
+  });
+});
+
 // ── Method-not-allowed ────────────────────────────────────────────────────────
 describe('artifact endpoints — method not allowed', () => {
   test('/api/artifact rejeita GET com 405 (após preflight CORS)', async () => {
