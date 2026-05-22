@@ -65,31 +65,25 @@ describe('API Integration Tests (Enterprise)', () => {
     });
   });
 
-  describe('Transcribe API - Serginho Orchestrator Integration', () => {
-    test('transcribe.js uses Serginho Orchestrator', async () => {
+  describe('Transcribe API - Controlled Unavailability', () => {
+    test('transcribe.js returns controlled unavailable response', async () => {
       const fs = await import('fs/promises');
       const content = await fs.readFile('./api/transcribe.js', 'utf8');
       
-      // Verify Serginho Orchestrator imports
-      expect(content).toContain('from "./lib/serginho-orchestrator.js"');
-      expect(content).toContain('serginho');
-      
-      // Verify NO direct Gemini/Groq API calls
-      expect(content).not.toContain('generativelanguage.googleapis.com');
-      expect(content).not.toContain('api.groq.com/openai/v1/audio');
-      expect(content).not.toContain('whisper-large-v3');
+      expect(content).toContain('status(501)');
+      expect(content).toContain('TRANSCRIPTION_NOT_AVAILABLE');
+      expect(content).toContain('temporariamente indisponível');
     });
 
-    test('transcribe.js has standardized error handling', async () => {
+    test('transcribe.js does not contain legacy runtime transcription flow', async () => {
       const fs = await import('fs/promises');
       const content = await fs.readFile('./api/transcribe.js', 'utf8');
       
-      // Verify error handling
-      expect(content).toContain('Circuit breaker');
-      expect(content).toContain('Timeout');
-      expect(content).toContain('All providers failed');
-      expect(content).toContain('503'); // Service unavailable
-      expect(content).toContain('504'); // Gateway timeout
+      expect(content).not.toContain('gemini-2.0-flash');
+      expect(content).not.toContain('serginho.handleRequest');
+      expect(content).not.toContain('from "./lib/serginho-orchestrator.js"');
+      expect(content).not.toContain('getEnabledProviders');
+      expect(content).not.toContain('forceProvider');
     });
   });
 
@@ -105,8 +99,8 @@ describe('API Integration Tests (Enterprise)', () => {
       
       // Check transcribe.js
       const transcribeContent = await fs.readFile('./api/transcribe.js', 'utf8');
-      expect(transcribeContent).toContain('success:');
-      expect(transcribeContent).toContain('transcript:');
+      expect(transcribeContent).toContain('code: "TRANSCRIPTION_NOT_AVAILABLE"');
+      expect(transcribeContent).toContain('message:');
     });
 
     test('no API exposes provider names in code', async () => {
@@ -136,13 +130,12 @@ describe('API Integration Tests (Enterprise)', () => {
       expect(content).toContain('executeAITask');
     });
 
-    test('transcribe.js uses Serginho Orchestrator for transcription', async () => {
+    test('transcribe.js does not call Serginho Orchestrator for transcription', async () => {
       const fs = await import('fs/promises');
       const content = await fs.readFile('./api/transcribe.js', 'utf8');
       
-      // Verify transcription uses Serginho Orchestrator
-      expect(content).toContain('serginho.handleRequest');
-      expect(content).toContain('forceProvider');
+      expect(content).not.toContain('serginho.handleRequest');
+      expect(content).not.toContain('forceProvider');
     });
   });
 
@@ -150,7 +143,7 @@ describe('API Integration Tests (Enterprise)', () => {
     test('APIs have circuit breaker awareness', async () => {
       const fs = await import('fs/promises');
       
-      const apis = ['ai.js', 'transcribe.js'];
+      const apis = ['ai.js'];
       
       for (const api of apis) {
         const content = await fs.readFile(`./api/${api}`, 'utf8');
@@ -162,7 +155,7 @@ describe('API Integration Tests (Enterprise)', () => {
     test('APIs have timeout protection awareness', async () => {
       const fs = await import('fs/promises');
       
-      const apis = ['ai.js', 'transcribe.js'];
+      const apis = ['ai.js'];
       
       for (const api of apis) {
         const content = await fs.readFile(`./api/${api}`, 'utf8');
@@ -180,9 +173,7 @@ describe('API Integration Tests (Enterprise)', () => {
       expect(aiContent).toContain('Circuit breaker protection');
       
       const transcribeContent = await fs.readFile('./api/transcribe.js', 'utf8');
-      expect(transcribeContent).toContain('Enterprise-grade');
-      expect(transcribeContent).toContain('Serginho Orchestrator');
+      expect(transcribeContent).toContain('temporariamente indisponível');
     });
   });
 });
-
