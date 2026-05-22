@@ -315,81 +315,20 @@ curl -X POST https://your-domain.vercel.app/api/multimodal \
 
 **Endpoint:** `POST /api/transcribe`
 
-**Request (multipart/form-data):**
-```bash
---boundary
-Content-Disposition: form-data; name="audio"; filename="recording.mp3"
-Content-Type: audio/mpeg
-
-[binary audio data]
---boundary
-Content-Disposition: form-data; name="language"
-
-en
---boundary--
-```
-
-**Response:**
+**Current response (501):**
 ```json
 {
-  "success": true,
-  "transcription": {
-    "text": "Hello, this is a test recording.",
-    "language": "en",
-    "duration": 3.5,
-    "confidence": 0.98,
-    "words": [
-      {"word": "Hello", "start": 0.0, "end": 0.5},
-      {"word": "this", "start": 0.6, "end": 0.8}
-    ]
-  }
+  "error": "TRANSCRIPTION_NOT_AVAILABLE",
+  "message": "Audio transcription is not available in the current version.",
+  "status": 501
 }
 ```
-
-**Supported Audio Formats:**
-- MP3
-- WAV
-- M4A
-- FLAC
-- OGG
 
 ---
 
 ### 7. Vision
 
 > ⚠️ **Temporariamente indisponível.** Image/vision analysis is not currently implemented. The endpoint `/api/vision` does not exist in the current codebase. Multimodal vision will be available in a future release.
-
-**Endpoint:** `POST /api/vision` *(not available)*
-
-**Request (multipart/form-data):**
-```bash
-curl -X POST https://your-domain.vercel.app/api/vision \
-  -H "Authorization: Bearer YOUR_TOKEN" \
-  -F "image=@screenshot.png" \
-  -F "task=detect_objects"
-```
-
-**Response:**
-```json
-{
-  "success": true,
-  "vision": {
-    "task": "detect_objects",
-    "objects": [
-      {"label": "person", "confidence": 0.95, "bbox": [10, 20, 100, 200]},
-      {"label": "laptop", "confidence": 0.89, "bbox": [150, 100, 300, 250]}
-    ],
-    "scene": "office environment",
-    "colors": ["gray", "white", "blue"]
-  }
-}
-```
-
-**Available Tasks:**
-- `detect_objects` - Object detection
-- `ocr` - Text extraction
-- `classify` - Image classification
-- `describe` - General description
 
 ---
 
@@ -757,7 +696,7 @@ Check system health and status.
   "services": {
     "database": "operational",
     "stripe": "operational",
-    "openai": "operational",
+    "groq": "operational",
     "gemini": "operational",
     "supabase": "operational"
   },

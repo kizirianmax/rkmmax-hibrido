@@ -96,7 +96,7 @@ Para elevar o nível de maturidade do projeto e mitigar os riscos identificados,
     -   **Justificativa**: Corrige a falha de segurança mais grave, que permite o uso ilimitado e não faturado da API, protegendo o projeto contra abusos e custos inesperados.
 
 3.  **Realizar uma Limpeza Abrangente de Código Morto (Alto)**:
-    -   **Ação**: Remover todas as páginas não roteadas, componentes duplicados e arquivos órfãos identificados. Desinstalar as dependências de npm que não estão sendo utilizadas (`@google/generative-ai`, `openai`, `busboy`, `form-data`).
+    -   **Ação**: Remover todas as páginas não roteadas, componentes duplicados e arquivos órfãos identificados. Desinstalar dependências de npm não utilizadas (`busboy`, `form-data`). **Atualização:** As dependências `@google/generative-ai` e `openai` foram removidas do `package.json` no PR #456 da rodada corretiva da Fase 1 após contraprova de ausência de imports/uso runtime.
     -   **Justificativa**: Reduz a complexidade do projeto, diminui o tamanho do bundle, melhora o tempo de build e facilita a manutenção, permitindo que os desenvolvedores foquem no código que realmente importa.
 
 4.  **Corrigir Riscos de Segurança (Alto)**:
