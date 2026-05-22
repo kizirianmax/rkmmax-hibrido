@@ -77,7 +77,7 @@ const FRONTEND_FORBIDDEN_ENDPOINT_PATTERNS = PROVIDER_ENDPOINTS.map((endpoint) =
 const FRONTEND_FORBIDDEN_SDK_IMPORT_PATTERNS = FRONTEND_FORBIDDEN_SDK_IMPORTS.map((sdkName) => ({
   sdkName,
   pattern: new RegExp(
-    `(?:import\\s+[^;]*?from\\s*['"]${sdkName}['"]|import\\s*['"]${sdkName}['"]|import\\s*\\(\\s*['"]${sdkName}['"]\\s*\\)|require\\(\\s*['"]${sdkName}['"]\\s*\\))`,
+    `(?:import\\s+[^;]*?from\\s*['"]${escapeForRegExp(sdkName)}(?:\\/[^'"]+)?['"]|import\\s*['"]${escapeForRegExp(sdkName)}(?:\\/[^'"]+)?['"]|export\\s+(?:\\*|\\{[^}]*\\}|[^;]*?)\\s+from\\s*['"]${escapeForRegExp(sdkName)}(?:\\/[^'"]+)?['"]|import\\s*\\(\\s*['"]${escapeForRegExp(sdkName)}(?:\\/[^'"]+)?['"]\\s*\\)|require\\(\\s*['"]${escapeForRegExp(sdkName)}(?:\\/[^'"]+)?['"]\\s*\\))`,
     'm'
   ),
 }));
@@ -193,6 +193,23 @@ describe('Phase A4 — Gateway Sovereignty', () => {
   });
 
   describe('Frontend sovereignty: src/ must not bypass internal AI gateway', () => {
+    it('sdk detector catches direct imports, reexports, and subpaths', () => {
+      const cases = [
+        { sdk: 'openai', code: "import OpenAI from 'openai'", expected: true },
+        { sdk: 'openai', code: "export * from 'openai'", expected: true },
+        { sdk: '@google/generative-ai', code: "export { GoogleGenerativeAI } from '@google/generative-ai'", expected: true },
+        { sdk: 'openai', code: "import helper from 'openai/helpers'", expected: true },
+        { sdk: '@anthropic-ai/sdk', code: "const x = require('@anthropic-ai/sdk/client')", expected: true },
+        { sdk: 'groq-sdk', code: "await import('groq-sdk/runtime')", expected: true },
+        { sdk: 'openai', code: "import client from '/api/ai'", expected: false },
+      ];
+
+      for (const { sdk, code, expected } of cases) {
+        const sdkPattern = FRONTEND_FORBIDDEN_SDK_IMPORT_PATTERNS.find(({ sdkName }) => sdkName === sdk);
+        expect(Boolean(sdkPattern?.pattern.test(code))).toBe(expected);
+      }
+    });
+
     it('blocks direct external AI provider endpoints and direct frontend SDK imports', () => {
       const files = collectFrontendSourceFiles(FRONTEND_DIR);
       const violations = [];
