@@ -39,6 +39,8 @@ A auditoria revelou diversos pontos de atenção que variam em criticidade, desd
 
 ### P1: Múltiplas Implementações Conflitantes do Orquestrador "Serginho" (Risco Alto)
 
+> **Atualização pós-auditoria (rodada corretiva Fase 1, 2026-05-22):** Os arquivos legados `src/api/serginhoOrchestrator.js` e `src/agents/serginho/Serginho.js` mencionados nos itens 2 e 3 abaixo **não existem mais** no repositório. O único orquestrador backend soberano ativo é `api/lib/serginho-orchestrator.js`. O achado P1/F1-04 está resolvido.
+
 O problema mais crítico identificado é a existência de **três implementações distintas e conflitantes do orquestrador "Serginho"**:
 
 1.  **`api/lib/serginho-orchestrator.js` (v2.1.0)**: Uma implementação de backend robusta e agnóstica a provedores. Possui características avançadas como circuit breakers, registro de modelos com fallback, cache e métricas. Parece ser a versão mais madura e planejada.
@@ -54,7 +56,7 @@ O repositório possui uma quantidade significativa de código que parece não se
 -   **Páginas Não Roteadas**: Um grande número de componentes de página em `src/pages` (como `Account.jsx`, `Auth.jsx`, `AutomationDashboard.jsx`) não são referenciados no roteador principal (`src/App.jsx`), indicando que são código morto.
 -   **Componentes Duplicados**: Existem dois componentes de Logout (`Logout.jsx` na raiz e `src/pages/Logout.jsx`) e duas páginas para o sistema híbrido (`HybridAgent.jsx` e `HybridAgentSimple.jsx`), onde apenas a segunda é efetivamente usada.
 -   **Arquivos Órfãos na Raiz**: Arquivos como `add_avatars.js` e `script.js` estão soltos na raiz do projeto e não parecem ser utilizados, contribuindo para a desorganização.
--   **Dependências Não Utilizadas**: O `package.json` declara dependências como `@google/generative-ai` e `openai`, mas a análise do código não encontrou uso direto de seus SDKs. As chamadas de API são feitas via `fetch`, tornando essas dependências desnecessárias e aumentando o tamanho do build.
+-   **Dependências Não Utilizadas**: O `package.json` declarava dependências como `@google/generative-ai` e `openai`, mas a análise do código não encontrou uso direto de seus SDKs. As chamadas de API são feitas via `fetch`, tornando essas dependências desnecessárias. **Atualização (rodada corretiva Fase 1, 2026-05-22):** Ambas as dependências foram removidas do `package.json` no PR #456 após contraprova de ausência de imports/uso runtime.
 
 ### P3: Riscos de Segurança e Arquiteturais (Risco Alto)
 
@@ -94,7 +96,7 @@ Para elevar o nível de maturidade do projeto e mitigar os riscos identificados,
     -   **Justificativa**: Corrige a falha de segurança mais grave, que permite o uso ilimitado e não faturado da API, protegendo o projeto contra abusos e custos inesperados.
 
 3.  **Realizar uma Limpeza Abrangente de Código Morto (Alto)**:
-    -   **Ação**: Remover todas as páginas não roteadas, componentes duplicados e arquivos órfãos identificados. Desinstalar as dependências de npm que não estão sendo utilizadas (`@google/generative-ai`, `openai`, `busboy`, `form-data`).
+    -   **Ação**: Remover todas as páginas não roteadas, componentes duplicados e arquivos órfãos identificados. Desinstalar dependências de npm não utilizadas (`busboy`, `form-data`). **Atualização:** As dependências `@google/generative-ai` e `openai` foram removidas do `package.json` no PR #456 da rodada corretiva da Fase 1 após contraprova de ausência de imports/uso runtime.
     -   **Justificativa**: Reduz a complexidade do projeto, diminui o tamanho do bundle, melhora o tempo de build e facilita a manutenção, permitindo que os desenvolvedores foquem no código que realmente importa.
 
 4.  **Corrigir Riscos de Segurança (Alto)**:

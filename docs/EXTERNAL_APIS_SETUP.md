@@ -1,5 +1,7 @@
 # 🔗 Guia de Configuração de APIs Externas
 
+> ⚠️ **DOCUMENTO LEGADO.** Este guia foi escrito para a arquitetura anterior baseada em `ExternalAPIManager.js` (removido no PR #452 da rodada corretiva da Auditoria Mestre Fase 1). A arquitetura atual utiliza **Serginho** (`api/lib/serginho-orchestrator.js`) como orquestrador soberano e gateway único para todos os providers de IA. Os providers ativos são **Groq** e **Gemini**, chamados via `fetch`/REST interno sob controle do Serginho. OpenAI e Anthropic não são providers ativos. Consulte `README.md` e `docs/api.md` para documentação atual.
+
 **Integração com OpenAI, Anthropic, Google e Groq**
 
 ---
