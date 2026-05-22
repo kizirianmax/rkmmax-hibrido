@@ -22,16 +22,19 @@ class SecretManager {
   initialize() {
     try {
       // 🔐 CARREGAR CREDENCIAIS DO AMBIENTE
+      // NOTA: As chaves de API do provedor Groq e o segredo OAuth do GitHub
+      // são gerenciados exclusivamente no backend (api/lib/serginho-orchestrator.js).
+      // Não devem ser expostas no bundle frontend via variáveis VITE_*.
       this.secrets = {
-        // GROQ API — provider principal
+        // GROQ API — gerenciada exclusivamente no backend
         groq: {
-          apiKey: this._getEnvVar("VITE_GROQ_API_KEY"),
+          apiKey: null,
           isConfigured: false,
         },
-        // GITHUB OAUTH
+        // GITHUB OAUTH — clientSecret gerenciado exclusivamente no backend
         github: {
           clientId: this._getEnvVar("VITE_GITHUB_CLIENT_ID"),
-          clientSecret: this._getEnvVar("VITE_GITHUB_CLIENT_SECRET"),
+          clientSecret: null,
           redirectUri: this._getEnvVar("VITE_GITHUB_REDIRECT_URI"),
           isConfigured: false,
         },
