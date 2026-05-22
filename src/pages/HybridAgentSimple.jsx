@@ -367,9 +367,15 @@ export default function HybridAgentSimple() {
     setPreviewLoading((prev) => ({ ...prev, [msgId]: true }));
     setPreviewErrors((prev) => { const updated = { ...prev }; delete updated[msgId]; return updated; });
     try {
+      // Fase 2 — Contenção P0: endpoints de artefato exigem JWT autenticado
+      const { data: sessionData } = await supabase.auth.getSession();
+      const accessToken = sessionData?.session?.access_token;
       const response = await fetch("/api/artifact-preview", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          ...(accessToken ? { "Authorization": `Bearer ${accessToken}` } : {}),
+        },
         body: JSON.stringify({
           content: msg.content,
           metadata: {
@@ -422,9 +428,15 @@ export default function HybridAgentSimple() {
     try {
       const body = { preview: currentPreview, decision, feedback };
       if (decision === 'approved' && content) body.content = content;
+      // Fase 2 — Contenção P0: endpoints de artefato exigem JWT autenticado
+      const { data: sessionData } = await supabase.auth.getSession();
+      const accessToken = sessionData?.session?.access_token;
       const response = await fetch("/api/artifact-preview", {
         method: "PATCH",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          ...(accessToken ? { "Authorization": `Bearer ${accessToken}` } : {}),
+        },
         body: JSON.stringify(body),
       });
       if (!response.ok) {

@@ -31,16 +31,63 @@
 
 import { packageArtifact } from '../src/lib/construtor/artifactPackager.js';
 import { validateArtifact } from '../src/lib/construtor/artifactValidator.js';
-import { executeArtifact } from '../src/lib/construtor/artifactRunner.js';
 import { generatePreview, applyDecision } from '../src/lib/construtor/artifactPreview.js';
+import { applyCorsRestricted } from './lib/cors.js';
+import { verifyAuth } from './lib/auth.js';
+
+// ⚠️ Fase 2 — Contenção P0:
+//
+// A importação de `executeArtifact` foi DESLIGADA intencionalmente neste handler.
+// O preview NÃO deve executar JavaScript no servidor automaticamente. A execução
+// permanecerá indisponível até que um PR posterior introduza sandbox real e
+// gatilho explícito opt-in.
+//
+// O contrato de resposta preserva o campo `preview.summary.execution` para
+// compatibilidade do frontend, mas com valor explícito indicando desativação
+// temporária por segurança (sem fingir execução realizada).
+
+/**
+ * Marcador de execução desativada temporariamente — preserva o shape esperado
+ * pelo frontend, sem fingir que houve execução.
+ */
+const EXECUTION_DISABLED = {
+  executed: false,
+  success: false,
+  command: null,
+  durationMs: 0,
+  stdout: '',
+  stderr: '',
+  timedOut: false,
+  exitCode: null,
+  reason: 'execution-disabled-by-security-policy',
+};
 
 export default async function handler(req, res) {
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'POST, PATCH, OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+  // CORS restrito — substitui o antigo "*"
+  if (applyCorsRestricted(req, res)) return;
 
-  if (req.method === 'OPTIONS') {
-    return res.status(200).end();
+  if (req.method !== 'POST' && req.method !== 'PATCH') {
+    return res.status(405).json({ error: 'Method not allowed' });
+  }
+
+  // Auth guard — rejeitar requisições sem JWT válido (padrão de /api/ai)
+  const { error: authError } = await verifyAuth(req);
+  if (authError) {
+    const statusMap = {
+      missing_token: 401,
+      invalid_token: 401,
+      auth_unavailable: 503,
+      auth_error: 503,
+    };
+    return res.status(statusMap[authError] || 401).json({
+      error: authError === 'auth_unavailable' ? 'Service configuration error' : 'Unauthorized',
+      message: authError === 'missing_token'
+        ? 'Authentication required. Send Authorization: Bearer <token> header.'
+        : authError === 'auth_unavailable'
+        ? 'Authentication service is not configured. Contact administrator.'
+        : 'Invalid or expired token. Please log in again.',
+      code: authError,
+    });
   }
 
   // ── POST: gerar preview ───────────────────────────────────────────────────
@@ -61,16 +108,9 @@ export default async function handler(req, res) {
       // Fase 2B — validar
       const validationResult = validateArtifact(artifact);
 
-      // Fase 2C — tentar executar (executor detecta e pula conteúdo não executável)
-      let executionResult = null;
-      if (artifact.zipBuffer instanceof Buffer) {
-        try {
-          executionResult = await executeArtifact(artifact);
-        } catch {
-          // Execução opcional — não bloqueia o preview
-          executionResult = null;
-        }
-      }
+      // Fase 2C — execução automática DESATIVADA por contenção P0.
+      // Não invocar `executeArtifact()` aqui. Preview deve ser inspeção, não execução.
+      const executionResult = EXECUTION_DISABLED;
 
       // Fase 2D — gerar preview
       const preview = generatePreview(artifact, validationResult, executionResult);
