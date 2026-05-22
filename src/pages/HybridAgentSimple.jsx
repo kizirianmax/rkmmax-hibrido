@@ -613,14 +613,6 @@ export default function HybridAgentSimple() {
     }
   };
 
-  const handleMicrophoneClick = () => {
-    alert("Voz indisponível temporariamente");
-  };
-
-  const handleImageClick = () => {
-    alert("Imagem indisponível temporariamente");
-  };
-
   const handleGitHubOAuth = async () => {
     try {
 
@@ -828,22 +820,6 @@ export default function HybridAgentSimple() {
             title={githubToken ? "Abrir repositório GitHub" : "Autorizar GitHub"}
           >
             {githubToken ? "🐙✅" : "🐙"}
-          </button>
-          <button
-            onClick={handleMicrophoneClick}
-            className="toolbar-btn mic-btn"
-            title="Voz indisponível temporariamente"
-            disabled={true}
-          >
-            🎤
-          </button>
-          <button
-            onClick={handleImageClick}
-            className="toolbar-btn image-btn"
-            title="Imagem indisponível temporariamente"
-            disabled={true}
-          >
-            📸
           </button>
         </div>
         <textarea

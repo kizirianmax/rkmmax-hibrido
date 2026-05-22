@@ -156,10 +156,6 @@ export default function SpecialistChat() {
     }
   };
 
-  const handleVoiceInput = () => {
-    alert("Voz indisponível temporariamente");
-  };
-
   if (!specialist) {
     return null; // Aguardando redirecionamento
   }
@@ -269,15 +265,6 @@ export default function SpecialistChat() {
           disabled={isLoading}
           rows={1}
         />
-        <button
-          onClick={handleVoiceInput}
-          disabled={true}
-          className="mic-button"
-          title="Voz indisponível temporariamente"
-          type="button"
-        >
-          🎤
-        </button>
         <button
           onClick={handleSend}
           disabled={!input.trim() || isLoading}
