@@ -231,7 +231,6 @@ export default function HybridAgentSimple() {
     return initialMessages;
   });
   const [loading, setLoading] = useState(false);
-  const [isRecording, setIsRecording] = useState(false);
   const [githubToken, setGithubToken] = useState(localStorage.getItem("github_token") || null);
   // Fase 2D — estado de preview por mensagem
   const [previews, setPreviews] = useState(() => {
@@ -260,7 +259,6 @@ export default function HybridAgentSimple() {
   // PASSO 6 — sinaliza que o próximo preview é continuação de uma revisão (preservar histórico)
   const revisionPendingRef = useRef(false);
   const messagesEndRef = useRef(null);
-  const mediaRecorderRef = useRef(null);
 
   // Helper function to get tier color
   const getTierColor = (tier) => {
@@ -615,98 +613,12 @@ export default function HybridAgentSimple() {
     }
   };
 
-  const handleMicrophoneClick = async () => {
-    if (!isRecording) {
-      try {
-        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-        const mediaRecorder = new MediaRecorder(stream);
-        mediaRecorderRef.current = mediaRecorder;
-        const chunks = [];
-
-        mediaRecorder.ondataavailable = (e) => chunks.push(e.data);
-        mediaRecorder.onstop = async () => {
-          const audioBlob = new Blob(chunks, { type: "audio/mp3" });
-          await handleAudioUpload(audioBlob);
-          stream.getTracks().forEach((track) => track.stop());
-        };
-
-        mediaRecorder.start();
-        setIsRecording(true);
-      } catch (error) {
-        console.error("Erro ao acessar microfone:", error);
-        alert("Permissão de microfone negada");
-      }
-    } else {
-      mediaRecorderRef.current?.stop();
-      setIsRecording(false);
-    }
-  };
-
-  const handleAudioUpload = async (audioBlob) => {
-    try {
-
-      const formData = new FormData();
-      formData.append("audio", audioBlob, "audio.mp3");
-
-      const response = await fetch("/api/transcribe", {
-        method: "POST",
-        body: formData,
-      });
-
-
-      if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.message || "Erro na transcrição");
-      }
-
-      const data = await response.json();
-
-      const transcript = data.transcript || data.text || "";
-      if (transcript) {
-        setInput(transcript);
-      } else {
-        console.warn("⚠️ Nenhum texto foi transcrito");
-      }
-    } catch (error) {
-      console.error("❌ Erro ao transcrever áudio:", error);
-      alert(`Erro ao transcrever: ${error.message}`);
-    }
+  const handleMicrophoneClick = () => {
+    alert("Voz indisponível temporariamente");
   };
 
   const handleImageClick = () => {
-    const input = document.createElement("input");
-    input.type = "file";
-    input.accept = "image/*";
-    input.onchange = (e) => handleImageUpload(e.target.files[0]);
-    input.click();
-  };
-
-  const handleImageUpload = async (imageFile) => {
-    if (!imageFile) return;
-
-    try {
-
-      const formData = new FormData();
-      formData.append("image", imageFile);
-
-      const response = await fetch("/api/vision", {
-        method: "POST",
-        body: formData,
-      });
-
-      if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.message || "Erro na análise de imagem");
-      }
-
-      const data = await response.json();
-
-      const description = data.description || data.text || "Imagem processada";
-      setInput(`[Imagem analisada] ${description}`);
-    } catch (error) {
-      console.error("❌ Erro ao processar imagem:", error);
-      alert(`Erro ao processar imagem: ${error.message}`);
-    }
+    alert("Imagem indisponível temporariamente");
   };
 
   const handleGitHubOAuth = async () => {
@@ -919,15 +831,17 @@ export default function HybridAgentSimple() {
           </button>
           <button
             onClick={handleMicrophoneClick}
-            className={`toolbar-btn mic-btn ${isRecording ? "recording" : ""}`}
-            title={isRecording ? "Parar gravação" : "Gravar áudio"}
+            className="toolbar-btn mic-btn"
+            title="Voz indisponível temporariamente"
+            disabled={true}
           >
-            {isRecording ? "🔴" : "🎤"}
+            🎤
           </button>
           <button
             onClick={handleImageClick}
             className="toolbar-btn image-btn"
-            title="Enviar imagem"
+            title="Imagem indisponível temporariamente"
+            disabled={true}
           >
             📸
           </button>

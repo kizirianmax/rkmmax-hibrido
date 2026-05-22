@@ -74,9 +74,7 @@ export default function SpecialistChat() {
   ]);
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const [isRecording, setIsRecording] = useState(false);
   const messagesEndRef = useRef(null);
-  const mediaRecorderRef = useRef(null);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -158,71 +156,8 @@ export default function SpecialistChat() {
     }
   };
 
-  const handleVoiceInput = async () => {
-    if (isRecording) {
-      if (mediaRecorderRef.current) {
-        mediaRecorderRef.current.stop();
-      }
-      setIsRecording(false);
-      return;
-    }
-
-    try {
-      if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-        alert('Seu navegador não suporta gravação de áudio. Tente usar Chrome ou Edge.');
-        return;
-      }
-
-      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-      const mediaRecorder = new MediaRecorder(stream);
-      mediaRecorderRef.current = mediaRecorder;
-      const audioChunks = [];
-
-      mediaRecorder.ondataavailable = (event) => {
-        audioChunks.push(event.data);
-      };
-
-      mediaRecorder.onstop = async () => {
-        const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
-        stream.getTracks().forEach((track) => track.stop());
-
-        try {
-          const formData = new FormData();
-          formData.append('audio', audioBlob, 'recording.webm');
-
-          const response = await fetch('/api/transcribe', {
-            method: 'POST',
-            body: formData,
-          });
-
-          if (!response.ok) throw new Error('Erro na transcrição');
-
-          const { text } = await response.json();
-          setInput(text);
-
-          setMessages((prev) => [
-            ...prev,
-            {
-              role: 'assistant',
-              content: `🎤 Áudio transcrito: "${text}"`,
-            },
-          ]);
-        } catch (error) {
-          setMessages((prev) => [
-            ...prev,
-            {
-              role: 'assistant',
-              content: '❌ Erro ao transcrever áudio. Verifique se a API está configurada.',
-            },
-          ]);
-        }
-      };
-
-      mediaRecorder.start();
-      setIsRecording(true);
-    } catch (error) {
-      alert('Não foi possível acessar o microfone. Verifique as permissões do navegador.');
-    }
+  const handleVoiceInput = () => {
+    alert("Voz indisponível temporariamente");
   };
 
   if (!specialist) {
@@ -336,12 +271,12 @@ export default function SpecialistChat() {
         />
         <button
           onClick={handleVoiceInput}
-          disabled={isLoading}
-          className={`mic-button ${isRecording ? 'recording' : ''}`}
-          title={isRecording ? 'Parar gravação' : 'Gravar mensagem de voz'}
+          disabled={true}
+          className="mic-button"
+          title="Voz indisponível temporariamente"
           type="button"
         >
-          {isRecording ? '⏹' : '🎤'}
+          🎤
         </button>
         <button
           onClick={handleSend}
