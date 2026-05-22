@@ -53,6 +53,33 @@ const PROVIDER_ENDPOINTS = [
   'api.anthropic.com',
 ];
 
+const FRONTEND_DIR = path.resolve(__dirname, '..', '..', 'src');
+const FRONTEND_EXTENSIONS = ['.js', '.jsx', '.mjs', '.ts', '.tsx'];
+const FRONTEND_NETWORK_CALL_PATTERN =
+  /\b(fetch\s*\(|axios(?:\s*\.\s*[a-zA-Z]+)?\s*\(|XMLHttpRequest|new\s+Request\s*\(|navigator\.sendBeacon\s*\(|new\s+WebSocket\s*\(|new\s+EventSource\s*\()/m;
+const FRONTEND_FORBIDDEN_SDK_IMPORTS = [
+  'openai',
+  '@google/generative-ai',
+  '@anthropic-ai/sdk',
+  'groq-sdk',
+];
+
+function collectFrontendSourceFiles(dir) {
+  const results = [];
+  for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
+    const fullPath = path.join(dir, entry.name);
+    if (entry.isDirectory()) {
+      results.push(...collectFrontendSourceFiles(fullPath));
+      continue;
+    }
+
+    if (entry.isFile() && FRONTEND_EXTENSIONS.includes(path.extname(entry.name))) {
+      results.push(fullPath);
+    }
+  }
+  return results;
+}
+
 describe('Phase A4 — Gateway Sovereignty', () => {
   describe('Test 1: No direct callGemini/callGroq/callOpenAI imports outside serginho-orchestrator', () => {
     it('no file imports callGemini, callGroq, or callOpenAI as named imports', () => {
@@ -144,6 +171,43 @@ describe('Phase A4 — Gateway Sovereignty', () => {
         'utf8'
       );
       expect(content).toMatch(/getWeightedProviders/);
+    });
+  });
+
+  describe('Frontend sovereignty: src/ must not bypass internal AI gateway', () => {
+    it('blocks direct external AI provider endpoints and direct frontend SDK imports', () => {
+      const files = collectFrontendSourceFiles(FRONTEND_DIR);
+      const violations = [];
+
+      for (const file of files) {
+        const content = fs.readFileSync(file, 'utf8');
+        const relativePath = path.relative(FRONTEND_DIR, file);
+
+        for (const endpoint of PROVIDER_ENDPOINTS) {
+          if (content.includes(endpoint) && FRONTEND_NETWORK_CALL_PATTERN.test(content)) {
+            violations.push(`${relativePath} → direct external endpoint "${endpoint}"`);
+          }
+        }
+
+        for (const sdkName of FRONTEND_FORBIDDEN_SDK_IMPORTS) {
+          const directImportPattern = new RegExp(
+            `(?:import\\s+[^;]*?from\\s*['"]${sdkName}['"]|import\\s*['"]${sdkName}['"]|require\\(\\s*['"]${sdkName}['"]\\s*\\))`,
+            'm'
+          );
+          if (directImportPattern.test(content)) {
+            violations.push(`${relativePath} → direct frontend SDK import "${sdkName}"`);
+          }
+        }
+      }
+
+      if (violations.length > 0) {
+        throw new Error(
+          `Frontend sovereignty violation in src/: ${violations.join('; ')}. ` +
+            'Frontend must use only internal governed endpoints (e.g. /api/ai, /api/chat, /api/transcribe).'
+        );
+      }
+
+      expect(violations).toEqual([]);
     });
   });
 });
