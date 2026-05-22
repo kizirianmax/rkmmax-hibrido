@@ -49,6 +49,15 @@ jest.unstable_mockModule('../../src/lib/construtor/artifactRunner.js', () => ({
   }),
 }));
 
+// Fase 2 — Contenção P0: mock de auth para evitar dependência Supabase nos testes.
+// `verifyAuth` retorna usuário válido (simula token aceito).
+jest.unstable_mockModule('../lib/auth.js', () => ({
+  verifyAuth: jest.fn().mockResolvedValue({
+    user: { id: 'test-user', email: 'test@example.com' },
+    error: null,
+  }),
+}));
+
 jest.unstable_mockModule('../../src/lib/construtor/artifactPreview.js', () => ({
   generatePreview: jest.fn().mockReturnValue({
     previewAvailable: true,
@@ -92,10 +101,13 @@ function makeReqRes(method, body) {
 // ── Tests ─────────────────────────────────────────────────────────────────────
 
 let handler;
+let executeArtifactMock;
 
 beforeAll(async () => {
   const mod = await import('../artifact-preview.js');
   handler = mod.default;
+  const runnerMod = await import('../../src/lib/construtor/artifactRunner.js');
+  executeArtifactMock = runnerMod.executeArtifact;
 });
 
 describe('POST /api/artifact-preview', () => {
@@ -122,6 +134,18 @@ describe('POST /api/artifact-preview', () => {
     expect(res._json.success).toBe(true);
     expect(res._json.preview).toHaveProperty('previewAvailable', true);
     expect(res._json.preview).toHaveProperty('decision', 'pending');
+  });
+
+  // Fase 2 — Contenção P0: execução automática foi desativada.
+  test('NÃO deve invocar executeArtifact() ao gerar preview (contenção P0)', async () => {
+    executeArtifactMock.mockClear();
+    const { req, res } = makeReqRes('POST', {
+      content: '--- FILE: a.js ---\nconsole.log(1);\n--- FILE: b.js ---\nconsole.log(2);\n',
+      metadata: {},
+    });
+    await handler(req, res);
+    expect(res._status).toBe(200);
+    expect(executeArtifactMock).not.toHaveBeenCalled();
   });
 });
 
