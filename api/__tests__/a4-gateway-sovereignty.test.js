@@ -55,14 +55,32 @@ const PROVIDER_ENDPOINTS = [
 
 const FRONTEND_DIR = path.resolve(__dirname, '..', '..', 'src');
 const FRONTEND_EXTENSIONS = ['.js', '.jsx', '.mjs', '.ts', '.tsx'];
-const FRONTEND_NETWORK_CALL_PATTERN =
-  /\b(fetch\s*\(|axios(?:\s*\.\s*[a-zA-Z]+)?\s*\(|XMLHttpRequest|new\s+Request\s*\(|navigator\.sendBeacon\s*\(|new\s+WebSocket\s*\(|new\s+EventSource\s*\()/m;
 const FRONTEND_FORBIDDEN_SDK_IMPORTS = [
   'openai',
   '@google/generative-ai',
   '@anthropic-ai/sdk',
   'groq-sdk',
 ];
+
+function escapeForRegExp(value) {
+  return value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+
+const FRONTEND_FORBIDDEN_ENDPOINT_PATTERNS = PROVIDER_ENDPOINTS.map((endpoint) => ({
+  endpoint,
+  pattern: new RegExp(
+    `['"\`][^'"\\\`\\n]*\\b(?:https?:\\/\\/)?${escapeForRegExp(endpoint)}\\b[^'"\\\`\\n]*['"\`]`,
+    'm'
+  ),
+}));
+
+const FRONTEND_FORBIDDEN_SDK_IMPORT_PATTERNS = FRONTEND_FORBIDDEN_SDK_IMPORTS.map((sdkName) => ({
+  sdkName,
+  pattern: new RegExp(
+    `(?:import\\s+[^;]*?from\\s*['"]${sdkName}['"]|import\\s*['"]${sdkName}['"]|import\\s*\\(\\s*['"]${sdkName}['"]\\s*\\)|require\\(\\s*['"]${sdkName}['"]\\s*\\))`,
+    'm'
+  ),
+}));
 
 function collectFrontendSourceFiles(dir) {
   const results = [];
@@ -183,18 +201,14 @@ describe('Phase A4 — Gateway Sovereignty', () => {
         const content = fs.readFileSync(file, 'utf8');
         const relativePath = path.relative(FRONTEND_DIR, file);
 
-        for (const endpoint of PROVIDER_ENDPOINTS) {
-          if (content.includes(endpoint) && FRONTEND_NETWORK_CALL_PATTERN.test(content)) {
+        for (const { endpoint, pattern } of FRONTEND_FORBIDDEN_ENDPOINT_PATTERNS) {
+          if (pattern.test(content)) {
             violations.push(`${relativePath} → direct external endpoint "${endpoint}"`);
           }
         }
 
-        for (const sdkName of FRONTEND_FORBIDDEN_SDK_IMPORTS) {
-          const directImportPattern = new RegExp(
-            `(?:import\\s+[^;]*?from\\s*['"]${sdkName}['"]|import\\s*['"]${sdkName}['"]|require\\(\\s*['"]${sdkName}['"]\\s*\\))`,
-            'm'
-          );
-          if (directImportPattern.test(content)) {
+        for (const { sdkName, pattern } of FRONTEND_FORBIDDEN_SDK_IMPORT_PATTERNS) {
+          if (pattern.test(content)) {
             violations.push(`${relativePath} → direct frontend SDK import "${sdkName}"`);
           }
         }
@@ -206,8 +220,6 @@ describe('Phase A4 — Gateway Sovereignty', () => {
             'Frontend must use only internal governed endpoints (e.g. /api/ai, /api/chat, /api/transcribe).'
         );
       }
-
-      expect(violations).toEqual([]);
     });
   });
 });
