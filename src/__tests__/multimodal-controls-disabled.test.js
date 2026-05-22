@@ -3,12 +3,23 @@ import path from "path";
 
 const repoRoot = path.resolve(process.cwd());
 
+const expectDisabledButtonNearHandler = (source, handlerName) => {
+  const onClickToken = `onClick={${handlerName}}`;
+  const start = source.indexOf(onClickToken);
+  expect(start).toBeGreaterThanOrEqual(0);
+  const neighborhood = source.slice(start, start + 220);
+  expect(neighborhood).toContain("disabled={true}");
+  return neighborhood;
+};
+
 describe("UI multimodal indisponível nas interfaces ativas", () => {
   test("HybridAgentSimple mantém voz/imagem desativados sem chamadas diretas de transcrição/visão", () => {
     const hybridSource = fs.readFileSync(path.join(repoRoot, "src/pages/HybridAgentSimple.jsx"), "utf8");
 
-    expect(hybridSource).toMatch(/onClick=\{handleMicrophoneClick\}[\s\S]*disabled=\{true\}/);
-    expect(hybridSource).toMatch(/onClick=\{handleImageClick\}[\s\S]*disabled=\{true\}/);
+    const micNeighborhood = expectDisabledButtonNearHandler(hybridSource, "handleMicrophoneClick");
+    const imageNeighborhood = expectDisabledButtonNearHandler(hybridSource, "handleImageClick");
+    expect(micNeighborhood).toContain('title="Voz indisponível temporariamente"');
+    expect(imageNeighborhood).toContain('title="Imagem indisponível temporariamente"');
     expect(hybridSource).not.toContain("/api/transcribe");
     expect(hybridSource).not.toContain("/api/vision");
   });
@@ -16,15 +27,16 @@ describe("UI multimodal indisponível nas interfaces ativas", () => {
   test("SpecialistChat mantém controle de voz desativado sem chamada direta de transcrição", () => {
     const specialistSource = fs.readFileSync(path.join(repoRoot, "src/pages/SpecialistChat.jsx"), "utf8");
 
-    expect(specialistSource).toMatch(/onClick=\{handleVoiceInput\}[\s\S]*disabled=\{true\}/);
+    const voiceNeighborhood = expectDisabledButtonNearHandler(specialistSource, "handleVoiceInput");
+    expect(voiceNeighborhood).toContain('title="Voz indisponível temporariamente"');
     expect(specialistSource).not.toContain("/api/transcribe");
   });
 
   test("Serginho permanece com controles multimodais desativados", () => {
     const serginhoSource = fs.readFileSync(path.join(repoRoot, "src/pages/Serginho.jsx"), "utf8");
 
-    expect(serginhoSource).toMatch(/onClick=\{handleCameraCapture\}[\s\S]*disabled=\{true\}/);
-    expect(serginhoSource).toMatch(/onClick=\{handleImageAttach\}[\s\S]*disabled=\{true\}/);
-    expect(serginhoSource).toMatch(/onClick=\{handleVoiceInput\}[\s\S]*disabled=\{true\}/);
+    expectDisabledButtonNearHandler(serginhoSource, "handleCameraCapture");
+    expectDisabledButtonNearHandler(serginhoSource, "handleImageAttach");
+    expectDisabledButtonNearHandler(serginhoSource, "handleVoiceInput");
   });
 });
