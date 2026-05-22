@@ -60,7 +60,7 @@ For GitHub integration endpoints, use GitHub OAuth tokens obtained via `/api/git
 
 ### 1. Chat API
 
-Main chat interface for interacting with AI agents.
+Main chat interface for interacting with AI agents. All AI calls are routed through Serginho, the sovereign backend orchestrator (`api/lib/serginho-orchestrator.js`). The active providers are **Groq** and **Gemini**. The model `gemini-2.0-flash` is legacy and has been removed.
 
 **Endpoint:** `POST /api/chat`
 
@@ -68,7 +68,6 @@ Main chat interface for interacting with AI agents.
 ```json
 {
   "message": "Explain quantum computing in simple terms",
-  "model": "gemini-2.0-flash-exp",
   "temperature": 0.7,
   "maxTokens": 2000,
   "context": {
@@ -82,7 +81,7 @@ Main chat interface for interacting with AI agents.
 {
   "success": true,
   "response": "Quantum computing is a revolutionary approach...",
-  "model": "gemini-2.0-flash-exp",
+  "model": "gemini-3-flash",
   "tokensUsed": 156,
   "cost": 0.0012,
   "timestamp": "2026-02-16T18:06:25.000Z"
@@ -95,8 +94,7 @@ curl -X POST https://your-domain.vercel.app/api/chat \
   -H "Content-Type: application/json" \
   -H "Authorization: Bearer YOUR_TOKEN" \
   -d '{
-    "message": "What is the weather like?",
-    "model": "gemini-2.0-flash-exp"
+    "message": "What is the weather like?"
   }'
 ```
 
@@ -230,7 +228,7 @@ Direct communication with a specific specialist agent.
 
 ### 4. AI Service
 
-Abstract AI service layer with automatic provider selection.
+Abstract AI service layer with automatic provider selection. All calls are routed through **Serginho** (`api/lib/serginho-orchestrator.js`). Active providers are **Groq** and **Gemini**; OpenAI is not an active provider.
 
 **Endpoint:** `POST /api/ai`
 
@@ -240,8 +238,7 @@ Abstract AI service layer with automatic provider selection.
   "prompt": "Generate a business plan for a SaaS startup",
   "options": {
     "complexity": "high",
-    "maxCost": 0.50,
-    "preferredProvider": "openai"
+    "maxCost": 0.50
   }
 }
 ```
@@ -250,8 +247,8 @@ Abstract AI service layer with automatic provider selection.
 ```json
 {
   "success": true,
-  "provider": "openai",
-  "model": "gpt-4-turbo",
+  "provider": "groq",
+  "model": "llama-3.3-70b-versatile",
   "response": "Executive Summary:\n\nOur SaaS startup...",
   "metadata": {
     "tokensUsed": 1250,
@@ -314,7 +311,7 @@ curl -X POST https://your-domain.vercel.app/api/multimodal \
 
 ### 6. Transcribe
 
-Convert audio to text using AI transcription.
+> ⚠️ **Temporariamente indisponível.** Audio transcription is not currently implemented. The endpoint `/api/transcribe` returns HTTP 501 (`TRANSCRIPTION_NOT_AVAILABLE`). Real transcription will be available in a future release.
 
 **Endpoint:** `POST /api/transcribe`
 
@@ -360,9 +357,9 @@ en
 
 ### 7. Vision
 
-Analyze images using AI vision models.
+> ⚠️ **Temporariamente indisponível.** Image/vision analysis is not currently implemented. The endpoint `/api/vision` does not exist in the current codebase. Multimodal vision will be available in a future release.
 
-**Endpoint:** `POST /api/vision`
+**Endpoint:** `POST /api/vision` *(not available)*
 
 **Request (multipart/form-data):**
 ```bash
