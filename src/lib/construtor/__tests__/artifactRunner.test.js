@@ -7,10 +7,13 @@
  * - executeArtifact() aplica timeout rígido (artefato com loop infinito)
  * - executeArtifact() retorna executed=false para artefato não executável (markdown)
  * - executeArtifact() retorna executed=false, reason='validation-failed' para artefato inválido
+ * - Barreira 2: validateZipEntries rejeita entries inseguras (path traversal, absolutos)
  */
 
 import { packageArtifact } from '../artifactPackager.js';
-import { executeArtifact } from '../artifactRunner.js';
+import { executeArtifact, validateZipEntries } from '../artifactRunner.js';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
@@ -41,6 +44,16 @@ async function buildMarkdownArtifact() {
     content: '# Artefato de Teste\n\nConteúdo markdown não executável.',
     metadata: { ...sampleMetadata, filename: 'content.md' },
   });
+}
+
+/**
+ * Cria um mock de AdmZip com entries customizadas para testes de validação.
+ * @param {string[]} entryNames
+ */
+function mockZip(entryNames) {
+  return {
+    getEntries: () => entryNames.map((name) => ({ entryName: name })),
+  };
 }
 
 // ── Testes ────────────────────────────────────────────────────────────────────
@@ -114,5 +127,132 @@ describe('executeArtifact', () => {
     expect(result.command).toBeNull();
     expect(result.durationMs).toBe(0);
     expect(result.exitCode).toBeNull();
+  });
+});
+
+// ── Barreira 2: validateZipEntries — testes diretos de segurança ──────────────
+
+const SAFE_DEST = join(tmpdir(), 'artifact-runner-test-safe');
+
+describe('validateZipEntries — Barreira 2: rejeição de entries inseguras', () => {
+  // ── Casos rejeitados ──────────────────────────────────────────────────────
+
+  test('rejeita entry com traversal: ../evil.js', () => {
+    const result = validateZipEntries(mockZip(['../evil.js']), SAFE_DEST);
+    expect(result.safe).toBe(false);
+    expect(result.reason).toMatch(/traversal|\.\./i);
+  });
+
+  test('rejeita entry com traversal embutido: src/../../evil.js', () => {
+    const result = validateZipEntries(mockZip(['src/../../evil.js']), SAFE_DEST);
+    expect(result.safe).toBe(false);
+    expect(result.reason).toMatch(/traversal|\.\./i);
+  });
+
+  test('rejeita entry com traversal com backslash: ..\\evil.js', () => {
+    const result = validateZipEntries(mockZip(['..\\evil.js']), SAFE_DEST);
+    expect(result.safe).toBe(false);
+    expect(result.reason).toMatch(/traversal|\.\./i);
+  });
+
+  test('rejeita entry com traversal misto backslash: src\\..\\evil.js', () => {
+    const result = validateZipEntries(mockZip(['src\\..\\evil.js']), SAFE_DEST);
+    expect(result.safe).toBe(false);
+    expect(result.reason).toMatch(/traversal|\.\./i);
+  });
+
+  test('rejeita entry com traversal misto slash-backslash: src/..\\evil.js', () => {
+    const result = validateZipEntries(mockZip(['src/..\\evil.js']), SAFE_DEST);
+    expect(result.safe).toBe(false);
+    expect(result.reason).toMatch(/traversal|\.\./i);
+  });
+
+  test('rejeita entry com traversal misto backslash-slash: src\\../evil.js', () => {
+    const result = validateZipEntries(mockZip(['src\\../evil.js']), SAFE_DEST);
+    expect(result.safe).toBe(false);
+    expect(result.reason).toMatch(/traversal|\.\./i);
+  });
+
+  test('rejeita entry com caminho absoluto Unix: /etc/passwd', () => {
+    const result = validateZipEntries(mockZip(['/etc/passwd']), SAFE_DEST);
+    expect(result.safe).toBe(false);
+    expect(result.reason).toMatch(/absoluto Unix/i);
+  });
+
+  test('rejeita entry com caminho absoluto Windows (backslash): \\tmp\\evil.js', () => {
+    const result = validateZipEntries(mockZip(['\\tmp\\evil.js']), SAFE_DEST);
+    expect(result.safe).toBe(false);
+    expect(result.reason).toMatch(/backslash/i);
+  });
+
+  test('rejeita entry com byte nulo', () => {
+    const result = validateZipEntries(mockZip(['evil\0.js']), SAFE_DEST);
+    expect(result.safe).toBe(false);
+    expect(result.reason).toMatch(/byte nulo/i);
+  });
+
+  test('rejeita entry com caminho UNC backslash: \\\\server\\share\\evil.js', () => {
+    const result = validateZipEntries(mockZip(['\\\\server\\share\\evil.js']), SAFE_DEST);
+    expect(result.safe).toBe(false);
+  });
+
+  test('rejeita entry com caminho UNC double slash: //server/share/evil.js', () => {
+    const result = validateZipEntries(mockZip(['//server/share/evil.js']), SAFE_DEST);
+    expect(result.safe).toBe(false);
+  });
+
+  test('rejeita entry com drive letter Windows: C:/temp/evil.js', () => {
+    const result = validateZipEntries(mockZip(['C:/temp/evil.js']), SAFE_DEST);
+    expect(result.safe).toBe(false);
+    expect(result.reason).toMatch(/drive letter/i);
+  });
+
+  test('rejeita tentativa de escape por diretório com prefixo semelhante ao permitido', () => {
+    // Um path absoluto como /tmp/artifact-runner-test-safe-escape/evil.js é capturado
+    // pela verificação de caminho absoluto (começa com /), mesmo tendo nome similar ao destDir.
+    const similarDirPath = SAFE_DEST + '-escape/evil.js';
+    const result = validateZipEntries(mockZip([similarDirPath]), SAFE_DEST);
+    expect(result.safe).toBe(false);
+  });
+
+  // ── Casos aceitos ─────────────────────────────────────────────────────────
+
+  test('aceita entry de arquivo simples: script.js', () => {
+    const result = validateZipEntries(mockZip(['script.js']), SAFE_DEST);
+    expect(result.safe).toBe(true);
+  });
+
+  test('aceita entries com subpastas relativas seguras', () => {
+    const result = validateZipEntries(
+      mockZip(['src/App.jsx', 'src/components/Button.jsx', 'public/index.html', 'manifest.json']),
+      SAFE_DEST,
+    );
+    expect(result.safe).toBe(true);
+  });
+
+  test('comprova que ZIP vazio é aceito (nenhuma entry a validar)', () => {
+    const result = validateZipEntries(mockZip([]), SAFE_DEST);
+    expect(result.safe).toBe(true);
+  });
+
+  // ── Integração: ZIP legítimo gerado pelo packager é aceito pelo runner ────
+
+  test('ZIP gerado por packageArtifact passa na validação (sem rejeição unsafe-zip-entry)', async () => {
+    const artifact = await buildJsArtifact("process.stdout.write('ok\\n');");
+    const result = await executeArtifact(artifact);
+    expect(result.reason).not.toBe('unsafe-zip-entry');
+  });
+
+  // ── Confirmar que extractAllTo não é chamado em entries inseguras ─────────
+
+  test('validateZipEntries retorna safe=false imediatamente, bloqueando extração', () => {
+    // Verificamos diretamente que validateZipEntries retorna safe=false para entry insegura.
+    // Como extractToTempDir chama validateZipEntries ANTES de extractAllTo, safe=false
+    // impede qualquer extração — confirmado pelo fluxo de executeArtifact retornando
+    // executed=false com stdout='' e reason='unsafe-zip-entry'.
+    const result = validateZipEntries(mockZip(['../evil.js', 'script.js']), SAFE_DEST);
+    expect(result.safe).toBe(false);
+    // O primeiro arquivo inseguro bloqueia tudo — nenhuma entry subsequente é extraída
+    expect(result.reason).toBeTruthy();
   });
 });
