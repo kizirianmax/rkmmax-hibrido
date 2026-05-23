@@ -154,35 +154,15 @@ const clearArtifactPreview = () => {
   } catch { /* ignorar */ }
 };
 
-// PASSO 13 — chave de persistência do modo selecionado (Manual/Otimizado)
-const MODE_STORAGE_KEY = 'construtor_mode';
-
-const loadMode = () => {
-  try {
-    const saved = sessionStorage.getItem(MODE_STORAGE_KEY);
-    if (saved === 'manual' || saved === 'optimized') return saved;
-  } catch { /* ignorar */ }
-  return 'manual'; // padrão
-};
-
-const saveMode = (mode) => {
-  try {
-    sessionStorage.setItem(MODE_STORAGE_KEY, mode);
-  } catch { /* falhar silenciosamente */ }
-};
-
 // PASSO 12 — helpers de persistência importados de src/lib/construtor/inputDraftStorage.js
 
 /**
  * RKMMAX HYBRID - CONSTRUTOR (KIZI)
  * Agente Construtor: geração e entrega de artefatos via orquestrador KIZI.
  * Roteamento adaptativo multi-provedor (KIZI 2.5 Pro, Speed, Flash).
- * Modos: Manual (1 crédito) | Otimizado (0.5 crédito)
  * Sem seleção direta de especialista — orquestração é responsabilidade do Serginho.
  */
 export default function HybridAgentSimple() {
-  // PASSO 13 — restaurar modo salvo ao montar o componente
-  const [mode, setMode] = useState(() => loadMode());
   const [selectedEngine, setSelectedEngine] = useState(DEFAULT_HYBRID_ENGINE);
   // PASSO 12 — restaurar rascunho salvo ao montar o componente
   const [input, setInput] = useState(() => loadInputDraft());
@@ -344,11 +324,6 @@ export default function HybridAgentSimple() {
   useEffect(() => {
     saveInputDraft(input);
   }, [input]);
-
-  // PASSO 13 — persistir modo selecionado em sessionStorage
-  useEffect(() => {
-    saveMode(mode);
-  }, [mode]);
 
   // Fase 2D — gerar preview de um artefato (mensagem do agente)
   const handleGeneratePreview = async (msg) => {
@@ -544,7 +519,6 @@ export default function HybridAgentSimple() {
           { role: "user", content: userInput },
         ],
         agentType: "hybrid",
-        mode: mode.toUpperCase(),
       };
 
       // Seleção manual de motor para teste controlado
@@ -667,24 +641,6 @@ export default function HybridAgentSimple() {
 
         {/* Controles */}
         <div className="header-controls">
-          <div className="mode-selector">
-            <label>Modo:</label>
-            <div className="mode-buttons">
-              <button
-                className={`mode-btn ${mode === "manual" ? "active" : ""}`}
-                onClick={() => setMode("manual")}
-              >
-                📋 Manual (1 crédito)
-              </button>
-              <button
-                className={`mode-btn ${mode === "optimized" ? "active" : ""}`}
-                onClick={() => setMode("optimized")}
-              >
-                ⚡ Otimizado (0.5 crédito)
-              </button>
-            </div>
-          </div>
-
           {/* Seletor de motor para teste controlado */}
           <div className="mode-selector engine-selector">
             <label htmlFor="engine-select">🔬 Motor:</label>

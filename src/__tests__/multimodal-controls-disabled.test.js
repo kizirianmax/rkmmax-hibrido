@@ -26,6 +26,18 @@ describe("UI multimodal indisponível nas interfaces ativas", () => {
     expect(hybridSource).not.toContain("Imagem indisponível temporariamente");
     expect(hybridSource).not.toContain("/api/transcribe");
     expect(hybridSource).not.toContain("/api/vision");
+
+    // Fase 2 — F2-04: remover claims de modo/crédito não implementados
+    expect(hybridSource).not.toContain("Manual (1 crédito)");
+    expect(hybridSource).not.toContain("Otimizado (0.5 crédito)");
+    expect(hybridSource).not.toContain("const [mode, setMode]");
+    expect(hybridSource).not.toContain("mode: mode.toUpperCase()");
+
+    // Fluxo principal do Construtor permanece ativo
+    expect(hybridSource).toContain("Construção e entrega de artefatos");
+    expect(hybridSource).toContain("🔍 Revisar artefato");
+    expect(hybridSource).toContain("/api/ai");
+    expect(hybridSource).toContain("/api/artifact-preview");
   });
 
   test("SpecialistChat remove controle de voz da UI e não mantém chamada direta de transcrição", () => {
