@@ -12,6 +12,8 @@
 
 import { packageArtifact } from '../artifactPackager.js';
 import { executeArtifact, validateZipEntries } from '../artifactRunner.js';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
@@ -130,4 +132,4 @@ describe('executeArtifact', () => {
 
 // ── Barreira 2: validateZipEntries — testes diretos de segurança ──────────────
 
-const SAFE_DEST = '/tmp/artifact-runner-test-safe';
+const SAFE_DEST = join(tmpdir(), 'artifact-runner-test-safe');

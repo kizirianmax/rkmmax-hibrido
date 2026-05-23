@@ -21,7 +21,7 @@
 import { execFile } from 'node:child_process';
 import { mkdtemp, rm } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
-import { join } from 'node:path';
+import { join, resolve, sep } from 'node:path';
 import { promisify } from 'node:util';
 import AdmZip from 'adm-zip';
 
@@ -169,8 +169,9 @@ export function validateZipEntries(zip, destDir) {
     }
 
     // Verificar que o caminho resolvido permanece dentro de destDir
-    const resolved = join(destDir, normalized);
-    if (!resolved.startsWith(destDir + '/') && resolved !== destDir) {
+    const resolved = resolve(destDir, normalized);
+    const normalizedDestDir = resolve(destDir);
+    if (!resolved.startsWith(normalizedDestDir + sep) && resolved !== normalizedDestDir) {
       return { safe: false, reason: `entry ZIP sairia do diretório de destino: "${entryName}"` };
     }
   }
