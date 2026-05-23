@@ -121,10 +121,68 @@ function extOf(filePath) {
   return dot !== -1 ? filePath.slice(dot).toLowerCase() : '';
 }
 
-// ── Extração do ZIP ───────────────────────────────────────────────────────────
+// ── Validação defensiva de entries ZIP ───────────────────────────────────────
+
+/**
+ * Valida todas as entries de um ZIP antes de qualquer extração.
+ * Rejeita entries com path traversal, caminhos absolutos ou byte nulo.
+ * Garante que todos os caminhos resolvidos permanecem dentro de `destDir`.
+ *
+ * Exportada para testes diretos de segurança.
+ *
+ * @param {AdmZip} zip - instância de AdmZip já carregada
+ * @param {string} destDir - diretório de destino absoluto
+ * @returns {{ safe: boolean, reason: string | null }}
+ */
+export function validateZipEntries(zip, destDir) {
+  const entries = zip.getEntries();
+  for (const entry of entries) {
+    const entryName = entry.entryName;
+
+    // Rejeitar byte nulo
+    if (entryName.includes('\0')) {
+      return { safe: false, reason: `entry ZIP contém byte nulo: "${entryName}"` };
+    }
+
+    // Rejeitar caminho absoluto Unix
+    if (entryName.startsWith('/')) {
+      return { safe: false, reason: `entry ZIP com caminho absoluto Unix: "${entryName}"` };
+    }
+
+    // Rejeitar caminho UNC Windows
+    if (entryName.startsWith('\\\\') || entryName.startsWith('//')) {
+      return { safe: false, reason: `entry ZIP com caminho UNC: "${entryName}"` };
+    }
+
+    // Rejeitar drive letter Windows
+    if (/^[a-zA-Z]:[/\\]/.test(entryName)) {
+      return { safe: false, reason: `entry ZIP com drive letter Windows: "${entryName}"` };
+    }
+
+    // Normalizar separadores e verificar segmentos de traversal
+    const normalized = entryName.replace(/\\/g, '/');
+    const segments = normalized.split('/');
+    for (const seg of segments) {
+      if (seg === '..') {
+        return { safe: false, reason: `entry ZIP contém traversal "..": "${entryName}"` };
+      }
+    }
+
+    // Verificar que o caminho resolvido permanece dentro de destDir
+    const resolved = join(destDir, normalized);
+    if (!resolved.startsWith(destDir + '/') && resolved !== destDir) {
+      return { safe: false, reason: `entry ZIP sairia do diretório de destino: "${entryName}"` };
+    }
+  }
+
+  return { safe: true, reason: null };
+}
+
+
 
 /**
  * Extrai o zipBuffer em um diretório temporário isolado.
+ * Valida todas as entries do ZIP antes de extrair (defesa em profundidade).
  *
  * @param {Buffer} zipBuffer
  * @returns {Promise<{ tmpDir: string, cleanup: () => Promise<void> }>}
@@ -133,6 +191,14 @@ async function extractToTempDir(zipBuffer) {
   const tmpDir = await mkdtemp(join(tmpdir(), 'artifact-runner-'));
 
   const zip = new AdmZip(zipBuffer);
+
+  // Barreira 2: validar entries antes de qualquer extração
+  const check = validateZipEntries(zip, tmpDir);
+  if (!check.safe) {
+    await rm(tmpDir, { recursive: true, force: true });
+    throw new Error(`extractToTempDir: entry ZIP insegura — ${check.reason}`);
+  }
+
   zip.extractAllTo(tmpDir, /* overwrite */ true);
 
   const cleanup = () => rm(tmpDir, { recursive: true, force: true });
@@ -221,7 +287,23 @@ export async function executeArtifact(artifact, options = {}) {
   }
 
   // ── Extração e execução ────────────────────────────────────────────────────
-  const { tmpDir, cleanup } = await extractToTempDir(zipBuffer);
+  let tmpDir, cleanup;
+  try {
+    ({ tmpDir, cleanup } = await extractToTempDir(zipBuffer));
+  } catch (extractErr) {
+    return {
+      executed: false,
+      success: false,
+      command: null,
+      durationMs: 0,
+      stdout: '',
+      stderr: '',
+      timedOut: false,
+      exitCode: null,
+      reason: 'unsafe-zip-entry',
+      errors: [extractErr.message],
+    };
+  }
 
   try {
     const scriptPath = join(tmpDir, detection.entryPath);

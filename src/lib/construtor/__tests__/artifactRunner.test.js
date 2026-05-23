@@ -7,10 +7,11 @@
  * - executeArtifact() aplica timeout rígido (artefato com loop infinito)
  * - executeArtifact() retorna executed=false para artefato não executável (markdown)
  * - executeArtifact() retorna executed=false, reason='validation-failed' para artefato inválido
+ * - Barreira 2: validateZipEntries rejeita entries inseguras (path traversal, absolutos)
  */
 
 import { packageArtifact } from '../artifactPackager.js';
-import { executeArtifact } from '../artifactRunner.js';
+import { executeArtifact, validateZipEntries } from '../artifactRunner.js';
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
@@ -41,6 +42,16 @@ async function buildMarkdownArtifact() {
     content: '# Artefato de Teste\n\nConteúdo markdown não executável.',
     metadata: { ...sampleMetadata, filename: 'content.md' },
   });
+}
+
+/**
+ * Cria um mock de AdmZip com entries customizadas para testes de validação.
+ * @param {string[]} entryNames
+ */
+function mockZip(entryNames) {
+  return {
+    getEntries: () => entryNames.map((name) => ({ entryName: name })),
+  };
 }
 
 // ── Testes ────────────────────────────────────────────────────────────────────
@@ -116,3 +127,7 @@ describe('executeArtifact', () => {
     expect(result.exitCode).toBeNull();
   });
 });
+
+// ── Barreira 2: validateZipEntries — testes diretos de segurança ──────────────
+
+const SAFE_DEST = '/tmp/artifact-runner-test-safe';

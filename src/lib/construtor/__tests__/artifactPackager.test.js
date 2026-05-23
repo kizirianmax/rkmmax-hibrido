@@ -1008,3 +1008,135 @@ describe('prettyFormatByExtension', () => {
     expect(result).toContain('function main()');
   });
 });
+
+// ─── validateArtifactFileName — Barreira 1: rejeição de nomes inseguros ───────
+
+import { validateArtifactFileName } from '../artifactPackager.js';
+
+describe('validateArtifactFileName', () => {
+  // ── Casos aceitos ─────────────────────────────────────────────────────────
+  test('aceita arquivo simples: index.html', () => {
+    expect(validateArtifactFileName('index.html')).toEqual({ valid: true, reason: null });
+  });
+
+  test('aceita arquivo simples: script.js', () => {
+    expect(validateArtifactFileName('script.js')).toEqual({ valid: true, reason: null });
+  });
+
+  test('aceita subpasta relativa segura: src/App.jsx', () => {
+    expect(validateArtifactFileName('src/App.jsx')).toEqual({ valid: true, reason: null });
+  });
+
+  test('aceita subpasta relativa segura: src/components/Button.jsx', () => {
+    expect(validateArtifactFileName('src/components/Button.jsx')).toEqual({ valid: true, reason: null });
+  });
+
+  test('aceita subpasta relativa segura: public/index.html', () => {
+    expect(validateArtifactFileName('public/index.html')).toEqual({ valid: true, reason: null });
+  });
+
+  // ── Casos rejeitados ──────────────────────────────────────────────────────
+  test('rejeita nome vazio', () => {
+    const result = validateArtifactFileName('');
+    expect(result.valid).toBe(false);
+  });
+
+  test('rejeita nome null', () => {
+    const result = validateArtifactFileName(null);
+    expect(result.valid).toBe(false);
+  });
+
+  test('rejeita nome undefined', () => {
+    const result = validateArtifactFileName(undefined);
+    expect(result.valid).toBe(false);
+  });
+
+  test('rejeita nome com apenas espaços', () => {
+    const result = validateArtifactFileName('   ');
+    expect(result.valid).toBe(false);
+  });
+
+  test('rejeita byte nulo', () => {
+    const result = validateArtifactFileName('evil\0.js');
+    expect(result.valid).toBe(false);
+    expect(result.reason).toMatch(/byte nulo/);
+  });
+
+  test('rejeita caminho absoluto Unix: /tmp/evil.js', () => {
+    const result = validateArtifactFileName('/tmp/evil.js');
+    expect(result.valid).toBe(false);
+    expect(result.reason).toMatch(/absoluto Unix/);
+  });
+
+  test('rejeita caminho UNC Windows: \\\\server\\share\\evil.js', () => {
+    const result = validateArtifactFileName('\\\\server\\share\\evil.js');
+    expect(result.valid).toBe(false);
+    expect(result.reason).toMatch(/UNC/);
+  });
+
+  test('rejeita drive letter Windows com barra: C:\\temp\\evil.js', () => {
+    const result = validateArtifactFileName('C:\\temp\\evil.js');
+    expect(result.valid).toBe(false);
+    expect(result.reason).toMatch(/drive letter/);
+  });
+
+  test('rejeita drive letter Windows com slash: C:/temp/evil.js', () => {
+    const result = validateArtifactFileName('C:/temp/evil.js');
+    expect(result.valid).toBe(false);
+    expect(result.reason).toMatch(/drive letter/);
+  });
+
+  test('rejeita traversal simples: ../evil.js', () => {
+    const result = validateArtifactFileName('../evil.js');
+    expect(result.valid).toBe(false);
+    expect(result.reason).toMatch(/traversal/);
+  });
+
+  test('rejeita traversal embutido: src/../../evil.js', () => {
+    const result = validateArtifactFileName('src/../../evil.js');
+    expect(result.valid).toBe(false);
+    expect(result.reason).toMatch(/traversal/);
+  });
+
+  test('rejeita traversal com backslash: ..\\evil.js', () => {
+    const result = validateArtifactFileName('..\\evil.js');
+    expect(result.valid).toBe(false);
+    expect(result.reason).toMatch(/traversal/);
+  });
+
+  test('rejeita traversal misto com backslash: src\\..\\evil.js', () => {
+    const result = validateArtifactFileName('src\\..\\evil.js');
+    expect(result.valid).toBe(false);
+    expect(result.reason).toMatch(/traversal/);
+  });
+});
+
+// ─── parseMultiFileContent — rejeição de nomes inseguros no pipeline ─────────
+
+describe('parseMultiFileContent — rejeição de nomes inseguros (Barreira 1)', () => {
+  function makeMultiFile(...entries) {
+    return entries.map(([name, content]) => `--- FILE: ${name} ---\n${content}`).join('\n\n');
+  }
+
+  test('rejeita conteúdo multi-file com traversal ../evil.js', () => {
+    const content = makeMultiFile(['../evil.js', 'alert(1)'], ['index.html', '<html></html>']);
+    expect(() => parseMultiFileContent(content)).toThrow(/traversal|inseguros|inválido/i);
+  });
+
+  test('rejeita conteúdo multi-file com caminho absoluto /tmp/evil.js', () => {
+    const content = makeMultiFile(['/tmp/evil.js', 'alert(1)'], ['index.html', '<html></html>']);
+    expect(() => parseMultiFileContent(content)).toThrow(/inválido|absoluto/i);
+  });
+
+  test('aceita conteúdo multi-file com subpastas seguras', () => {
+    const content = makeMultiFile(
+      ['src/App.jsx', 'export default function App() {}'],
+      ['src/components/Button.jsx', 'export default function Button() {}'],
+    );
+    const result = parseMultiFileContent(content);
+    expect(result).not.toBeNull();
+    expect(result).toHaveLength(2);
+    expect(result[0].name).toBe('src/App.jsx');
+    expect(result[1].name).toBe('src/components/Button.jsx');
+  });
+});

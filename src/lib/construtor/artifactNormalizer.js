@@ -30,6 +30,58 @@ function resolveMime(filename) {
 
 const MIN_MULTI_FILE_COUNT = 2;
 
+// ── Validação segura de nomes de arquivo ─────────────────────────────────────
+
+/**
+ * Valida se um nome de arquivo extraído de artefato multi-file é seguro para
+ * empacotamento. Rejeita nomes que podem causar path traversal ou escrita fora
+ * do diretório alvo. Permite subpastas relativas legítimas (ex.: src/App.jsx).
+ *
+ * Esta função é isomórfica (sem dependências Node-only) e pode ser chamada
+ * tanto no backend quanto no frontend.
+ *
+ * @param {string} name - nome do arquivo a validar
+ * @returns {{ valid: boolean, reason: string | null }}
+ */
+export function validateArtifactFileName(name) {
+  if (!name || typeof name !== 'string' || name.trim() === '') {
+    return { valid: false, reason: 'nome de arquivo vazio' };
+  }
+
+  // Rejeitar byte nulo
+  if (name.includes('\0')) {
+    return { valid: false, reason: 'nome de arquivo contém byte nulo' };
+  }
+
+  // Rejeitar caminho absoluto Unix (começa com /)
+  if (name.startsWith('/')) {
+    return { valid: false, reason: 'caminho absoluto Unix não permitido' };
+  }
+
+  // Rejeitar caminho UNC Windows (começa com \\ ou //)
+  if (name.startsWith('\\\\') || name.startsWith('//')) {
+    return { valid: false, reason: 'caminho UNC não permitido' };
+  }
+
+  // Rejeitar drive letter Windows (ex.: C:\ ou C:/)
+  if (/^[a-zA-Z]:[/\\]/.test(name)) {
+    return { valid: false, reason: 'drive letter Windows não permitido' };
+  }
+
+  // Normalizar separadores para verificação de segmentos
+  const normalized = name.replace(/\\/g, '/');
+
+  // Rejeitar segmentos de traversal (..)
+  const segments = normalized.split('/');
+  for (const seg of segments) {
+    if (seg === '..') {
+      return { valid: false, reason: 'segmento de traversal ".." não permitido' };
+    }
+  }
+
+  return { valid: true, reason: null };
+}
+
 // ── Formatação leve por extensão ─────────────────────────────────────────────
 
 /**
@@ -197,6 +249,13 @@ export function parseMultiFileContent(content) {
   const files = [];
   for (let i = 0; i < matches.length; i++) {
     const name = matches[i][1].trim();
+
+    // Barreira 1: rejeitar nomes inseguros antes de qualquer processamento
+    const nameCheck = validateArtifactFileName(name);
+    if (!nameCheck.valid) {
+      throw new Error(`artifactNormalizer: nome de arquivo inválido "${name}" — ${nameCheck.reason}`);
+    }
+
     const start = matches[i].index + matches[i][0].length;
     const end = i + 1 < matches.length ? matches[i + 1].index : content.length;
     let fileContent = content.slice(start, end).trim();
