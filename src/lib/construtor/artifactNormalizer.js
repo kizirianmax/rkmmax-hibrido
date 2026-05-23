@@ -58,9 +58,14 @@ export function validateArtifactFileName(name) {
     return { valid: false, reason: 'caminho absoluto Unix não permitido' };
   }
 
-  // Rejeitar caminho UNC Windows (começa com \\ ou //)
+  // Rejeitar caminho UNC Windows (começa com \\ ou //) — verificar antes do check de \ simples
   if (name.startsWith('\\\\') || name.startsWith('//')) {
     return { valid: false, reason: 'caminho UNC não permitido' };
+  }
+
+  // Rejeitar caminho absoluto Windows com backslash simples (ex.: \tmp\evil.js)
+  if (name.startsWith('\\')) {
+    return { valid: false, reason: 'caminho absoluto Windows com backslash não permitido' };
   }
 
   // Rejeitar drive letter Windows (ex.: C:\ ou C:/)

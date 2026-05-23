@@ -1011,7 +1011,7 @@ describe('prettyFormatByExtension', () => {
 
 // ─── validateArtifactFileName — Barreira 1: rejeição de nomes inseguros ───────
 
-import { validateArtifactFileName } from '../artifactPackager.js';
+import { validateArtifactFileName } from '../artifactNormalizer.js';
 
 describe('validateArtifactFileName', () => {
   // ── Casos aceitos ─────────────────────────────────────────────────────────
@@ -1068,10 +1068,21 @@ describe('validateArtifactFileName', () => {
     expect(result.reason).toMatch(/absoluto Unix/);
   });
 
-  test('rejeita caminho UNC Windows: \\\\server\\share\\evil.js', () => {
+  test('rejeita caminho absoluto Windows com backslash: \\tmp\\evil.js', () => {
+    const result = validateArtifactFileName('\\tmp\\evil.js');
+    expect(result.valid).toBe(false);
+    expect(result.reason).toMatch(/backslash/);
+  });
+
+  test('rejeita caminho UNC Windows com backslash: \\\\server\\share\\evil.js', () => {
     const result = validateArtifactFileName('\\\\server\\share\\evil.js');
     expect(result.valid).toBe(false);
     expect(result.reason).toMatch(/UNC/);
+  });
+
+  test('rejeita caminho UNC com double slash: //server/share/evil.js', () => {
+    const result = validateArtifactFileName('//server/share/evil.js');
+    expect(result.valid).toBe(false);
   });
 
   test('rejeita drive letter Windows com barra: C:\\temp\\evil.js', () => {
@@ -1106,6 +1117,18 @@ describe('validateArtifactFileName', () => {
 
   test('rejeita traversal misto com backslash: src\\..\\evil.js', () => {
     const result = validateArtifactFileName('src\\..\\evil.js');
+    expect(result.valid).toBe(false);
+    expect(result.reason).toMatch(/traversal/);
+  });
+
+  test('rejeita traversal misto slash-backslash: src/..\\evil.js', () => {
+    const result = validateArtifactFileName('src/..\\evil.js');
+    expect(result.valid).toBe(false);
+    expect(result.reason).toMatch(/traversal/);
+  });
+
+  test('rejeita traversal misto backslash-slash: src\\..\\/evil.js', () => {
+    const result = validateArtifactFileName('src\\../evil.js');
     expect(result.valid).toBe(false);
     expect(result.reason).toMatch(/traversal/);
   });

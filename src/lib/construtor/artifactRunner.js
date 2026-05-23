@@ -149,9 +149,14 @@ export function validateZipEntries(zip, destDir) {
       return { safe: false, reason: `entry ZIP com caminho absoluto Unix: "${entryName}"` };
     }
 
-    // Rejeitar caminho UNC Windows
+    // Rejeitar caminho UNC Windows — verificar antes do check de \ simples
     if (entryName.startsWith('\\\\') || entryName.startsWith('//')) {
       return { safe: false, reason: `entry ZIP com caminho UNC: "${entryName}"` };
+    }
+
+    // Rejeitar caminho absoluto Windows com backslash simples (ex.: \tmp\evil.js)
+    if (entryName.startsWith('\\')) {
+      return { safe: false, reason: `entry ZIP com caminho absoluto Windows (backslash): "${entryName}"` };
     }
 
     // Rejeitar drive letter Windows
