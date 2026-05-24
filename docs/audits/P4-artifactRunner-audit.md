@@ -112,7 +112,7 @@ Se `stdout + stderr > 1 MB`, `execFile` lança `RangeError: stdout maxBuffer len
 ### RS-01 — Allowlist de comandos eficaz mas com vetor de substituição por `options.command`
 **Severidade:** Média  
 O parâmetro `options.command` permite ao chamador especificar um runtime alternativo, mas este é validado contra `ALLOWED_COMMANDS = ['node']`. O risco existe se o chamador for controlável por input externo não sanitizado.  
-**Chamadores atuais:** somente `api/artifact-preview.js` chama `executeArtifact(artifact)` sem `options.command`. Risco atual: baixo.  
+**Chamadores atuais no baseline F3-04:** não há caller runtime ativo em produção; `api/artifact-preview.js` mantém execução automática desativada e não invoca `executeArtifact()`. Risco atual: baixo enquanto permanecer sem opt-in.  
 **Risco futuro:** se um endpoint expuser `options.command` como parâmetro de request HTTP, seria um RCE.
 
 ### RS-02 — Ambiente limpo (`buildCleanEnv`) não inclui NODE_PATH
