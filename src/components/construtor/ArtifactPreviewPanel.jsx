@@ -466,7 +466,12 @@ export default function ArtifactPreviewPanel({ preview, onDecision, onRevision, 
                 {reviewCycleMetrics.cycleElapsedMs != null && (
                   <li>Tempo do ciclo: <strong>~{Math.round(reviewCycleMetrics.cycleElapsedMs / 1000)}s</strong></li>
                 )}
-                <li>Timestamp: <strong>{new Date(reviewCycleMetrics.timestamp).toLocaleString('pt-BR')}</strong></li>
+                {typeof reviewCycleMetrics.timestamp === 'string' && (() => {
+                  const d = new Date(reviewCycleMetrics.timestamp);
+                  return !isNaN(d.getTime()) && (
+                    <li>Timestamp: <strong>{d.toLocaleString('pt-BR')}</strong></li>
+                  );
+                })()}
               </ul>
             </div>
           )}
