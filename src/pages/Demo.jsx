@@ -3,10 +3,6 @@ import { Link } from "react-router-dom";
 import { demoArtifacts } from "../data/demoArtifacts.js";
 import "./Demo.css";
 
-const structuralStatusLabels = {
-  "estrutura-demo-revisada": "Estrutura validada",
-};
-
 export default function Demo() {
   return (
     <main className="demo-page">
@@ -36,8 +32,8 @@ export default function Demo() {
         <div className="demo-page__grid">
           {demoArtifacts.map((artifact) => {
             const structuralStatus = artifact.traceability?.structuralStatus;
-            const structuralIndicator =
-              structuralStatusLabels[structuralStatus] ?? "Estrutura mapeada";
+            const hasValidatedStructure =
+              structuralStatus === "estrutura-demo-revisada";
 
             return (
               <article key={artifact.id} className="demo-card">
@@ -45,12 +41,12 @@ export default function Demo() {
                   <span className="demo-card__type">{artifact.category}</span>
                   <div className="demo-card__meta">
                     <span className="demo-card__status">{artifact.status}</span>
-                    {structuralStatus ? (
+                    {hasValidatedStructure ? (
                       <span
                         className="demo-card__structure-badge"
                         title={`Status estrutural: ${structuralStatus}`}
                       >
-                        {structuralIndicator}
+                        Estrutura validada
                       </span>
                     ) : null}
                   </div>
