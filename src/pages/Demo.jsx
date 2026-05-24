@@ -4,6 +4,16 @@ import { demoArtifacts } from "../data/demoArtifacts.js";
 import "./Demo.css";
 
 export default function Demo() {
+  const artifactsWithStructure = demoArtifacts.map((artifact) => {
+    const structuralStatus = artifact.traceability?.structuralStatus;
+
+    return {
+      ...artifact,
+      structuralStatus,
+      hasValidatedStructure: structuralStatus === "estrutura-demo-revisada",
+    };
+  });
+
   return (
     <main className="demo-page">
       <section className="demo-page__hero">
@@ -30,64 +40,58 @@ export default function Demo() {
           Referência rastreável do pipeline desta vitrine: docs/DEMO.md#pipeline-rastreavel-da-demo-f4-04
         </p>
         <div className="demo-page__grid">
-          {demoArtifacts.map((artifact) => {
-            const structuralStatus = artifact.traceability?.structuralStatus;
-            const hasValidatedStructure =
-              structuralStatus === "estrutura-demo-revisada";
-
-            return (
-              <article key={artifact.id} className="demo-card">
-                <header className="demo-card__header">
-                  <span className="demo-card__type">{artifact.category}</span>
-                  <div className="demo-card__meta">
-                    <span className="demo-card__status">{artifact.status}</span>
-                    {hasValidatedStructure ? (
-                      <span
-                        className="demo-card__structure-badge"
-                        title={`Status estrutural: ${structuralStatus}`}
-                      >
-                        Estrutura validada
-                      </span>
-                    ) : null}
-                  </div>
-                </header>
-
-                <h2 className="demo-card__title">{artifact.name}</h2>
-                <p className="demo-card__description">{artifact.description}</p>
-                <p className="demo-card__problem">
-                  <strong>Problema que resolve:</strong> {artifact.problemSolved}
-                </p>
-                <p className="demo-card__stack">
-                  <strong>Tecnologias / estrutura estimada:</strong> {artifact.technologies.join(" • ")}
-                </p>
-                <p className="demo-card__score">{artifact.qualityScore}</p>
-                <p className="demo-card__stack">
-                  <strong>Rastreabilidade:</strong>{" "}
-                  {[
-                    `tipo ${artifact.traceability.artifactType}`,
-                    artifact.traceability.structuralStatus,
-                    `origem ${artifact.traceability.origin}`,
-                  ].join(" • ")}
-                </p>
-                <p className="demo-card__hint">
-                  {artifact.traceability.isDemonstrativeExample
-                    ? "Exemplo demonstrativo estático (fixture local, sem geração em tempo real)."
-                    : "Exemplo não demonstrativo"}
-                </p>
-
-                <div className="demo-card__footer">
-                  <div className="demo-card__actions">
-                    <a className="demo-card__action" href={artifact.previewAnchor}>
-                      Ver exemplo
-                    </a>
-                    <a className="demo-card__action demo-card__action--secondary" href={artifact.structureAnchor}>
-                      Ver estrutura
-                    </a>
-                  </div>
+          {artifactsWithStructure.map((artifact) => (
+            <article key={artifact.id} className="demo-card">
+              <header className="demo-card__header">
+                <span className="demo-card__type">{artifact.category}</span>
+                <div className="demo-card__meta">
+                  <span className="demo-card__status">{artifact.status}</span>
+                  {artifact.hasValidatedStructure ? (
+                    <span
+                      className="demo-card__structure-badge"
+                      title={`Status estrutural: ${artifact.structuralStatus}`}
+                    >
+                      Estrutura validada
+                    </span>
+                  ) : null}
                 </div>
-              </article>
-            );
-          })}
+              </header>
+
+              <h2 className="demo-card__title">{artifact.name}</h2>
+              <p className="demo-card__description">{artifact.description}</p>
+              <p className="demo-card__problem">
+                <strong>Problema que resolve:</strong> {artifact.problemSolved}
+              </p>
+              <p className="demo-card__stack">
+                <strong>Tecnologias / estrutura estimada:</strong> {artifact.technologies.join(" • ")}
+              </p>
+              <p className="demo-card__score">{artifact.qualityScore}</p>
+              <p className="demo-card__stack">
+                <strong>Rastreabilidade:</strong>{" "}
+                {[
+                  `tipo ${artifact.traceability.artifactType}`,
+                  artifact.traceability.structuralStatus,
+                  `origem ${artifact.traceability.origin}`,
+                ].join(" • ")}
+              </p>
+              <p className="demo-card__hint">
+                {artifact.traceability.isDemonstrativeExample
+                  ? "Exemplo demonstrativo estático (fixture local, sem geração em tempo real)."
+                  : "Exemplo não demonstrativo"}
+              </p>
+
+              <div className="demo-card__footer">
+                <div className="demo-card__actions">
+                  <a className="demo-card__action" href={artifact.previewAnchor}>
+                    Ver exemplo
+                  </a>
+                  <a className="demo-card__action demo-card__action--secondary" href={artifact.structureAnchor}>
+                    Ver estrutura
+                  </a>
+                </div>
+              </div>
+            </article>
+          ))}
         </div>
       </section>
 
@@ -113,7 +117,7 @@ export default function Demo() {
 
       <section className="demo-page__section">
         <h2 className="demo-page__section-title">Previews estáticos</h2>
-        {demoArtifacts.map((artifact) => (
+        {artifactsWithStructure.map((artifact) => (
           <article key={`preview-${artifact.id}`} id={`preview-${artifact.id}`} className="demo-preview">
             <h3>{artifact.name}</h3>
             <p>
