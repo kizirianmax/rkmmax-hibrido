@@ -161,3 +161,18 @@
 | **Validação executada** | `npm test` e `npm run build`. |
 | **Rollback** | `git revert <commit-sha>` |
 | **Declaração de encerramento técnico** | Após merge deste PR e checks verdes, a Auditoria Mestre Fase 2 fica formalmente encerrada no baseline auditado. |
+
+## 2026-05-24 — docs(governance): abrir Fase 3 do Híbrido/Construtor (qualidade/estabilização)
+
+| Item | Detalhe |
+|------|---------|
+| **Título do PR** | `docs(governance): abrir Fase 3 do Híbrido/Construtor (qualidade/estabilização)` |
+| **Escopo do PR** | Documental mínimo, sem alterações funcionais. |
+| **Fase aberta** | **Fase 3 — Qualidade/Estabilização** |
+| **Prioridade 1** | **F3-01:** teste E2E mínimo do pipeline do Construtor |
+| **Prioridade 2** | **F3-02:** UX/validação de aprovação com artefato/ZIP explícito |
+| **Prioridade 3** | **F3-03:** persistência local/mínima do ciclo de revisão |
+| **Prioridade 4** | **F3-04:** trilha futura de sandbox real do runner, sem reativar execução agora |
+| **Critério de sucesso da fase** | Prioridades F3-01 a F3-04 registradas, execução por PRs pequenos e reversíveis, sem violar a arquitetura fixa (Serginho soberano, sem bypass). |
+| **Validação executada** | `npm test` e `npm run build` (baseline desta abertura). |
+| **Rollback** | `git revert <commit-sha>` |
