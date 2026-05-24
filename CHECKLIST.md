@@ -203,3 +203,17 @@
 | **Arquivos alterados** | `src/components/construtor/ArtifactPreviewPanel.jsx`, `src/styles/HybridAgent.css`, `src/lib/construtor/__tests__/artifactPreview.test.js`, `CHECKLIST.md` |
 | **Validação executada** | `npm test -- --runInBand` (baseline e pós-ajuste), além de teste direcionado do painel. |
 | **Rollback** | `git revert <commit-sha>` |
+
+## 2026-05-24 — fix(construtor): F3-03 persistência local mínima do ciclo de revisão
+
+| Item | Detalhe |
+|------|---------|
+| **Título do PR** | `fix(construtor): F3-03 persistência local mínima do ciclo de revisão` |
+| **Identificação** | Fase 3 — Prioridade **F3-03** (persistência local mínima/segura do ciclo atual). |
+| **O que mudou** | Extração da persistência do ciclo de revisão para `reviewCycleStorage` com schema mínimo (`lastAdjustment`, `decision`, `messageKey`, `updatedAt`), validação defensiva (JSON inválido, schema incompatível, ausência de `window/sessionStorage`, TTL, limite de tamanho) e restauração apenas quando compatível com o artefato atual. |
+| **Limpeza controlada** | O estado local do ciclo agora é limpo ao encerrar ciclo manualmente, iniciar novo artefato e em decisões terminais (`approved`/`rejected`), sem apagar histórico geral fora da chave dedicada. |
+| **Cobertura de testes** | Novo teste unitário `src/lib/construtor/__tests__/reviewCycleStorage.test.js` cobrindo persistência, restauração compatível, expiração, corrupção de JSON, ausência de `window`, limpeza explícita e proteção contra payload excessivo. |
+| **Restrições arquiteturais** | Sem backend novo, sem chamadas externas, sem alteração em Serginho/providers/modelos/prompts/Auth/SaaS/Payments/Especialistas/ABNT. |
+| **Arquivos alterados** | `src/pages/HybridAgentSimple.jsx`, `src/lib/construtor/reviewCycleStorage.js`, `src/lib/construtor/__tests__/reviewCycleStorage.test.js`, `CHECKLIST.md` |
+| **Validação executada** | `npm test -- --runInBand src/lib/construtor/__tests__/reviewCycleStorage.test.js`, `npm test -- --runInBand`, `npm run build`. |
+| **Rollback** | `git revert <commit-sha>` |
