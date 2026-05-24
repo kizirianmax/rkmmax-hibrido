@@ -3,6 +3,10 @@ import { Link } from "react-router-dom";
 import { demoArtifacts } from "../data/demoArtifacts.js";
 import "./Demo.css";
 
+const structuralStatusLabels = {
+  "estrutura-demo-revisada": "Estrutura validada",
+};
+
 export default function Demo() {
   return (
     <main className="demo-page">
@@ -30,48 +34,64 @@ export default function Demo() {
           Referência rastreável do pipeline desta vitrine: docs/DEMO.md#pipeline-rastreavel-da-demo-f4-04
         </p>
         <div className="demo-page__grid">
-          {demoArtifacts.map((artifact) => (
-            <article key={artifact.id} className="demo-card">
-              <header className="demo-card__header">
-                <span className="demo-card__type">{artifact.category}</span>
-                <span className="demo-card__status">{artifact.status}</span>
-              </header>
+          {demoArtifacts.map((artifact) => {
+            const structuralStatus = artifact.traceability?.structuralStatus;
+            const structuralIndicator =
+              structuralStatusLabels[structuralStatus] ?? "Estrutura mapeada";
 
-              <h2 className="demo-card__title">{artifact.name}</h2>
-              <p className="demo-card__description">{artifact.description}</p>
-              <p className="demo-card__problem">
-                <strong>Problema que resolve:</strong> {artifact.problemSolved}
-              </p>
-              <p className="demo-card__stack">
-                <strong>Tecnologias / estrutura estimada:</strong> {artifact.technologies.join(" • ")}
-              </p>
-              <p className="demo-card__score">{artifact.qualityScore}</p>
-              <p className="demo-card__stack">
-                <strong>Rastreabilidade:</strong>{" "}
-                {[
-                  `tipo ${artifact.traceability.artifactType}`,
-                  artifact.traceability.structuralStatus,
-                  `origem ${artifact.traceability.origin}`,
-                ].join(" • ")}
-              </p>
-              <p className="demo-card__hint">
-                {artifact.traceability.isDemonstrativeExample
-                  ? "Exemplo demonstrativo estático (fixture local, sem geração em tempo real)."
-                  : "Exemplo não demonstrativo"}
-              </p>
+            return (
+              <article key={artifact.id} className="demo-card">
+                <header className="demo-card__header">
+                  <span className="demo-card__type">{artifact.category}</span>
+                  <div className="demo-card__meta">
+                    <span className="demo-card__status">{artifact.status}</span>
+                    {structuralStatus ? (
+                      <span
+                        className="demo-card__structure-badge"
+                        title={`Status estrutural: ${structuralStatus}`}
+                      >
+                        {structuralIndicator}
+                      </span>
+                    ) : null}
+                  </div>
+                </header>
 
-              <div className="demo-card__footer">
-                <div className="demo-card__actions">
-                  <a className="demo-card__action" href={artifact.previewAnchor}>
-                    Ver exemplo
-                  </a>
-                  <a className="demo-card__action demo-card__action--secondary" href={artifact.structureAnchor}>
-                    Ver estrutura
-                  </a>
+                <h2 className="demo-card__title">{artifact.name}</h2>
+                <p className="demo-card__description">{artifact.description}</p>
+                <p className="demo-card__problem">
+                  <strong>Problema que resolve:</strong> {artifact.problemSolved}
+                </p>
+                <p className="demo-card__stack">
+                  <strong>Tecnologias / estrutura estimada:</strong> {artifact.technologies.join(" • ")}
+                </p>
+                <p className="demo-card__score">{artifact.qualityScore}</p>
+                <p className="demo-card__stack">
+                  <strong>Rastreabilidade:</strong>{" "}
+                  {[
+                    `tipo ${artifact.traceability.artifactType}`,
+                    artifact.traceability.structuralStatus,
+                    `origem ${artifact.traceability.origin}`,
+                  ].join(" • ")}
+                </p>
+                <p className="demo-card__hint">
+                  {artifact.traceability.isDemonstrativeExample
+                    ? "Exemplo demonstrativo estático (fixture local, sem geração em tempo real)."
+                    : "Exemplo não demonstrativo"}
+                </p>
+
+                <div className="demo-card__footer">
+                  <div className="demo-card__actions">
+                    <a className="demo-card__action" href={artifact.previewAnchor}>
+                      Ver exemplo
+                    </a>
+                    <a className="demo-card__action demo-card__action--secondary" href={artifact.structureAnchor}>
+                      Ver estrutura
+                    </a>
+                  </div>
                 </div>
-              </div>
-            </article>
-          ))}
+              </article>
+            );
+          })}
         </div>
       </section>
 
