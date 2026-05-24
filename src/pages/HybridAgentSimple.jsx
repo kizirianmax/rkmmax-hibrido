@@ -133,9 +133,11 @@ const clearArtifactPreview = () => {
 const getLatestPreviewMessageId = (previewMap) => {
   const msgIds = Object.keys(previewMap || {});
   if (msgIds.length === 0) return null;
-  const lastMsgId = msgIds[msgIds.length - 1];
-  const numericMsgId = Number(lastMsgId);
-  return Number.isInteger(numericMsgId) && numericMsgId > 0 ? numericMsgId : null;
+  const numericIds = msgIds
+    .map((id) => Number(id))
+    .filter((id) => Number.isInteger(id) && id > 0);
+  if (numericIds.length === 0) return null;
+  return Math.max(...numericIds);
 };
 
 const buildInitialReviewHistory = (savedCycle) => {
@@ -147,11 +149,13 @@ const buildInitialReviewHistory = (savedCycle) => {
       savedCycle.lastAdjustment.focusFile,
       savedCycle.lastAdjustment.comment,
     ].filter(Boolean);
-    events.push({
-      type: 'adjustment_requested',
-      text: textParts.join(' · ') || null,
-      timestamp: new Date(savedCycle.updatedAt || Date.now()).toISOString(),
-    });
+    if (textParts.length > 0) {
+      events.push({
+        type: 'adjustment_requested',
+        text: textParts.join(' · '),
+        timestamp: new Date(savedCycle.updatedAt || Date.now()).toISOString(),
+      });
+    }
   }
   if (savedCycle.decision === 'approved' || savedCycle.decision === 'rejected') {
     events.push({
@@ -246,7 +250,7 @@ export default function HybridAgentSimple() {
   // PASSO 6 — histórico local de revisão global (array linear, independente de msgId)
   const [reviewHistory, setReviewHistory] = useState(() => buildInitialReviewHistory(savedCycle));
   // PASSO 8 — versão do artefato no ciclo de revisão
-  const [artifactVersion, setArtifactVersion] = useState(savedCycle?.lastAdjustment ? 2 : 1);
+  const [artifactVersion, setArtifactVersion] = useState(1);
   // PASSO 6 — sinaliza que o próximo preview é continuação de uma revisão (preservar histórico)
   const revisionPendingRef = useRef(false);
   const messagesEndRef = useRef(null);

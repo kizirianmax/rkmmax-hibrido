@@ -18,7 +18,7 @@ const normalizeText = (value, maxLength) => {
 };
 
 const normalizeAdjustment = (value) => {
-  if (!value || typeof value !== 'object' || Array.isArray(value)) return null;
+  if (value == null || typeof value !== 'object' || Array.isArray(value)) return null;
   const category = normalizeText(value.category, 80);
   const focusFile = normalizeText(value.focusFile, 300);
   const comment = normalizeText(value.comment, 1000);
@@ -83,7 +83,13 @@ export const loadReviewCycleState = ({ currentMessageKey, now = Date.now() } = {
   }
 
   const updatedAt = Number(parsed.updatedAt);
-  if (!Number.isFinite(updatedAt) || updatedAt <= 0 || now - updatedAt > REVIEW_CYCLE_STORAGE_TTL_MS) {
+  const ageMs = now - updatedAt;
+  if (
+    !Number.isFinite(updatedAt) ||
+    updatedAt <= 0 ||
+    ageMs > REVIEW_CYCLE_STORAGE_TTL_MS ||
+    ageMs < -(5 * 60 * 1000)
+  ) {
     safelyRemoveStorageKey(storage);
     return null;
   }
