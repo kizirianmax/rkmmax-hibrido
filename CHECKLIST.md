@@ -189,3 +189,17 @@
 | **Arquivos alterados** | `src/lib/construtor/__tests__/artifactPreview.test.js`, `CHECKLIST.md` |
 | **Validação executada** | Teste direcionado do Construtor + suíte relacionada de preview/auth da API + `npm test` para regressão geral (detalhes no PR). |
 | **Rollback** | `git revert <commit-sha>` |
+
+## 2026-05-24 — fix(construtor): F3-02 indicador explícito de artefato/ZIP na aprovação
+
+| Item | Detalhe |
+|------|---------|
+| **Título do PR** | `fix(construtor): F3-02 indicador explícito de artefato/ZIP na aprovação` |
+| **Identificação** | Fase 3 — Prioridade **F3-02** (UX de aprovação com artefato/ZIP explícito). |
+| **O que mudou** | No `ArtifactPreviewPanel`, em estado `pending`, foi adicionado indicador visual explícito `Status do artefato/ZIP` com dois estados: `ready` (válido e pronto para exportar após aprovação) e `review` (pendências/necessidade de revisão). |
+| **Origem dos dados** | Status derivado exclusivamente de dados já existentes do preview (`summary.validation` e `summary.filesSummary/files`), sem lógica de backend nova. |
+| **Teste mínimo alternativo** | Teste renderizado do painel não foi viável no setup atual de Jest (padrão do projeto não executa `*.test.jsx` e não transpila import JSX do componente no `testMatch` ativo). Em vez de ampliar escopo de infraestrutura de testes, foi adicionado teste mínimo determinístico em `src/lib/construtor/__tests__/artifactPreview.test.js` cobrindo os dados que alimentam o indicador visual (`summary.validation` + `summary.filesSummary`) para estados "pronto" vs "revisar". |
+| **Restrições arquiteturais** | Sem reativar `executeArtifact`, sem bypass do Serginho, sem alteração em providers/modelos/prompts/Auth/Payments/Especialistas/ABNT. |
+| **Arquivos alterados** | `src/components/construtor/ArtifactPreviewPanel.jsx`, `src/styles/HybridAgent.css`, `src/lib/construtor/__tests__/artifactPreview.test.js`, `CHECKLIST.md` |
+| **Validação executada** | `npm test -- --runInBand` (baseline e pós-ajuste), além de teste direcionado do painel. |
+| **Rollback** | `git revert <commit-sha>` |
