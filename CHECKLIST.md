@@ -217,3 +217,18 @@
 | **Arquivos alterados** | `src/pages/HybridAgentSimple.jsx`, `src/lib/construtor/reviewCycleStorage.js`, `src/lib/construtor/__tests__/reviewCycleStorage.test.js`, `CHECKLIST.md` |
 | **Validação executada** | `npm test -- --runInBand src/lib/construtor/__tests__/reviewCycleStorage.test.js`, `npm test -- --runInBand`, `npm run build`. |
 | **Rollback** | `git revert <commit-sha>` |
+
+## 2026-05-24 — docs(governance): F3-04 trilha futura de sandbox real (executeArtifact segue desativado)
+
+| Item | Detalhe |
+|------|---------|
+| **Título do PR** | `docs(governance): registrar F3-04 de sandbox real sem reativar execução` |
+| **Identificação** | Fase 3 — Prioridade **F3-04** (trilha futura de segurança para runner). |
+| **Auditoria de presença de `executeArtifact`** | Presente em `src/lib/construtor/artifactRunner.js` (implementação), `src/lib/construtor/__tests__/artifactRunner.test.js` (cobertura da função), e em testes da API com mock/asserção de não uso automático: `api/__tests__/artifact-preview.test.js` e `api/__tests__/artifact-auth.test.js`. |
+| **Onde NÃO pode ser chamado automaticamente** | `POST /api/artifact-preview` permanece em modo de inspeção (`api/artifact-preview.js`), com `executionResult` fixo `execution-disabled-by-security-policy` e sem import/invocação de `executeArtifact()`. Não há ativação automática em preview/revisão/exportação. |
+| **Teste existente de não execução automática** | Mantido e referenciado sem duplicação: `api/__tests__/artifact-preview.test.js` (`NÃO deve invocar executeArtifact() ao gerar preview`) e `api/__tests__/artifact-auth.test.js` (`POST autenticado NÃO invoca executeArtifact`). |
+| **Requisitos mínimos obrigatórios para futura reativação segura (sandbox real)** | (1) isolamento forte de processo/ambiente; (2) timeout rígido; (3) limite de CPU/memória; (4) bloqueio/controle de rede; (5) diretório temporário seguro com limpeza garantida; (6) validação de ZIP/path traversal antes de extrair/executar; (7) allowlist explícita de comandos/runtime quando aplicável; (8) logs auditáveis e plano de rollback; (9) execução somente **opt-in** e nunca automática no preview. |
+| **Restrições preservadas neste PR** | Não implementa sandbox real, não reativa execução, não cria endpoint novo, não altera UX funcional, não altera Serginho/Providers/Auth/SaaS/Especialistas/ABNT. |
+| **Arquivos alterados** | `CHECKLIST.md`, `docs/audits/P4-artifactRunner-audit.md` |
+| **Validação executada** | Baseline local: `npm run build` e `npm test -- --runInBand` verdes; `npm run lint` falha por configuração do projeto (ESLint v10 sem `eslint.config.*`), sem relação com este PR documental. |
+| **Rollback** | `git revert <commit-sha>` |
