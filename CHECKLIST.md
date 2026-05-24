@@ -176,3 +176,16 @@
 | **Critério de sucesso da fase** | Prioridades F3-01 a F3-04 registradas, execução por PRs pequenos e reversíveis, sem violar a arquitetura fixa (Serginho soberano, sem bypass). |
 | **Validação executada** | `npm test` e `npm run build` (baseline desta abertura). |
 | **Rollback** | `git revert <commit-sha>` |
+
+## 2026-05-24 — test(construtor): adicionar F3-01 E2E mínimo do pipeline
+
+| Item | Detalhe |
+|------|---------|
+| **Título do PR** | `test(construtor): adicionar F3-01 E2E mínimo do pipeline` |
+| **Identificação** | Fase 3 — Prioridade **F3-01** (qualidade/estabilização do Híbrido/Construtor). |
+| **O que mudou** | Extensão cirúrgica de `src/lib/construtor/__tests__/artifactPreview.test.js` com 1 teste E2E mínimo/determinístico cobrindo `packageArtifact()` → `validateArtifact()` → `generatePreview()`, incluindo verificação de manifest/checksum, validação e preview/filesSummary. |
+| **Sem dependência externa de IA** | O teste roda só com libs locais do Construtor; adicionada asserção explícita de que `global.fetch` não é chamado durante o fluxo. |
+| **Execução automática preservada desativada** | Confirmado por testes da API (`api/__tests__/artifact-preview.test.js`) que `executeArtifact()` continua **não** invocado automaticamente no preview. Nenhuma alteração em runtime reativou execução. |
+| **Arquivos alterados** | `src/lib/construtor/__tests__/artifactPreview.test.js`, `CHECKLIST.md` |
+| **Validação executada** | Teste direcionado do Construtor + suíte relacionada de preview/auth da API + `npm test` para regressão geral (detalhes no PR). |
+| **Rollback** | `git revert <commit-sha>` |

@@ -13,9 +13,11 @@
  * - applyDecision() lança TypeError para decision inválida
  */
 
+import { jest } from '@jest/globals';
 import { packageArtifact } from '../artifactPackager.js';
 import { validateArtifact } from '../artifactValidator.js';
 import { generatePreview, applyDecision } from '../artifactPreview.js';
+import { computeChecksum } from '../artifactManifest.js';
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
@@ -319,5 +321,59 @@ describe('applyDecision', () => {
   test('feedback deve ser null quando não fornecido', () => {
     const updated = applyDecision(basePreview, 'approved');
     expect(updated.feedback).toBeNull();
+  });
+});
+
+describe('F3-01 — pipeline mínimo do Construtor/Híbrido', () => {
+  test('deve manter íntegro o fluxo empacotar → validar → preview com dados determinísticos e sem rede externa', async () => {
+    const fetchSpy = jest.spyOn(global, 'fetch');
+
+    try {
+      const deterministicContent = '# Título\n\nConteúdo determinístico para F3-01.';
+      const deterministicMetadata = {
+        model: { modelId: 'llama-3.3-70b' },
+        provider: 'groq',
+        tier: 'free',
+        complexity: 'low',
+        promptId: 'hybrid-genius',
+      };
+      const executionDisabled = {
+        executed: false,
+        success: false,
+        timedOut: false,
+        durationMs: 0,
+        reason: 'execution-disabled-by-security-policy',
+      };
+
+      const artifact = await packageArtifact({
+        content: deterministicContent,
+        metadata: deterministicMetadata,
+      });
+      const validationResult = validateArtifact(artifact);
+      const preview = generatePreview(artifact, validationResult, executionDisabled);
+
+      expect(artifact.manifest.origin.specialist).toBe('hybrid');
+      expect(artifact.manifest.origin.promptId).toBe('hybrid-genius');
+      expect(artifact.manifest.checksum).toBe(computeChecksum(deterministicContent));
+
+      expect(validationResult.valid).toBe(true);
+      expect(validationResult.errors).toEqual([]);
+
+      expect(preview.previewAvailable).toBe(true);
+      expect(preview.summary.validation.valid).toBe(true);
+      expect(preview.summary.filesSummary.fileNames).toEqual(
+        expect.arrayContaining(['manifest.json', 'logs/generation.log', 'logs/structure.log']),
+      );
+      expect(preview.summary.execution).toEqual({
+        executed: false,
+        success: false,
+        timedOut: false,
+        durationMs: 0,
+      });
+
+      expect(fetchSpy).not.toHaveBeenCalled();
+    } finally {
+      fetchSpy.mockRestore();
+    }
   });
 });
