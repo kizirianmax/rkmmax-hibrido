@@ -23,6 +23,7 @@ import archiver from 'archiver';
 
 import { generateManifest } from './artifactManifest.js';
 import { generateGenerationLog, generateStructureLog } from './artifactLogger.js';
+import { buildArtifactPipelineMetrics } from './artifactMetrics.js';
 import {
   stripMarkdownFences,
   tryNormalizeAlternativeFormat,
@@ -258,7 +259,21 @@ async function packageMultiFileArtifact({ id, content, multiFiles, metadata, sta
     archive.finalize();
   });
 
-  return { id, manifest, zipBuffer, zipBase64: zipBuffer.toString('base64') };
+  const packagingMetrics = buildArtifactPipelineMetrics({
+    phase: 'packaging',
+    startedAt: new Date(startTime).toISOString(),
+    finishedAt: new Date().toISOString(),
+    files: contents,
+    zipBuffer,
+  });
+
+  return {
+    id,
+    manifest,
+    zipBuffer,
+    zipBase64: zipBuffer.toString('base64'),
+    metrics: { packaging: packagingMetrics },
+  };
 }
 
 /**
@@ -376,11 +391,20 @@ export async function packageArtifact({ content, metadata = {} }) {
     structureLog,
   });
 
+  const packagingMetrics = buildArtifactPipelineMetrics({
+    phase: 'packaging',
+    startedAt: new Date(startTime).toISOString(),
+    finishedAt: new Date().toISOString(),
+    files: contents,
+    zipBuffer,
+  });
+
   return {
     id,
     manifest,
     zipBuffer,
     zipBase64: zipBuffer.toString('base64'),
+    metrics: { packaging: packagingMetrics },
   };
 }
 

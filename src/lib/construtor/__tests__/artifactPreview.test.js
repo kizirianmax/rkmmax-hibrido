@@ -292,6 +292,45 @@ describe('generatePreview', () => {
       expect(preview.summary.validation.errors).toContain('manifest inválido');
     });
   });
+
+  describe('F4-02 — observabilidade mínima do pipeline', () => {
+    test('deve anexar métricas estruturadas de empacotamento e preview no summary', async () => {
+      const artifact = await buildValidArtifact();
+      const validationResult = { valid: true, errors: [], warnings: ['aviso-a'] };
+      const executionResult = {
+        executed: false,
+        success: false,
+        timedOut: false,
+        durationMs: 0,
+        reason: 'execution-disabled-by-security-policy',
+      };
+
+      const preview = generatePreview(artifact, validationResult, executionResult);
+      const { packaging, preview: previewMetrics } = preview.summary.pipelineMetrics;
+
+      expect(packaging).toEqual(
+        expect.objectContaining({
+          phase: 'packaging',
+          fileCount: expect.any(Number),
+          zipApproxBytes: expect.any(Number),
+          timestamp: expect.any(String),
+        }),
+      );
+
+      expect(previewMetrics).toEqual(
+        expect.objectContaining({
+          phase: 'preview',
+          fileCount: expect.any(Number),
+          zipApproxBytes: expect.any(Number),
+          validationStatus: 'valid',
+          errorCount: 0,
+          warningCount: 1,
+          executionStatus: 'disabled-by-security-policy',
+          timestamp: expect.any(String),
+        }),
+      );
+    });
+  });
 });
 
 // ── applyDecision ─────────────────────────────────────────────────────────────
@@ -386,12 +425,15 @@ describe('F3-01 — pipeline mínimo do Construtor/Híbrido', () => {
       expect(preview.summary.filesSummary.fileNames).toEqual(
         expect.arrayContaining(['manifest.json', 'logs/generation.log', 'logs/structure.log']),
       );
-      expect(preview.summary.execution).toEqual({
-        executed: false,
-        success: false,
-        timedOut: false,
-        durationMs: 0,
-      });
+      expect(preview.summary.execution).toEqual(
+        expect.objectContaining({
+          executed: false,
+          success: false,
+          timedOut: false,
+          durationMs: 0,
+          reason: 'execution-disabled-by-security-policy',
+        }),
+      );
 
       expect(fetchSpy).not.toHaveBeenCalled();
     } finally {
