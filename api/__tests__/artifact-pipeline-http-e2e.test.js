@@ -3,6 +3,7 @@ import { createServer, request as httpRequest } from 'node:http';
 import { artifactPipelineFixture } from '../__fixtures__/artifact-pipeline.fixture.js';
 
 const TEST_HOST = '127.0.0.1';
+const ALLOWED_FETCH_HOSTS = new Set(['127.0.0.1', 'localhost']);
 
 jest.unstable_mockModule('../../src/lib/construtor/artifactPackager.js', () => ({
   packageArtifact: jest.fn().mockImplementation(async ({ metadata = {} }) => ({
@@ -95,6 +96,8 @@ describe('F4-01 — pipeline HTTP E2E mínimo (artifact + preview)', () => {
   let server;
   let baseUrl;
   let executeArtifactMock;
+  let originalFetch;
+  let guardedFetchMock;
 
   const sendJsonRequest = (path, method, body) =>
     new Promise((resolve, reject) => {
@@ -136,9 +139,23 @@ describe('F4-01 — pipeline HTTP E2E mínimo (artifact + preview)', () => {
 
     const address = server.address();
     baseUrl = `http://${TEST_HOST}:${address.port}`;
+
+    originalFetch = global.fetch;
+    guardedFetchMock = jest.fn((input, init) => {
+      const rawUrl = typeof input === 'string' ? input : input?.url;
+      const parsedUrl = new URL(rawUrl, 'http://localhost');
+      if (!ALLOWED_FETCH_HOSTS.has(parsedUrl.hostname)) {
+        throw new Error(`External fetch blocked in F4-01 test: ${parsedUrl.toString()}`);
+      }
+      return originalFetch(input, init);
+    });
+    global.fetch = guardedFetchMock;
   });
 
   afterAll(async () => {
+    if (originalFetch) {
+      global.fetch = originalFetch;
+    }
     if (server) {
       await new Promise((resolve) => server.close(resolve));
     }
@@ -202,6 +219,6 @@ describe('F4-01 — pipeline HTTP E2E mínimo (artifact + preview)', () => {
     expect(reviewJson.zipBase64).toBe(artifactPipelineFixture.expected.zipBase64);
 
     expect(executeArtifactMock).not.toHaveBeenCalled();
-    expect(global.fetch).not.toHaveBeenCalled();
+    expect(guardedFetchMock).not.toHaveBeenCalled();
   });
 });
