@@ -58,6 +58,8 @@ For a detailed architectural breakdown, see [docs/architecture.md](docs/architec
 
 ## Construtor/Híbrido — Artifact Pipeline
 
+> **Nota de governança (2026-05-24):** A Fase 2 do Híbrido/Construtor foi encerrada estruturalmente após auditoria objetiva, sem pendências bloqueadoras para avanço. Próxima etapa recomendada: Fase 3 de qualidade/estabilização.
+
 The Híbrido / Construtor layer is **not a chatbot**. It is a generation, validation, preview, and export pipeline that produces structured artefacts from AI-generated content.
 
 ### Pipeline
