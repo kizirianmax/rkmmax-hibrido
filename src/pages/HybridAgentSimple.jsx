@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useMemo } from "react";
 import "../styles/HybridAgent.css";
 import ArtifactPreviewPanel from "../components/construtor/ArtifactPreviewPanel";
 import { normalizeVisibleContent } from "../lib/construtor/artifactNormalizer";
@@ -12,6 +12,7 @@ import {
   saveReviewCycleState,
   clearReviewCycleState,
 } from "../lib/construtor/reviewCycleStorage";
+import { buildReviewCycleMetrics } from "../lib/construtor/reviewCycleMetrics";
 import { HYBRID_ENGINE_OPTIONS, DEFAULT_HYBRID_ENGINE } from "../config/hybridEngines";
 import { supabase } from "../lib/supabaseClient";
 
@@ -251,9 +252,17 @@ export default function HybridAgentSimple() {
   const [reviewHistory, setReviewHistory] = useState(() => buildInitialReviewHistory(savedCycle));
   // PASSO 8 — versão do artefato no ciclo de revisão
   const [artifactVersion, setArtifactVersion] = useState(1);
+  // F4-03 — timestamp de início do ciclo de revisão atual (ms)
+  const [cycleStartedAt, setCycleStartedAt] = useState(null);
   // PASSO 6 — sinaliza que o próximo preview é continuação de uma revisão (preservar histórico)
   const revisionPendingRef = useRef(false);
   const messagesEndRef = useRef(null);
+
+  // F4-03 — métricas mínimas do ciclo de revisão (derivado local, sem envio externo)
+  const reviewCycleMetrics = useMemo(
+    () => buildReviewCycleMetrics({ reviewHistory, cycleStartedAt }),
+    [reviewHistory, cycleStartedAt]
+  );
 
   // Helper function to get tier color
   const getTierColor = (tier) => {
@@ -405,6 +414,8 @@ export default function HybridAgentSimple() {
 
   // PASSO 6 — helper para append imutável de evento no histórico de revisão (array global)
   const addReviewEvent = (event) => {
+    // F4-03 — registrar início do ciclo na primeira ação de revisão
+    setCycleStartedAt((prev) => prev ?? Date.now());
     setReviewHistory((prev) => [...prev, event]);
   };
 
@@ -413,6 +424,7 @@ export default function HybridAgentSimple() {
     setReviewHistory([]);
     setArtifactVersion(1);
     setLastAdjustment(null);
+    setCycleStartedAt(null); // F4-03 — resetar início do ciclo
     clearReviewCycleState();
     revisionPendingRef.current = false;
     // PASSO 11 — limpar preview persistido ao encerrar ciclo
@@ -785,6 +797,7 @@ export default function HybridAgentSimple() {
                       reviewHistory={reviewHistory}
                       artifactVersion={artifactVersion}
                       onClearCycle={handleClearReviewCycle}
+                      reviewCycleMetrics={reviewCycleMetrics}
                     />
                   )}
                   {previewErrors[msg.id] && previews[msg.id] && (

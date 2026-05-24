@@ -1210,6 +1210,40 @@ textarea:disabled {
   flex-shrink: 0;
 }
 
+/* ===== F4-03 — Métricas mínimas do ciclo de revisão ===== */
+.artifact-review-metrics {
+  margin-top: 0.75rem;
+  padding: 0.5rem 0.75rem;
+  background: rgba(99, 102, 241, 0.06);
+  border: 1px solid rgba(99, 102, 241, 0.2);
+  border-radius: 6px;
+}
+
+.artifact-review-metrics-title {
+  display: block;
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: #818cf8;
+  margin-bottom: 0.35rem;
+  letter-spacing: 0.02em;
+}
+
+.artifact-review-metrics-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  font-size: 0.72rem;
+  color: #94a3b8;
+}
+
+.artifact-review-metrics-list li strong {
+  color: #e2e8f0;
+  font-weight: 600;
+}
+
 /* ===== PASSO 8 — Badge de versão do artefato ===== */
 .artifact-version-badge {
   padding: 1px 8px;
