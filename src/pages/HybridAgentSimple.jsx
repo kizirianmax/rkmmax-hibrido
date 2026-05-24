@@ -7,6 +7,11 @@ import {
   saveInputDraft,
   clearInputDraft,
 } from "../lib/construtor/inputDraftStorage";
+import {
+  loadReviewCycleState,
+  saveReviewCycleState,
+  clearReviewCycleState,
+} from "../lib/construtor/reviewCycleStorage";
 import { HYBRID_ENGINE_OPTIONS, DEFAULT_HYBRID_ENGINE } from "../config/hybridEngines";
 import { supabase } from "../lib/supabaseClient";
 
@@ -85,37 +90,8 @@ function MultiFileRenderer({ content }) {
   );
 }
 
-// PASSO 9 — helpers de persistência do ciclo de revisão em sessionStorage
-const REVIEW_CYCLE_STORAGE_KEY = 'construtor_review_cycle';
-
 // PASSO 11 — helpers de persistência do preview atual do artefato em sessionStorage
 const ARTIFACT_PREVIEW_STORAGE_KEY = 'construtor_artifact_preview';
-
-const loadReviewCycle = () => {
-  try {
-    const raw = sessionStorage.getItem(REVIEW_CYCLE_STORAGE_KEY);
-    if (!raw) return null;
-    const parsed = JSON.parse(raw);
-    if (parsed && typeof parsed === 'object') return parsed;
-  } catch { /* ignorar dados corrompidos */ }
-  return null;
-};
-
-const saveReviewCycle = (history, version, adjustment) => {
-  try {
-    sessionStorage.setItem(REVIEW_CYCLE_STORAGE_KEY, JSON.stringify({
-      reviewHistory: history,
-      artifactVersion: version,
-      lastAdjustment: adjustment,
-    }));
-  } catch { /* sessionStorage indisponível ou cheio — falhar silenciosamente */ }
-};
-
-const clearReviewCycle = () => {
-  try {
-    sessionStorage.removeItem(REVIEW_CYCLE_STORAGE_KEY);
-  } catch { /* ignorar */ }
-};
 
 const loadArtifactPreview = () => {
   try {
@@ -152,6 +128,39 @@ const clearArtifactPreview = () => {
   try {
     sessionStorage.removeItem(ARTIFACT_PREVIEW_STORAGE_KEY);
   } catch { /* ignorar */ }
+};
+
+const getLatestPreviewMessageId = (previewMap) => {
+  const msgIds = Object.keys(previewMap || {});
+  if (msgIds.length === 0) return null;
+  const lastMsgId = msgIds[msgIds.length - 1];
+  const numericMsgId = Number(lastMsgId);
+  return Number.isInteger(numericMsgId) && numericMsgId > 0 ? numericMsgId : null;
+};
+
+const buildInitialReviewHistory = (savedCycle) => {
+  if (!savedCycle) return [];
+  const events = [];
+  if (savedCycle.lastAdjustment) {
+    const textParts = [
+      savedCycle.lastAdjustment.category,
+      savedCycle.lastAdjustment.focusFile,
+      savedCycle.lastAdjustment.comment,
+    ].filter(Boolean);
+    events.push({
+      type: 'adjustment_requested',
+      text: textParts.join(' · ') || null,
+      timestamp: new Date(savedCycle.updatedAt || Date.now()).toISOString(),
+    });
+  }
+  if (savedCycle.decision === 'approved' || savedCycle.decision === 'rejected') {
+    events.push({
+      type: savedCycle.decision,
+      text: null,
+      timestamp: new Date(savedCycle.updatedAt || Date.now()).toISOString(),
+    });
+  }
+  return events;
 };
 
 // PASSO 12 — helpers de persistência importados de src/lib/construtor/inputDraftStorage.js
@@ -227,15 +236,17 @@ export default function HybridAgentSimple() {
     }
     return {};
   });
-  // Carregar ciclo salvo (PASSO 9)
-  const savedCycle = loadReviewCycle();
+  // Carregar ciclo salvo (F3-03) apenas quando há artefato atual compatível
+  const savedCycle = restoredMsgId
+    ? loadReviewCycleState({ currentMessageKey: restoredMsgId })
+    : null;
 
   // PASSO 5 — último ajuste solicitado (para continuidade visual)
   const [lastAdjustment, setLastAdjustment] = useState(savedCycle?.lastAdjustment ?? null);
   // PASSO 6 — histórico local de revisão global (array linear, independente de msgId)
-  const [reviewHistory, setReviewHistory] = useState(savedCycle?.reviewHistory ?? []);
+  const [reviewHistory, setReviewHistory] = useState(() => buildInitialReviewHistory(savedCycle));
   // PASSO 8 — versão do artefato no ciclo de revisão
-  const [artifactVersion, setArtifactVersion] = useState(savedCycle?.artifactVersion ?? 1);
+  const [artifactVersion, setArtifactVersion] = useState(savedCycle?.lastAdjustment ? 2 : 1);
   // PASSO 6 — sinaliza que o próximo preview é continuação de uma revisão (preservar histórico)
   const revisionPendingRef = useRef(false);
   const messagesEndRef = useRef(null);
@@ -296,10 +307,23 @@ export default function HybridAgentSimple() {
     }
   }, []);
 
-  // PASSO 9 — persistir ciclo de revisão em sessionStorage
+  // F3-03 — persistir ciclo mínimo de revisão em sessionStorage
   useEffect(() => {
-    saveReviewCycle(reviewHistory, artifactVersion, lastAdjustment);
-  }, [reviewHistory, artifactVersion, lastAdjustment]);
+    const activeMsgId = getLatestPreviewMessageId(previews);
+    const activeDecision = activeMsgId != null ? previews[activeMsgId]?.decision : null;
+
+    if (!activeMsgId || activeDecision === 'approved' || activeDecision === 'rejected') {
+      clearReviewCycleState();
+      return;
+    }
+
+    saveReviewCycleState({
+      messageKey: activeMsgId,
+      lastAdjustment,
+      decision: activeDecision || 'pending',
+      updatedAt: Date.now(),
+    });
+  }, [previews, lastAdjustment]);
 
   // PASSO 11 — persistir preview atual no sessionStorage
   useEffect(() => {
@@ -333,7 +357,7 @@ export default function HybridAgentSimple() {
       setReviewHistory([]);
       setArtifactVersion(1);     // PASSO 8 — artefato novo → versão 1
       setLastAdjustment(null);   // garantir reset completo
-      clearReviewCycle();        // PASSO 9 — limpar sessionStorage ao iniciar artefato novo
+      clearReviewCycleState();   // F3-03 — limpar estado mínimo salvo ao iniciar artefato novo
       clearArtifactPreview();    // PASSO 11 — limpar preview anterior ao gerar novo artefato
     } else {
       setArtifactVersion((v) => v + 1);  // PASSO 8 — revisão → incrementa versão
@@ -385,7 +409,7 @@ export default function HybridAgentSimple() {
     setReviewHistory([]);
     setArtifactVersion(1);
     setLastAdjustment(null);
-    clearReviewCycle();
+    clearReviewCycleState();
     revisionPendingRef.current = false;
     // PASSO 11 — limpar preview persistido ao encerrar ciclo
     setPreviews({});
@@ -428,6 +452,9 @@ export default function HybridAgentSimple() {
           addReviewEvent({ type: 'approved', text: null, timestamp: new Date().toISOString() });
         } else if (decision === 'rejected') {
           addReviewEvent({ type: 'rejected', text: feedback || null, timestamp: new Date().toISOString() });
+        }
+        if (decision === 'approved' || decision === 'rejected') {
+          clearReviewCycleState();
         }
       }
     } catch (err) {
