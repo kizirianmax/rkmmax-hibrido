@@ -26,6 +26,9 @@ export default function Demo() {
 
       <section className="demo-page__section">
         <h2 className="demo-page__section-title">Artefatos demonstrativos</h2>
+        <p className="demo-page__notice">
+          Referência rastreável do pipeline desta vitrine: docs/DEMO.md#pipeline-rastreavel-da-demo-f4-04
+        </p>
         <div className="demo-page__grid">
           {demoArtifacts.map((artifact) => (
             <article key={artifact.id} className="demo-card">
@@ -55,9 +58,6 @@ export default function Demo() {
                 {artifact.traceability.isDemonstrativeExample
                   ? "Exemplo demonstrativo estático (fixture local, sem geração em tempo real)."
                   : "Exemplo não demonstrativo"}
-              </p>
-              <p className="demo-card__hint">
-                Referência de pipeline: {artifact.traceability.pipelineReference}
               </p>
 
               <div className="demo-card__footer">
