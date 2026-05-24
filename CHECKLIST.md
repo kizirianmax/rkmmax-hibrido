@@ -156,6 +156,8 @@
 | **Arquivo documental criado** | `docs/audits/fase-2-encerramento-hibrido-construtor-2026-05-23.md` |
 | **Confirmação de escopo** | Nenhum runtime foi alterado neste PR; alteração exclusivamente documental/governança. |
 | **Riscos residuais deferidos** | **F2-06**, **F2-07**, **F2-09** e sandbox/execução opt-in futura em trilha separada e rastreável. |
+| **Status explícito** | **Fase 2 concluída**. |
+| **Próxima fase recomendada** | **Fase 3 de qualidade/estabilização**. |
 | **Validação executada** | `npm test` e `npm run build`. |
 | **Rollback** | `git revert <commit-sha>` |
 | **Declaração de encerramento técnico** | Após merge deste PR e checks verdes, a Auditoria Mestre Fase 2 fica formalmente encerrada no baseline auditado. |
