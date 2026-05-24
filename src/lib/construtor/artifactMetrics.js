@@ -4,9 +4,16 @@
  * Sem envio externo, sem persistência remota e sem conteúdo sensível.
  */
 
+/**
+ * Converte valor numérico para inteiro seguro não-negativo.
+ * Retorna o fallback para NaN, infinito ou números negativos.
+ */
 const toSafeInteger = (value, fallback = 0) => {
   const parsed = Number(value);
-  return Number.isFinite(parsed) && parsed >= 0 ? Math.round(parsed) : fallback;
+  if (Number.isNaN(parsed)) return fallback;
+  if (!Number.isFinite(parsed)) return fallback;
+  if (parsed < 0) return fallback;
+  return Math.round(parsed);
 };
 
 const toIsoTimestamp = (value = null) => {
