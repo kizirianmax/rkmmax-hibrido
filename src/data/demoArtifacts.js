@@ -10,6 +10,13 @@ export const demoArtifacts = [
     qualityScore: "Qualidade: 9.1/10",
     previewAnchor: "#preview-landing",
     structureAnchor: "#structure-landing",
+    traceability: {
+      artifactType: "landing-page",
+      structuralStatus: "estrutura-demo-revisada",
+      origin: "demo-fixture-local",
+      isDemonstrativeExample: true,
+      pipelineReference: "docs/DEMO.md#pipeline-rastreavel-da-demo-f4-04",
+    },
   },
   {
     id: "dashboard",
@@ -22,6 +29,13 @@ export const demoArtifacts = [
     qualityScore: "Qualidade: 8.9/10",
     previewAnchor: "#preview-dashboard",
     structureAnchor: "#structure-dashboard",
+    traceability: {
+      artifactType: "operational-dashboard",
+      structuralStatus: "estrutura-demo-revisada",
+      origin: "demo-fixture-local",
+      isDemonstrativeExample: true,
+      pipelineReference: "docs/DEMO.md#pipeline-rastreavel-da-demo-f4-04",
+    },
   },
   {
     id: "signup",
@@ -34,6 +48,13 @@ export const demoArtifacts = [
     qualityScore: "Qualidade: 9.0/10",
     previewAnchor: "#preview-signup",
     structureAnchor: "#structure-signup",
+    traceability: {
+      artifactType: "smart-signup-form",
+      structuralStatus: "estrutura-demo-revisada",
+      origin: "demo-fixture-local",
+      isDemonstrativeExample: true,
+      pipelineReference: "docs/DEMO.md#pipeline-rastreavel-da-demo-f4-04",
+    },
   },
   {
     id: "saas",
@@ -46,6 +67,13 @@ export const demoArtifacts = [
     qualityScore: "Qualidade: 8.8/10",
     previewAnchor: "#preview-saas",
     structureAnchor: "#structure-saas",
+    traceability: {
+      artifactType: "saas-product-page",
+      structuralStatus: "estrutura-demo-revisada",
+      origin: "demo-fixture-local",
+      isDemonstrativeExample: true,
+      pipelineReference: "docs/DEMO.md#pipeline-rastreavel-da-demo-f4-04",
+    },
   },
   {
     id: "miniapp",
@@ -58,5 +86,12 @@ export const demoArtifacts = [
     qualityScore: "Qualidade: 9.2/10",
     previewAnchor: "#preview-miniapp",
     structureAnchor: "#structure-miniapp",
+    traceability: {
+      artifactType: "interactive-mini-app",
+      structuralStatus: "estrutura-demo-revisada",
+      origin: "demo-fixture-local",
+      isDemonstrativeExample: true,
+      pipelineReference: "docs/DEMO.md#pipeline-rastreavel-da-demo-f4-04",
+    },
   },
 ];

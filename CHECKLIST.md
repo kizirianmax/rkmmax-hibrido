@@ -1,3 +1,16 @@
+## 2026-05-24 — docs(demo): F4-04 rastreabilidade mínima dos artefatos demonstrativos
+
+| Item | Detalhe |
+|------|---------|
+| **Título do PR** | `docs(demo): F4-04 rastreabilidade mínima dos artefatos demonstrativos` |
+| **Identificação** | **Fase 4 — F4-04 (refinamento benchmark/demo com saídas rastreáveis)** |
+| **O que mudou** | Auditoria da fonte demo confirmada em `src/data/demoArtifacts.js`; inclusão de metadados `traceability` por artefato (`artifactType`, `structuralStatus`, `origin`, `isDemonstrativeExample`, `pipelineReference`); ajustes mínimos em `src/pages/Demo.jsx` para exibir rastreabilidade e reforçar que é fixture estática; documentação `docs/DEMO.md` atualizada com seção "Pipeline rastreável da demo (F4-04)"; teste estático `src/__tests__/demo-showcase-routing.test.js` atualizado para exigir os novos campos. |
+| **Segurança/escopo** | Sem alteração no runtime funcional do Construtor/Híbrido, sem chamadas externas, sem endpoint novo, sem banco/persistência remota e sem promessas de IA em tempo real para dados estáticos. Serginho, Especialistas, ABNT e SaaS/Auth/Payments não foram alterados. |
+| **Arquivos alterados** | `src/data/demoArtifacts.js`, `src/pages/Demo.jsx`, `docs/DEMO.md`, `src/__tests__/demo-showcase-routing.test.js`, `CHECKLIST.md` |
+| **Validação executada** | Baseline pré-mudança: `npm run lint` (falha pré-existente: ESLint v10 sem `eslint.config.*`), `npm run build` (**PASS**), `npm test -- --runInBand` (**64 suites / 2442 testes PASS**). Pós-mudança: teste direcionado `npm test -- --runInBand src/__tests__/demo-showcase-routing.test.js src/__tests__/DemoAutoplay.test.js` (**PASS**); validação final `npm test -- --runInBand` (**PASS**). |
+| **Riscos/limites conhecidos** | Metadados de demo são estáticos por design e representam rastreabilidade documental/fixture local, não telemetry nem execução real do pipeline em tempo de navegação da vitrine pública. |
+| **Rollback** | `git revert <commit-sha>` |
+
 ## 2026-05-24 — feat(construtor): F4-03 métricas mínimas do ciclo de revisão humana
 
 | Item | Detalhe |

@@ -43,6 +43,18 @@ export default function Demo() {
                 <strong>Tecnologias / estrutura estimada:</strong> {artifact.technologies.join(" • ")}
               </p>
               <p className="demo-card__score">{artifact.qualityScore}</p>
+              <p className="demo-card__stack">
+                <strong>Rastreabilidade:</strong> tipo {artifact.traceability.artifactType} •{" "}
+                {artifact.traceability.structuralStatus} • origem {artifact.traceability.origin}
+              </p>
+              <p className="demo-card__hint">
+                {artifact.traceability.isDemonstrativeExample
+                  ? "Exemplo demonstrativo estático (fixture local, sem geração em tempo real)."
+                  : "Exemplo não demonstrativo"}
+              </p>
+              <p className="demo-card__hint">
+                Referência de pipeline: {artifact.traceability.pipelineReference}
+              </p>
 
               <div className="demo-card__footer">
                 <span className="demo-card__hint">Exemplo demonstrativo</span>

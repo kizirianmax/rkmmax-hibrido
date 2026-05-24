@@ -70,6 +70,12 @@ describe("Demo showcase integration (static checks)", () => {
       "qualityScore",
       "previewAnchor",
       "structureAnchor",
+      "traceability",
+      "artifactType",
+      "structuralStatus",
+      "origin",
+      "isDemonstrativeExample",
+      "pipelineReference",
     ].forEach((fieldName) => {
       expect(artifactsSource).toContain(fieldName);
     });
