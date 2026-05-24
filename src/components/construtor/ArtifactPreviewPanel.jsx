@@ -110,6 +110,13 @@ export default function ArtifactPreviewPanel({ preview, onDecision, onRevision, 
   };
 
   const isPending = decision === 'pending';
+  const validationErrorCount = summary.validation?.errorCount ?? summary.validation?.errors?.length ?? 0;
+  const hasValidationIssues = summary.validation?.valid === false || validationErrorCount > 0;
+  const filesCount = summary.filesSummary?.totalFiles ?? summary.files?.length ?? 0;
+  const artifactExportState = !hasValidationIssues && filesCount > 0 ? 'ready' : 'review';
+  const artifactExportLabel = artifactExportState === 'ready'
+    ? '✅ Válido e pronto para exportar ZIP após aprovação.'
+    : '⚠️ Artefato/ZIP com pendências — revise antes de aprovar/exportar.';
 
   const handleDownload = () => {
     if (!delivery?.zipBase64) return;
@@ -133,7 +140,19 @@ export default function ArtifactPreviewPanel({ preview, onDecision, onRevision, 
         {decisionBadge}
       </div>
       {isPending && (
-        <p className="artifact-preview-hint">Revise o artefato e escolha uma ação abaixo.</p>
+        <>
+          <p className="artifact-preview-hint">Revise o artefato e escolha uma ação abaixo.</p>
+          <div
+            className={`artifact-export-readiness artifact-export-readiness-${artifactExportState}`}
+            role="status"
+            aria-live="polite"
+            data-testid="artifact-export-status"
+            data-state={artifactExportState}
+          >
+            <span className="artifact-export-readiness-label">📦 Status do artefato/ZIP:</span>
+            <span className="artifact-export-readiness-text">{artifactExportLabel}</span>
+          </div>
+        </>
       )}
 
       {/* PASSO 5 — Banner de continuidade: último ajuste solicitado */}

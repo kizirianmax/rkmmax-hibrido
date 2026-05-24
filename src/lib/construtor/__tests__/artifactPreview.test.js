@@ -270,6 +270,28 @@ describe('generatePreview', () => {
       );
     });
   });
+
+  describe('F3-02 — dados mínimos para indicador de artefato/ZIP na UI', () => {
+    test('preview válido inclui arquivos e validation sem erros para estado "pronto para exportar"', async () => {
+      const artifact = await buildValidArtifact();
+      const validationResult = { valid: true, errors: [], warnings: [] };
+      const preview = generatePreview(artifact, validationResult, null);
+
+      expect(preview.summary.validation.valid).toBe(true);
+      expect(preview.summary.validation.errorCount).toBe(0);
+      expect(preview.summary.filesSummary.totalFiles).toBeGreaterThan(0);
+    });
+
+    test('preview inválido preserva erros de validação para estado "revisar antes de exportar"', async () => {
+      const artifact = await buildValidArtifact();
+      const validationResult = { valid: false, errors: ['manifest inválido'], warnings: [] };
+      const preview = generatePreview(artifact, validationResult, null);
+
+      expect(preview.summary.validation.valid).toBe(false);
+      expect(preview.summary.validation.errorCount).toBeGreaterThan(0);
+      expect(preview.summary.validation.errors).toContain('manifest inválido');
+    });
+  });
 });
 
 // ── applyDecision ─────────────────────────────────────────────────────────────
