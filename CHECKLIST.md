@@ -1,3 +1,16 @@
+## 2026-05-24 — test(hybrid): adicionar F4-01 E2E HTTP real mínimo do pipeline de artefatos
+
+| Item | Detalhe |
+|------|---------|
+| **Título do PR** | `test(hybrid): adicionar F4-01 E2E HTTP real mínimo do pipeline de artefatos` |
+| **Identificação** | **Fase 4 — F4-01 (teste E2E HTTP real do pipeline)** |
+| **O que mudou** | Novo teste `api/__tests__/artifact-pipeline-http-e2e.test.js` com servidor HTTP local real para validar o fluxo `POST /api/artifact` → `POST /api/artifact-preview` → `PATCH /api/artifact-preview`; novo fixture determinístico `api/__fixtures__/artifact-pipeline.fixture.js`. |
+| **Garantias de segurança/escopo** | O teste bloqueia qualquer `fetch` externo (aceita apenas `localhost/127.0.0.1`), valida que `executeArtifact` não é chamado e confirma `execution.reason = execution-disabled-by-security-policy` no preview. Nenhum runtime funcional foi alterado. |
+| **Arquivos alterados** | `api/__tests__/artifact-pipeline-http-e2e.test.js`, `api/__fixtures__/artifact-pipeline.fixture.js`, `CHECKLIST.md` |
+| **Validação executada** | 1. Baseline pré-mudança: `npm test` (**PASS**). 2. Teste direcionado: `NODE_OPTIONS='--experimental-vm-modules' npx jest api/__tests__/artifact-pipeline-http-e2e.test.js --runInBand` (**PASS**). 3. Validação final: `npm test` (**PASS**). |
+| **Limites conhecidos** | Escopo propositalmente mínimo: cobre pipeline HTTP local e contrato principal de resposta; não realiza chamadas reais de provider/IA e não altera a contenção de execução automática. |
+| **Rollback** | `git revert <commit-sha>` |
+
 ## 2026-05-24 — docs(audit): encerrar formalmente a Fase 3 inicial do Híbrido/Construtor
 
 | Item | Detalhe |
