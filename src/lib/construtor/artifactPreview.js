@@ -11,6 +11,7 @@
  */
 
 import AdmZip from 'adm-zip';
+import { buildArtifactPipelineMetrics } from './artifactMetrics.js';
 
 /** Número máximo de caracteres exibidos no preview de conteúdo. */
 const MAX_CONTENT_PREVIEW_LENGTH = 500;
@@ -116,6 +117,8 @@ function extractZipInfo(zipBuffer, contentFilename = 'content.md') {
  * }}
  */
 export function generatePreview(artifact, validationResult = null, executionResult = null) {
+  const previewStartedAt = new Date().toISOString();
+
   if (!artifact || typeof artifact !== 'object') {
     return {
       previewAvailable: false,
@@ -173,6 +176,7 @@ export function generatePreview(artifact, validationResult = null, executionResu
       success: executionResult.success ?? false,
       timedOut: executionResult.timedOut ?? false,
       durationMs: executionResult.durationMs ?? 0,
+      reason: executionResult.reason || null,
     };
   }
 
@@ -184,6 +188,17 @@ export function generatePreview(artifact, validationResult = null, executionResu
     contentType: manifest?.contentType || null,
   };
 
+  const packagingMetrics = artifact?.metrics?.packaging || null;
+  const previewMetrics = buildArtifactPipelineMetrics({
+    phase: 'preview',
+    startedAt: previewStartedAt,
+    finishedAt: new Date().toISOString(),
+    files,
+    zipBuffer,
+    validationResult,
+    executionResult,
+  });
+
   const summary = {
     id: id || null,
     version: manifest?.version || '1.0.0',
@@ -193,6 +208,10 @@ export function generatePreview(artifact, validationResult = null, executionResu
     status,
     filesSummary,
     execution,
+    pipelineMetrics: {
+      packaging: packagingMetrics,
+      preview: previewMetrics,
+    },
     files,
     contentPreview,
   };

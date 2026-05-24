@@ -1,3 +1,15 @@
+## 2026-05-24 — feat(hybrid): adicionar observabilidade mínima local do pipeline de artefatos (F4-02)
+
+| Item | Detalhe |
+|------|---------|
+| **Título do PR** | `feat(hybrid): adicionar observabilidade mínima local do pipeline de artefatos (F4-02)` |
+| **Identificação** | **Fase 4 — F4-02 (observabilidade mínima do pipeline de artefatos)** |
+| **O que mudou** | Adicionado utilitário local `src/lib/construtor/artifactMetrics.js` para métricas estruturadas mínimas; `packageArtifact()` agora anexa `metrics.packaging` (duração, quantidade de arquivos, tamanho aproximado do ZIP, timestamp); `generatePreview()` agora anexa `summary.pipelineMetrics` com `packaging` + `preview` e preserva status de execução desativada via `reason` quando disponível. |
+| **Segurança/escopo** | Sem chamadas externas, sem dashboard, sem banco/persistência remota e sem conteúdo sensível completo do artefato nas métricas. Execução automática permanece desativada (`execution-disabled-by-security-policy`). |
+| **Arquivos alterados** | `src/lib/construtor/artifactMetrics.js`, `src/lib/construtor/artifactPackager.js`, `src/lib/construtor/artifactPreview.js`, `src/lib/construtor/__tests__/artifactMetrics.test.js`, `src/lib/construtor/__tests__/artifactPreview.test.js`, `CHECKLIST.md` |
+| **Validação executada** | 1. Baseline: `npm run lint` (falha pré-existente de configuração ESLint v10 sem `eslint.config.*`), `npm run build` (**PASS**), `npm test -- --runInBand` (**PASS**). 2. Testes direcionados pós-mudança: `NODE_OPTIONS='--experimental-vm-modules' npx jest src/lib/construtor/__tests__/artifactMetrics.test.js src/lib/construtor/__tests__/artifactPreview.test.js src/lib/construtor/__tests__/artifactPackager.test.js --runInBand` (**PASS**). 3. Validação final pós-mudança: `npm run build` (**PASS**) e `npm test -- --runInBand` (**PASS**). |
+| **Rollback** | `git revert <commit-sha>` |
+
 ## 2026-05-24 — test(hybrid): adicionar F4-01 E2E HTTP real mínimo do pipeline de artefatos
 
 | Item | Detalhe |
