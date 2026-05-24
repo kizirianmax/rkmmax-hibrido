@@ -44,8 +44,12 @@ export default function Demo() {
               </p>
               <p className="demo-card__score">{artifact.qualityScore}</p>
               <p className="demo-card__stack">
-                <strong>Rastreabilidade:</strong> tipo {artifact.traceability.artifactType} •{" "}
-                {artifact.traceability.structuralStatus} • origem {artifact.traceability.origin}
+                <strong>Rastreabilidade:</strong>{" "}
+                {[
+                  `tipo ${artifact.traceability.artifactType}`,
+                  artifact.traceability.structuralStatus,
+                  `origem ${artifact.traceability.origin}`,
+                ].join(" • ")}
               </p>
               <p className="demo-card__hint">
                 {artifact.traceability.isDemonstrativeExample
@@ -57,7 +61,6 @@ export default function Demo() {
               </p>
 
               <div className="demo-card__footer">
-                <span className="demo-card__hint">Exemplo demonstrativo</span>
                 <div className="demo-card__actions">
                   <a className="demo-card__action" href={artifact.previewAnchor}>
                     Ver exemplo
