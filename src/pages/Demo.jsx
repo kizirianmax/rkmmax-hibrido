@@ -26,6 +26,9 @@ export default function Demo() {
 
       <section className="demo-page__section">
         <h2 className="demo-page__section-title">Artefatos demonstrativos</h2>
+        <p className="demo-page__notice">
+          Referência rastreável do pipeline desta vitrine: docs/DEMO.md#pipeline-rastreavel-da-demo-f4-04
+        </p>
         <div className="demo-page__grid">
           {demoArtifacts.map((artifact) => (
             <article key={artifact.id} className="demo-card">
@@ -43,9 +46,21 @@ export default function Demo() {
                 <strong>Tecnologias / estrutura estimada:</strong> {artifact.technologies.join(" • ")}
               </p>
               <p className="demo-card__score">{artifact.qualityScore}</p>
+              <p className="demo-card__stack">
+                <strong>Rastreabilidade:</strong>{" "}
+                {[
+                  `tipo ${artifact.traceability.artifactType}`,
+                  artifact.traceability.structuralStatus,
+                  `origem ${artifact.traceability.origin}`,
+                ].join(" • ")}
+              </p>
+              <p className="demo-card__hint">
+                {artifact.traceability.isDemonstrativeExample
+                  ? "Exemplo demonstrativo estático (fixture local, sem geração em tempo real)."
+                  : "Exemplo não demonstrativo"}
+              </p>
 
               <div className="demo-card__footer">
-                <span className="demo-card__hint">Exemplo demonstrativo</span>
                 <div className="demo-card__actions">
                   <a className="demo-card__action" href={artifact.previewAnchor}>
                     Ver exemplo

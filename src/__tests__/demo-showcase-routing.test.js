@@ -1,5 +1,6 @@
 import fs from "fs";
 import path from "path";
+import { pathToFileURL } from "url";
 
 const repoRoot = path.resolve(process.cwd());
 
@@ -58,10 +59,16 @@ describe("Demo showcase integration (static checks)", () => {
     expect(startupSource).toContain("Automatic or manual presentation of the Builder.");
   });
 
-  test("Demo artifacts include mandatory card fields", () => {
+  test("Demo artifacts include mandatory card fields", async () => {
     const artifactsSource = fs.readFileSync(path.join(repoRoot, "src/data/demoArtifacts.js"), "utf8");
+    const artifactsModulePath = pathToFileURL(
+      path.join(repoRoot, "src/data/demoArtifacts.js"),
+    ).href;
+    const { demoArtifacts } = await import(artifactsModulePath);
 
     [
+      "id",
+      "name",
       "category",
       "description",
       "problemSolved",
@@ -70,8 +77,36 @@ describe("Demo showcase integration (static checks)", () => {
       "qualityScore",
       "previewAnchor",
       "structureAnchor",
+      "traceability",
     ].forEach((fieldName) => {
       expect(artifactsSource).toContain(fieldName);
+    });
+
+    expect(Array.isArray(demoArtifacts)).toBe(true);
+    expect(demoArtifacts).toHaveLength(5);
+
+    demoArtifacts.forEach((artifact) => {
+      expect(artifact).toEqual(
+        expect.objectContaining({
+          id: expect.any(String),
+          name: expect.any(String),
+          category: expect.any(String),
+          description: expect.any(String),
+          problemSolved: expect.any(String),
+          technologies: expect.any(Array),
+          status: expect.any(String),
+          qualityScore: expect.any(String),
+          previewAnchor: expect.any(String),
+          structureAnchor: expect.any(String),
+          traceability: expect.objectContaining({
+            artifactType: expect.any(String),
+            structuralStatus: expect.any(String),
+            origin: expect.any(String),
+            isDemonstrativeExample: true,
+            pipelineReference: expect.any(String),
+          }),
+        }),
+      );
     });
   });
 });

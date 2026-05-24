@@ -27,6 +27,22 @@ O Construtor/Híbrido é apresentado como:
 
 ---
 
+## Pipeline rastreável da demo (F4-04)
+
+Para reforçar a auditoria técnica pública sem execução externa, os exemplos em
+`src/data/demoArtifacts.js` passaram a incluir metadados mínimos de rastreabilidade:
+
+- `traceability.artifactType` — tipo de artefato demonstrado
+- `traceability.structuralStatus` — status estrutural do exemplo
+- `traceability.origin` — origem do dado (`demo-fixture-local`)
+- `traceability.isDemonstrativeExample` — flag explícita de exemplo demonstrativo
+- `traceability.pipelineReference` — referência documental do pipeline desta demo
+
+Esses campos são estáticos e apenas documentam o pipeline de artefatos mostrado na vitrine.
+Não representam inferência de IA em tempo real e não acionam chamadas externas.
+
+---
+
 ## O que a demo NÃO é
 
 - ❌ Não é um chat
