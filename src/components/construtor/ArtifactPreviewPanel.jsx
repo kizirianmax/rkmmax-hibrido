@@ -111,6 +111,9 @@ export default function ArtifactPreviewPanel({ preview, onDecision, onRevision, 
 
   const isPending = decision === 'pending';
 
+  // F3-02 — ZIP readiness indicator: torna explícito se há artefato ZIP válido no fluxo de aprovação
+  const zipReady = summary.validation?.valid === true;
+
   const handleDownload = () => {
     if (!delivery?.zipBase64) return;
     const byteNums = Uint8Array.from(atob(delivery.zipBase64), (c) => c.charCodeAt(0));
@@ -278,6 +281,19 @@ export default function ArtifactPreviewPanel({ preview, onDecision, onRevision, 
           >
             📥 Baixar Artefato (.zip)
           </button>
+        </div>
+      )}
+
+      {/* F3-02 — Indicador de prontidão do ZIP: explícito antes da aprovação */}
+      {isPending && (
+        <div
+          className={`artifact-zip-status${zipReady ? ' artifact-zip-status--ready' : ' artifact-zip-status--warn'}`}
+          role="status"
+          aria-label="Status do artefato ZIP"
+        >
+          {zipReady
+            ? '📦 Artefato ZIP válido — pronto para exportar após aprovação'
+            : '⚠️ Artefato com erros de validação — revise antes de aprovar'}
         </div>
       )}
 

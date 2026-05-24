@@ -933,6 +933,27 @@ textarea:disabled {
   margin-top: 0.25rem;
 }
 
+/* F3-02 — Indicador de prontidão do artefato ZIP no fluxo de aprovação */
+.artifact-zip-status {
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 0.35rem 0.65rem;
+  border-radius: 6px;
+  margin-bottom: 0.5rem;
+}
+
+.artifact-zip-status--ready {
+  background: rgba(107, 207, 127, 0.12);
+  color: #6bcf7f;
+  border: 1px solid rgba(107, 207, 127, 0.3);
+}
+
+.artifact-zip-status--warn {
+  background: rgba(255, 217, 61, 0.12);
+  color: #ffd93d;
+  border: 1px solid rgba(255, 217, 61, 0.3);
+}
+
 .artifact-preview-actions {
   display: flex;
   gap: 0.5rem;

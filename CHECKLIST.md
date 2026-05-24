@@ -189,3 +189,16 @@
 | **Arquivos alterados** | `src/lib/construtor/__tests__/artifactPreview.test.js`, `CHECKLIST.md` |
 | **Validação executada** | Teste direcionado do Construtor + suíte relacionada de preview/auth da API + `npm test` para regressão geral (detalhes no PR). |
 | **Rollback** | `git revert <commit-sha>` |
+
+## 2026-05-24 — feat(construtor): F3-02 UX de aprovação com indicador de artefato/ZIP explícito
+
+| Item | Detalhe |
+|------|---------|
+| **Título do PR** | `feat(construtor): F3-02 UX de aprovação com indicador de artefato/ZIP explícito` |
+| **Identificação** | Fase 3 — Prioridade **F3-02** (qualidade/estabilização do Híbrido/Construtor). |
+| **O que mudou** | 1. `ArtifactPreviewPanel.jsx`: adicionado indicador `artifact-zip-status` no estado pendente, mostrando explicitamente se o artefato ZIP está válido e pronto para exportar após aprovação (ou se há erros de validação). 2. `HybridAgent.css`: adicionadas classes `.artifact-zip-status`, `.artifact-zip-status--ready`, `.artifact-zip-status--warn`. 3. `src/__tests__/artifact-approval-zip-indicator.test.js`: 11 testes de análise estática validando o indicador, acessibilidade, preservação do botão de download e ausência de `executeArtifact`. |
+| **Por que mudou** | O fluxo de aprovação não deixava explícito se havia um artefato ZIP válido pronto para exportar. O usuário só descobria a disponibilidade do ZIP *após* aprovar. Com o indicador F3-02, a prontidão é visível *antes* da decisão, eliminando ambiguidade. |
+| **Arquivos alterados** | `src/components/construtor/ArtifactPreviewPanel.jsx`, `src/styles/HybridAgent.css`, `src/__tests__/artifact-approval-zip-indicator.test.js`, `CHECKLIST.md` |
+| **Comportamento preservado** | Nenhuma lógica de aprovação foi alterada; `onDecision('approved', null)` permanece inalterado; botão de download pós-aprovação permanece intacto; `executeArtifact` não reativado; nenhuma chamada externa adicionada. |
+| **Validação executada** | 11 testes direcionados F3-02 PASS + `npm test` (regressão geral). |
+| **Rollback** | `git revert <commit-sha>` |
