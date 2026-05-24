@@ -1,3 +1,17 @@
+## 2026-05-24 — docs(audit): encerrar formalmente a Fase 3 inicial do Híbrido/Construtor
+
+| Item | Detalhe |
+|------|---------|
+| **Título do PR** | `docs(audit): encerrar formalmente a Fase 3 inicial do Híbrido/Construtor` |
+| **Status** | **Fase 3 inicial concluída** |
+| **HEAD auditado** | `56af64941238897b85a495194a5931666aab334a` |
+| **PRs consolidados** | **#464**, **#466**, **#467**, **#468** |
+| **Documento criado** | `docs/audits/fase-3-inicial-encerramento-hibrido-construtor-2026-05-24.md` |
+| **Riscos residuais deferidos** | ESLint v10 sem `eslint.config.*`; teste renderizado JSX não viável no setup atual de Jest (`*.test.jsx` fora do padrão executado); sandbox real do runner segue como trilha futura não implementada. |
+| **Próxima fase recomendada** | **Fase 4 — Qualidade avançada/Operacionalização** |
+| **Confirmação de escopo** | Nenhum runtime foi alterado neste PR; alteração exclusivamente documental/governança. |
+| **Rollback** | `git revert <commit-sha>` |
+
 ## 2026-05-20 — fix(frontend): tornar /startup rota institucional pública real
 
 | Item                  | Detalhe |
