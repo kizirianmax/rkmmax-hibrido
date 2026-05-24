@@ -1,3 +1,17 @@
+## 2026-05-24 — feat(construtor): F4-03 métricas mínimas do ciclo de revisão humana
+
+| Item | Detalhe |
+|------|---------|
+| **Título do PR** | `feat(construtor): F4-03 métricas mínimas do ciclo de revisão humana` |
+| **Identificação** | **Fase 4 — F4-03 (métricas mínimas do ciclo de revisão)** |
+| **O que mudou** | Adicionado utilitário `src/lib/construtor/reviewCycleMetrics.js` com `buildReviewCycleMetrics()` que computa: `revisionCount`, `humanDecisionCount`, `finalStatus` (approved/rejected/pending), `cycleElapsedMs` e `timestamp`. `HybridAgentSimple.jsx` rastreia `cycleStartedAt` (definido no primeiro evento do ciclo via `addReviewEvent`) e deriva `reviewCycleMetrics` via `useMemo`, passando-as ao `ArtifactPreviewPanel`. O painel exibe bloco "📊 Métricas do ciclo" na seção de histórico de revisão quando o histórico está ativo. CSS mínimo adicionado em `HybridAgent.css`. |
+| **Segurança/escopo** | Sem chamadas externas, sem banco/persistência remota, sem dashboard, sem conteúdo sensível do artefato nas métricas — apenas contadores, timestamps e status. Execução automática permanece desativada. Serginho continua orquestrador soberano. |
+| **Reutilização F3-03** | `reviewHistory` (array de eventos existente desde F3-03) é a fonte de dados das métricas; `cycleStartedAt` complementa o ciclo com rastreio de tempo sem persistência adicional. |
+| **Arquivos alterados** | `src/lib/construtor/reviewCycleMetrics.js` (novo), `src/lib/construtor/__tests__/reviewCycleMetrics.test.js` (novo), `src/pages/HybridAgentSimple.jsx`, `src/components/construtor/ArtifactPreviewPanel.jsx`, `src/styles/HybridAgent.css`, `CHECKLIST.md` |
+| **Validação executada** | 1. Testes direcionados: `npm test -- --testPathPatterns=reviewCycleMetrics --no-coverage` (**9/9 PASS**). 2. Suíte completa: `npm test -- --no-coverage --runInBand` (**64 suites / 2442 testes PASS**). |
+| **Riscos/limites conhecidos** | Métricas são voláteis (memória React, não persistidas); `cycleElapsedMs` é aproximado (baseado em `Date.now()`, sem precisão de evento). Sem impacto funcional no pipeline de artefatos. |
+| **Rollback** | `git revert <commit-sha>` |
+
 ## 2026-05-24 — feat(hybrid): adicionar observabilidade mínima local do pipeline de artefatos (F4-02)
 
 | Item | Detalhe |

@@ -8,15 +8,16 @@ import { useState } from 'react';
  * preview do conteúdo e permite: aprovar, solicitar ajuste ou rejeitar.
  *
  * Props:
- *   preview        {object}   — objeto retornado por generatePreview() / /api/artifact-preview
- *   onDecision     {function} — callback(decision, feedback) chamado ao aprovar/rejeitar
- *   onRevision     {function} — callback({category, focusFile, comment}) chamado ao solicitar ajuste
- *   loading        {boolean}  — exibir estado de carregamento
- *   delivery       {object}   — { zipBase64 } retornado na aprovação (opcional)
- *   lastAdjustment {object}   — último ajuste solicitado {category, focusFile, comment, timestamp} (opcional)
- *   reviewHistory  {Array}    — histórico de eventos de revisão [{type, text, timestamp}] (opcional)
- *   artifactVersion {number}  — versão atual do artefato no ciclo de revisão (opcional, padrão 1)
- *   onClearCycle   {function} — callback chamado ao encerrar/limpar o ciclo de revisão (opcional)
+ *   preview              {object}   — objeto retornado por generatePreview() / /api/artifact-preview
+ *   onDecision           {function} — callback(decision, feedback) chamado ao aprovar/rejeitar
+ *   onRevision           {function} — callback({category, focusFile, comment}) chamado ao solicitar ajuste
+ *   loading              {boolean}  — exibir estado de carregamento
+ *   delivery             {object}   — { zipBase64 } retornado na aprovação (opcional)
+ *   lastAdjustment       {object}   — último ajuste solicitado {category, focusFile, comment, timestamp} (opcional)
+ *   reviewHistory        {Array}    — histórico de eventos de revisão [{type, text, timestamp}] (opcional)
+ *   artifactVersion      {number}   — versão atual do artefato no ciclo de revisão (opcional, padrão 1)
+ *   onClearCycle         {function} — callback chamado ao encerrar/limpar o ciclo de revisão (opcional)
+ *   reviewCycleMetrics   {object}   — métricas mínimas do ciclo F4-03 (opcional)
  */
 
 // PASSO 4 — Categorias de ajuste (opcionais)
@@ -31,7 +32,7 @@ const ADJUSTMENT_CATEGORIES = [
 // PASSO 6 — Limite de caracteres para exibição de texto no histórico de revisão
 const MAX_REVIEW_TEXT_LENGTH = 120;
 
-export default function ArtifactPreviewPanel({ preview, onDecision, onRevision, loading = false, delivery, lastAdjustment = null, reviewHistory = [], artifactVersion = 1, onClearCycle }) {
+export default function ArtifactPreviewPanel({ preview, onDecision, onRevision, loading = false, delivery, lastAdjustment = null, reviewHistory = [], artifactVersion = 1, onClearCycle, reviewCycleMetrics = null }) {
   const [rejectionFeedback, setRejectionFeedback] = useState('');
   const [showRejectionInput, setShowRejectionInput] = useState(false);
   const [adjustmentFeedback, setAdjustmentFeedback] = useState('');
@@ -454,6 +455,21 @@ export default function ArtifactPreviewPanel({ preview, onDecision, onRevision, 
               );
             })}
           </ul>
+          {/* F4-03 — Métricas mínimas do ciclo de revisão */}
+          {reviewCycleMetrics && (
+            <div className="artifact-review-metrics" data-testid="artifact-review-metrics">
+              <span className="artifact-review-metrics-title">📊 Métricas do ciclo</span>
+              <ul className="artifact-review-metrics-list">
+                <li>Revisões solicitadas: <strong>{reviewCycleMetrics.revisionCount}</strong></li>
+                <li>Decisões registradas: <strong>{reviewCycleMetrics.humanDecisionCount}</strong></li>
+                <li>Status final: <strong>{reviewCycleMetrics.finalStatus}</strong></li>
+                {reviewCycleMetrics.cycleElapsedMs != null && (
+                  <li>Tempo do ciclo: <strong>~{Math.round(reviewCycleMetrics.cycleElapsedMs / 1000)}s</strong></li>
+                )}
+                <li>Timestamp: <strong>{new Date(reviewCycleMetrics.timestamp).toLocaleString('pt-BR')}</strong></li>
+              </ul>
+            </div>
+          )}
           {/* PASSO 10 — Encerrar ciclo de revisão */}
           {onClearCycle && (
             <button
