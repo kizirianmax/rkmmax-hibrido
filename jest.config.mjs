@@ -1,12 +1,14 @@
 export default {
   testEnvironment: 'node',
-  transform: {},
+  transform: {
+    '^.+\\.jsx$': 'babel-jest',
+  },
   moduleNameMapper: {
     '^(\\.{1,2}/.*)\\.js$': '$1',
   },
   testMatch: [
-    '**/__tests__/**/*.js',
-    '**/*.test.js'
+    '**/__tests__/**/*.{js,jsx}',
+    '**/*.test.{js,jsx}'
   ],
   collectCoverageFrom: [
     'src/**/*.js',
