@@ -1,3 +1,18 @@
+## 2026-05-25 — chore(governance): F5-01 restaurar execução de lint no baseline com ESLint v10 flat config
+
+| Item | Detalhe |
+|------|---------|
+| **Título do PR** | `chore(governance): F5-01 restaurar execução de lint no baseline com ESLint v10 flat config` |
+| **Identificação** | **Fase 5 — F5-01 (tooling/governança: lint executável no baseline)** |
+| **Causa da falha no baseline** | `npm run lint` falhava no estado atual com **ESLint v10.2.1** por ausência de `eslint.config.(js|mjs|cjs)`. O repositório tinha apenas `.eslintrc.json` (formato legado). |
+| **O que mudou** | Adicionado `eslint.config.mjs` em formato flat com migração mínima da intenção do `.eslintrc.json`: plugins `react`/`react-hooks`, regras existentes (`no-console`, `no-unused-vars`, `react/prop-types`, `react/react-in-jsx-scope`, hooks), `react` settings, `eslint-config-prettier`; `ecmaVersion` ajustado para `latest` para evitar falsos erros de parsing em sintaxe já usada no baseline; plugin `import` incluído para compatibilidade com usos legados de `import/first`. |
+| **Escopo e segurança** | Mudança estritamente de tooling/lint. Nenhum código funcional, runtime, rota, provider/model/prompt, Serginho, Construtor runtime, Especialistas, ABNT, Auth/SaaS/Payments foi alterado. |
+| **Arquivos alterados** | `eslint.config.mjs` (novo), `CHECKLIST.md` |
+| **Validação executada** | Baseline pré-mudança: `npm run lint` (**FAIL**: ausência de `eslint.config.*`), `npm run build` (**PASS**), `npm test -- --runInBand` (**64 suites / 2442 testes PASS**). Pós-mudança F5-01: `npm run lint` (**EXECUTA / exit 0**, com dívida existente: **258 warnings, 0 errors**), `npm run build` (**PASS**), `npm test -- --runInBand` (**64 suites / 2442 testes PASS**). |
+| **Dívida técnica controlada** | Permanecem warnings legados de lint no baseline (principalmente `no-unused-vars` e `no-console`) sem correção em massa neste PR, por decisão explícita de escopo mínimo em F5-01. |
+| **Riscos/limites conhecidos** | O comando de lint foi restaurado para execução e detecção de problemas. A redução da dívida de warnings fica para fases futuras, sem impacto no runtime funcional. |
+| **Rollback** | `git revert <commit-sha>` |
+
 ## 2026-05-25 — docs(audit): auditoria de transição Fase 4 para decisão formal de Fase 5
 
 | Item | Detalhe |
