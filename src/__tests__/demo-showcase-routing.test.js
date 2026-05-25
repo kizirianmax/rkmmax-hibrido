@@ -47,6 +47,8 @@ describe("Demo showcase integration (static checks)", () => {
     expect(demoSource).toContain("Compare os 5 tipos de artefatos");
     expect(demoSource).toContain('to="/demo-autoplay"');
     expect(demoSource).toContain("Assistir demo guiada do Serginho IA");
+    expect(demoSource).toContain("Estrutura validada");
+    expect(demoSource).toContain("demo-card__structure-badge");
   });
 
   test("Startup page includes highlighted CTA to /demo-autoplay", () => {

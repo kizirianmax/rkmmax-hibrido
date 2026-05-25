@@ -4,6 +4,16 @@ import { demoArtifacts } from "../data/demoArtifacts.js";
 import "./Demo.css";
 
 export default function Demo() {
+  const artifactsWithStructure = demoArtifacts.map((artifact) => {
+    const structuralStatus = artifact.traceability?.structuralStatus;
+
+    return {
+      ...artifact,
+      structuralStatus,
+      hasValidatedStructure: structuralStatus === "estrutura-demo-revisada",
+    };
+  });
+
   return (
     <main className="demo-page">
       <section className="demo-page__hero">
@@ -30,11 +40,21 @@ export default function Demo() {
           Referência rastreável do pipeline desta vitrine: docs/DEMO.md#pipeline-rastreavel-da-demo-f4-04
         </p>
         <div className="demo-page__grid">
-          {demoArtifacts.map((artifact) => (
+          {artifactsWithStructure.map((artifact) => (
             <article key={artifact.id} className="demo-card">
               <header className="demo-card__header">
                 <span className="demo-card__type">{artifact.category}</span>
-                <span className="demo-card__status">{artifact.status}</span>
+                <div className="demo-card__meta">
+                  <span className="demo-card__status">{artifact.status}</span>
+                  {artifact.hasValidatedStructure ? (
+                    <span
+                      className="demo-card__structure-badge"
+                      title={`Status estrutural: ${artifact.structuralStatus}`}
+                    >
+                      Estrutura validada
+                    </span>
+                  ) : null}
+                </div>
               </header>
 
               <h2 className="demo-card__title">{artifact.name}</h2>
@@ -97,7 +117,7 @@ export default function Demo() {
 
       <section className="demo-page__section">
         <h2 className="demo-page__section-title">Previews estáticos</h2>
-        {demoArtifacts.map((artifact) => (
+        {artifactsWithStructure.map((artifact) => (
           <article key={`preview-${artifact.id}`} id={`preview-${artifact.id}`} className="demo-preview">
             <h3>{artifact.name}</h3>
             <p>

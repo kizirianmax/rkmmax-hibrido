@@ -98,6 +98,14 @@
   margin-bottom: 10px;
 }
 
+.demo-card__meta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
 .demo-card__type {
   display: inline-flex;
   padding: 4px 9px;
@@ -119,6 +127,19 @@
   color: #86efac;
   font-size: 0.74rem;
   font-weight: 700;
+}
+
+.demo-card__structure-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 8px;
+  border-radius: 999px;
+  border: 1px solid rgba(74, 222, 128, 0.45);
+  background: rgba(22, 163, 74, 0.12);
+  color: #bbf7d0;
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.01em;
 }
 
 .demo-card__title {

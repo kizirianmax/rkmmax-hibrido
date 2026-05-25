@@ -1,3 +1,16 @@
+## 2026-05-24 — feat(demo): F4-05 indicador visual mínimo de estrutura validada
+
+| Item | Detalhe |
+|------|---------|
+| **Título do PR** | `feat(demo): F4-05 indicador visual mínimo de estrutura validada` |
+| **Identificação** | **Fase 4 — F4-05 (validação estrutural pública mínima da demo/showcase)** |
+| **O que mudou** | Inclusão de indicador visual discreto "Estrutura validada" nos cards da vitrine (`/demo`) com base em `traceability.structuralStatus` já existente; agrupamento visual mínimo de status no header do card para manter leitura limpa; teste estático da demo atualizado para exigir a presença do novo indicador. |
+| **Segurança/escopo** | Alteração apenas de apresentação estática da demo/showcase, sem runtime novo, sem cálculo em tempo real, sem analytics externo, sem endpoint/banco/persistência. Serginho, Construtor runtime, Especialistas, ABNT e SaaS/Auth/Payments não foram alterados. |
+| **Arquivos alterados** | `src/pages/Demo.jsx`, `src/pages/Demo.css`, `src/__tests__/demo-showcase-routing.test.js`, `CHECKLIST.md` |
+| **Validação executada** | Baseline pré-mudança: `npm run lint` (falha pré-existente de configuração ESLint v10 sem `eslint.config.*`), `npm run build` (**PASS**), `npm test -- --runInBand` (**PASS**). Pós-mudança: teste direcionado `npm test -- --runInBand src/__tests__/demo-showcase-routing.test.js` (**PASS**); validação final `npm run build` (**PASS**) e `npm test -- --runInBand` (**PASS**). |
+| **Riscos/limites conhecidos** | O selo é intencionalmente simples e documental (baseado em fixture local já rastreável), sem representar validação dinâmica em tempo de navegação. |
+| **Rollback** | `git revert <commit-sha>` |
+
 ## 2026-05-24 — docs(demo): F4-04 rastreabilidade mínima dos artefatos demonstrativos
 
 | Item | Detalhe |
