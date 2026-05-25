@@ -1,3 +1,21 @@
+## 2026-05-25 — docs(audit): auditoria de transição Fase 4 para decisão formal de Fase 5
+
+| Item | Detalhe |
+|------|---------|
+| **Título do PR** | `docs(audit): auditoria de transição Fase 4 para decisão formal de Fase 5` |
+| **Identificação** | **Transição F4 → F5 (governança/auditoria documental)** |
+| **O que foi auditado** | `CHECKLIST.md`, `docs/audits/fase-3-inicial-encerramento-hibrido-construtor-2026-05-24.md`, `docs/audits/fase4-demo-showcase-final-audit-2026-05-25.md`, `docs/audits/f4-08-final-visual-audit-demo-2026-05-25.md`, `docs/audits/P4-artifactRunner-audit.md`. |
+| **Decisão formal** | **Existe Fase 5.** Nome recomendado: **Fase 5 — Confiabilidade de Banca e Prontidão Operacional (sem expansão funcional)**. |
+| **Objetivo principal da F5** | Elevar a confiabilidade verificável do baseline para banca/incubadora, priorizando qualidade de validação (lint/testes), evidência operacional e hardening documental sem alterar runtime funcional. |
+| **Urgente para banca/incubadora** | **F5-01:** restaurar lint executável no baseline (migração para `eslint.config.*` mantendo regras atuais); **F5-02:** habilitar execução de testes `*.test.jsx` no setup atual para cobrir renderização crítica já existente; **F5-03:** consolidar checklist operacional de demonstração/reprodutibilidade (build+test+rotas públicas). |
+| **Melhoria futura (não bloqueante)** | **F5-04:** trilha de sandbox real/opt-in do runner (somente especificação e critérios de segurança, sem reativar execução); **F5-05:** estratégia de persistência não sensível para métricas de ciclo (se houver decisão de produto). |
+| **Não deve ser feito agora** | Não reativar `executeArtifact`; não criar bypass do Serginho; não alterar providers/modelos/prompts; não mexer em Auth/SaaS/Payments/Especialistas/ABNT; não criar endpoint/dashboard/banco/analytics externo. |
+| **Documento criado** | `docs/audits/fase-4-para-fase-5-auditoria-transicao-2026-05-25.md` |
+| **Arquivos alterados** | `docs/audits/fase-4-para-fase-5-auditoria-transicao-2026-05-25.md` (novo), `CHECKLIST.md` |
+| **Validação executada** | Baseline local e pós-mudança documental: `npm run build` (**PASS**), `npm test -- --runInBand` (**64 suites / 2442 testes PASS**); `npm run lint` com falha pré-existente de configuração (ESLint v10 sem `eslint.config.*`). |
+| **Riscos/limites conhecidos** | PR exclusivamente documental; risco funcional zero. A principal lacuna operacional continua sendo lint indisponível e cobertura JSX fora do padrão atual do runner. |
+| **Rollback** | `git revert <commit-sha>` |
+
 ## 2026-05-25 — docs(audit): auditoria documental final robusta da Fase 4 demo/showcase
 
 | Item | Detalhe |
