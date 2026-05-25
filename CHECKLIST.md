@@ -1,3 +1,20 @@
+## 2026-05-25 — docs(audit): encerramento formal dos itens urgentes da Fase 5 (F5-01, F5-02, F5-03)
+
+| Item | Detalhe |
+|------|---------|
+| **Título do PR** | `docs(audit): encerramento formal dos itens urgentes da Fase 5 (F5-01, F5-02, F5-03)` |
+| **Identificação** | **Fase 5 — Auditoria de Encerramento dos Urgentes (F5-01, F5-02, F5-03)** |
+| **O que foi auditado** | Estado real de F5-01, F5-02 e F5-03 (todos mergeados e registrados em `CHECKLIST.md`). Execução direta dos comandos de baseline: `npm run lint`, `npm run build`, `npm test -- --runInBand`. Avaliação dos 5 critérios de sucesso da Fase 5 definidos em `docs/audits/fase-4-para-fase-5-auditoria-transicao-2026-05-25.md`. |
+| **Decisão formal** | ✅ **Itens urgentes F5-01, F5-02 e F5-03 estão formalmente encerrados.** O projeto está pronto para banca/incubadora. |
+| **Escopo e segurança** | PR exclusivamente documental. Nenhum código funcional, runtime, rota, componente, endpoint, dependência, provider/modelo/prompt foi alterado. Serginho, Construtor, Especialistas, ABNT, Auth/SaaS/Payments inalterados. |
+| **Arquivos alterados** | `docs/audits/f5-urgentes-encerramento-2026-05-25.md` (novo), `CHECKLIST.md` |
+| **Validação executada** | `npm run lint` (**PASS** / 258 warnings / 0 errors), `npm run build` (**PASS** / 1030 módulos), `npm test -- --runInBand` (**PASS** / 66 suítes / 2455 testes). |
+| **Próximos passos** | F5-04 (governança de sandbox) e F5-05 (métricas não voláteis) são itens **futuros e não bloqueantes** — devem ser tratados após a banca, sem expansão de escopo antes da apresentação. |
+| **O que NÃO deve ser feito antes da banca** | Reativar `executeArtifact`; criar bypass do Serginho; alterar providers/modelos/prompts; alterar runtime funcional do Construtor; alterar Especialistas, ABNT, Auth/SaaS/Payments; criar endpoint, dashboard, banco ou analytics externo; implementar F5-04 ou F5-05 agora. |
+| **Riscos/limites conhecidos** | 258 warnings de lint (dívida pré-existente, não bloqueante). Chunk >500 kB no build (aviso Vite, pré-existente). Latência Groq variável (rastreada desde Fase 4). Fixture estática na demo (decisão arquitetural). `executeArtifact` desativado (decisão de segurança). |
+| **Rollback** | `git revert <commit-sha>` |
+| **Declaração de encerramento** | Fase 5 urgente encerrada. Baseline verificado e reproduzível. Projeto pronto para banca/incubadora. |
+
 ## 2026-05-25 — docs(governance): F5-03 checklist operacional de demonstração/reprodutibilidade
 
 | Item | Detalhe |
