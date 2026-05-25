@@ -1,3 +1,19 @@
+## 2026-05-25 — style(demo): F4-08 auditoria visual final da demo
+
+| Item | Detalhe |
+|------|---------|
+| **Título do PR** | `style(demo): F4-08 auditoria visual final da demo` |
+| **Identificação** | **Fase 4 — F4-08 (auditoria visual final da demo/showcase para banca/incubadora)** |
+| **O que foi auditado** | Hero, CTA autoplay, notice badge, section titles, grid de cards, badges do header do card, título/descrição/parágrafos do card, rastreabilidade, hint, footer/actions, botões "Ver exemplo"/"Ver estrutura", listas, previews estáticos, footer da página — em mobile (320px, 375px, 480px) e desktop (720px, 1024px+). |
+| **O que mudou** | Correção mínima em `src/pages/Demo.css`: adicionado `margin: 8px 0 0` ao `.demo-card__hint`. O reset global (`* { margin: 0; padding: 0; }` em `src/index.css`) zerava o margin padrão do `<p>`, fazendo o texto de disclaimer aparecer sem espaçamento acima — inconsistente com todos os demais parágrafos do card (`.demo-card__problem`, `.demo-card__stack`, `.demo-card__score`), que todos têm `margin: 8px 0 0` explícito. |
+| **Documento de auditoria** | `docs/audits/f4-08-final-visual-audit-demo-2026-05-25.md` |
+| **Segurança/escopo** | Alteração exclusivamente visual/CSS da demo/showcase estática. Nenhum runtime alterado. Sem novas dependências. Serginho, Construtor, Especialistas, Auth, SaaS, Payments, ABNT inalterados. |
+| **Arquivos alterados** | `src/pages/Demo.css`, `docs/audits/f4-08-final-visual-audit-demo-2026-05-25.md`, `CHECKLIST.md` |
+| **Validação executada** | `npm run build` (**PASS**), `npm test -- --runInBand` (**PASS**). |
+| **Riscos/limites conhecidos** | Mudança é de apresentação pura. Risco zero funcional. |
+| **Rollback** | `git revert <commit-sha>` |
+| **Declaração de encerramento** | F4-08 concluído. `/demo` auditada visualmente. Correção mínima aplicada. Vitrine pronta para banca/incubadora. |
+
 ## 2026-05-25 — style(demo): F4-07 auditoria visual mobile da demo
 
 | Item | Detalhe |
