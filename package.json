@@ -28,7 +28,7 @@
     "@supabase/supabase-js": "^2.105.4",
     "@vitejs/plugin-react": "^6.0.2",
     "adm-zip": "^0.5.17",
-    "archiver": "^7.0.1",
+    "archiver": "^8.0.0",
     "busboy": "^1.6.0",
     "form-data": "^4.0.5",
     "posthog-js": "^1.374.0",
