@@ -1,3 +1,16 @@
+## 2026-05-25 — style(demo): F4-07 auditoria visual mobile da demo
+
+| Item | Detalhe |
+|------|---------|
+| **Título do PR** | `style(demo): F4-07 auditoria visual mobile da demo` |
+| **Identificação** | **Fase 4 — F4-07 (auditoria e correção visual mobile da demo/showcase)** |
+| **O que mudou** | Correções visuais mobile em `src/pages/Demo.css`: (1) CTA autoplay — `min-height` corrigido de 42px para 44px (touch target mínimo) e `padding` horizontal aumentado; (2) Header dos cards — adicionado `flex-wrap: wrap` e `align-items: flex-start` para badges não overflowarem em telas estreitas; (3) Media query `max-width: 480px` adicionada com: hero padding reduzido (28/24px → 20/16px), CTA autoplay com `width: 100%` em mobile, `.demo-page__notice` com `word-break: break-word` e `overflow-wrap` para URLs longas, card padding reduzido (20px → 16px), botões de ação empilhados verticalmente com `min-height: 44px` e `width: 100%`, footer da página com padding reduzido e links em bloco para toque fácil. |
+| **Segurança/escopo** | Alteração exclusivamente visual/CSS da demo/showcase estática. Nenhum runtime alterado. Sem novas dependências. Sem analytics externo. Serginho, Construtor, Especialistas, Auth, SaaS, Payments, ABNT inalterados. |
+| **Arquivos alterados** | `src/pages/Demo.css`, `CHECKLIST.md` |
+| **Validação executada** | `npm run build` (**PASS**), `npm test -- --runInBand` (**PASS**). |
+| **Riscos/limites conhecidos** | Mudanças são de apresentação pura; CSS mobile testado em viewports 320px–768px. |
+| **Rollback** | `git revert <commit-sha>` |
+
 ## 2026-05-25 — style(demo): F4-06 refinamento premium discreto da vitrine
 
 | Item | Detalhe |
