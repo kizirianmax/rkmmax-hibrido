@@ -1,3 +1,18 @@
+## 2026-05-25 — test(governance): F5-02 habilitar execução padrão de testes JSX críticos no Jest
+
+| Item | Detalhe |
+|------|---------|
+| **Título do PR** | `test(governance): F5-02 habilitar execução padrão de testes JSX críticos no Jest` |
+| **Identificação** | **Fase 5 — F5-02 (tooling/testes: cobertura padrão de testes JSX críticos)** |
+| **O que foi auditado** | `jest.config.mjs` (padrão de descoberta e transform), `package.json` (scripts de teste), arquivos JSX de teste no repositório (`src/components/FeedbackButton.test.jsx`, `src/components/construtor/__tests__/ArtifactPreviewPanel.test.jsx`). |
+| **Diagnóstico do baseline** | O runner padrão do Jest não descobria testes JSX porque `testMatch` cobria apenas `*.js`/`__tests__/**/*.js`. Evidência: `npm test -- src/components/FeedbackButton.test.jsx --runInBand` retornava **No tests found** com `testMatch: **/__tests__/**/*.js, **/*.test.js`. |
+| **O que mudou** | Ajuste mínimo em `jest.config.mjs` para incluir `*.jsx` no `testMatch`, aplicar `babel-jest` apenas para arquivos `.jsx` e manter `collectCoverageFrom` no baseline `*.js` para preservar estabilidade dos checks de Coverage; adição de pragma `@jest-environment jsdom` nos 2 testes JSX críticos para manter ambiente Node como padrão global; inclusão de `@testing-library/dom` (devDependency estritamente necessária para `@testing-library/react`) e ajustes pontuais de queries ambíguas nos 2 testes JSX para estabilizar execução. |
+| **Escopo e segurança** | Alterações restritas a tooling e testes. Nenhum código funcional/runtime foi alterado (Serginho, Construtor runtime, Especialistas, ABNT, Auth/SaaS/Payments, providers/modelos/prompts permanecem inalterados). |
+| **Arquivos alterados** | `jest.config.mjs`, `package.json`, `package-lock.json`, `src/components/FeedbackButton.test.jsx`, `src/components/construtor/__tests__/ArtifactPreviewPanel.test.jsx`, `CHECKLIST.md` |
+| **Validação executada** | Baseline pré-mudança: `npm run lint` (**PASS** com **258 warnings / 0 errors**), `npm run build` (**PASS**), `npm test -- --runInBand` (**64 suites / 2442 testes PASS**). Auditoria direcionada: `npm test -- src/components/FeedbackButton.test.jsx --runInBand` (**No tests found**, confirmando lacuna). Pós-mudança: `npm test -- --runInBand src/components/FeedbackButton.test.jsx src/components/construtor/__tests__/ArtifactPreviewPanel.test.jsx` (**2 suites / 13 testes PASS**), `npm run lint` (**PASS** com **258 warnings / 0 errors**), `npm run build` (**PASS**), `npm test -- --runInBand` (**66 suites / 2455 testes PASS**). |
+| **Riscos/limites conhecidos** | Transform de Jest foi mantido restrito a `.jsx` para minimizar impacto no baseline ESM atual. Os ajustes em testes foram mínimos e focados apenas em remover ambiguidades de seleção de elementos ao ativar a execução real desses testes no runner padrão. |
+| **Rollback** | `git revert <commit-sha>` |
+
 ## 2026-05-25 — chore(governance): F5-01 restaurar execução de lint no baseline com ESLint v10 flat config
 
 | Item | Detalhe |

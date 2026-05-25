@@ -1,7 +1,8 @@
+/** @jest-environment jsdom */
 // src/components/construtor/__tests__/ArtifactPreviewPanel.test.jsx
 // PASSO 4 — testes do fluxo de ajuste com feedback estruturado
 import React from 'react';
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, screen, fireEvent, within } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import ArtifactPreviewPanel from '../ArtifactPreviewPanel.jsx';
 
@@ -95,7 +96,7 @@ describe('ArtifactPreviewPanel — PASSO 4 Feedback Estruturado', () => {
     const onDecision = jest.fn();
     render(<ArtifactPreviewPanel preview={buildPreview()} onRevision={jest.fn()} onDecision={onDecision} />);
 
-    fireEvent.click(screen.getByText(/aprovar/i));
+    fireEvent.click(screen.getByRole('button', { name: /aprovar/i }));
     expect(onDecision).toHaveBeenCalledWith('approved', null);
   });
 
@@ -117,8 +118,8 @@ describe('ArtifactPreviewPanel — PASSO 4 Feedback Estruturado', () => {
     fireEvent.click(screen.getByText(/solicitar ajuste/i));
     const select = screen.getByLabelText(/arquivo-foco do ajuste/i);
     expect(select).toBeInTheDocument();
-    expect(screen.getByText('script.js')).toBeInTheDocument();
-    expect(screen.getByText('dados.json')).toBeInTheDocument();
+    expect(within(select).getByRole('option', { name: 'script.js' })).toBeInTheDocument();
+    expect(within(select).getByRole('option', { name: 'dados.json' })).toBeInTheDocument();
   });
 
   test('seletor de arquivo-foco não aparece quando preview não tem arquivos', () => {

@@ -1,3 +1,4 @@
+/** @jest-environment jsdom */
 // src/components/FeedbackButton.test.jsx
 // Setup global fetch mock BEFORE imports
 global.fetch = jest.fn();
@@ -44,7 +45,7 @@ describe("FeedbackButton Component", () => {
     const button = screen.getByRole("button", { name: /feedback/i });
     fireEvent.click(button);
 
-    expect(screen.getByText(/enviar feedback/i)).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: /enviar feedback/i })).toBeInTheDocument();
   });
 
   test("closes form when close button is clicked", () => {
