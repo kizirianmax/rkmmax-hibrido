@@ -1,3 +1,18 @@
+## 2026-05-25 — docs(governance): F5-03 checklist operacional de demonstração/reprodutibilidade
+
+| Item | Detalhe |
+|------|---------|
+| **Título do PR** | `docs(governance): F5-03 checklist operacional de demonstração/reprodutibilidade` |
+| **Identificação** | **Fase 5 — F5-03 (governança/documentação: checklist de demo para banca/incubadora)** |
+| **O que foi documentado** | Criação de `docs/audits/f5-03-checklist-operacional-demo-2026-05-25.md` com sequência operacional mínima e reproduzível para validar o projeto antes de apresentação: (1) pré-requisitos; (2) sequência técnica — `npm run lint`, `npm run build`, `npm test -- --runInBand`; (3) verificação de rotas públicas (`/demo`, `/demo-autoplay`, `/startup`, `/showcase`); (4) confirmação que `/hybrid` exige autenticação; (5) garantias arquiteturais — demo não promete IA em tempo real, sem bypass do Serginho, `executeArtifact` desativado; (6) roteiro sugerido de apresentação curta (≤ 10 min); (7) limites conhecidos e avisos ao apresentador; (8) confirmação de integridade arquitetural; (9) rollback de emergência. |
+| **Por que foi documentado** | F5-03 estava listado como urgente para banca/incubadora na auditoria de transição F4→F5 (`docs/audits/fase-4-para-fase-5-auditoria-transicao-2026-05-25.md`). A Fase 5 exige sequência verificável padronizada para que qualquer avaliador interno possa reproduzir a validação antes de qualquer apresentação sem depender de conhecimento tácito. |
+| **Escopo e segurança** | PR exclusivamente documental. Nenhum código funcional, runtime, rota, componente, endpoint, dependência, provider/modelo/prompt foi alterado. Serginho, Construtor, Especialistas, ABNT, Auth/SaaS/Payments inalterados. |
+| **Arquivos alterados** | `docs/audits/f5-03-checklist-operacional-demo-2026-05-25.md` (novo), `CHECKLIST.md` |
+| **Validação executada** | Baseline pós-F5-02: `npm run lint` (**PASS** / 258 warnings / 0 errors), `npm run build` (**PASS**), `npm test -- --runInBand` (**66 suítes / 2455 testes PASS**). PR documental — risco funcional zero. |
+| **Riscos/limites conhecidos** | Documento estático. Nenhum risco funcional. Os limites operacionais documentados (fixture estática na demo, executeArtifact desativado, latência Groq variável) são pré-existentes e rastreados desde a Fase 4. |
+| **Rollback** | `git revert <commit-sha>` |
+| **Declaração de conclusão** | F5-03 concluído. Checklist operacional de demonstração formalizado e reproduzível. Fase 5 tem agora F5-01, F5-02 e F5-03 completos — baseline pronto para banca/incubadora. |
+
 ## 2026-05-25 — test(governance): F5-02 habilitar execução padrão de testes JSX críticos no Jest
 
 | Item | Detalhe |
