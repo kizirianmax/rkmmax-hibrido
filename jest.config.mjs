@@ -11,8 +11,8 @@ export default {
     '**/*.test.{js,jsx}'
   ],
   collectCoverageFrom: [
-    'src/**/*.{js,jsx}',
-    'api/**/*.{js,jsx}',
+    'src/**/*.js',
+    'api/**/*.js',
     '!**/__tests__/**',
     '!**/__mocks__/**',
     '!**/node_modules/**'
