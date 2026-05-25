@@ -1,3 +1,16 @@
+## 2026-05-25 — style(demo): F4-06 refinamento premium discreto da vitrine
+
+| Item | Detalhe |
+|------|---------|
+| **Título do PR** | `style(demo): F4-06 refinamento premium discreto da vitrine` |
+| **Identificação** | **Fase 4 — F4-06 (microdetalhes visuais premium da demo/showcase)** |
+| **O que mudou** | Refinamentos visuais discretos em `src/pages/Demo.css`: (1) Hero — padding aumentado, border mais visível, `box-shadow` base adicionada; (2) Seção — espaçamento aumentado, títulos com `border-left` accent de 3px para hierarquia visual; (3) Cards — `padding` de 16 → 20px, `border-radius` 14 → 16px, `box-shadow` base sutil, hover com lift de 3px e sombra mais profunda; (4) Header do card — separador `border-bottom` para delimitar badges do conteúdo; (5) Badges (`type`, `status`, `structure-badge`) — font-size unificado em 0.72rem, `padding` consistente 4px 10px, borda semi-transparente nos três; (6) Corpo do card — `font-weight: 700` no título, `line-height` levemente aumentada, labels (`strong`) em cor mais clara que o valor para hierarquia; (7) Footer do card — separador `border-top`, `margin-top` aumentado; (8) Botões de ação — gradiente sutil, `border-radius` 10px, `box-shadow` de foco no hover; (9) Preview cards — `padding` 14 → 18px, `border-radius` 12 → 14px, `box-shadow` base; (10) Footer da página — `padding` e `border-radius` levemente aumentados, cor do texto ajustada para hierarquia. |
+| **Segurança/escopo** | Alteração exclusivamente visual/CSS da demo/showcase estática. Nenhum runtime alterado. Sem novas dependências. Sem analytics externo. Serginho, Construtor, Especialistas, ABNT e SaaS/Auth/Payments não foram tocados. |
+| **Arquivos alterados** | `src/pages/Demo.css`, `CHECKLIST.md` |
+| **Validação executada** | `npm run build` (**PASS**), `npm test -- --runInBand` (**PASS**). |
+| **Riscos/limites conhecidos** | Mudanças são de apresentação pura; o único risco é divergência visual em dispositivos muito antigos sem suporte a `radial-gradient` (já presente antes). Sem risco funcional. |
+| **Rollback** | `git revert <commit-sha>` |
+
 ## 2026-05-24 — feat(demo): F4-05 indicador visual mínimo de estrutura validada
 
 | Item | Detalhe |
