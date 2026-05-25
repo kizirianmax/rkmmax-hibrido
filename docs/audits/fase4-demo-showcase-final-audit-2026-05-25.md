@@ -115,9 +115,9 @@ Responsividade: 1 coluna (≤640px) → 2 colunas (641–1023px) → 3 colunas (
 
 Rota de apresentação autoplay da demo. CTA "Assistir Demo Automatizada" visível no hero da `/demo` com `min-height: 44px` e `width: 100%` em mobile.
 
-### `/showcase` — Vitrine de especialistas/artefatos
+### `/showcase` — Alias de redirecionamento
 
-Vitrine complementar que apresenta as capacidades da plataforma de forma estruturada. Não alterada na Fase 4.
+`/showcase` é uma rota React Router que redireciona para `/demo` via `<Navigate to="/demo" replace />` (definida em `src/App.jsx`). Não há página ou componente separado para `/showcase`. A rota é listada como pública em `src/auth/AuthGate.jsx`. Não foi alterada na Fase 4.
 
 ### Vitrine de artefatos demonstrativos
 
@@ -134,11 +134,11 @@ Cada artefato tem os seguintes campos de rastreabilidade exibidos na UI:
 
 ```js
 traceability: {
-  artifactType: "...",
-  structuralStatus: "validated" | "pending" | "reviewed",
-  origin: "demonstrative-fixture",
+  artifactType: "landing-page" | "operational-dashboard" | "smart-signup-form" | "saas-product-page" | "interactive-mini-app",
+  structuralStatus: "estrutura-demo-revisada",
+  origin: "demo-fixture-local",
   isDemonstrativeExample: true,
-  pipelineReference: "..."
+  pipelineReference: "docs/DEMO.md#pipeline-rastreavel-da-demo-f4-04"
 }
 ```
 
@@ -193,7 +193,7 @@ Cards de preview mostram a estrutura de saída esperada (não execução real). 
 A Fase 4 reforçou explicitamente a honestidade da vitrine pública:
 
 1. **Metadado `isDemonstrativeExample: true`** em todos os artefatos da demo (F4-04)
-2. **Campo `origin: "demonstrative-fixture"`** visível no bloco de rastreabilidade de cada card
+2. **Campo `origin: "demo-fixture-local"`** visível no bloco de rastreabilidade de cada card
 3. **Texto de disclaimer (`demo-card__hint`)** exibido em cada card: o artefato é exemplo estático, não gerado em tempo real
 4. **Teste F4-01** valida que `executeArtifact` não é chamado em nenhum run do pipeline
 5. **`pipelineReference`** indica o pipeline de referência sem implicar execução real durante a navegação
@@ -218,6 +218,8 @@ Não há nenhuma simulação de IA em tempo real, nenhuma resposta fabricada e n
 | Teste direcionado F4-03: `reviewCycleMetrics.test.js` (9/9) | ✅ PASS |
 | Teste direcionado F4-04/F4-05: `demo-showcase-routing.test.js`, `DemoAutoplay.test.js` | ✅ PASS |
 | Suite completa pós-F4: 64 suites / 2442 testes | ✅ PASS |
+| `npm run build` (revalidação pós-auditoria 2026-05-25) | ✅ PASS |
+| `npm test -- --runInBand` (revalidação pós-auditoria 2026-05-25) | ✅ PASS — 64 suites / 2442 testes |
 
 ### PRs F4-01 → F4-08
 
