@@ -1,18 +1,19 @@
 .demo-page {
   min-height: calc(100vh - 80px);
-  padding: 24px 16px 56px;
-  background: radial-gradient(circle at top, #16213b 0%, #0b1220 46%, #070d18 100%);
-  color: #e2e8f0;
+  width: min(100%, 1180px);
+  margin: 0 auto;
+  padding: var(--rkm-space-6) 0 var(--rkm-space-16);
+  color: var(--rkm-text);
 }
 
 .demo-page__hero {
-  max-width: 980px;
-  margin: 0 auto 28px;
-  padding: 28px 24px;
-  border: 1px solid #253555;
-  border-radius: 18px;
-  background: rgba(15, 23, 42, 0.92);
-  box-shadow: 0 4px 24px rgba(2, 6, 23, 0.38);
+  margin-bottom: var(--rkm-space-8);
+  padding: clamp(var(--rkm-space-6), 4vw, var(--rkm-space-10));
+  border-color: rgba(56, 189, 248, 0.2);
+  background:
+    radial-gradient(circle at top right, rgba(56, 189, 248, 0.16), transparent 36%),
+    linear-gradient(180deg, rgba(38, 51, 72, 0.96), rgba(15, 23, 42, 0.98));
+  box-shadow: var(--rkm-shadow-lg);
 }
 
 .demo-page__title {
@@ -25,36 +26,27 @@
 
 .demo-page__subtitle {
   margin: 0;
-  color: #cbd5e1;
+  color: var(--rkm-text-muted);
   line-height: 1.55;
+  max-width: 760px;
 }
 
 .demo-page__notice {
   display: inline-block;
   margin: 14px 0 0;
   padding: 6px 10px;
-  border: 1px solid #2a3d60;
+  border: 1px solid rgba(56, 189, 248, 0.18);
   border-radius: 999px;
-  background: rgba(14, 165, 233, 0.12);
-  color: #bae6fd;
+  background: rgba(56, 189, 248, 0.08);
+  color: var(--rkm-info);
   font-size: 0.85rem;
   font-weight: 600;
 }
 
 .demo-page__autoplay-cta {
-  display: inline-flex;
   margin-top: 14px;
-  align-items: center;
-  justify-content: center;
   min-height: 44px;
-  padding: 8px 18px;
-  border-radius: 999px;
-  border: 1px solid #38bdf8;
-  text-decoration: none;
   font-weight: 700;
-  color: #e0f2fe;
-  background: linear-gradient(135deg, #0f172a 0%, #1d4ed8 100%);
-  box-shadow: 0 8px 20px rgba(2, 6, 23, 0.35);
 }
 
 .demo-page__autoplay-cta:hover {
@@ -62,14 +54,18 @@
 }
 
 .demo-page__section {
-  max-width: 980px;
-  margin: 0 auto 22px;
+  margin-bottom: var(--rkm-space-6);
+}
+
+.demo-page__section--panel {
+  padding: clamp(var(--rkm-space-5), 3vw, var(--rkm-space-8));
+  background: rgba(30, 41, 59, 0.92);
 }
 
 .demo-page__section-title {
   margin: 0 0 14px;
   padding-left: 10px;
-  border-left: 3px solid rgba(56, 189, 248, 0.5);
+  border-left: 3px solid rgba(56, 189, 248, 0.42);
   color: #f1f5f9;
   font-size: 1.12rem;
   font-weight: 700;
@@ -81,11 +77,10 @@
 }
 
 .demo-card {
-  border: 1px solid #243352;
-  border-radius: 16px;
   padding: 20px;
-  background: rgba(15, 23, 42, 0.8);
-  box-shadow: 0 2px 10px rgba(2, 6, 23, 0.28);
+  background:
+    linear-gradient(180deg, rgba(56, 189, 248, 0.06), rgba(15, 23, 42, 0.98)),
+    var(--rkm-surface);
   transition: border-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
 }
 
@@ -103,7 +98,7 @@
   gap: 8px;
   margin-bottom: 12px;
   padding-bottom: 12px;
-  border-bottom: 1px solid rgba(37, 53, 85, 0.7);
+  border-bottom: 1px solid rgba(148, 163, 184, 0.1);
 }
 
 .demo-card__meta {
@@ -171,13 +166,13 @@
 .demo-card__stack,
 .demo-card__score {
   margin: 8px 0 0;
-  color: #94a3b8;
+  color: var(--rkm-text-muted);
   line-height: 1.5;
 }
 
 .demo-card__problem strong,
 .demo-card__stack strong {
-  color: #cbd5e1;
+  color: var(--rkm-text);
 }
 
 .demo-card__footer {
@@ -187,7 +182,7 @@
   gap: 8px;
   margin-top: 18px;
   padding-top: 14px;
-  border-top: 1px solid rgba(37, 53, 85, 0.7);
+  border-top: 1px solid rgba(148, 163, 184, 0.1);
 }
 
 .demo-card__hint {
@@ -199,38 +194,29 @@
 .demo-card__actions {
   display: flex;
   gap: 8px;
+  flex-wrap: wrap;
 }
 
 .demo-card__action {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
   min-width: 96px;
-  padding: 8px 14px;
-  border-radius: 10px;
-  border: 1px solid #2e4470;
-  text-decoration: none;
   font-size: 0.85rem;
   font-weight: 600;
-  color: #dbeafe;
-  background: linear-gradient(135deg, #142237 0%, #1a2f50 100%);
   transition: border-color 0.2s ease, color 0.2s ease, box-shadow 0.2s ease;
 }
 
 .demo-card__action--secondary {
-  color: #bae6fd;
+  color: var(--rkm-text);
+  border-color: rgba(148, 163, 184, 0.2);
 }
 
 .demo-card__action:hover {
-  border-color: #38bdf8;
-  color: #e0f2fe;
-  box-shadow: 0 0 0 2px rgba(56, 189, 248, 0.12);
+  border-color: var(--rkm-info);
 }
 
 .demo-page__list {
   margin: 0;
   padding-left: 20px;
-  color: #cbd5e1;
+  color: var(--rkm-text-muted);
   line-height: 1.55;
 }
 
@@ -239,12 +225,9 @@
 }
 
 .demo-preview {
-  border: 1px solid #243352;
-  border-radius: 14px;
-  background: rgba(15, 23, 42, 0.8);
   padding: 18px;
   margin-bottom: 12px;
-  box-shadow: 0 2px 8px rgba(2, 6, 23, 0.22);
+  background: rgba(15, 23, 42, 0.56);
 }
 
 .demo-preview h3 {
@@ -254,30 +237,28 @@
 
 .demo-preview p {
   margin: 8px 0 0;
-  color: #cbd5e1;
+  color: var(--rkm-text-muted);
 }
 
 .demo-preview__structure {
   margin-top: 10px;
   padding-top: 10px;
-  border-top: 1px solid #1f2a44;
+  border-top: 1px solid rgba(148, 163, 184, 0.12);
 }
 
 .demo-preview__structure ul {
   margin: 8px 0 0;
   padding-left: 20px;
-  color: #cbd5e1;
+  color: var(--rkm-text-muted);
 }
 
 .demo-page__footer {
-  max-width: 980px;
-  margin: 32px auto 0;
+  margin-top: var(--rkm-space-8);
   padding: 20px 24px;
-  border: 1px solid #243352;
-  border-radius: 14px;
-  background: rgba(15, 23, 42, 0.88);
-  color: #94a3b8;
-  box-shadow: 0 2px 10px rgba(2, 6, 23, 0.24);
+  color: var(--rkm-text-muted);
+  background:
+    linear-gradient(180deg, rgba(56, 189, 248, 0.06), rgba(15, 23, 42, 0.98)),
+    var(--rkm-surface);
 }
 
 .demo-page__footer p {
@@ -288,7 +269,7 @@
   display: inline-flex;
   margin-top: 10px;
   margin-right: 14px;
-  color: #38bdf8;
+  color: var(--rkm-info);
   text-decoration: none;
   font-weight: 600;
 }
@@ -298,13 +279,15 @@
 }
 
 @media (min-width: 720px) {
-  .demo-page {
-    padding: 36px 22px 64px;
-  }
-
   .demo-page__hero {
     margin-bottom: 32px;
     padding: 32px;
+  }
+
+  @media (max-width: 640px) {
+    .demo-page__footer a {
+      margin-right: 0;
+    }
   }
 
   .demo-page__grid {

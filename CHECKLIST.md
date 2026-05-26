@@ -1,3 +1,18 @@
+## 2026-05-26 — feat(ui): F7-UX-05 refinamento premium das páginas públicas principais
+
+| Item | Detalhe |
+|------|---------|
+| **Título do PR** | `feat(ui): F7-UX-05 refinamento premium das páginas públicas principais` |
+| **Identificação** | **Fase 7 — UI/UX (F7-UX-05)** |
+| **Páginas refinadas** | `/` (`src/pages/Home.jsx`, `src/pages/Home.css` novo), `/startup` (`src/pages/Projects.jsx`, `src/pages/Projects.css`), `/demo` (`src/pages/Demo.jsx`, `src/pages/Demo.css`) e `/login` (`src/pages/Auth.jsx`, `src/pages/Auth.css` novo). |
+| **Componentes/tokens aplicados** | Aplicação progressiva de `.rkm-card`, `.rkm-card-elevated`, `.rkm-btn-primary`, `.rkm-btn-secondary`, `.rkm-btn-ghost`, `.rkm-input` e tokens `--rkm-*` para hero sections, cards, CTAs, inputs, grids, contraste, containers e espaçamento desktop-first. |
+| **Arquivos alterados** | `src/pages/Home.jsx`, `src/pages/Home.css` (novo), `src/pages/Projects.jsx`, `src/pages/Projects.css`, `src/pages/Demo.jsx`, `src/pages/Demo.css`, `src/pages/Auth.jsx`, `src/pages/Auth.css` (novo), `src/__tests__/public-pages-premium-ui.test.js` (novo), `CHECKLIST.md` |
+| **O que NÃO foi alterado** | Runtime funcional, endpoints, Serginho, Construtor/Híbrido runtime, Especialistas, ABNT, Auth/SaaS/Payments funcionalmente, providers/modelos/prompts, rotas existentes, textos principais de negócio e lógica de Demo. |
+| **Validação executada** | `npm run lint` — **PASS** (warnings pré-existentes fora do escopo); `npm run build` — **PASS**; `npm test -- --runInBand` — **PASS**; teste direcionado `src/__tests__/public-pages-premium-ui.test.js` — **PASS**. |
+| **Evidências visuais** | Screenshots locais de auditoria: `/tmp/playwright-logs/home-premium.png`, `/tmp/playwright-logs/startup-premium.png`, `/tmp/playwright-logs/demo-premium.png`, `/tmp/playwright-logs/login-premium.png`. URLs fornecidas pelo usuário para eventual uso no PR: `https://github.com/user-attachments/assets/4b0dea11-8450-4506-a677-c09833e02637` e `https://github.com/user-attachments/assets/8b2a8a0d-5195-45e1-b9d9-9909c4141f72`. |
+| **Riscos conhecidos** | Ajustes estritamente visuais podem gerar pequenas diferenças de densidade/percepção entre breakpoints, mas sem impacto funcional observado; ambiente local de preview sem variáveis Supabase/Sentry/PostHog apenas exibe warnings informativos já esperados. |
+| **Rollback** | `git revert <commit-sha>` |
+
 ## 2026-05-26 — feat(css): F7-UX-04 componentes base premium (botões/cards/inputs/badges)
 
 | Item | Detalhe |

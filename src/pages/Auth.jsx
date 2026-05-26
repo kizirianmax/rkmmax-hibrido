@@ -1,6 +1,7 @@
 // src/pages/Auth.jsx
-import React, { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef } from "react";
 import { supabase } from "../lib/supabaseClient.js";
+import "./Auth.css";
 
 const COOLDOWN_SECONDS = 60;
 const RATE_LIMIT_COOLDOWN_SECONDS = 300;
@@ -104,23 +105,33 @@ export default function Auth() {
   const isDisabled = loading || cooldown > 0;
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-900 text-white">
-      <div className="bg-gray-800 p-6 rounded-2xl shadow-md w-96">
-        <h2 className="text-xl font-bold mb-4 text-center">Login no RKMMax</h2>
-        <form onSubmit={handleLogin} className="space-y-4">
-          <input
-            type="email"
-            placeholder="Digite seu e-mail"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-            disabled={loading}
-            className="w-full px-3 py-2 rounded-lg bg-gray-700 border border-gray-600 focus:outline-none focus:ring focus:ring-indigo-500"
-          />
+    <main className="auth-page">
+      <section className="auth-card rkm-card rkm-card-elevated" aria-labelledby="auth-title">
+        <div className="auth-card__header">
+          <p className="auth-card__eyebrow">Acesso seguro</p>
+          <h1 id="auth-title" className="auth-card__title">
+            Login no RKMMax
+          </h1>
+        </div>
+
+        <form onSubmit={handleLogin} className="auth-card__form">
+          <label className="auth-card__field">
+            <span className="auth-card__label">E-mail</span>
+            <input
+              type="email"
+              placeholder="Digite seu e-mail"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+              disabled={loading}
+              className="auth-card__input rkm-input"
+            />
+          </label>
+
           <button
             type="submit"
             disabled={isDisabled}
-            className="w-full bg-indigo-600 hover:bg-indigo-500 px-3 py-2 rounded-lg font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
+            className="auth-card__submit rkm-btn-primary"
           >
             {loading
               ? "Enviando..."
@@ -129,8 +140,17 @@ export default function Auth() {
               : "Entrar"}
           </button>
         </form>
-        {message && <p className="mt-4 text-center text-sm text-yellow-400">{message}</p>}
-      </div>
-    </div>
+
+        {message ? (
+          <p
+            className={`auth-card__message${
+              message.startsWith("Erro:") ? " auth-card__message--error" : ""
+            }`}
+          >
+            {message}
+          </p>
+        ) : null}
+      </section>
+    </main>
   );
 }
