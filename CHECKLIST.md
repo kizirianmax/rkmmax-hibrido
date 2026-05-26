@@ -1,3 +1,17 @@
+## 2026-05-26 — feat(ui): F7-UX-06 destacar Serginho IA e proposta de valor na Home pública
+
+| Item | Detalhe |
+|------|---------|
+| **Título do PR** | `feat(ui): F7-UX-06 destacar Serginho IA e proposta de valor na Home pública` |
+| **Identificação** | **Fase 7 — UI/UX (F7-UX-06)** |
+| **Objetivo** | Reposicionamento público mínimo da Home (`/`) para apresentar o Serginho IA como marca principal e plataforma integrada de IA, com proposta de valor objetiva e quatro capacidades visíveis, atendendo ao feedback externo do Sebrae/Startup SC. |
+| **Arquivos alterados** | `src/pages/Home.jsx`, `src/pages/Home.css`, `src/__tests__/public-pages-premium-ui.test.js`, `CHECKLIST.md` |
+| **O que foi alterado** | (1) Hero da Home: título principal alterado para **Serginho IA**; eyebrow alterado para "Uma solução da RKMMAX INFINITY MATRIX STUDY"; subtítulo atualizado com proposta de valor concreta (planejar, construir, validar artefatos digitais); texto de público-alvo adicionado; CTA principal "Ver demonstração pública" → `/demo`; CTA secundário "Acessar a plataforma" → `/serginho`. (2) Nova seção de quatro capacidades integradas com cards informativos premium: Planejar com Serginho IA, Construir artefatos digitais, Consultar especialistas, Validar conformidade ABNT. (3) Home.css: novos estilos para `.home-page__audience`, `.home-page__hero-cta`, `.home-page__capabilities`, `.home-page__capabilities-grid`, `.home-page__cap-card`, `.home-page__cap-icon`, `.home-page__cap-title`, `.home-page__cap-body`; responsividade mobile para novos blocos adicionada ao bloco `@media (max-width: 720px)` existente. (4) Testes: dois novos casos de teste adicionados validando hierarquia/CTA/capabilities. |
+| **O que NÃO foi alterado** | `Projects.jsx` / `/startup`; `Demo.jsx` / `/demo-autoplay`; `Auth.jsx` / `/login`; Header/menu global; runtime funcional; Serginho backend/orquestração; Construtor/Híbrido runtime; Especialistas runtime; ABNT runtime; Auth/SaaS/Payments; endpoints, providers, modelos ou prompts; rotas existentes. |
+| **Validações executadas** | `npm run lint` — **PASS**; `npm run build` — **PASS**; `npm test -- --runInBand` — **PASS**. |
+| **Risco** | Exclusivamente visual/copy na Home pública. Nenhuma lógica funcional ou camada interna alterada. Risco mínimo. |
+| **Rollback** | `git revert <commit-sha>` |
+
 ## 2026-05-26 — feat(ui): F7-UX-05 refinamento premium das páginas públicas principais
 
 | Item | Detalhe |

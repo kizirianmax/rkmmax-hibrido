@@ -18,6 +18,39 @@ describe("Public pages premium UI adoption (static checks)", () => {
     expect(homeCss).toContain(".home-page__content-grid");
   });
 
+  test("Home page F7-UX-06: Serginho IA as main brand with value proposition and /demo CTA", () => {
+    const homeSource = readSource("src/pages/Home.jsx");
+
+    // Main brand title
+    expect(homeSource).toContain("Serginho IA");
+    // Institutional reference preserved
+    expect(homeSource).toContain("RKMMAX INFINITY MATRIX STUDY");
+    // Primary CTA points to /demo
+    expect(homeSource).toContain('href="/demo"');
+    // Secondary CTA uses existing platform route
+    expect(homeSource).toContain('href="/serginho"');
+    // Value proposition includes key terms
+    expect(homeSource).toContain("artefatos digitais");
+    // Target audience present
+    expect(homeSource).toContain("empreendedores");
+  });
+
+  test("Home page F7-UX-06: four capability cards present (informational only)", () => {
+    const homeSource = readSource("src/pages/Home.jsx");
+    const homeCss = readSource("src/pages/Home.css");
+
+    // All four capabilities
+    expect(homeSource).toContain("Planejar com Serginho IA");
+    expect(homeSource).toContain("Construir artefatos digitais");
+    expect(homeSource).toContain("Consultar especialistas");
+    expect(homeSource).toContain("Validar conformidade ABNT");
+    // Capabilities grid CSS exists
+    expect(homeCss).toContain(".home-page__capabilities-grid");
+    // No operational selectors / bypass routes created
+    expect(homeSource).not.toContain('href="/abnt"');
+    expect(homeSource).not.toContain('href="/construtor"');
+  });
+
   test("Startup page applies premium cards and button foundations", () => {
     const startupSource = readSource("src/pages/Projects.jsx");
     const startupCss = readSource("src/pages/Projects.css");
