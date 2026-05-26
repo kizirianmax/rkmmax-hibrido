@@ -10,7 +10,7 @@ export default function Header() {
   return (
     <header className="app-header">
       <div className="app-header__inner">
-        <Link to="/" className="app-header__brand" aria-label="Ir para a página inicial do RKMMAX">
+        <Link to="/" className="app-header__brand">
           <span className="brand-full">{BRAND.lockup}</span>
           <span className="brand-short">{BRAND.shortLockup}</span>
         </Link>

@@ -142,6 +142,8 @@ body {
   scroll-padding-bottom: calc(120px + var(--safe-bottom));
 }
 
+/* Layout global: shell flexível com main expansível e container centralizado
+ * para manter gutters consistentes entre rotas sem alterar runtime funcional. */
 #root {
   min-height: 100vh;
 }
@@ -168,11 +170,6 @@ body {
   background: var(--rkm-accent);
   padding: var(--rkm-space-4);
   text-align: center;
-}
-
-/* Links da barra/nav */
-.nav a {
-  text-decoration: none;
 }
 
 /* Container principal */
