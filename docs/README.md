@@ -59,6 +59,8 @@ Este índice consolida a documentação ativa e histórica sem duplicações de 
 | [../CODE_OF_CONDUCT.md](../CODE_OF_CONDUCT.md) | Código de conduta |
 | [../CHANGELOG.md](../CHANGELOG.md) | Histórico de mudanças |
 | [../CHECKLIST.md](../CHECKLIST.md) | Registro operacional/auditorias e rollback |
+| [RELEASE_POLICY.md](RELEASE_POLICY.md) | Política atual de versionamento, tagging e rollback (manual/single-owner) |
+| [../.github/CODEOWNERS](../.github/CODEOWNERS) | Definição mínima de ownership e revisão do repositório |
 | [DEVELOPMENT_GUIDELINES.md](DEVELOPMENT_GUIDELINES.md) | Diretrizes de desenvolvimento |
 | [BRANCH_PROTECTION_GUIDE.md](BRANCH_PROTECTION_GUIDE.md) | Política de proteção de branches |
 | [MAINTENANCE.md](MAINTENANCE.md) | Plano de manutenção |

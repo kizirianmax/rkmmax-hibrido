@@ -12,6 +12,7 @@ Thank you for your interest in contributing to RKMMAX Híbrido - RKMMAX Hybrid I
 - [Testing Requirements](#testing-requirements)
 - [Commit Messages](#commit-messages)
 - [Pull Request Process](#pull-request-process)
+- [AI-assisted Development](#ai-assisted-development)
 - [Reporting Bugs](#reporting-bugs)
 - [Suggesting Features](#suggesting-features)
 
@@ -333,6 +334,13 @@ Brief description of changes
 3. **Feedback**: Address review comments
 4. **Approval**: At least one maintainer approval required
 5. **Merge**: Squash and merge to `main`
+
+## AI-assisted Development
+
+- Pull requests podem ser gerados com suporte do GitHub Copilot coding agent.
+- A revisão final e o merge continuam sob responsabilidade do owner (`@kizirianmax`).
+- IA não substitui validação humana de código, segurança e aderência arquitetural.
+- CI verde continua obrigatório antes de merge.
 
 ## Reporting Bugs
 
