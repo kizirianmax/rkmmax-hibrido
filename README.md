@@ -7,6 +7,14 @@
 
 RKMMAX Híbrido is an AI agent orchestration system with a React frontend and Vercel serverless backend. The orchestrator (Serginho) is sovereign and routes requests across a multi-provider setup currently in stabilization — Groq and Gemini are both active in the codebase, with provider priority defined by `src/config/modelPriority.js`.
 
+### Em uma frase
+
+**RKMMAX / Serginho IA** é um sistema de orquestração de IA com um orquestrador soberano (Serginho), 47 especialistas de domínio, uma camada de geração/validação/exportação de artefatos (Construtor/Híbrido) e uma camada de conformidade ABNT — projetado para reduzir o esforço de produzir entregáveis estruturados (não apenas respostas de chat) com rastreabilidade arquitetural.
+
+- **Problema que endereça:** quando se usa IA para gerar entregáveis (documentos, pacotes, conteúdo estruturado), a saída tende a ser texto solto, sem validação, sem ciclo de revisão e sem auditoria. O Construtor/Híbrido encapsula geração → validação → preview → revisão → aprovação → exportação dentro de um único pipeline, sob orquestração soberana do Serginho.
+- **Público-alvo inicial (ICP):** estudantes, pesquisadores e profissionais que precisam de entregáveis estruturados (com viés inicial para conformidade ABNT) e avaliadores técnicos de banca/incubadora que precisam inspecionar a arquitetura e o baseline reproduzível.
+- **O que diferencia:** Serginho é o ponto de entrada único — não há bypass do orquestrador; o Construtor entrega artefatos empacotados com manifest e UUID, não apenas mensagens; especialistas e ABNT são camadas separadas e auditáveis.
+
 > **Development policy:** This is an individual project by [@kizirianmax](https://github.com/kizirianmax). All merges to `main` require a passing CI run. See [docs/DEVELOPMENT_GUIDELINES.md](docs/DEVELOPMENT_GUIDELINES.md) for details.
 
 ---
@@ -282,6 +290,85 @@ rkmmax-hibrido/
 - **Serverless-first resilience:** The circuit breaker pattern is the primary mechanism for handling downstream failures within Vercel's timeout constraints.
 - **Legacy repo consolidation:** The architecture is fully consolidated in `rkmmax-hibrido`. Legacy repositories (`kizirian-max-site`, `Rkmmax-app`, `kizi-agent`, `rkmmax-specialists`) have been audited and are no longer active structural sources. `kizi-agent` was an original prototype; `rkmmax-specialists` was a standalone dataset snapshot (49 specialists, superseded by the 47-specialist canonical set in `src/config/specialists.js`). Both are formally classified as discontinued, with no structural dependency in the current system.
 - **Active parallel deployment — ABNT layer:** The repository `formatador-abnt` (deployed at `abnt.kizirianmax.site`) is **not** classified as discontinued. It is an independent, actively deployed standalone version of the ABNT conformance layer, running its own stack (Express + Vite + TypeScript). It retains two features not yet fully ported to `rkmmax-hibrido`: (1) a reference validator with ABNT compliance scoring, and (2) project-based organisation of the reference library. It should be preserved until those features are either absorbed into the main codebase or explicitly deprecated.
+
+---
+
+## Estado atual do produto
+
+Esta seção separa, sem inflação, o que já é verificável hoje do que ainda é limite ou trabalho futuro. Serve como leitura rápida para avaliadores.
+
+### ✅ Pronto / verificável
+
+- Orquestrador soberano **Serginho** ativo — todas as chamadas de IA passam pelo orquestrador (sem bypass).
+- Pipeline do **Construtor/Híbrido** end-to-end: `gerar → empacotar → validar → preview → revisar → aprovar → exportar` (endpoints `POST /api/ai`, `POST /api/artifact`, `POST /api/artifact-preview`, `PATCH /api/artifact-preview`).
+- Catálogo de **47 especialistas** com fonte única de verdade em `src/config/specialists.js`.
+- Camada **ABNT** (validação/conformidade) como camada separada e auditável.
+- Baseline reproduzível: `npm run lint`, `npm run build`, `npm test -- --runInBand` documentado e executável localmente.
+- **Demo pública estática** (rotas `/demo`, `/demo-autoplay`, `/startup`, `/showcase`) — sem autenticação e sem geração ao vivo durante a apresentação.
+- **Circuit breaker**, **cache inteligente** e **validação de segurança** ativos no caminho serverless (ver `api/lib/`).
+- Endpoint de saúde público: `GET /api/health`.
+
+### 🟡 Em estabilização
+
+- **Multi-provider Groq + Gemini.** Ambos estão ativos no código; a prioridade é definida em `src/config/modelPriority.js` como fonte única. A consolidação ainda pendente é a revisão de coerência sobre qual provider/modelo é efetivamente usado em cada caminho de chamada das camadas (em particular dentro do Híbrido/Construtor), garantindo que o `modelPriority.js` seja respeitado uniformemente — observação aberta, não bloqueante.
+- **Cobertura de testes JSX** ampliada na Fase 5 (F5-02); ainda há dívida pré-existente de warnings de lint (rastreada, não bloqueante).
+- **Documentação canônica** após F6-DOC-01 — stubs de compatibilidade mantidos para referências antigas (`docs/API.md`, `docs/ARCHITECTURE.md`).
+
+### ⛔ Futuro / não prometido nesta versão
+
+- **Não há IA em tempo real nas rotas de demo pública** — a demo opera sobre fixtures estáticas (`src/data/demoArtifacts.js`); ver [docs/DEMO.md](docs/DEMO.md).
+- **`executeArtifact` está desativado por decisão de segurança** — execução de artefatos JS gerados não está habilitada no runtime atual.
+- **Sem dashboard de métricas externo**, sem analytics próprio fora de Sentry/PostHog, sem persistência adicional além do Supabase já documentado.
+- **Branch protection** não está ativa neste repositório privado (limitação do plano GitHub); a regra de "CI verde" é enforced por convenção.
+- Itens **F5-04 (governança de sandbox)** e **F5-05 (métricas não voláteis)** são explicitamente futuros e não bloqueantes para a banca.
+
+---
+
+## Para avaliadores / banca
+
+Leitura rápida para avaliadores técnicos, banca e incubadora. Tudo abaixo é verificável diretamente no repositório.
+
+### Demo pública
+
+- Vitrine pública (estática, sem autenticação): rotas `/demo`, `/demo-autoplay`, `/startup`, `/showcase`.
+- Detalhamento de escopo e transparência da demo: [docs/DEMO.md](docs/DEMO.md).
+- Checklist operacional para reprodução da demonstração: [docs/audits/f5-03-checklist-operacional-demo-2026-05-25.md](docs/audits/f5-03-checklist-operacional-demo-2026-05-25.md).
+- A demo **não** promete IA em tempo real — opera sobre fixtures estáticas documentadas.
+
+### Baseline técnico (reproduzível)
+
+Executável localmente após `npm install`:
+
+```bash
+npm run lint               # ESLint sobre src/ e api/
+npm run build              # Build de produção (Vite)
+npm test -- --runInBand    # Suíte Jest completa, execução serial
+```
+
+Resultado de baseline registrado nas auditorias de Fase 5 (ver `CHECKLIST.md`):
+lint **PASS** (0 errors, warnings pré-existentes rastreados),
+build **PASS**,
+testes **PASS** (66 suítes / 2 455 testes na referência mais recente — números podem evoluir).
+
+Saúde do runtime em produção: `curl https://kizirianmax.site/api/health`.
+
+### Garantias arquiteturais
+
+- **Serginho é soberano.** Toda chamada de IA passa pelo orquestrador — não há bypass nas camadas Construtor, Especialistas ou ABNT.
+- **Camadas separadas e auditáveis.** Construtor/Híbrido (geração/artefatos), Especialistas (domínio), ABNT (conformidade) e SaaS/Auth/Payments são camadas independentes — alterações em uma não afetam o runtime das demais.
+- **Fonte única de verdade** para especialistas (`src/config/specialists.js`) e prioridade de providers (`src/config/modelPriority.js`).
+- **Resiliência serverless** com circuit breaker (limite de 8 s e margem de 4 s dentro dos 12 s da Vercel), cache inteligente e validação de input/output.
+- **Governança documentada** em [docs/DEVELOPMENT_GUIDELINES.md](docs/DEVELOPMENT_GUIDELINES.md), [CONTRIBUTING.md](CONTRIBUTING.md), [SECURITY.md](SECURITY.md) e registro contínuo em [CHECKLIST.md](CHECKLIST.md) e [CHANGELOG.md](CHANGELOG.md).
+- **Rollback simples.** Cada PR de governança traz instrução `git revert <commit-sha>` registrada no CHECKLIST.
+
+### Limites conhecidos
+
+- Demo pública é **estática** (fixtures) — não exercita providers ao vivo durante a apresentação.
+- `executeArtifact` está **desativado** por decisão arquitetural de segurança.
+- **Latência Groq variável** — rastreada desde a Fase 4; mitigada por circuit breaker e cascata de modelos.
+- **Warnings de lint pré-existentes** (dívida documentada em F5-01) — não bloqueantes.
+- **Multi-provider em estabilização** — consolidação fina do uso entre camadas ainda é observação aberta.
+- **Repositório `formatador-abnt` paralelo** segue ativo para a camada ABNT em deploy separado; ver [Architecture Principles](#architecture-principles) abaixo.
 
 ---
 

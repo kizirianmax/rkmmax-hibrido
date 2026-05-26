@@ -1,4 +1,20 @@
-## 2026-05-26 — docs(governance): F6-DOC-01 auditoria de consistência e desduplicação do README/docs
+## 2026-05-26 — docs(governance): F6-DOC-02 clareza executiva do README para banca/incubadora
+
+| Item | Detalhe |
+|------|---------|
+| **Título do PR** | `docs(governance): F6-DOC-02 clareza executiva do README para banca/incubadora` |
+| **Identificação** | **Fase 6 — Governança Documental (F6-DOC-02)** |
+| **O que foi auditado** | `README.md` após F6-DOC-01 — verificação de leitura executiva em até 5 minutos para avaliadores técnicos, incubadora e banca: (1) o que é RKMMAX / Serginho IA; (2) qual problema resolve; (3) público-alvo inicial (ICP); (4) o que o sistema já faz hoje; (5) o que ainda é limite/futuro; (6) por que a arquitetura é confiável. |
+| **O que mudou** | (1) Inclusão de bloco **"Em uma frase"** logo após o parágrafo introdutório do `README.md`, descrevendo proposta de valor, problema endereçado, ICP inicial e diferenciais arquiteturais — sem overclaim e sem prometer IA em tempo real onde a demo é fixture estática; (2) inclusão da seção **"Estado atual do produto"** separando explicitamente `✅ Pronto / verificável`, `🟡 Em estabilização` e `⛔ Futuro / não prometido nesta versão`; (3) inclusão da seção **"Para avaliadores / banca"** com leitura rápida sobre demo pública, baseline técnico reproduzível, garantias arquiteturais e limites conhecidos, com links diretos para `docs/DEMO.md`, checklist operacional F5-03 e governança. |
+| **Por que melhora a leitura executiva** | A versão anterior do `README.md` já estava factual e desduplicada (F6-DOC-01), mas faltavam três sinais executivos centrais para banca/incubadora: proposta de valor em uma frase, separação explícita entre o que está pronto vs. em estabilização vs. futuro, e ponto de entrada único para avaliadores (demo + baseline + garantias + limites). As três adições preenchem essas lacunas mantendo postura conservadora: nada é prometido sem evidência verificável no repositório. |
+| **Escopo e segurança** | PR exclusivamente documental. Nenhum código funcional, runtime, rota, componente, endpoint, dependência, provider/modelo/prompt foi alterado. Serginho, Construtor, Especialistas, ABNT, Auth/SaaS/Payments inalterados. Nenhum bypass do Serginho. `executeArtifact` permanece desativado. Nenhuma promessa de IA em tempo real em rotas de demo (que seguem operando sobre fixtures estáticas documentadas em `docs/DEMO.md`). |
+| **Arquivos alterados** | `README.md`, `CHECKLIST.md` |
+| **Validação executada** | `npm run lint` — **PASS** (0 errors, warnings pré-existentes rastreados); `npm run build` — **PASS**; `npm test -- --runInBand` — **PASS**. PR documental — risco funcional zero. |
+| **Riscos/limites conhecidos** | Apenas texto/estrutura do `README.md` foi modificado. Nenhum risco funcional. Limites reais e dívidas pré-existentes (warnings de lint, chunk >500 kB, latência Groq variável, fixture estática na demo, `executeArtifact` desativado) foram preservados explicitamente nas novas seções para evitar overclaim. |
+| **Rollback** | `git revert <commit-sha>` |
+| **Declaração de conclusão** | F6-DOC-02 concluído. README mais legível para avaliadores em até 5 minutos, com proposta de valor, ICP e separação clara entre pronto / em estabilização / futuro. F6-DOC-03 **não** foi iniciado neste PR (escopo respeitado). |
+
+
 
 | Item | Detalhe |
 |------|---------|
