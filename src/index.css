@@ -1,11 +1,116 @@
 /* src/index.css */
 
-/* ========= Variáveis de cor (opcional) ========= */
+/* ========= F7-UX-02 — Design Tokens Globais Premium ========= */
+/*
+ * Fundação visual reutilizável para o RKMMAX.
+ * Todas as variáveis usam o prefixo --rkm- para evitar colisão.
+ * As variáveis legadas (--brand, --text, --bg) são mantidas para
+ * retrocompatibilidade com componentes existentes.
+ */
 :root {
-  --brand: #06b6d4; /* cor principal (ciano) */
-  --brand-dark: #0e7490;
-  --text: #333;
-  --bg: #f9f9f9;
+  /* ── Cores base (backgrounds) ── */
+  --rkm-bg:              #0f172a; /* fundo principal — slate-900 */
+  --rkm-surface:         #1e293b; /* superfície de cards — slate-800 */
+  --rkm-surface-elevated:#263348; /* superfície elevada (modais, dropdowns) */
+
+  /* ── Bordas ── */
+  --rkm-border:          rgba(148, 163, 184, 0.15); /* slate-400 @ 15% */
+  --rkm-border-focus:    rgba(6, 182, 212, 0.6);    /* cyan-500 @ 60% */
+
+  /* ── Texto ── */
+  --rkm-text:            #f1f5f9; /* slate-100 */
+  --rkm-text-muted:      #94a3b8; /* slate-400 */
+  --rkm-text-subtle:     #64748b; /* slate-500 */
+
+  /* ── Acento (cyan) ── */
+  --rkm-accent:          #06b6d4; /* cyan-500 */
+  --rkm-accent-dark:     #0e7490; /* cyan-700 */
+  --rkm-accent-soft:     rgba(6, 182, 212, 0.12); /* cyan suave para fundos */
+  --rkm-accent-hover:    #22d3ee; /* cyan-400 — hover */
+
+  /* ── Acento secundário (azul) ── */
+  --rkm-blue:            #3b82f6; /* blue-500 */
+  --rkm-blue-dark:       #1d4ed8; /* blue-700 */
+  --rkm-blue-soft:       rgba(59, 130, 246, 0.12);
+
+  /* ── Status / feedback ── */
+  --rkm-success:         #22c55e; /* green-500 */
+  --rkm-warning:         #f59e0b; /* amber-500 */
+  --rkm-error:           #ef4444; /* red-500 */
+  --rkm-info:            #38bdf8; /* sky-400 */
+
+  /* ── Border radius ── */
+  --rkm-radius-sm:       6px;
+  --rkm-radius-md:       10px;
+  --rkm-radius-lg:       14px;
+  --rkm-radius-xl:       20px;
+  --rkm-radius-full:     9999px;
+
+  /* ── Sombras ── */
+  --rkm-shadow-sm:       0 1px 4px rgba(0, 0, 0, 0.3);
+  --rkm-shadow-md:       0 4px 16px rgba(0, 0, 0, 0.4);
+  --rkm-shadow-lg:       0 8px 32px rgba(0, 0, 0, 0.5);
+  --rkm-shadow-accent:   0 4px 20px rgba(6, 182, 212, 0.2);
+
+  /* ── Espaçamento (escala 4px) ── */
+  --rkm-space-1:  4px;
+  --rkm-space-2:  8px;
+  --rkm-space-3:  12px;
+  --rkm-space-4:  16px;
+  --rkm-space-5:  20px;
+  --rkm-space-6:  24px;
+  --rkm-space-8:  32px;
+  --rkm-space-10: 40px;
+  --rkm-space-12: 48px;
+  --rkm-space-16: 64px;
+
+  /* ── Tipografia ── */
+  --rkm-font-sans:  system-ui, -apple-system, "Segoe UI", "Inter", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --rkm-font-mono:  "Courier New", "Fira Code", "Consolas", monospace;
+  --rkm-font-size-xs:   0.75rem;   /* 12px */
+  --rkm-font-size-sm:   0.875rem;  /* 14px */
+  --rkm-font-size-base: 1rem;      /* 16px */
+  --rkm-font-size-lg:   1.125rem;  /* 18px */
+  --rkm-font-size-xl:   1.25rem;   /* 20px */
+  --rkm-font-size-2xl:  1.5rem;    /* 24px */
+  --rkm-font-size-3xl:  1.875rem;  /* 30px */
+  --rkm-font-size-4xl:  2.25rem;   /* 36px */
+  --rkm-font-weight-normal:   400;
+  --rkm-font-weight-medium:   500;
+  --rkm-font-weight-semibold: 600;
+  --rkm-font-weight-bold:     700;
+  --rkm-line-height-tight:    1.25;
+  --rkm-line-height-normal:   1.5;
+  --rkm-line-height-relaxed:  1.75;
+
+  /* ── Transições ── */
+  --rkm-transition-fast:   0.1s ease;
+  --rkm-transition:        0.2s ease;
+  --rkm-transition-slow:   0.35s ease;
+
+  /* ── Z-index ── */
+  --rkm-z-base:    0;
+  --rkm-z-above:   10;
+  --rkm-z-modal:   100;
+  --rkm-z-overlay: 200;
+  --rkm-z-top:     300;
+
+  /* ── Texto sobre acento ── */
+  --rkm-accent-text:     #001b17; /* texto escuro sobre fundo cyan */
+
+  /* ── Variáveis legadas — mantidas para retrocompatibilidade ── */
+  --brand:       var(--rkm-accent);
+  --brand-dark:  var(--rkm-accent-dark);
+  --text:        var(--rkm-text);
+  --bg:          var(--rkm-bg);
+
+  /* Aliases para variáveis previamente sem definição em src/styles.css
+   * (--text-100, --text-200, --accent-400, --accent-500 eram usadas nas classes
+   *  .nav-links, .navbar .btn, etc. sem definição global — agora resolvidas aqui.) */
+  --text-100:    var(--rkm-text);
+  --text-200:    var(--rkm-text-muted);
+  --accent-400:  var(--rkm-accent);
+  --accent-500:  var(--rkm-accent-dark);
 
   /* Safe area para mobile (iOS/Android) */
   --safe-bottom: env(safe-area-inset-bottom, 0px);
@@ -16,23 +121,23 @@
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--rkm-font-sans);
 }
 
 body {
-  background-color: var(--bg);
-  color: var(--text);
-  line-height: 1.6;
+  background-color: var(--rkm-bg);
+  color: var(--rkm-text);
+  line-height: var(--rkm-line-height-normal);
 
   /* Safe area para mobile */
-  padding-bottom: calc(24px + var(--safe-bottom));
+  padding-bottom: calc(var(--rkm-space-6) + var(--safe-bottom));
   scroll-padding-bottom: calc(120px + var(--safe-bottom));
 }
 
 /* Barra superior (se usar) */
 .topbar {
-  background: var(--brand);
-  padding: 1rem;
+  background: var(--rkm-accent);
+  padding: var(--rkm-space-4);
   text-align: center;
 }
 
@@ -40,45 +145,45 @@ body {
 .nav a {
   margin: 0 15px;
   text-decoration: none;
-  font-weight: bold;
+  font-weight: var(--rkm-font-weight-bold);
   color: #003366; /* mantém seu tom de azul */
 }
 .nav a:hover {
-  color: var(--brand-dark);
+  color: var(--rkm-accent-dark);
 }
 
 /* Link ativo (NavLink aplica aria-current="page") */
 .nav a[aria-current="page"] {
-  color: var(--brand);
-  border-bottom: 2px solid var(--brand);
+  color: var(--rkm-accent);
+  border-bottom: 2px solid var(--rkm-accent);
 }
 
 /* Foco visível no teclado (acessibilidade) */
 .nav a:focus-visible {
-  outline: 2px dashed var(--brand);
+  outline: 2px dashed var(--rkm-accent);
   outline-offset: 2px;
 }
 
 /* Container principal */
 .container {
-  padding: 2rem;
+  padding: var(--rkm-space-8);
   text-align: center;
 }
 
 /* Títulos */
 .page h1,
 .page h2 {
-  margin-bottom: 1rem;
+  margin-bottom: var(--rkm-space-4);
   color: #222;
 }
 
 /* Rodapé */
 .footer {
-  margin-top: 3rem;
+  margin-top: var(--rkm-space-12);
   text-align: center;
-  padding: 1rem;
+  padding: var(--rkm-space-4);
   background: #eee;
-  font-size: 0.9rem;
+  font-size: var(--rkm-font-size-sm);
 }
 
 /* ========= Utilitários p/ brand (sem Tailwind) ========= */
@@ -96,4 +201,61 @@ body {
   .brand-short {
     display: inline;
   }
+}
+
+/* ========= F7-UX-02 — Classes utilitárias base ========= */
+/*
+ * Classes reutilizáveis para uso progressivo nas próximas etapas.
+ * Não redesenham telas existentes — apenas disponibilizam base segura.
+ */
+
+/* Foco global acessível */
+:focus-visible {
+  outline: 2px solid var(--rkm-border-focus);
+  outline-offset: 2px;
+}
+
+/* Superfície premium */
+.rkm-surface {
+  background: var(--rkm-surface);
+  border: 1px solid var(--rkm-border);
+  border-radius: var(--rkm-radius-lg);
+}
+
+.rkm-surface-elevated {
+  background: var(--rkm-surface-elevated);
+  border: 1px solid var(--rkm-border);
+  border-radius: var(--rkm-radius-lg);
+  box-shadow: var(--rkm-shadow-md);
+}
+
+/* Botão acento base */
+.rkm-btn-accent {
+  background: var(--rkm-accent);
+  color: var(--rkm-accent-text);
+  border: none;
+  border-radius: var(--rkm-radius-md);
+  padding: var(--rkm-space-3) var(--rkm-space-6);
+  font-weight: var(--rkm-font-weight-semibold);
+  font-size: var(--rkm-font-size-base);
+  cursor: pointer;
+  transition: background var(--rkm-transition), box-shadow var(--rkm-transition);
+}
+.rkm-btn-accent:hover {
+  background: var(--rkm-accent-hover);
+  box-shadow: var(--rkm-shadow-accent);
+}
+.rkm-btn-accent:focus-visible {
+  outline: 2px solid var(--rkm-border-focus);
+  outline-offset: 2px;
+}
+
+/* Texto muted */
+.rkm-text-muted {
+  color: var(--rkm-text-muted);
+}
+
+/* Cor de acento */
+.rkm-text-accent {
+  color: var(--rkm-accent);
 }
