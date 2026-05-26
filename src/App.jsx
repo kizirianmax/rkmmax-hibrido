@@ -8,6 +8,7 @@ import { AuthProvider } from "./auth/AuthProvider.jsx";
 import AuthGate from "./auth/AuthGate.jsx";
 
 import Header from "./components/Header.jsx";
+import Footer from "./components/Footer.jsx";
 import BrandTitle from "./components/BrandTitle.jsx";
 import PlanGate from "./components/PlanGate.jsx";
 import OwnerGate from "./components/OwnerGate.jsx";
@@ -72,111 +73,119 @@ export default function App() {
     <BrowserRouter>
       <AuthProvider>
         <AuthGate>
-      <BrandTitle />
-      <Header />
+          <div className="app-shell">
+            <BrandTitle />
+            <Header />
 
-      {/* Onboarding para novos usuários */}
-      {showOnboarding && <Onboarding onComplete={() => setShowOnboarding(false)} />}
+            {/* Onboarding para novos usuários */}
+            {showOnboarding && <Onboarding onComplete={() => setShowOnboarding(false)} />}
 
-      {/* Banner de cadastro opcional */}
-      <OptionalSignupBanner />
+            {/* Banner de cadastro opcional */}
+            <OptionalSignupBanner />
 
-      {/* Banner de consentimento GDPR/LGPD */}
-      <ConsentBanner />
+            {/* Banner de consentimento GDPR/LGPD */}
+            <ConsentBanner />
 
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/serginho" element={<Serginho />} />
-        <Route path="/projects" element={<Projects />} />
-        <Route path="/startup" element={<Projects />} />
-        <Route path="/study" element={<StudyLab />} />
-        <Route path="/specialists" element={<Specialists />} />
-        <Route path="/specialist/:specialistId" element={<SpecialistChat />} />
-        <Route path="/study-lab" element={<Navigate to="/study" replace />} />
-        <Route path="/demo" element={<Demo />} />
-        <Route path="/demo-autoplay" element={<DemoAutoplay />} />
-        <Route path="/showcase" element={<Navigate to="/demo" replace />} />
+            <main className="app-main" id="main-content">
+              <div className="app-main__inner">
+                <Routes>
+                  <Route path="/" element={<Home />} />
+                  <Route path="/serginho" element={<Serginho />} />
+                  <Route path="/projects" element={<Projects />} />
+                  <Route path="/startup" element={<Projects />} />
+                  <Route path="/study" element={<StudyLab />} />
+                  <Route path="/specialists" element={<Specialists />} />
+                  <Route path="/specialist/:specialistId" element={<SpecialistChat />} />
+                  <Route path="/study-lab" element={<Navigate to="/study" replace />} />
+                  <Route path="/demo" element={<Demo />} />
+                  <Route path="/demo-autoplay" element={<DemoAutoplay />} />
+                  <Route path="/showcase" element={<Navigate to="/demo" replace />} />
 
-        {/* Área Premium */}
-        <Route
-          path="/agents"
-          element={
-            <PlanGate requirePlan="premium">
-              <AgentsPage />
-            </PlanGate>
-          }
-        />
+                  {/* Área Premium */}
+                  <Route
+                    path="/agents"
+                    element={
+                      <PlanGate requirePlan="premium">
+                        <AgentsPage />
+                      </PlanGate>
+                    }
+                  />
 
-        {/* Planos */}
-        <Route path="/pricing" element={<Pricing />} />
-        <Route path="/plans" element={<Navigate to="/pricing" replace />} />
-        <Route path="/subscribe" element={<Subscribe />} />
-        <Route path="/plans-screen" element={<PlansScreen />} />
+                  {/* Planos */}
+                  <Route path="/pricing" element={<Pricing />} />
+                  <Route path="/plans" element={<Navigate to="/pricing" replace />} />
+                  <Route path="/subscribe" element={<Subscribe />} />
+                  <Route path="/plans-screen" element={<PlansScreen />} />
 
-        {/* Sucesso do Stripe */}
-        <Route path="/success" element={<Success />} />
+                  {/* Sucesso do Stripe */}
+                  <Route path="/success" element={<Success />} />
 
-        {/* Help & Status */}
-        <Route path="/help" element={<Help />} />
-        <Route path="/status" element={<Help />} />
-        <Route path="/info" element={<Info />} />
+                  {/* Help & Status */}
+                  <Route path="/help" element={<Help />} />
+                  <Route path="/status" element={<Help />} />
+                  <Route path="/info" element={<Info />} />
 
-        {/* Settings */}
-        <Route path="/settings" element={<Settings />} />
-        <Route path="/configuracoes" element={<Navigate to="/settings" replace />} />
+                  {/* Settings */}
+                  <Route path="/settings" element={<Settings />} />
+                  <Route path="/configuracoes" element={<Navigate to="/settings" replace />} />
 
-        {/* Subscription Management */}
-        <Route path="/subscription" element={<Subscription />} />
-        <Route path="/assinatura" element={<Navigate to="/subscription" replace />} />
-        {/* Sistema Híbrido */}
-        <Route path="/hybrid" element={<HybridAgentSimple />} />
-        <Route path="/agent" element={<HybridAgentSimple />} />
-        <Route path="/agent-detail/:id" element={<AgentDetail />} />
-        <Route path="/chat" element={<Chat />} />
-        <Route path="/github-callback" element={<GitHubCallback />} />
+                  {/* Subscription Management */}
+                  <Route path="/subscription" element={<Subscription />} />
+                  <Route path="/assinatura" element={<Navigate to="/subscription" replace />} />
+                  {/* Sistema Híbrido */}
+                  <Route path="/hybrid" element={<HybridAgentSimple />} />
+                  <Route path="/agent" element={<HybridAgentSimple />} />
+                  <Route path="/agent-detail/:id" element={<AgentDetail />} />
+                  <Route path="/chat" element={<Chat />} />
+                  <Route path="/github-callback" element={<GitHubCallback />} />
 
-        {/* Auth */}
-        <Route path="/login" element={<Auth />} />
-        <Route path="/logout" element={<Logout />} />
-        <Route path="/reset-password" element={<ResetPassword />} />
-        <Route path="/account" element={<Account />} />
+                  {/* Auth */}
+                  <Route path="/login" element={<Auth />} />
+                  <Route path="/logout" element={<Logout />} />
+                  <Route path="/reset-password" element={<ResetPassword />} />
+                  <Route path="/account" element={<Account />} />
 
-        {/* Políticas */}
-        <Route path="/privacy" element={<Privacy />} />
-        <Route path="/terms" element={<Terms />} />
-        <Route path="/refund" element={<Refund />} />
-        <Route path="/regulamento" element={<Regulamento />} />
-        {/* Formatador ABNT/APA */}
-        <Route path="/abnt" element={<Abnt />} />
+                  {/* Políticas */}
+                  <Route path="/privacy" element={<Privacy />} />
+                  <Route path="/terms" element={<Terms />} />
+                  <Route path="/refund" element={<Refund />} />
+                  <Route path="/regulamento" element={<Regulamento />} />
+                  {/* Formatador ABNT/APA */}
+                  <Route path="/abnt" element={<Abnt />} />
 
-        {/* Study Lab — Ferramentas */}
-        <Route path="/cronograma" element={<Cronograma />} />
-        <Route path="/flashcards" element={<Flashcards />} />
-        <Route path="/gerador-resumos" element={<GeradorResumos />} />
-        <Route path="/mapas-mentais" element={<MapasMentais />} />
-        <Route path="/source-proof" element={<SourceProof />} />
+                  {/* Study Lab — Ferramentas */}
+                  <Route path="/cronograma" element={<Cronograma />} />
+                  <Route path="/flashcards" element={<Flashcards />} />
+                  <Route path="/gerador-resumos" element={<GeradorResumos />} />
+                  <Route path="/mapas-mentais" element={<MapasMentais />} />
+                  <Route path="/source-proof" element={<SourceProof />} />
 
-        {/* Fallback */}
-        <Route path="*" element={<Navigate to="/" replace />} />
+                  {/* Fallback */}
+                  <Route path="*" element={<Navigate to="/" replace />} />
 
-        {/* Admin / Owner */}
-        <Route
-          path="/dashboard"
-          element={
-            <OwnerGate>
-              <HybridSystemDashboard />
-            </OwnerGate>
-          }
-        />
-        <Route
-          path="/advanced-dashboard"
-          element={
-            <OwnerGate>
-              <AdvancedDashboard />
-            </OwnerGate>
-          }
-        />
-      </Routes>
+                  {/* Admin / Owner */}
+                  <Route
+                    path="/dashboard"
+                    element={
+                      <OwnerGate>
+                        <HybridSystemDashboard />
+                      </OwnerGate>
+                    }
+                  />
+                  <Route
+                    path="/advanced-dashboard"
+                    element={
+                      <OwnerGate>
+                        <AdvancedDashboard />
+                      </OwnerGate>
+                    }
+                  />
+                </Routes>
+              </div>
+            </main>
+
+            <Footer />
+          </div>
         </AuthGate>
       </AuthProvider>
     </BrowserRouter>
