@@ -33,6 +33,10 @@ describe("Public pages premium UI adoption (static checks)", () => {
     expect(homeSource).toContain("artefatos digitais");
     // Target audience present
     expect(homeSource).toContain("empreendedores");
+    // Informational panels with updated brand-consistent titles
+    expect(homeSource).toContain("Sobre o Serginho IA");
+    // Institutional reference appears in panel body text
+    expect(homeSource).toContain("RKMMAX INFINITY MATRIX STUDY");
   });
 
   test("Home page F7-UX-06: four capability cards present (informational only)", () => {

@@ -69,6 +69,56 @@ export default function Home() {
         </div>
       </header>
 
+      <div className="home-page__content-grid">
+        <section className="home-page__panel rkm-card rkm-card-elevated" aria-labelledby="serginho-panel-title">
+          <div className="home-page__panel-header">
+            <div className="home-page__identity">
+              <img
+                src="/avatars/serginho.png"
+                alt="Avatar do Serginho IA"
+                width={72}
+                height={72}
+                loading="lazy"
+                decoding="async"
+                className="home-page__avatar"
+              />
+              <div>
+                <h2 id="serginho-panel-title" className="home-page__panel-title">
+                  Serginho IA
+                </h2>
+                <p className="home-page__role">Orquestrador central</p>
+              </div>
+            </div>
+          </div>
+          <p className="home-page__body">
+            Orquestrador central da plataforma. Coordena planejamento, construção de
+            artefatos, especialistas de domínio e validações conforme a necessidade
+            de cada projeto.
+          </p>
+        </section>
+
+        <section className="home-page__panel home-page__panel--info rkm-card" aria-labelledby="about-title">
+          <div className="home-page__info-header">
+            <div className="home-page__info-icon" aria-hidden>
+              🤖
+            </div>
+            <div>
+              <p className="home-page__section-kicker">Identidade do produto</p>
+              <h2 id="about-title" className="home-page__panel-title">
+                Sobre o Serginho IA
+              </h2>
+            </div>
+          </div>
+          <p className="home-page__body">
+            Serginho IA é uma solução da{" "}
+            <strong>RKMMAX INFINITY MATRIX STUDY</strong> para transformar ideias
+            em artefatos digitais estruturados e verificáveis, com orquestração
+            central, revisão humana, especialistas de domínio e validação de
+            conformidade.
+          </p>
+        </section>
+      </div>
+
       <section className="home-page__capabilities" aria-labelledby="capabilities-title">
         <div className="home-page__capabilities-header">
           <p className="home-page__section-kicker">Quatro capacidades integradas</p>
