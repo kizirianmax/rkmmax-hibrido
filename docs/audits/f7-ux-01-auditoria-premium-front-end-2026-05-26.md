@@ -31,7 +31,7 @@ Observação: `Footer` existe em código, mas não está montado no `App.jsx`.
 
 ## 3) Problemas encontrados por tela (objetivos e verificáveis)
 
-## `/` (Home)
+### Home (`/`)
 - **Excesso de estilo inline** em vez de sistema de componentes/tokens reutilizáveis.
 - Bloco principal com CTAs empilhados em coluna (desktop), com sensação de layout mobile expandido.
 - Hierarquia visual com muitas cores/gradientes simultâneos, sem foco claro de ação primária.
@@ -39,55 +39,55 @@ Observação: `Footer` existe em código, mas não está montado no `App.jsx`.
 
 Prioridade: **P1**
 
-## `/startup`
+### Startup (`/startup`)
 - Melhor estrutura textual/institucional, mas ainda com estética “documento + cards simples”, abaixo de padrão premium enterprise.
 - Escala tipográfica conservadora e pouca variação de peso/ritmo para destacar mensagem executiva.
 - Cards e tabela com pouca profundidade visual (densidade informativa alta, acabamento mediano).
 
 Prioridade: **P1**
 
-## `/demo`
+### Demo (`/demo`)
 - É uma das telas mais maduras visualmente, porém ainda há densidade alta de informação nos cards.
 - Em desktop, o volume de texto por card pode reduzir escaneabilidade executiva rápida.
 - Estados interativos estão presentes, mas sem padronização com outras rotas.
 
 Prioridade: **P2**
 
-## `/demo-autoplay`
+### Demo Autoplay (`/demo-autoplay`)
 - Boa coerência com `/demo`, mas mantém tipografia e espaçamento mais compactos que o ideal para “premium presentation mode”.
 - Controles funcionais, porém visualmente utilitários (mais “ferramenta interna” que “apresentação enterprise”).
 
 Prioridade: **P2**
 
-## `/serginho`
+### Serginho (`/serginho`)
 - Layout `position: fixed` em tela cheia com linguagem de app mobile/chat.
 - Elementos com aparência informal (emojis e múltiplos badges compactos), reduzindo tom institucional.
 - Densidade visual alta na base (muitos botões de ação), com hierarquia fraca entre ações principais e secundárias.
 
 Prioridade: **P0**
 
-## `/hybrid`
+### Hybrid (`/hybrid`)
 - Forte viés de console/tooling técnico (bom para operação, fraco para percepção premium externa).
 - Header e painéis densos, com grande volume de informações simultâneas.
 - Paleta e microdetalhes destoam de outras telas (inconsistência de identidade visual).
 
 Prioridade: **P0**
 
-## `/specialists`
+### Specialists (`/specialists`)
 - Página 100% com inline styles, sem sistema visual reutilizável.
 - Escalas pequenas (chips, botões, textos) em desktop, reforçando sensação mobile.
 - Cards com aparência genérica (sombras/raios/tamanhos pouco refinados para padrão premium).
 
 Prioridade: **P0**
 
-## `/login`
+### Login (`/login`)
 - Uso de classes utilitárias estilo Tailwind (`flex`, `bg-gray-900`, etc.) sem evidência de Tailwind no stack atual, gerando risco de visual inconsistente/não aplicado conforme esperado.
 - Layout e linguagem visual não seguem o mesmo padrão das demais telas-chave.
 - Percepção de tela provisória para etapa crítica do funil (auth).
 
 Prioridade: **P0**
 
-## Navegação/header/footer/global
+### Navegação, header, footer e layout global
 - Header com estilo muito básico para posicionamento premium.
 - `index.css` mistura reset global e estilos de navegação genéricos; falta camada de design system.
 - `Footer` estilizado existe, mas não está integrado ao layout principal.
@@ -194,7 +194,7 @@ Mitigação: evolução faseada (tokens → layout base → componentes → poli
 
 ---
 
-## 10) Critério de sucesso para front-end premium (mensurável)
+## 10) Critérios de sucesso para front-end premium (mensuráveis)
 
 1. **Consistência**: mesmas regras de tipografia, cores, raios, sombras e espaçamento em todas as telas alvo.
 2. **Hierarquia**: cada tela com CTA primária clara em até 3 segundos de leitura.
