@@ -9,6 +9,21 @@ Diagnóstico honesto:
 - **Gargalo principal**: ausência de linguagem visual unificada (tokens, escala tipográfica, grid, estados interativos e padrão de componentes).
 - **Impacto externo**: pode transmitir menor robustez comercial do que a robustez real de engenharia.
 
+### 1.1) Por que o front-end parece menos profissional que a arquitetura atual
+
+1. **Maturidade técnica > maturidade visual**: backend e governança evoluíram por fases auditáveis; o front-end ainda mistura padrões antigos e novos.
+2. **Baixa sistematização de design**: prevalência de estilos inline e ausência de tokens visuais globais consolidados.
+3. **Inconsistência entre jornadas críticas**: landing, chat, builder e auth não compartilham a mesma linguagem de produto enterprise.
+4. **Densidade e hierarquia irregulares**: telas com muita informação sem ritmo tipográfico e de espaçamento uniforme para leitura executiva.
+5. **Percepção de “ferramenta técnica” em vez de “produto SaaS premium”** em rotas centrais de valor (`/serginho`, `/hybrid`, `/specialists`, `/login`).
+
+### 1.2) Critério de objetividade da auditoria (fato verificável vs juízo de percepção)
+
+| Tipo | Definição aplicada nesta auditoria | Exemplo |
+|---|---|---|
+| **Fato verificável** | Algo observável em arquivo/estrutura/estilo existente, sem interpretação estética livre. | Presença de estilos inline em `Home.jsx` e `Specialists.jsx`; `Footer` existente, porém não montado no `App.jsx`; uso de classes utilitárias em `Auth.jsx` sem stack Tailwind declarada. |
+| **Juízo de percepção controlado** | Avaliação de impacto visual com base em heurísticas de SaaS/IA enterprise, sempre ancorada em fatos verificáveis. | “Aparência mobile improvisada em desktop” ancorada em escalas compactas, CTAs empilhados e densidade de elementos em telas críticas. |
+
 ---
 
 ## 2) Telas auditadas (somente leitura)
@@ -112,6 +127,17 @@ Prioridade: **P0**
 1. Ajuste fino de densidade e escaneabilidade em `/demo` e `/demo-autoplay`.
 2. Microinterações e padronização final de componentes de apoio.
 
+### Matriz de decisão (impacto na percepção premium x risco de regressão)
+
+| Frente | Impacto percebido | Risco de regressão funcional | Prioridade |
+|---|---|---|---|
+| Tokens visuais globais + estados de interação | Muito alto | Baixo (quando documental/estilístico) | **P0** |
+| Header/layout base cross-screen | Alto | Baixo/Médio | **P0** |
+| Refino visual `/serginho` e `/hybrid` | Muito alto | Médio (alta sensibilidade de fluxo) | **P0** com rollout controlado |
+| Refino visual `/specialists` e `/login` | Alto | Baixo/Médio | **P0** |
+| Refino Home + `/startup` | Médio/Alto | Baixo | **P1** |
+| Polimento `/demo` + `/demo-autoplay` | Médio | Baixo | **P2** |
+
 ---
 
 ## 5) Comparação conceitual com padrão SaaS/IA moderno (sem cópia de marca)
@@ -156,6 +182,10 @@ Gap atual do RKMMAX:
    - Garantir contraste AA em textos e botões críticos.
    - Garantir `:focus-visible` consistente para teclado.
 
+7. **Identidade própria RKMMAX (sem cópia de terceiros)**
+   - Manter linguagem própria de marca e conteúdo; usar benchmarks apenas como heurística de qualidade.
+   - Evitar “clonar estética” de produtos conhecidos; priorizar coerência interna entre as rotas do próprio RKMMAX.
+
 ---
 
 ## 7) Riscos de mexer demais agora
@@ -166,6 +196,8 @@ Gap atual do RKMMAX:
 - Perda de consistência temporária se ajustes forem feitos tela a tela sem base comum.
 
 Mitigação: evolução faseada (tokens → layout base → componentes → polimento), com PRs pequenos e reversíveis.
+
+Guardrail adicional: cada etapa deve preservar contrato funcional das rotas críticas e ser validada com `lint/build/test` antes de avançar para a próxima fase.
 
 ---
 

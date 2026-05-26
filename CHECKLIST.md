@@ -1,3 +1,16 @@
+## 2026-05-26 — docs(audit): complemento sênior da F7-UX-01 (precisão e priorização visual)
+
+| Item | Detalhe |
+|------|---------|
+| **Título do PR** | `docs(audit): complemento sênior da F7-UX-01 (precisão e priorização visual)` |
+| **Identificação** | **Fase 7 — UI/UX (F7-UX-01 complemento documental)** |
+| **O que mudou** | Refino documental da auditoria `docs/audits/f7-ux-01-auditoria-premium-front-end-2026-05-26.md` com: (1) explicitação objetiva do gap entre maturidade técnica e maturidade visual; (2) critério formal de distinção entre fato verificável e juízo de percepção; (3) matriz impacto x risco para priorização sem alterar runtime; (4) reforço de guardrails de segurança, acessibilidade, consistência e identidade própria sem cópia de terceiros. |
+| **Link da auditoria** | [`docs/audits/f7-ux-01-auditoria-premium-front-end-2026-05-26.md`](docs/audits/f7-ux-01-auditoria-premium-front-end-2026-05-26.md) |
+| **Escopo e segurança** | PR exclusivamente documental/checklist. Nenhum CSS funcional, componente, endpoint, runtime, Serginho, Construtor runtime, Especialistas, ABNT, Auth/SaaS/Payments ou providers/modelos/prompts foi alterado. |
+| **Arquivos alterados** | `docs/audits/f7-ux-01-auditoria-premium-front-end-2026-05-26.md`, `CHECKLIST.md` |
+| **Validação executada** | `npm run lint` — **PASS** (0 errors, 258 warnings pré-existentes); `npm run build` — **PASS**; `npm test -- --runInBand` — **PASS** (66 suítes, 2455 testes). |
+| **Rollback** | `git revert <commit-sha>` |
+
 ## 2026-05-26 — docs(audit): F7-UX-01 auditoria premium de interface do front-end
 
 | Item | Detalhe |
