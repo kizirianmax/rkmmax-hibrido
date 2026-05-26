@@ -154,7 +154,7 @@ npm install
 cp .env.example .env
 ```
 
-Use `.env.example` as the single source of truth for all variables and required keys.
+Use [.env.example](.env.example) as the single source of truth for all variables. Mandatory keys are listed in the `🔴 CRÍTICAS` section.
 
 ### 3. Run locally
 
