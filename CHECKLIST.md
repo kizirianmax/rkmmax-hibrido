@@ -1,3 +1,16 @@
+## 2026-05-26 — docs(governance): F6-GOV-02 mitigadores mínimos de maturidade operacional
+
+| Item | Detalhe |
+|------|---------|
+| **Título do PR** | `docs(governance): F6-GOV-02 mitigadores mínimos de maturidade operacional` |
+| **Identificação** | **Fase 6 — Governança Documental (F6-GOV-02)** |
+| **Escopo** | Mitigadores mínimos e verificáveis de governança operacional: criação de `.github/CODEOWNERS`; criação de `docs/RELEASE_POLICY.md`; registro de autoria assistida por IA no `CONTRIBUTING.md`; atualização do índice `docs/README.md`. |
+| **Mitigadores adicionados** | (1) `CODEOWNERS` mínimo e honesto com owner único (`* @kizirianmax`); (2) política simples de release/tagging semântico com exemplo `v6.0.0`; (3) recomendação explícita de tag antes de demos/bancas; (4) release notes manuais; (5) rollback documental com `git revert` e referência a tags; (6) política de autoria assistida por IA com revisão/merge final do owner e CI verde obrigatório. |
+| **Escopo e segurança** | PR exclusivamente documental. Nenhum código funcional, runtime, endpoint, provider/modelo/prompt foi alterado. Serginho, Construtor runtime, Especialistas, ABNT e camada Auth/SaaS/Payments permanecem inalterados. |
+| **Arquivos alterados** | `.github/CODEOWNERS` (novo), `docs/RELEASE_POLICY.md` (novo), `CONTRIBUTING.md`, `docs/README.md`, `CHECKLIST.md` |
+| **Validação executada** | `npm run lint`, `npm run build`, `npm test -- --runInBand` |
+| **Rollback** | `git revert <commit-sha>` |
+
 ## 2026-05-26 — docs(governance): F6-GOV-01 auditoria de governança real do repositório
 
 | Item | Detalhe |
