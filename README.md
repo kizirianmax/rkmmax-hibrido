@@ -7,7 +7,7 @@
 
 RKMMAX Híbrido is an AI agent orchestration system with a React frontend and Vercel serverless backend. The orchestrator (Serginho) is sovereign and routes requests across a multi-provider setup currently in stabilization — Groq and Gemini are both active in the codebase, with provider priority defined by `src/config/modelPriority.js`.
 
-> **Development policy:** This is an individual project by [@kizirianmax](https://github.com/kizirianmax). All merges to `main` require a passing CI run. See [DEVELOPMENT_GUIDELINES.md](DEVELOPMENT_GUIDELINES.md) for details.
+> **Development policy:** This is an individual project by [@kizirianmax](https://github.com/kizirianmax). All merges to `main` require a passing CI run. See [docs/DEVELOPMENT_GUIDELINES.md](docs/DEVELOPMENT_GUIDELINES.md) for details.
 
 ---
 
@@ -152,15 +152,9 @@ npm install
 
 ```bash
 cp .env.example .env
-# Minimum required keys:
-# GROQ_API_KEY           — Groq provider key (required; active provider)
-# GEMINI_API_KEY         — Gemini provider key (active provider, multi-provider stabilization)
-# REACT_APP_SUPABASE_URL & REACT_APP_SUPABASE_ANON_KEY
-# SUPABASE_SERVICE_ROLE_KEY
-# STRIPE_SECRET_KEY & STRIPE_WEBHOOK_SECRET
-# GITHUB_OAUTH_CLIENT_ID & GITHUB_OAUTH_CLIENT_SECRET
-# RESEND_API_KEY
 ```
+
+Use `.env.example` as the single source of truth for all variables and required keys.
 
 ### 3. Run locally
 
@@ -175,16 +169,7 @@ npm i -g vercel
 vercel dev                 # Runs frontend + API functions together
 ```
 
-### 4. Run tests
-
-```bash
-npm test                   # Run all tests
-npm run test:coverage      # Run tests with coverage report
-npm test -- --watch        # Watch mode
-npm test -- circuit        # Run a specific suite
-```
-
-### 5. Build & deploy
+### 4. Build & deploy
 
 ```bash
 npm run build              # Production build (Vite)
@@ -225,35 +210,14 @@ RKMMAX Híbrido is designed for Vercel. All serverless functions in `api/` are a
 ### Environment variables (Vercel dashboard)
 
 ```bash
-# AI — mandatory
-GROQ_API_KEY=gsk_...
-GEMINI_API_KEY=...
-# Multi-provider (in stabilization)
-
-# Database
-REACT_APP_SUPABASE_URL=https://...
-REACT_APP_SUPABASE_ANON_KEY=eyJ...
-SUPABASE_SERVICE_ROLE_KEY=eyJ...
-
-# Payments
-STRIPE_SECRET_KEY_RKMMAX=sk_...
-STRIPE_WEBHOOK_SECRET=whsec_...
-
-# Auth
-GITHUB_OAUTH_CLIENT_ID=...
-GITHUB_OAUTH_CLIENT_SECRET=...
+# Production-specific examples
 GITHUB_OAUTH_REDIRECT_URI=https://your-domain/api/auth/github/callback
-
-# Email
-RESEND_API_KEY=re_...
 FROM_EMAIL=noreply@your-domain
-
-# Optional
 REACT_APP_SENTRY_DSN=...
 REACT_APP_POSTHOG_KEY=...
 ```
 
-Full variable reference is in `.env.example`. See [docs/deployment.md](docs/deployment.md) for a step-by-step guide.
+All variables are documented in [.env.example](.env.example). See [docs/deployment.md](docs/deployment.md) for a step-by-step guide.
 
 **Production domain:** https://kizirianmax.site  
 **Health check:** `curl https://kizirianmax.site/api/health` — returns `{"status":"ok",...}` when the system is up
@@ -306,7 +270,7 @@ rkmmax-hibrido/
 - [docs/deployment.md](docs/deployment.md) — Deployment guide
 - [docs/AGENTS.md](docs/AGENTS.md) — Agent system details
 - [docs/OBSERVABILITY.md](docs/OBSERVABILITY.md) — Monitoring and logging
-- [DEVELOPMENT_GUIDELINES.md](DEVELOPMENT_GUIDELINES.md) — Governance and contribution rules
+- [docs/DEVELOPMENT_GUIDELINES.md](docs/DEVELOPMENT_GUIDELINES.md) — Governance and contribution rules
 
 ---
 
@@ -314,7 +278,7 @@ rkmmax-hibrido/
 
 - **Multi-provider runtime (in stabilization):** Groq and Gemini are both active AI providers at runtime. Provider priority is defined as the single source of truth in `src/config/modelPriority.js`. Serginho remains the sovereign orchestrator — all provider calls flow through it. Consolidation and coherence review of provider usage across layers (Híbrido/Construtor in particular) is pending and tracked as an open observation.
 - **CI-green merges only:** No PR is merged to `main` without a passing CI run. This is a hard rule enforced by convention; branch protection rules require GitHub Pro or a public repository and are not currently active on this private repository.
-- **Single-owner governance:** This is an individual project. External contributions are welcome but must pass all tests and comply with [DEVELOPMENT_GUIDELINES.md](DEVELOPMENT_GUIDELINES.md).
+- **Single-owner governance:** This is an individual project. External contributions are welcome but must pass all tests and comply with [docs/DEVELOPMENT_GUIDELINES.md](docs/DEVELOPMENT_GUIDELINES.md).
 - **Serverless-first resilience:** The circuit breaker pattern is the primary mechanism for handling downstream failures within Vercel's timeout constraints.
 - **Legacy repo consolidation:** The architecture is fully consolidated in `rkmmax-hibrido`. Legacy repositories (`kizirian-max-site`, `Rkmmax-app`, `kizi-agent`, `rkmmax-specialists`) have been audited and are no longer active structural sources. `kizi-agent` was an original prototype; `rkmmax-specialists` was a standalone dataset snapshot (49 specialists, superseded by the 47-specialist canonical set in `src/config/specialists.js`). Both are formally classified as discontinued, with no structural dependency in the current system.
 - **Active parallel deployment — ABNT layer:** The repository `formatador-abnt` (deployed at `abnt.kizirianmax.site`) is **not** classified as discontinued. It is an independent, actively deployed standalone version of the ABNT conformance layer, running its own stack (Express + Vite + TypeScript). It retains two features not yet fully ported to `rkmmax-hibrido`: (1) a reference validator with ABNT compliance scoring, and (2) project-based organisation of the reference library. It should be preserved until those features are either absorbed into the main codebase or explicitly deprecated.
