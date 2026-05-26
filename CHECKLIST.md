@@ -1,3 +1,23 @@
+## 2026-05-26 — docs(governance): F6-GOV-01 auditoria de governança real do repositório
+
+| Item | Detalhe |
+|------|---------|
+| **Título do PR** | `docs(governance): F6-GOV-01 auditoria de governança real do repositório` |
+| **Identificação** | **Fase 6 — Governança Documental (F6-GOV-01)** |
+| **Data** | 2026-05-26 |
+| **Escopo** | Auditoria de governança real: o que já existe, o que ainda é limitação, riscos para banca/incubadora, mitigadores atuais e recomendados, o que não deve ser prometido. |
+| **O que foi auditado** | `CHECKLIST.md`, `README.md`, `docs/DEVELOPMENT_GUIDELINES.md`, `CONTRIBUTING.md`, `SECURITY.md`, `docs/BRANCH_PROTECTION_GUIDE.md`, `docs/MAINTENANCE.md`, `.github/workflows/test.yml`, `.github/workflows/coverage.yml`, histórico de PRs F4/F5/F6. |
+| **O que mudou** | Criação de `docs/audits/f6-gov-01-governanca-real-repositorio-2026-05-26.md` com auditoria honesta e verificável da governança real do repositório. |
+| **Governança documentada** | CI ativo (test.yml + coverage.yml); CHECKLIST.md como trilha append-only; política de merge documentada (CI verde obrigatório); SECURITY.md com canal e prazos; guia de branch protection instrucional; CONTRIBUTING.md e templates de PR/issue; histórico de PRs pequenos e reversíveis. |
+| **Limitações declaradas** | Single-owner (@kizirianmax único mantenedor real); PRs com autoria assistida por Copilot/agent revisados pelo owner; branch protection de status incerto para repositório privado; ausência de revisor externo independente; MAINTENANCE.md stub; sem CODEOWNERS; sem releases versionados formais. |
+| **Status** | ✅ Documentado / sem alteração de runtime |
+| **Escopo e segurança** | PR exclusivamente documental. Nenhum código funcional, runtime, rota, componente, endpoint, dependência, provider/modelo/prompt foi alterado. Serginho, Construtor, Especialistas, ABNT, Auth/SaaS/Payments inalterados. Nenhuma regra de branch protection criada ou fingida. Nenhuma revisão externa fingida. |
+| **Arquivos alterados** | `docs/audits/f6-gov-01-governanca-real-repositorio-2026-05-26.md` (novo), `CHECKLIST.md` |
+| **Link** | [`docs/audits/f6-gov-01-governanca-real-repositorio-2026-05-26.md`](docs/audits/f6-gov-01-governanca-real-repositorio-2026-05-26.md) |
+| **Validação executada** | `npm run lint` — **PASS** (0 errors, warnings pré-existentes); `npm run build` — **PASS**; `npm test -- --runInBand` — **PASS**. PR documental — risco funcional zero. |
+| **Rollback** | `git revert <commit-sha>` |
+| **Declaração de conclusão** | F6-GOV-01 concluído. Auditoria honesta de governança documentada sem overclaim e sem fingir estruturas que não existem. F6-GOV-02 **não** iniciado neste PR. |
+
 ## 2026-05-26 — docs(governance): F6-DOC-02 clareza executiva do README para banca/incubadora
 
 | Item | Detalhe |
