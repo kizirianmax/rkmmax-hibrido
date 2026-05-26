@@ -61,7 +61,8 @@ describe("Public pages premium UI adoption (static checks)", () => {
     const startupSource = readSource("src/pages/Projects.jsx");
     const startupCss = readSource("src/pages/Projects.css");
 
-    expect(startupSource).toContain('className="startup-demo-cta rkm-btn-primary"');
+    expect(startupSource).toContain('className="startup-demo-cta rkm-btn rkm-btn-primary"');
+    expect(startupSource).toContain('className="startup-demo-cta-secondary rkm-btn rkm-btn-secondary"');
     expect(startupSource).toContain("Serginho IA");
     expect(startupSource).toContain("RKMMAX INFINITY MATRIX STUDY");
     expect(startupSource).toContain('to="/demo"');

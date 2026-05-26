@@ -49,6 +49,25 @@ const CONTENT = {
           text: "Document validation and conformity guidance are integrated as governed product capabilities.",
         },
       ],
+      architecture: "Visible architecture layers",
+      architectureItems: [
+        {
+          badge: "Serginho IA",
+          text: "Sovereign orchestrator and central platform entry point.",
+        },
+        {
+          badge: "Hybrid/Builder",
+          text: "Generates, validates, previews, reviews, and exports digital artifacts without bypassing orchestration.",
+        },
+        {
+          badge: "Specialists",
+          text: "Domain specialists are used under Serginho IA coordination.",
+        },
+        {
+          badge: "ABNT",
+          text: "Document validation and conformity layer, without direct operational access on this page.",
+        },
+      ],
 
       business: "Digital business model",
       businessText:
@@ -88,9 +107,9 @@ const CONTENT = {
         ],
       ],
 
-      cloud: "Cloud infrastructure strategy",
+      cloud: "Security and Access",
       cloudText:
-        "Cloud infrastructure is treated as a secondary strategic layer to support secure scale, operational control, and future workflows. It does not replace the core product value proposition.",
+        "The main application may require login to protect internal data and workflows. This public page allows visitors to understand the product, founder, and project trajectory without exposing private systems, users, tokens, code, or sensitive infrastructure.",
 
       notice:
         "This public page presents product and institutional context without exposing private systems, tokens, user data, or sensitive infrastructure.",
@@ -141,6 +160,25 @@ const CONTENT = {
           text: "Validação documental e conformidade são tratadas como capacidades governadas do produto.",
         },
       ],
+      architecture: "Camadas visíveis de arquitetura",
+      architectureItems: [
+        {
+          badge: "Serginho IA",
+          text: "Orquestrador soberano e ponto central de entrada da plataforma.",
+        },
+        {
+          badge: "Híbrido/Construtor",
+          text: "Geração, validação, preview, revisão e exportação de artefatos digitais, sem bypass da orquestração.",
+        },
+        {
+          badge: "Especialistas",
+          text: "Especialistas de domínio utilizados sob coordenação do Serginho IA.",
+        },
+        {
+          badge: "ABNT",
+          text: "Camada de validação e conformidade documental, sem acesso operacional direto nesta página.",
+        },
+      ],
 
       business: "Modelo de negócio digital",
       businessText:
@@ -181,9 +219,9 @@ const CONTENT = {
         ],
       ],
 
-      cloud: "Estratégia de infraestrutura em nuvem",
+      cloud: "Segurança e Acesso",
       cloudText:
-        "A infraestrutura em nuvem é tratada como camada estratégica secundária para suportar escala segura, controle operacional e fluxos futuros. Ela não substitui a proposta de valor central do produto.",
+        "A aplicação principal pode exigir login para proteger dados e fluxos internos. Esta página pública permite conhecer o produto, o fundador e a trajetória do projeto sem expor sistemas privados, usuários, tokens, código ou infraestrutura sensível.",
 
       notice:
         "Esta página pública apresenta contexto de produto e institucional sem expor sistemas privados, tokens, dados de usuários ou infraestrutura sensível.",
@@ -217,14 +255,14 @@ export default function Projects() {
 
         <div className="startup-demo-cta-wrap">
           <Link
-            className="startup-demo-cta rkm-btn-primary"
+            className="startup-demo-cta rkm-btn rkm-btn-primary"
             to="/demo"
             aria-label={lang === "en" ? "Open public product demonstration" : "Abrir demonstração pública do produto"}
           >
             {c.demoCtaPrimary}
           </Link>
           <Link
-            className="startup-demo-cta-secondary rkm-btn-secondary"
+            className="startup-demo-cta-secondary rkm-btn rkm-btn-secondary"
             to="/demo-autoplay"
             aria-label={lang === "en" ? "Open guided autoplay demo" : "Abrir demo guiada em autoplay"}
           >
@@ -262,6 +300,18 @@ export default function Projects() {
             </article>
           ))}
         </div>
+      </section>
+
+      <section className="startup-section rkm-card">
+        <h2>{c.architecture}</h2>
+        <ul className="startup-arch-list">
+          {c.architectureItems.map((item, index) => (
+            <li key={index} className="startup-arch-item">
+              <span className="startup-arch-badge">{item.badge}</span>{" "}
+              <span>{item.text}</span>
+            </li>
+          ))}
+        </ul>
       </section>
 
       <section className="startup-section rkm-card">
