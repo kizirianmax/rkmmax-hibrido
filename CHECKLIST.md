@@ -1,3 +1,17 @@
+## 2026-05-26 — docs(audit): F7-UX-01 auditoria premium de interface do front-end
+
+| Item | Detalhe |
+|------|---------|
+| **Título do PR** | `docs(audit): F7-UX-01 auditoria premium de interface do front-end` |
+| **Identificação** | **Fase 7 — UI/UX (F7-UX-01)** |
+| **Escopo** | Auditoria visual premium, honesta e verificável das telas principais (`/`, `/startup`, `/demo`, `/demo-autoplay`, `/serginho`, `/hybrid`, `/specialists`, `/login`) e da navegação/layout global, sem alteração de runtime. |
+| **O que mudou** | Criação de `docs/audits/f7-ux-01-auditoria-premium-front-end-2026-05-26.md` com diagnóstico geral, problemas por tela, prioridades P0/P1/P2, recomendações visuais, riscos de regressão, sequência F7-UX-02+ e critérios mensuráveis de sucesso para front-end premium. |
+| **Link da auditoria** | [`docs/audits/f7-ux-01-auditoria-premium-front-end-2026-05-26.md`](docs/audits/f7-ux-01-auditoria-premium-front-end-2026-05-26.md) |
+| **Escopo e segurança** | PR exclusivamente documental/checklist. Nenhum código funcional, CSS de runtime, componentes, endpoints, providers/modelos/prompts, Serginho, Construtor runtime, Especialistas, ABNT ou Auth/SaaS/Payments foi alterado. |
+| **Arquivos alterados** | `docs/audits/f7-ux-01-auditoria-premium-front-end-2026-05-26.md` (novo), `CHECKLIST.md` |
+| **Validação executada** | `npm run lint` — **PASS** (0 errors, 258 warnings pré-existentes); `npm run build` — **PASS**; `npm test -- --runInBand` — **PASS** (66 suítes, 2455 testes). |
+| **Rollback** | `git revert <commit-sha>` |
+
 ## 2026-05-26 — docs(audit): encerramento formal da Fase 6 governança/documentação
 
 | Item | Detalhe |
