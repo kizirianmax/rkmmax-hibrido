@@ -13,7 +13,7 @@ Definir um processo mínimo, verificável e reversível para versionamento e pub
 
 - Usar tags semânticas simples no formato `vMAJOR.MINOR.PATCH`.
 - Exemplo: `v6.0.0`.
-- Recomenda-se criar a tag **antes** de demos, bancas e marcos formais para fixar uma versão de referência.
+- Recomenda-se criar a tag imediatamente após a validação final (CI verde) e antes do início de demos, bancas e marcos formais, para fixar uma versão de referência.
 
 ## Release notes
 

@@ -337,10 +337,11 @@ Brief description of changes
 
 ## AI-assisted Development
 
-- Pull requests podem ser gerados com suporte do GitHub Copilot coding agent.
+- Pull requests podem ser parcialmente ou integralmente gerados com suporte do GitHub Copilot coding agent.
 - A revisão final e o merge continuam sob responsabilidade do owner (`@kizirianmax`).
 - IA não substitui validação humana de código, segurança e aderência arquitetural.
 - CI verde continua obrigatório antes de merge.
+- PRs com falha em CI ou validação de segurança devem ser corrigidos ou descartados antes da revisão final.
 
 ## Reporting Bugs
 
