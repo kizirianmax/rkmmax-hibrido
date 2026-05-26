@@ -234,6 +234,9 @@ body {
 
 /* Botões base */
 .rkm-btn,
+.rkm-btn-primary,
+.rkm-btn-secondary,
+.rkm-btn-ghost,
 .rkm-btn-accent {
   display: inline-flex;
   align-items: center;
@@ -259,27 +262,22 @@ body {
     opacity var(--rkm-transition);
 }
 
-.rkm-btn:hover:not(:disabled):not([aria-disabled="true"]),
-.rkm-btn-accent:hover:not(:disabled):not([aria-disabled="true"]) {
+:is(.rkm-btn, .rkm-btn-primary, .rkm-btn-secondary, .rkm-btn-ghost, .rkm-btn-accent):hover:not(:disabled):not([aria-disabled="true"]) {
   box-shadow: var(--rkm-shadow-sm);
 }
 
-.rkm-btn:active:not(:disabled):not([aria-disabled="true"]),
-.rkm-btn-accent:active:not(:disabled):not([aria-disabled="true"]) {
+:is(.rkm-btn, .rkm-btn-primary, .rkm-btn-secondary, .rkm-btn-ghost, .rkm-btn-accent):active:not(:disabled):not([aria-disabled="true"]) {
   transform: translateY(1px);
 }
 
-.rkm-btn:focus-visible,
-.rkm-btn-accent:focus-visible {
+:is(.rkm-btn, .rkm-btn-primary, .rkm-btn-secondary, .rkm-btn-ghost, .rkm-btn-accent):focus-visible {
   outline: 2px solid var(--rkm-border-focus);
   outline-offset: 2px;
   box-shadow: 0 0 0 3px var(--rkm-accent-soft);
 }
 
-.rkm-btn:disabled,
-.rkm-btn[aria-disabled="true"],
-.rkm-btn-accent:disabled,
-.rkm-btn-accent[aria-disabled="true"] {
+:is(.rkm-btn, .rkm-btn-primary, .rkm-btn-secondary, .rkm-btn-ghost, .rkm-btn-accent):disabled,
+:is(.rkm-btn, .rkm-btn-primary, .rkm-btn-secondary, .rkm-btn-ghost, .rkm-btn-accent)[aria-disabled="true"] {
   opacity: 0.55;
   cursor: not-allowed;
   box-shadow: none;
