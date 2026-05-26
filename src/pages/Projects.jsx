@@ -1,5 +1,5 @@
 // src/pages/Projects.jsx
-import React, { useState } from "react";
+import { useState } from "react";
 import { Link } from "react-router-dom";
 import "./Projects.css";
 
@@ -124,18 +124,17 @@ export default function Projects() {
 
   return (
     <main className="startup-page">
-      {/* Language selector */}
       <div className="startup-lang-bar">
         <div className="startup-lang-buttons">
           <button
-            className={`startup-lang-btn${lang === "en" ? " active" : ""}`}
+            className={`startup-lang-btn rkm-btn rkm-btn-secondary${lang === "en" ? " active" : ""}`}
             onClick={() => setLang("en")}
             aria-pressed={lang === "en"}
           >
             🇺🇸 English
           </button>
           <button
-            className={`startup-lang-btn${lang === "pt" ? " active" : ""}`}
+            className={`startup-lang-btn rkm-btn rkm-btn-secondary${lang === "pt" ? " active" : ""}`}
             onClick={() => setLang("pt")}
             aria-pressed={lang === "pt"}
           >
@@ -144,7 +143,7 @@ export default function Projects() {
         </div>
         <div className="startup-demo-cta-wrap">
           <Link
-            className="startup-demo-cta"
+            className="startup-demo-cta rkm-btn rkm-btn-primary"
             to="/demo-autoplay"
             aria-label={
               lang === "en"
@@ -158,15 +157,13 @@ export default function Projects() {
         </div>
       </div>
 
-      {/* Hero */}
-      <section className="startup-hero">
+      <section className="startup-hero rkm-card rkm-card-elevated">
         <h1>RKMMAX INFINITY MATRIX STUDY / Serginho IA</h1>
         <p>{CONTENT[lang].heroSubtitle}</p>
       </section>
 
-      {/* Company Verification */}
-      <section className="startup-section">
-        <h2>{c.verify}</h2>
+      <section className="startup-section rkm-card" aria-labelledby="startup-verify-title">
+        <h2 id="startup-verify-title">{c.verify}</h2>
         <table className="startup-verify-table">
           <tbody>
             {c.verifyRows.map(([label, value], index) => (
@@ -199,42 +196,39 @@ export default function Projects() {
         </table>
       </section>
 
-      {/* Product Description */}
-      <section className="startup-section">
+      <section className="startup-section rkm-card">
         <h2>{c.product}</h2>
         <p className="startup-body">{c.productText}</p>
       </section>
 
-      {/* Architecture */}
-      <section className="startup-section">
+      <section className="startup-section rkm-card">
         <h2>{c.arch}</h2>
         <ul className="startup-arch-list">
           {c.archItems.map((item, index) => (
             <li key={index} className="startup-arch-item">
-              <strong className="startup-arch-badge">{item.badge}</strong>{'\u00A0\u2014\u00A0'}{item.text}
+              <strong className="startup-arch-badge">{item.badge}</strong>
+              {"\u00A0\u2014\u00A0"}
+              {item.text}
             </li>
           ))}
         </ul>
       </section>
 
-      {/* Current Stage */}
-      <section className="startup-section">
+      <section className="startup-section rkm-card">
         <h2>{c.stage}</h2>
         <p className="startup-body">{c.stageText}</p>
       </section>
 
-      {/* Security and Access */}
-      <section className="startup-section">
+      <section className="startup-section rkm-card">
         <h2>{c.security}</h2>
         <p className="startup-body">{c.securityText}</p>
       </section>
 
-      {/* External Validation */}
-      <section className="startup-section">
+      <section className="startup-section rkm-card">
         <h2>{c.validation}</h2>
         <div className="startup-validation-grid">
           {c.validationCards.map((card, index) => (
-            <div key={index} className="startup-validation-card">
+            <div key={index} className="startup-validation-card rkm-card">
               <div className="startup-validation-card-title">{card.title}</div>
               <div className="startup-validation-card-status">{card.status}</div>
             </div>
@@ -242,22 +236,19 @@ export default function Projects() {
         </div>
       </section>
 
-      {/* Business Model */}
-      <section className="startup-section">
+      <section className="startup-section rkm-card">
         <h2>{c.business}</h2>
         <p className="startup-body">{c.businessText}</p>
       </section>
 
-      {/* Cloud Infrastructure */}
-      <section className="startup-section">
+      <section className="startup-section rkm-card">
         <h2>{c.cloud}</h2>
         <p className="startup-body">{c.cloudText}</p>
       </section>
 
-      {/* Contact */}
-      <section className="startup-section">
+      <section className="startup-section rkm-card">
         <h2>{c.contact}</h2>
-        <div className="startup-contact-box">
+        <div className="startup-contact-box rkm-card rkm-card-elevated">
           <p className="startup-contact-label">{c.contactLabel}</p>
           <p>
             <strong>Roberto Kizirian Max</strong>

@@ -1,6 +1,6 @@
-// src/pages/Auth.jsx
-import React, { useState, useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { supabase } from "../lib/supabaseClient.js";
+import "./Auth.css";
 
 const COOLDOWN_SECONDS = 60;
 const RATE_LIMIT_COOLDOWN_SECONDS = 300;
@@ -40,7 +40,6 @@ export default function Auth() {
   const [cooldown, setCooldown] = useState(0);
   const intervalRef = useRef(null);
 
-  // Restaura cooldown do localStorage ao digitar o e-mail
   useEffect(() => {
     if (!email) {
       setCooldown(0);
@@ -50,7 +49,6 @@ export default function Auth() {
     setCooldown(remaining);
   }, [email]);
 
-  // Inicia contagem regressiva quando cooldown > 0
   useEffect(() => {
     if (cooldown <= 0) {
       clearInterval(intervalRef.current);
@@ -104,33 +102,48 @@ export default function Auth() {
   const isDisabled = loading || cooldown > 0;
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-900 text-white">
-      <div className="bg-gray-800 p-6 rounded-2xl shadow-md w-96">
-        <h2 className="text-xl font-bold mb-4 text-center">Login no RKMMax</h2>
-        <form onSubmit={handleLogin} className="space-y-4">
+    <main className="auth-page" role="main" aria-label="Login no RKMMAX">
+      <section className="auth-page__panel rkm-card rkm-card-elevated" aria-labelledby="auth-title">
+        <div className="auth-page__intro">
+          <span className="auth-page__eyebrow">Acesso seguro</span>
+          <h1 id="auth-title" className="auth-page__title">
+            Login no RKMMax
+          </h1>
+          <p className="auth-page__subtitle">
+            Digite seu e-mail para receber um link mágico de acesso. Nenhuma senha é armazenada no
+            front-end.
+          </p>
+        </div>
+
+        <form onSubmit={handleLogin} className="auth-form">
+          <label className="auth-form__label" htmlFor="auth-email">
+            E-mail
+          </label>
           <input
+            id="auth-email"
             type="email"
             placeholder="Digite seu e-mail"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required
             disabled={loading}
-            className="w-full px-3 py-2 rounded-lg bg-gray-700 border border-gray-600 focus:outline-none focus:ring focus:ring-indigo-500"
+            className="auth-form__input rkm-input"
           />
-          <button
-            type="submit"
-            disabled={isDisabled}
-            className="w-full bg-indigo-600 hover:bg-indigo-500 px-3 py-2 rounded-lg font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
-          >
+          <button type="submit" disabled={isDisabled} className="auth-form__submit rkm-btn rkm-btn-primary">
             {loading
               ? "Enviando..."
               : cooldown > 0
-              ? `Aguarde ${cooldown}s para tentar novamente`
-              : "Entrar"}
+                ? `Aguarde ${cooldown}s para tentar novamente`
+                : "Entrar"}
           </button>
         </form>
-        {message && <p className="mt-4 text-center text-sm text-yellow-400">{message}</p>}
-      </div>
-    </div>
+
+        {message ? (
+          <p className={`auth-page__message${message.startsWith("Erro:") ? " auth-page__message--error" : ""}`}>
+            {message}
+          </p>
+        ) : null}
+      </section>
+    </main>
   );
 }

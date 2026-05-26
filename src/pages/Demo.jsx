@@ -1,4 +1,3 @@
-import React from "react";
 import { Link } from "react-router-dom";
 import { demoArtifacts } from "../data/demoArtifacts.js";
 import "./Demo.css";
@@ -16,17 +15,15 @@ export default function Demo() {
 
   return (
     <main className="demo-page">
-      <section className="demo-page__hero">
+      <section className="demo-page__hero rkm-card rkm-card-elevated">
         <h1 className="demo-page__title">Serginho IA — Construtor de artefatos digitais</h1>
         <p className="demo-page__subtitle">
           Esta vitrine pública apresenta exemplos estáticos do Construtor/Híbrido do Serginho IA,
           com foco em geração, validação, preview e empacotamento.
         </p>
-        <p className="demo-page__notice">
-          Exemplos demonstrativos do pipeline (não são dados de produção)
-        </p>
+        <p className="demo-page__notice">Exemplos demonstrativos do pipeline (não são dados de produção)</p>
         <Link
-          className="demo-page__autoplay-cta"
+          className="demo-page__autoplay-cta rkm-btn rkm-btn-primary"
           to="/demo-autoplay"
           aria-label="Assistir demo guiada do Serginho IA em modo automático ou manual"
         >
@@ -34,14 +31,14 @@ export default function Demo() {
         </Link>
       </section>
 
-      <section className="demo-page__section">
+      <section className="demo-page__section rkm-card">
         <h2 className="demo-page__section-title">Artefatos demonstrativos</h2>
         <p className="demo-page__notice">
           Referência rastreável do pipeline desta vitrine: docs/DEMO.md#pipeline-rastreavel-da-demo-f4-04
         </p>
         <div className="demo-page__grid">
           {artifactsWithStructure.map((artifact) => (
-            <article key={artifact.id} className="demo-card">
+            <article key={artifact.id} className="demo-card rkm-card rkm-card-elevated">
               <header className="demo-card__header">
                 <span className="demo-card__type">{artifact.category}</span>
                 <div className="demo-card__meta">
@@ -82,10 +79,13 @@ export default function Demo() {
 
               <div className="demo-card__footer">
                 <div className="demo-card__actions">
-                  <a className="demo-card__action" href={artifact.previewAnchor}>
+                  <a className="demo-card__action rkm-btn rkm-btn-primary" href={artifact.previewAnchor}>
                     Ver exemplo
                   </a>
-                  <a className="demo-card__action demo-card__action--secondary" href={artifact.structureAnchor}>
+                  <a
+                    className="demo-card__action demo-card__action--secondary rkm-btn rkm-btn-secondary"
+                    href={artifact.structureAnchor}
+                  >
                     Ver estrutura
                   </a>
                 </div>
@@ -95,7 +95,7 @@ export default function Demo() {
         </div>
       </section>
 
-      <section className="demo-page__section">
+      <section className="demo-page__section rkm-card">
         <h2 className="demo-page__section-title">Por que isso não é apenas um chat?</h2>
         <ul className="demo-page__list">
           <li>O Construtor entrega artefatos digitais estruturados, não apenas respostas textuais.</li>
@@ -104,7 +104,7 @@ export default function Demo() {
         </ul>
       </section>
 
-      <section className="demo-page__section">
+      <section className="demo-page__section rkm-card">
         <h2 className="demo-page__section-title">Como avaliar em 5 minutos</h2>
         <ol className="demo-page__list demo-page__list--ordered">
           <li>Compare os 5 tipos de artefatos e os problemas de negócio atendidos.</li>
@@ -115,14 +115,12 @@ export default function Demo() {
         </ol>
       </section>
 
-      <section className="demo-page__section">
+      <section className="demo-page__section rkm-card">
         <h2 className="demo-page__section-title">Previews estáticos</h2>
         {artifactsWithStructure.map((artifact) => (
-          <article key={`preview-${artifact.id}`} id={`preview-${artifact.id}`} className="demo-preview">
+          <article key={`preview-${artifact.id}`} id={`preview-${artifact.id}`} className="demo-preview rkm-card">
             <h3>{artifact.name}</h3>
-            <p>
-              Preview estático demonstrativo. Sem geração ao vivo e sem dados reais de produção.
-            </p>
+            <p>Preview estático demonstrativo. Sem geração ao vivo e sem dados reais de produção.</p>
             <div id={`structure-${artifact.id}`} className="demo-preview__structure">
               <strong>Estrutura sugerida:</strong>
               <ul>
@@ -135,15 +133,17 @@ export default function Demo() {
         ))}
       </section>
 
-      <footer className="demo-page__footer">
+      <footer className="demo-page__footer rkm-card rkm-card-elevated">
         <p>
           Todos os exemplos desta vitrine são demonstrativos do Construtor/Híbrido e foram
           publicados para avaliação rápida e segura.
         </p>
-        <a href="https://kizirianmax.site/startup" target="_blank" rel="noopener noreferrer">
+        <a className="rkm-btn rkm-btn-ghost" href="https://kizirianmax.site/startup" target="_blank" rel="noopener noreferrer">
           Conhecer a visão institucional
         </a>
-        <Link to="/hybrid">Acessar Construtor/Híbrido</Link>
+        <Link className="rkm-btn rkm-btn-secondary" to="/hybrid">
+          Acessar Construtor/Híbrido
+        </Link>
       </footer>
     </main>
   );

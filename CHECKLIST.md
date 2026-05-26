@@ -1,3 +1,18 @@
+## 2026-05-26 — feat(ui): F7-UX-05 refinamento premium das páginas públicas principais
+
+| Item | Detalhe |
+|------|---------|
+| **Título do PR** | `feat(ui): F7-UX-05 refinamento premium das páginas públicas principais` |
+| **Identificação** | **Fase 7 — UI/UX (F7-UX-05)** |
+| **Páginas refinadas** | `Home` (`/`), `Startup` (`/startup`), `Demo` (`/demo`) e `Login` (`/login`). |
+| **Componentes/tokens aplicados** | Aplicação direta de `.rkm-card`, `.rkm-card-elevated`, `.rkm-btn-*`, `.rkm-input` e tokens `--rkm-*` para hierarquia visual, spacing, containers, contraste, grids e CTAs sem alterar runtime. |
+| **Arquivos alterados** | `src/pages/Home.jsx`, `src/pages/Home.css` (novo), `src/pages/Projects.jsx`, `src/pages/Projects.css`, `src/pages/Demo.jsx`, `src/pages/Demo.css`, `src/pages/Auth.jsx`, `src/pages/Auth.css` (novo), `src/__tests__/public-pages-premium.test.js` (novo), `CHECKLIST.md` |
+| **O que NÃO foi alterado** | Runtime funcional, lógica de autenticação/magic link, endpoints, rotas, Serginho, Construtor/Híbrido runtime, Especialistas, ABNT, Auth/SaaS/Payments funcionalmente, providers/modelos/prompts e textos centrais das páginas públicas. |
+| **Validação executada** | `npm run lint` — **PASS** (`exit 0`, 251 warnings pré-existentes/gerais); `npm run build` — **PASS** (`vite v8.0.13`, `dist/assets/index-Cmg9pVtk.css` 76.11 kB gzip 14.05 kB, `dist/assets/index-CF73MCiD.js` 982.88 kB gzip 282.56 kB, `✓ built in 1.01s`); `npm test -- --runInBand` — **PASS** (67 suítes, 2459 testes); teste focado `npm test -- --runInBand src/__tests__/public-pages-premium.test.js` — **PASS** (4 testes). |
+| **Verificação visual** | Inspeção manual via Playwright em desktop/mobile nas rotas públicas alvo. URLs de referência fornecidas para o PR: [Home](https://github.com/user-attachments/assets/e958fd72-2b11-47d5-b658-bb341616ce1a) e [Login](https://github.com/user-attachments/assets/94e12bf5-35b7-415f-aee8-60c071f4ef17). |
+| **Riscos conhecidos** | A Home continua sujeita a overlays/popup já existentes do produto durante navegação real; variáveis externas ausentes no ambiente local geram logs informativos de Supabase/Sentry/PostHog em dev, mas não foram alteradas neste PR. |
+| **Rollback** | `git revert <commit-sha>` |
+
 ## 2026-05-26 — feat(css): F7-UX-04 componentes base premium (botões/cards/inputs/badges)
 
 | Item | Detalhe |
