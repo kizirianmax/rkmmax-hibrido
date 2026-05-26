@@ -1,44 +1,49 @@
 // src/components/Header.jsx
-import React from "react";
 import { Link, NavLink } from "react-router-dom";
 import { BRAND } from "../config/brand.js";
 import useOwner from "../hooks/useOwner.js";
+import "./Header.css";
 
 export default function Header() {
   const { isOwner } = useOwner();
 
   return (
-    <header
-      style={{
-        padding: "10px 16px",
-        borderBottom: "1px solid #eee",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "space-between",
-        flexWrap: "wrap",
-        gap: 12,
-      }}
-    >
-      <Link to="/" style={{ fontWeight: 800, textDecoration: "none", color: "#111" }}>
-        <span className="brand-full">{BRAND.lockup}</span>
-        <span className="brand-short">{BRAND.shortLockup}</span>
-      </Link>
+    <header className="app-header">
+      <div className="app-header__inner">
+        <Link to="/" className="app-header__brand" aria-label="Ir para a página inicial do RKMMAX">
+          <span className="brand-full">{BRAND.lockup}</span>
+          <span className="brand-short">{BRAND.shortLockup}</span>
+        </Link>
 
-      <nav className="nav" style={{ display: "flex", gap: 12, alignItems: "center" }}>
-        <NavLink to="/">Home</NavLink>
-        <NavLink to="/serginho">Serginho</NavLink>
-        <NavLink to="/hybrid" title="Sistema Híbrido Otimizado">
-          🤖 Híbrido
-        </NavLink>
-        <NavLink to="/specialists">Especialistas</NavLink>
-        <NavLink to="/startup">Startup</NavLink>
-        <NavLink to="/study">Study Lab</NavLink>
-        {isOwner && (
-          <NavLink to="/dashboard" title="Painel do administrador">
-            🛠️ Dashboard
+        <nav className="app-header__nav nav" aria-label="Navegação principal">
+          <NavLink to="/" className="app-header__link">
+            Home
           </NavLink>
-        )}
-      </nav>
+          <NavLink to="/serginho" className="app-header__link">
+            Serginho
+          </NavLink>
+          <NavLink to="/hybrid" className="app-header__link" title="Sistema Híbrido Otimizado">
+            🤖 Híbrido
+          </NavLink>
+          <NavLink to="/specialists" className="app-header__link">
+            Especialistas
+          </NavLink>
+          <NavLink to="/startup" className="app-header__link">
+            Startup
+          </NavLink>
+          <NavLink to="/study" className="app-header__link">
+            Study Lab
+          </NavLink>
+        </nav>
+
+        <div className="app-header__actions">
+          {isOwner && (
+            <NavLink to="/dashboard" className="app-header__link app-header__link--action" title="Painel do administrador">
+              🛠️ Dashboard
+            </NavLink>
+          )}
+        </div>
+      </div>
     </header>
   );
 }
