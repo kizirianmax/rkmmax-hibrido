@@ -1,7 +1,7 @@
 .footer {
   margin-top: var(--rkm-space-12);
   border-top: 1px solid var(--rkm-border);
-  background: linear-gradient(180deg, rgba(38, 51, 72, 0.24) 0%, rgba(15, 23, 42, 0.88) 100%);
+  background: var(--rkm-footer-gradient);
   color: var(--rkm-text);
   padding: var(--rkm-space-8) 0 var(--rkm-space-6);
 }

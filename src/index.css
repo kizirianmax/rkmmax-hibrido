@@ -27,11 +27,17 @@
   --rkm-accent-dark:     #0e7490; /* cyan-700 */
   --rkm-accent-soft:     rgba(6, 182, 212, 0.12); /* cyan suave para fundos */
   --rkm-accent-hover:    #22d3ee; /* cyan-400 — hover */
+  --rkm-nav-action-border: rgba(6, 182, 212, 0.28);
 
   /* ── Acento secundário (azul) ── */
   --rkm-blue:            #3b82f6; /* blue-500 */
   --rkm-blue-dark:       #1d4ed8; /* blue-700 */
   --rkm-blue-soft:       rgba(59, 130, 246, 0.12);
+  --rkm-nav-active-border: rgba(59, 130, 246, 0.35);
+
+  /* ── Gradientes e overlays ── */
+  --rkm-header-bg: rgba(15, 23, 42, 0.92);
+  --rkm-footer-gradient: linear-gradient(180deg, rgba(38, 51, 72, 0.24) 0%, rgba(15, 23, 42, 0.88) 100%);
 
   /* ── Status / feedback ── */
   --rkm-success:         #22c55e; /* green-500 */

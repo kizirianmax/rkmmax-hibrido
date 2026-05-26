@@ -3,7 +3,7 @@
   top: 0;
   z-index: var(--rkm-z-above);
   border-bottom: 1px solid var(--rkm-border);
-  background: rgba(15, 23, 42, 0.92);
+  background: var(--rkm-header-bg);
   backdrop-filter: blur(10px);
   box-shadow: var(--rkm-shadow-sm);
 }
@@ -68,7 +68,7 @@
 .app-header__link[aria-current="page"] {
   color: var(--rkm-text);
   background: var(--rkm-blue-soft);
-  border-color: rgba(59, 130, 246, 0.35);
+  border-color: var(--rkm-nav-active-border);
 }
 
 .app-header__link:focus-visible {
@@ -79,7 +79,7 @@
 .app-header__link--action {
   color: var(--rkm-accent);
   background: var(--rkm-accent-soft);
-  border-color: rgba(6, 182, 212, 0.28);
+  border-color: var(--rkm-nav-action-border);
 }
 
 .app-header__link--action:hover {
