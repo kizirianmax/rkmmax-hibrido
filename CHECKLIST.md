@@ -4,14 +4,14 @@
 |------|---------|
 | **Título do PR** | `feat(ui): F7-UX-03 header, navegação e layout global premium` |
 | **Identificação** | **Fase 7 — UI/UX (F7-UX-03)** |
-| **Arquivos alterados** | `src/components/Header.jsx`, `src/components/Header.css` (novo), `src/App.jsx`, `src/index.css`, `src/components/Footer.jsx`, `src/components/Footer.css`, `src/__tests__/layout-premium-shell.test.js` (novo), `CHECKLIST.md` |
+| **Arquivos alterados** | `src/components/Header.jsx`, `src/components/Header.css` (novo), `src/App.jsx`, `src/index.css`, `src/components/Footer.jsx`, `src/components/Footer.css`, `CHECKLIST.md` |
 | **Header entregue** | Header desktop-first com altura consistente, sticky, divisória/borda premium, sombra sutil e backdrop; logo, navegação principal e ações separados em áreas visuais claras. |
 | **Navegação entregue** | Hierarquia tipográfica refinada, espaçamento entre itens, estados `hover`/`focus`/`active` com tokens e foco visível por teclado (`:focus-visible`) sem alteração de rotas/comportamento funcional. |
 | **Layout global entregue** | Estrutura global em `App.jsx` com `app-shell`/`app-main`/`app-main__inner` para gutters e centralização consistentes; novos tokens de layout (`--rkm-layout-gutter`, `--rkm-container-max`) aplicados no escopo permitido. |
 | **Footer (integração segura)** | `Footer` integrado ao layout global e refinado visualmente com tokens (`cores`, `tipografia`, `borda`, `sombra`, `espaçamento`) sem alterar conteúdo funcional interno. |
 | **Tokens aplicados** | Uso amplo de `--rkm-*` em header/nav/layout/footer, substituindo hardcodes no escopo permitido e preservando responsividade mobile. |
 | **O que NÃO foi alterado** | Runtime funcional, endpoints, Serginho, Construtor/Híbrido runtime, Especialistas, ABNT, Auth/SaaS/Payments, providers/modelos/prompts, `Demo.jsx`/`Demo.css`. |
-| **Validação executada** | `npm run lint` — **PASS** (0 errors, 256 warnings pré-existentes/gerais); `npm run build` — **PASS**; `npm test -- --runInBand` — **PASS** (67 suítes, 2457 testes). Teste focado adicional: `npm test -- --runInBand src/__tests__/layout-premium-shell.test.js` — **PASS**. |
+| **Validação executada** | `npm run lint` — **PASS** (0 errors, 256 warnings pré-existentes/gerais); `npm run build` — **PASS**; `npm test -- --runInBand` — **PASS** (66 suítes, 2455 testes). |
 | **Rollback** | `git revert <commit-sha>` |
 
 ## 2026-05-26 — feat(css): F7-UX-02 design tokens globais premium
