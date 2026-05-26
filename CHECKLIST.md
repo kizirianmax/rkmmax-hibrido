@@ -1,3 +1,20 @@
+## 2026-05-26 — docs(governance): F6-GOV-03 baseline mínimo de release/tag para banca/incubadora
+
+| Item | Detalhe |
+|------|---------|
+| **Título do PR** | `docs(governance): F6-GOV-03 baseline mínimo de release/tag para banca/incubadora` |
+| **Identificação** | **Fase 6 — Governança Documental (F6-GOV-03)** |
+| **Escopo** | Definição documental de baseline mínimo e verificável de release/tag para banca/incubadora, sem criação de automações inexistentes e sem alteração de runtime. |
+| **O que mudou** | Criação de `docs/audits/f6-gov-03-release-baseline-banca-2026-05-26.md` com política mínima e honesta para baseline, tagging, release notes, limites explícitos e rollback. |
+| **Baseline definido** | Congelar referência verificável pré-banca com validação técnica (`lint`, `build`, `test`), checks de Actions verdes e operação Vercel (Preview/produção). |
+| **Política mínima de tagging** | Convenção `vMAJOR.MINOR.PATCH`, exemplo recomendado `v6.0.0`, criação manual de tag por owner único (single-owner). |
+| **Política mínima de release** | Fluxo: CI verde → revisão final do owner → squash merge → criação de tag → release notes manuais. |
+| **Limites explícitos** | Não afirmar branch protection enterprise inexistente, múltiplos revisores independentes, IA em tempo real na demo, `executeArtifact` habilitado ou automação de release inexistente. |
+| **Escopo e segurança** | PR exclusivamente documental. Nenhum código funcional, endpoint, provider/modelo/prompt, runtime, rota ou camada de SaaS/Auth/Payments foi alterado. |
+| **Arquivos alterados** | `docs/audits/f6-gov-03-release-baseline-banca-2026-05-26.md` (novo), `CHECKLIST.md` |
+| **Validação executada** | `npm run lint` — **PASS** (warnings pré-existentes); `npm run build` — **PASS**; `npm test -- --runInBand` — **PASS**. |
+| **Rollback** | `git revert <commit-sha>` |
+
 ## 2026-05-26 — docs(governance): F6-GOV-02 mitigadores mínimos de maturidade operacional
 
 | Item | Detalhe |
