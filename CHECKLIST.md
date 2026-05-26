@@ -1,3 +1,14 @@
+## 2026-05-26 — docs(governance): F6-DOC-01 auditoria de consistência e desduplicação do README/docs
+
+| Item | Detalhe |
+|------|---------|
+| **Título do PR** | `docs(governance): F6-DOC-01 auditoria de consistência e desduplicação do README/docs` |
+| **Identificação** | **Fase 6 — Governança Documental (F6-DOC-01)** |
+| **Escopo** | Auditoria e ajustes mínimos em `README.md`, `docs/README.md`, `docs/API.md`, `docs/api.md`, `docs/ARCHITECTURE.md`, `docs/architecture.md` e registro em `CHECKLIST.md`. |
+| **Decisões tomadas** | (1) `docs/api.md` definido como canônico e `docs/API.md` convertido em stub de compatibilidade; (2) `docs/architecture.md` definido como canônico e `docs/ARCHITECTURE.md` convertido em stub de compatibilidade; (3) `docs/README.md` reorganizado em seções únicas (**Visão Geral / Arquitetura / Operação / Governança / Histórico**) sem entradas duplicadas; (4) `README.md` desduplicado em variáveis de ambiente e comandos de testes (seção única de Testing). |
+| **Rastreabilidade** | Documentação de auditoria/governança preservada e acessível pelo índice (`docs/audits/`, `CHANGELOG.md`, `CHECKLIST.md`, `SECURITY.md`, `CONTRIBUTING.md`, `CODE_OF_CONDUCT.md`, `BRANCH_PROTECTION_GUIDE.md`, `MAINTENANCE.md`, `DEVELOPMENT_GUIDELINES.md`). |
+| **Rollback** | `git revert <commit-sha>` |
+
 ## 2026-05-25 — docs(audit): encerramento formal dos itens urgentes da Fase 5 (F5-01, F5-02, F5-03)
 
 | Item | Detalhe |
