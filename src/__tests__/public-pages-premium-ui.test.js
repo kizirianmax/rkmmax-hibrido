@@ -49,6 +49,8 @@ describe("Public pages premium UI adoption (static checks)", () => {
     // No operational selectors / bypass routes created
     expect(homeSource).not.toContain('href="/abnt"');
     expect(homeSource).not.toContain('href="/construtor"');
+    expect(homeSource).not.toContain('href="/hybrid"');
+    expect(homeSource).not.toContain('href="/specialists"');
   });
 
   test("Startup page applies premium cards and button foundations", () => {
