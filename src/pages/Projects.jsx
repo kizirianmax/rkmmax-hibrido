@@ -206,8 +206,7 @@ export default function Projects() {
         <ul className="startup-arch-list">
           {c.archItems.map((item, index) => (
             <li key={index} className="startup-arch-item">
-              <strong className="startup-arch-badge">{item.badge}</strong>
-              {"\u00A0\u2014\u00A0"}
+              <strong className="startup-arch-badge">{item.badge}</strong>{"\u00A0\u2014\u00A0"}
               {item.text}
             </li>
           ))}

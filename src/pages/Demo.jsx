@@ -82,10 +82,7 @@ export default function Demo() {
                   <a className="demo-card__action rkm-btn rkm-btn-primary" href={artifact.previewAnchor}>
                     Ver exemplo
                   </a>
-                  <a
-                    className="demo-card__action demo-card__action--secondary rkm-btn rkm-btn-secondary"
-                    href={artifact.structureAnchor}
-                  >
+                  <a className="demo-card__action demo-card__action--secondary rkm-btn rkm-btn-secondary" href={artifact.structureAnchor}>
                     Ver estrutura
                   </a>
                 </div>

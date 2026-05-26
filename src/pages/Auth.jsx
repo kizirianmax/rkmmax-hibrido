@@ -132,9 +132,7 @@ export default function Auth() {
           <button type="submit" disabled={isDisabled} className="auth-form__submit rkm-btn rkm-btn-primary">
             {loading
               ? "Enviando..."
-              : cooldown > 0
-                ? `Aguarde ${cooldown}s para tentar novamente`
-                : "Entrar"}
+              : cooldown > 0 ? `Aguarde ${cooldown}s para tentar novamente` : "Entrar"}
           </button>
         </form>
 

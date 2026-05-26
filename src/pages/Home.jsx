@@ -13,8 +13,8 @@ export default function Home() {
           </h1>
 
           <p className="home-page__subtitle">
-            <strong>Serginho + Especialistas.</strong> E, quando precisar, o <strong>Study Lab</strong>
-            {" "}(opcional) para estudo acelerado.
+            <strong>Serginho + Especialistas.</strong> E, quando precisar, o <strong>Study Lab</strong> (opcional)
+            para estudo acelerado.
           </p>
 
           <div className="home-page__hero-actions">
