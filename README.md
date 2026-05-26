@@ -299,7 +299,7 @@ Esta seção separa, sem inflação, o que já é verificável hoje do que ainda
 
 ### ✅ Pronto / verificável
 
-- Orquestrador soberano **Serginho** ativo — todas as chamadas de IA passam pelo orquestrador (sem bypass).
+- Orquestrador soberano **Serginho** ativo — ponto de entrada arquitetural para as chamadas de IA, sem bypass intencional do orquestrador.
 - Pipeline do **Construtor/Híbrido** end-to-end: `gerar → empacotar → validar → preview → revisar → aprovar → exportar` (endpoints `POST /api/ai`, `POST /api/artifact`, `POST /api/artifact-preview`, `PATCH /api/artifact-preview`).
 - Catálogo de **47 especialistas** com fonte única de verdade em `src/config/specialists.js`.
 - Camada **ABNT** (validação/conformidade) como camada separada e auditável.
@@ -354,7 +354,7 @@ Saúde do runtime em produção: `curl https://kizirianmax.site/api/health`.
 
 ### Garantias arquiteturais
 
-- **Serginho é soberano.** Toda chamada de IA passa pelo orquestrador — não há bypass nas camadas Construtor, Especialistas ou ABNT.
+- **Serginho é soberano por design.** O orquestrador é o ponto de entrada arquitetural para chamadas de IA — não há bypass intencional do Serginho nas camadas Construtor, Especialistas ou ABNT, e essa regra está documentada em [docs/architecture.md](docs/architecture.md) e nas diretrizes de desenvolvimento.
 - **Camadas separadas e auditáveis.** Construtor/Híbrido (geração/artefatos), Especialistas (domínio), ABNT (conformidade) e SaaS/Auth/Payments são camadas independentes — alterações em uma não afetam o runtime das demais.
 - **Fonte única de verdade** para especialistas (`src/config/specialists.js`) e prioridade de providers (`src/config/modelPriority.js`).
 - **Resiliência serverless** com circuit breaker (limite de 8 s e margem de 4 s dentro dos 12 s da Vercel), cache inteligente e validação de input/output.

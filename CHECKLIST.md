@@ -14,7 +14,7 @@
 | **Rollback** | `git revert <commit-sha>` |
 | **Declaração de conclusão** | F6-DOC-02 concluído. README mais legível para avaliadores em até 5 minutos, com proposta de valor, ICP e separação clara entre pronto / em estabilização / futuro. F6-DOC-03 **não** foi iniciado neste PR (escopo respeitado). |
 
-
+## 2026-05-26 — docs(governance): F6-DOC-01 auditoria de consistência e desduplicação do README/docs
 
 | Item | Detalhe |
 |------|---------|
