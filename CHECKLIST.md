@@ -1,4 +1,18 @@
-## 2026-05-26 — docs(audit): complemento sênior da F7-UX-01 (precisão e priorização visual)
+## 2026-05-26 — feat(css): F7-UX-02 design tokens globais premium
+
+| Item | Detalhe |
+|------|---------|
+| **Título do PR** | `feat(css): F7-UX-02 design tokens globais premium` |
+| **Identificação** | **Fase 7 — UI/UX (F7-UX-02)** |
+| **O que mudou** | Expansão de `src/index.css` com camada completa de design tokens CSS (`--rkm-*`) cobrindo: cores base, superfícies, texto, acento, bordas, radius, sombras, espaçamento (escala 4px), escala tipográfica, transições, z-index e estados de foco/hover. Variáveis legadas (`--brand`, `--text`, `--bg`) mantidas via alias para retrocompatibilidade. Aliases `--text-100`, `--text-200`, `--accent-400`, `--accent-500` adicionados para corrigir referências sem definição em `src/styles.css`. Classes utilitárias base `.rkm-surface`, `.rkm-surface-elevated`, `.rkm-btn-accent`, `.rkm-text-muted`, `.rkm-text-accent` adicionadas para uso progressivo nas próximas etapas. Regra `:focus-visible` global adicionada para acessibilidade de teclado. |
+| **Tokens criados** | `--rkm-bg`, `--rkm-surface`, `--rkm-surface-elevated`, `--rkm-border`, `--rkm-border-focus`, `--rkm-text`, `--rkm-text-muted`, `--rkm-text-subtle`, `--rkm-accent`, `--rkm-accent-dark`, `--rkm-accent-soft`, `--rkm-accent-hover`, `--rkm-blue`, `--rkm-blue-dark`, `--rkm-blue-soft`, `--rkm-success`, `--rkm-warning`, `--rkm-error`, `--rkm-info`, `--rkm-radius-sm/md/lg/xl/full`, `--rkm-shadow-sm/md/lg/accent`, `--rkm-space-1` a `--rkm-space-16`, `--rkm-font-sans`, `--rkm-font-mono`, escala `--rkm-font-size-*`, `--rkm-font-weight-*`, `--rkm-line-height-*`, `--rkm-transition-*`, `--rkm-z-*` |
+| **Arquivos alterados** | `src/index.css`, `CHECKLIST.md` |
+| **O que NÃO foi alterado** | Serginho, Construtor runtime, Especialistas, ABNT, Auth/SaaS/Payments, providers/modelos/prompts, componentes React, páginas específicas, Demo.jsx/Demo.css, endpoints, App.css, HybridAgent.css, styles.css (lógica). Nenhuma tela foi redesenhada. |
+| **Escopo e segurança** | Exclusivamente CSS global declarativo. Nenhuma lógica funcional alterada. |
+| **Validação executada** | `npm run lint` — **PASS**; `npm run build` — **PASS**; `npm test -- --runInBand` — **PASS**. |
+| **Rollback** | `git revert <commit-sha>` |
+
+
 
 | Item | Detalhe |
 |------|---------|
