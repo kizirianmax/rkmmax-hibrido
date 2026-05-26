@@ -332,7 +332,7 @@ Brief description of changes
 1. **Automated Checks**: CI/CD runs tests, linting, security scans
 2. **Code Review**: Maintainers review code quality and design
 3. **Feedback**: Address review comments
-4. **Approval**: At least one maintainer approval required
+4. **Approval**: Final review/approval performed by the repository owner before merge
 5. **Merge**: Squash and merge to `main`
 
 ## AI-assisted Development
