@@ -1,3 +1,18 @@
+## 2026-05-26 — feat(css): F7-UX-04 componentes base premium (botões/cards/inputs/badges)
+
+| Item | Detalhe |
+|------|---------|
+| **Título do PR** | `feat(css): F7-UX-04 componentes base premium (botões/cards/inputs/badges)` |
+| **Identificação** | **Fase 7 — UI/UX (F7-UX-04)** |
+| **Auditoria aplicada** | Mapeamento dos padrões atuais indicou estilos fragmentados de botão/card/input/badge em CSS de páginas/componentes e ausência de classes globais `rkm-*` para esses blocos base. |
+| **Componentes base criados** | `.rkm-btn`, `.rkm-btn-primary`, `.rkm-btn-secondary`, `.rkm-btn-ghost`, `.rkm-card`, `.rkm-card-elevated`, `.rkm-input`, `.rkm-badge`, `.rkm-badge-success`, `.rkm-badge-warning`, `.rkm-badge-error` (com retrocompatibilidade de `.rkm-btn-accent`). |
+| **Estados cobertos** | Botões: `hover`, `focus-visible`, `active`, `disabled`; Inputs: `hover`, `focus/focus-visible`, `disabled`; Badges: `focus-visible`; foco global acessível preservado. |
+| **Tokens aplicados** | Uso consistente de `--rkm-*` para cor, borda, radius, sombra, espaçamento, tipografia e transições (sem hardcode funcional novo). |
+| **Arquivos alterados** | `src/index.css`, `CHECKLIST.md` |
+| **O que NÃO foi alterado** | Lógica funcional, componentes React, páginas específicas, `Demo.jsx`/`Demo.css`, runtime do Serginho/Construtor/Híbrido, Especialistas, ABNT, Auth/SaaS/Payments, endpoints, providers/modelos/prompts. |
+| **Validação executada** | `npm run lint` — **PASS** (0 errors, 256 warnings pré-existentes); `npm run build` — **PASS**; `npm test -- --runInBand` — **PASS** (66 suítes, 2455 testes). |
+| **Rollback** | `git revert <commit-sha>` |
+
 ## 2026-05-26 — feat(ui): F7-UX-03 header, navegação e layout global premium
 
 | Item | Detalhe |
