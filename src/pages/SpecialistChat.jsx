@@ -123,7 +123,7 @@ export default function SpecialistChat() {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          ...(accessToken ? { "Authorization": `****** } : {}),
+          ...(accessToken ? { "Authorization": `Bearer ${accessToken}` } : {}),
         },
         body: JSON.stringify(requestBody),
       });
