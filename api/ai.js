@@ -596,7 +596,8 @@ export default async function handler(req, res) {
 
       const optimized = optimizeRequest(messages, systemPrompt);
 
-      if (optimized.cached) {
+      // Verificar cache (modo manual força execução no provider selecionado)
+      if (optimized.cached && !forceProvider) {
         console.log("💰 CACHE HIT!");
         const cachedResp = {
           response: optimized.response.response,
@@ -609,10 +610,20 @@ export default async function handler(req, res) {
       }
 
       // Execute via Serginho Orchestrator
+      // forceProvider is optional — passes through the authorized gateway unchanged.
+      const specialistOpts = {};
+      if (forceProvider && forceProvider !== 'auto') {
+        specialistOpts.forceProvider = forceProvider;
+        specialistOpts.noFallback = true;
+        console.log(`🧑‍💼 SPECIALIST: Motor forçado manualmente → ${forceProvider}`);
+      }
+      const requestMessages = optimized.messages || messages;
+      const requestSystemPrompt = optimized.systemPrompt || systemPrompt;
       const result = await executeAITask(
-        optimized.messages,
-        optimized.systemPrompt,
-        { source: 'specialist-api', specialistId }
+        requestMessages,
+        requestSystemPrompt,
+        { source: 'specialist-api', specialistId },
+        specialistOpts
       );
 
       const response = {

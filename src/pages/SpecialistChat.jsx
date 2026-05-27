@@ -3,6 +3,7 @@ import React, { useState, useRef, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { specialists } from "../config/specialists.js";
 import { supabase } from "../lib/supabaseClient.js";
+import { MANUAL_MODEL_OPTIONS } from "../config/modelPriority.js";
 import "../pages/Serginho.css";
 import "../pages/SpecialistChat.css";
 
@@ -74,6 +75,7 @@ export default function SpecialistChat() {
   ]);
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [selectedModel, setSelectedModel] = useState('auto');
   const messagesEndRef = useRef(null);
 
   const scrollToBottom = () => {
@@ -116,6 +118,7 @@ export default function SpecialistChat() {
           messages: newMessages,
           type: "specialist",
           specialistId: specialistId,
+          ...(selectedModel !== 'auto' ? { forceProvider: selectedModel } : {}),
         }),
       });
 
@@ -219,6 +222,22 @@ export default function SpecialistChat() {
               </span>
             </div>
           </div>
+        </div>
+        {/* Seletor de motor de IA — reutiliza MANUAL_MODEL_OPTIONS do Serginho IA */}
+        <div className="specialist-model-selector">
+          <select
+            value={selectedModel}
+            onChange={(e) => setSelectedModel(e.target.value)}
+            className="specialist-model-select"
+            title="Selecionar modelo de IA"
+            aria-label="Selecionar modelo de IA"
+          >
+            {MANUAL_MODEL_OPTIONS.map((opt) => (
+              <option key={opt.id} value={opt.id}>
+                {opt.icon} {opt.label}
+              </option>
+            ))}
+          </select>
         </div>
       </div>
 

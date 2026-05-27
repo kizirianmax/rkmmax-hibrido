@@ -165,6 +165,36 @@
   margin-right: 0.5rem;
 }
 
+/* Seletor de motor de IA — paridade com Serginho IA (F7-UX-08) */
+.specialist-model-selector {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 0.5rem;
+}
+
+.specialist-model-select {
+  font-size: 0.65rem;
+  background: rgba(0, 0, 0, 0.25);
+  color: rgba(255, 255, 255, 0.85);
+  padding: 3px 8px;
+  border-radius: 10px;
+  cursor: pointer;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  outline: none;
+  appearance: none;
+  -webkit-appearance: none;
+}
+
+.specialist-model-select:focus {
+  border-color: rgba(255, 255, 255, 0.5);
+  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.15);
+}
+
+.specialist-model-select option {
+  background: #1e1b4b;
+  color: #e9d5ff;
+}
+
 /* Responsividade */
 @media (max-width: 768px) {
   .specialist-header {
