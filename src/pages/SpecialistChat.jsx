@@ -223,7 +223,7 @@ export default function SpecialistChat() {
             </div>
           </div>
         </div>
-        {/* Seletor de motor de IA — reutiliza MANUAL_MODEL_OPTIONS do Serginho IA */}
+        {/* Seletor de motor de IA — fonte compartilhada MANUAL_MODEL_OPTIONS (F7-UX-08) */}
         <div className="specialist-model-selector">
           <select
             value={selectedModel}

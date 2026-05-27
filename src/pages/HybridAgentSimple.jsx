@@ -684,9 +684,9 @@ export default function HybridAgentSimple() {
 
         {/* Controles */}
         <div className="header-controls">
-          {/* Seletor de motor — reutiliza MANUAL_MODEL_OPTIONS do Serginho IA */}
+          {/* Seletor de motor — fonte compartilhada MANUAL_MODEL_OPTIONS (F7-UX-08) */}
           <div className="mode-selector engine-selector">
-            <label htmlFor="engine-select">Motor IA:</label>
+            <label htmlFor="engine-select">🤖 Motor IA:</label>
             <select
               id="engine-select"
               className="engine-select"
