@@ -118,7 +118,11 @@ export default function SpecialistChat() {
           messages: newMessages,
           type: "specialist",
           specialistId: specialistId,
-          ...(selectedModel !== 'auto' ? { forceProvider: selectedModel } : {}),
+          // Resolve providerName via MANUAL_MODEL_OPTIONS — mirrors HybridAgentSimple pattern
+          ...(() => {
+            const modelOption = MANUAL_MODEL_OPTIONS.find(e => e.id === selectedModel);
+            return (modelOption && modelOption.providerName) ? { forceProvider: modelOption.providerName } : {};
+          })(),
         }),
       });
 
