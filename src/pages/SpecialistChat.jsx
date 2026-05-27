@@ -108,22 +108,24 @@ export default function SpecialistChat() {
       const { data: sessionData } = await supabase.auth.getSession();
       const accessToken = sessionData?.session?.access_token;
 
+      // Seleção manual de motor — resolve providerName via MANUAL_MODEL_OPTIONS (mirrors HybridAgentSimple pattern)
+      const modelOption = MANUAL_MODEL_OPTIONS.find(e => e.id === selectedModel);
+      const requestBody = {
+        messages: newMessages,
+        type: "specialist",
+        specialistId: specialistId,
+      };
+      if (modelOption && modelOption.providerName) {
+        requestBody.forceProvider = modelOption.providerName;
+      }
+
       const response = await fetch("/api/ai", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          ...(accessToken ? { "Authorization": `Bearer ${accessToken}` } : {}),
+          ...(accessToken ? { "Authorization": `****** } : {}),
         },
-        body: JSON.stringify({
-          messages: newMessages,
-          type: "specialist",
-          specialistId: specialistId,
-          // Resolve providerName via MANUAL_MODEL_OPTIONS — mirrors HybridAgentSimple pattern
-          ...(() => {
-            const modelOption = MANUAL_MODEL_OPTIONS.find(e => e.id === selectedModel);
-            return (modelOption && modelOption.providerName) ? { forceProvider: modelOption.providerName } : {};
-          })(),
-        }),
+        body: JSON.stringify(requestBody),
       });
 
       if (!response.ok) {
