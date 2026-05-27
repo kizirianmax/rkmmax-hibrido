@@ -51,14 +51,13 @@ describe("Demo showcase integration (static checks)", () => {
     expect(demoSource).toContain("demo-card__structure-badge");
   });
 
-  test("Startup page includes highlighted CTA to /demo-autoplay", () => {
+  test("Startup page includes primary CTA to /demo and keeps guided /demo-autoplay", () => {
     const startupSource = fs.readFileSync(path.join(repoRoot, "src/pages/Projects.jsx"), "utf8");
 
+    expect(startupSource).toContain('to="/demo"');
     expect(startupSource).toContain('to="/demo-autoplay"');
-    expect(startupSource).toContain("▶ Ver demo guiada do Serginho IA");
-    expect(startupSource).toContain("▶ Watch Serginho IA guided demo");
-    expect(startupSource).toContain("Apresentação automática ou manual do Construtor.");
-    expect(startupSource).toContain("Automatic or manual presentation of the Builder.");
+    expect(startupSource).toContain("Ver demonstração pública");
+    expect(startupSource).toContain("View public demo");
   });
 
   test("Demo artifacts include mandatory card fields", async () => {

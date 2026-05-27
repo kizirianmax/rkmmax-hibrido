@@ -5,115 +5,226 @@ import "./Projects.css";
 
 const CONTENT = {
   en: {
+    institutionTag: "A solution by RKMMAX INFINITY MATRIX STUDY",
     heroSubtitle:
-      "AI startup in active development and validation, focused on creating, validating, reviewing, previewing, and exporting digital artifacts with governance, cost control, and user ownership.",
+      "Serginho IA helps teams plan, build, review, and validate structured digital artifacts with artificial intelligence, human review, and governed workflows.",
     sections: {
-      verify: "Company Verification",
-      verifyRows: [
-        ["Startup / Project", "RKMMAX INFINITY MATRIX STUDY / Serginho IA"],
+      demoCtaPrimary: "View public demo",
+      demoCtaSecondary: "Watch guided demo",
+      demoCtaSupport:
+        "Public demonstration route for the product experience. Guided autoplay remains available as a secondary option.",
+
+      value: "Value proposition",
+      valueCards: [
+        {
+          title: "Problem solved",
+          text: "Turn ideas and business needs into structured and verifiable digital artifacts.",
+        },
+        {
+          title: "Who it serves",
+          text: "Entrepreneurs, teams, and organizations that need to create, review, or validate digital deliverables.",
+        },
+        {
+          title: "How it works",
+          text: "Serginho IA orchestrates construction capabilities, domain specialists, and ABNT compliance steps with human review.",
+        },
+      ],
+
+      capabilities: "Product capabilities",
+      capabilityItems: [
+        {
+          title: "Planning and orchestration with Serginho IA",
+          text: "Central intelligence coordinates priorities, workflow sequence, and quality gates.",
+        },
+        {
+          title: "Digital artifact construction",
+          text: "Structured creation, iteration, preview, revision, and export of digital artifacts.",
+        },
+        {
+          title: "Domain specialists under coordination",
+          text: "Specialized expertise is used under Serginho IA governance, without bypassing orchestration.",
+        },
+        {
+          title: "ABNT compliance validation",
+          text: "Document validation and conformity guidance are integrated as governed product capabilities.",
+        },
+      ],
+      architecture: "Visible architecture layers",
+      architectureItems: [
+        {
+          badge: "Serginho IA",
+          text: "Sovereign orchestrator and central platform entry point.",
+        },
+        {
+          badge: "Hybrid/Builder",
+          text: "Generates, validates, previews, reviews, and exports digital artifacts without bypassing orchestration.",
+        },
+        {
+          badge: "Specialists",
+          text: "Domain specialists are used under Serginho IA coordination.",
+        },
+        {
+          badge: "ABNT",
+          text: "Document validation and conformity layer, without direct operational access on this page.",
+        },
+      ],
+
+      business: "Digital business model",
+      businessText:
+        "Serginho IA is being developed as a digital platform/SaaS model, with future access plans aligned to usage level and available capabilities. The current stage remains a functional prototype in active development and validation.",
+
+      team: "Founder and project",
+      teamRows: [
         ["Founder", "Roberto Kizirian Max"],
-        ["Status", "Early-stage startup / functional prototype in active development and validation"],
-        [
-          "Development Context",
-          "Built 100% from a mobile phone with AI assistance, GitHub, Vercel, operational checklists, manual review, and structured governance",
-        ],
+        ["Product", "Serginho IA"],
+        ["Institutional organization", "RKMMAX INFINITY MATRIX STUDY"],
       ],
-      product: "Product Description",
-      productText:
-        "Serginho IA is being developed as an AI-based intelligence platform for creating, validating, reviewing, previewing, and exporting digital artifacts. The platform is designed to help users transform ideas into structured outputs while maintaining governance, cost control, and ownership of the generated results.",
-      arch: "Architecture / Product Layers",
-      archItems: [
-        { badge: "Serginho", text: "Sovereign orchestrator and central intelligence layer" },
-        { badge: "Hybrid", text: "Artifact generation, validation, preview, review, and export" },
-        { badge: "Specialists", text: "Domain-specific expert agents" },
-        { badge: "ABNT", text: "Validation and compliance layer" },
-      ],
-      stage: "Current Stage",
-      stageText:
-        "The product is not yet a fully commercialized platform. It is a functional prototype in active development and validation, being prepared for first real users and external startup programs.",
-      security: "Security and Access",
-      securityText:
-        "The main application may be protected by login for security reasons. This public page exists specifically to help partners verify the company, founder, product, domain, and startup validation context without exposing private systems, users, tokens, code, or sensitive infrastructure.",
-      validation: "External Validation",
+      contactLabel: "Professional contact:",
+
+      validation: "External validation trajectory",
       validationCards: [
         { title: "Ginga Prototipa / Startup SC / Sebrae Startups", status: "✅ Approved / Selected" },
         { title: "Start Digital 2026 — Sebrae SP + ABStartups", status: "✅ Approved" },
         { title: "Founders Club", status: "✅ Application approved by their team" },
-        { title: "SciBiz / USP", status: "✅ Selected to participate in the SciBiz 2026 Startup Fair at CDI USP, Campus Butantã, São Paulo" },
+        {
+          title: "SciBiz / USP",
+          status:
+            "✅ Selected to participate in the SciBiz 2026 Startup Fair at CDI USP, Campus Butantã, São Paulo",
+        },
         {
           title: "Sebrae Startups Benefits",
-          status:
-            "Access to partner benefits such as GitHub Enterprise and Google Cloud credits application pathway",
+          status: "Access to partner benefits, including GitHub Enterprise and a Google Cloud credit application path",
         },
       ],
-      business: "Business Model / Usage Model",
-      businessText:
-        "Users will use Serginho IA to create, validate, preview, and export artifacts. User projects are not intended to be hosted permanently on the founder's Vercel, GitHub, domain, or private infrastructure. The goal is to provide a controlled creation and validation environment, then allow users to export and own their outputs.",
-      cloud: "Cloud Infrastructure Goal",
+
+      verify: "Institutional context",
+      verifyRows: [
+        ["Startup / Project", "RKMMAX INFINITY MATRIX STUDY / Serginho IA"],
+        ["Status", "Early-stage startup / functional prototype in active development and validation"],
+        [
+          "Development context",
+          "Built from mobile-first execution with AI assistance, GitHub, Vercel, operational checklists, manual review, and structured governance",
+        ],
+      ],
+
+      cloud: "Security and Access",
       cloudText:
-        "Google Cloud credits would support the next stage of the project by enabling secure, scalable, and economically controlled infrastructure for artifact validation, testing, packaging, and future user workflows.",
-      contact: "Contact",
-      contactLabel: "For institutional verification, partnerships, or startup program review:",
+        "The main application may require login to protect internal data and workflows. This public page allows visitors to understand the product, founder, and project trajectory without exposing private systems, users, tokens, code, or sensitive infrastructure.",
+
       notice:
-        "This page is intended solely for institutional verification by program partners. It does not expose private systems, user data, tokens, or sensitive infrastructure.",
-      demoCta: "▶ Watch Serginho IA guided demo",
-      demoCtaSupport: "Automatic or manual presentation of the Builder.",
+        "This public page presents product and institutional context without exposing private systems, tokens, user data, or sensitive infrastructure.",
     },
   },
   pt: {
+    institutionTag: "Uma solução da RKMMAX INFINITY MATRIX STUDY",
     heroSubtitle:
-      "Startup de IA em desenvolvimento ativo e validação, focada em criar, validar, revisar, visualizar e exportar artefatos digitais com governança, controle de custos e propriedade do usuário.",
+      "O Serginho IA ajuda equipes a planejar, construir, revisar e validar artefatos digitais estruturados com inteligência artificial, revisão humana e governança.",
     sections: {
-      verify: "Verificação Institucional",
-      verifyRows: [
-        ["Startup / Projeto", "RKMMAX INFINITY MATRIX STUDY / Serginho IA"],
+      demoCtaPrimary: "Ver demonstração pública",
+      demoCtaSecondary: "Ver demo guiada",
+      demoCtaSupport:
+        "Rota pública de demonstração da experiência do produto. A versão guiada em autoplay permanece como opção secundária.",
+
+      value: "Proposta de valor",
+      valueCards: [
+        {
+          title: "Problema que resolve",
+          text: "Transformar ideias e necessidades em artefatos digitais estruturados e verificáveis.",
+        },
+        {
+          title: "Para quem serve",
+          text: "Empreendedores, equipes e organizações que precisam criar, revisar ou validar entregas digitais.",
+        },
+        {
+          title: "Como funciona",
+          text: "O Serginho IA coordena capacidades de construção, especialistas de domínio e conformidade ABNT com revisão humana.",
+        },
+      ],
+
+      capabilities: "Capacidades do produto",
+      capabilityItems: [
+        {
+          title: "Planejamento e orquestração com Serginho IA",
+          text: "A inteligência central coordena prioridades, sequência de trabalho e critérios de qualidade.",
+        },
+        {
+          title: "Construção de artefatos digitais",
+          text: "Criação estruturada, iteração, preview, revisão e exportação de artefatos digitais.",
+        },
+        {
+          title: "Especialistas de domínio sob coordenação",
+          text: "Especialistas atuam sob governança do Serginho IA, sem bypass da orquestração.",
+        },
+        {
+          title: "Validação de conformidade ABNT",
+          text: "Validação documental e conformidade são tratadas como capacidades governadas do produto.",
+        },
+      ],
+      architecture: "Camadas visíveis de arquitetura",
+      architectureItems: [
+        {
+          badge: "Serginho IA",
+          text: "Orquestrador soberano e ponto central de entrada da plataforma.",
+        },
+        {
+          badge: "Híbrido/Construtor",
+          text: "Geração, validação, preview, revisão e exportação de artefatos digitais, sem bypass da orquestração.",
+        },
+        {
+          badge: "Especialistas",
+          text: "Especialistas de domínio utilizados sob coordenação do Serginho IA.",
+        },
+        {
+          badge: "ABNT",
+          text: "Camada de validação e conformidade documental, sem acesso operacional direto nesta página.",
+        },
+      ],
+
+      business: "Modelo de negócio digital",
+      businessText:
+        "O Serginho IA está em desenvolvimento como plataforma digital/SaaS, com planos de acesso futuros conforme nível de uso e capacidades disponibilizadas. O estágio atual permanece como protótipo funcional em desenvolvimento e validação ativa.",
+
+      team: "Fundador e projeto",
+      teamRows: [
         ["Fundador", "Roberto Kizirian Max"],
-        ["Status", "Startup em estágio inicial / protótipo funcional em desenvolvimento ativo e validação"],
-        [
-          "Contexto de desenvolvimento",
-          "Construído 100% pelo celular com auxílio de IA, GitHub, Vercel, checklists operacionais, revisão manual e governança estruturada",
-        ],
+        ["Produto", "Serginho IA"],
+        ["Organização institucional", "RKMMAX INFINITY MATRIX STUDY"],
       ],
-      product: "Descrição do Produto",
-      productText:
-        "O Serginho IA está sendo desenvolvido como uma plataforma de inteligência baseada em IA para criar, validar, revisar, visualizar e exportar artefatos digitais. A plataforma foi projetada para ajudar os usuários a transformar ideias em resultados estruturados, mantendo governança, controle de custos e propriedade dos resultados gerados.",
-      arch: "Arquitetura / Camadas do Produto",
-      archItems: [
-        { badge: "Serginho", text: "Orquestrador soberano e camada de inteligência central" },
-        { badge: "Híbrido", text: "Geração, validação, preview, revisão e exportação de artefatos" },
-        { badge: "Especialistas", text: "Agentes especialistas por domínio" },
-        { badge: "ABNT", text: "Camada de validação e conformidade" },
-      ],
-      stage: "Estágio Atual",
-      stageText:
-        "O produto ainda não é uma plataforma comercialmente finalizada. É um protótipo funcional em desenvolvimento ativo e validação, sendo preparado para os primeiros usuários reais e programas externos de startups.",
-      security: "Segurança e Acesso",
-      securityText:
-        "A aplicação principal pode estar protegida por login por razões de segurança. Esta página pública existe especificamente para ajudar parceiros a verificar a empresa, o fundador, o produto, o domínio e o contexto de validação da startup, sem expor sistemas privados, usuários, tokens, código ou infraestrutura sensível.",
-      validation: "Validações Externas",
+      contactLabel: "Contato profissional:",
+
+      validation: "Trajetória de validações externas",
       validationCards: [
         { title: "Ginga Prototipa / Startup SC / Sebrae Startups", status: "✅ Aprovado / Selecionado" },
         { title: "Start Digital 2026 — Sebrae SP + ABStartups", status: "✅ Aprovado" },
         { title: "Founders Club", status: "✅ Candidatura aprovada pelo time deles" },
-        { title: "SciBiz / USP", status: "✅ Selecionado para participar da Feira de Startups do SciBiz 2026 no CDI USP, Campus Butantã, São Paulo" },
+        {
+          title: "SciBiz / USP",
+          status:
+            "✅ Selecionado para participar da Feira de Startups do SciBiz 2026 no CDI USP, Campus Butantã, São Paulo",
+        },
         {
           title: "Benefícios Sebrae Startups",
           status:
-            "Acesso a benefícios de parceiros como GitHub Enterprise e caminho para candidatura a créditos Google Cloud",
+            "Acesso a benefícios de parceiros, incluindo GitHub Enterprise e caminho para candidatura a créditos Google Cloud",
         },
       ],
-      business: "Modelo de Negócio / Modelo de Uso",
-      businessText:
-        "Os usuários utilizarão o Serginho IA para criar, validar, visualizar e exportar artefatos. Os projetos dos usuários não têm a intenção de ser hospedados permanentemente na Vercel, GitHub, domínio ou infraestrutura privada do fundador. O objetivo é oferecer um ambiente controlado de criação e validação, permitindo que os usuários exportem e sejam donos dos seus resultados.",
-      cloud: "Objetivo de Infraestrutura Cloud",
+
+      verify: "Contexto institucional",
+      verifyRows: [
+        ["Startup / Projeto", "RKMMAX INFINITY MATRIX STUDY / Serginho IA"],
+        ["Status", "Startup em estágio inicial / protótipo funcional em desenvolvimento ativo e validação"],
+        [
+          "Contexto de desenvolvimento",
+          "Construído com execução mobile-first, auxílio de IA, GitHub, Vercel, checklists operacionais, revisão manual e governança estruturada",
+        ],
+      ],
+
+      cloud: "Segurança e Acesso",
       cloudText:
-        "Créditos do Google Cloud apoiariam a próxima etapa do projeto, viabilizando uma infraestrutura segura, escalável e economicamente controlada para validação de artefatos, testes, empacotamento e futuros fluxos de trabalho dos usuários.",
-      contact: "Contato",
-      contactLabel: "Para verificação institucional, parcerias ou análise de programa de startups:",
+        "A aplicação principal pode exigir login para proteger dados e fluxos internos. Esta página pública permite conhecer o produto, o fundador e a trajetória do projeto sem expor sistemas privados, usuários, tokens, código ou infraestrutura sensível.",
+
       notice:
-        "Esta página destina-se exclusivamente à verificação institucional por parceiros de programas. Não expõe sistemas privados, dados de usuários, tokens ou infraestrutura sensível.",
-      demoCta: "▶ Ver demo guiada do Serginho IA",
-      demoCtaSupport: "Apresentação automática ou manual do Construtor.",
+        "Esta página pública apresenta contexto de produto e institucional sem expor sistemas privados, tokens, dados de usuários ou infraestrutura sensível.",
     },
   },
 };
@@ -124,7 +235,6 @@ export default function Projects() {
 
   return (
     <main className="startup-page">
-      {/* Language selector */}
       <div className="startup-lang-bar rkm-card">
         <div className="startup-lang-buttons">
           <button
@@ -142,94 +252,93 @@ export default function Projects() {
             🇧🇷 Português
           </button>
         </div>
+
         <div className="startup-demo-cta-wrap">
           <Link
-            className="startup-demo-cta rkm-btn-primary"
-            to="/demo-autoplay"
-            aria-label={
-              lang === "en"
-                ? "Open guided demo in automatic or manual mode"
-                : "Abrir demo guiada em modo automático ou manual"
-            }
+            className="startup-demo-cta rkm-btn rkm-btn-primary"
+            to="/demo"
+            aria-label={lang === "en" ? "Open public product demonstration" : "Abrir demonstração pública do produto"}
           >
-            {c.demoCta}
+            {c.demoCtaPrimary}
+          </Link>
+          <Link
+            className="startup-demo-cta-secondary rkm-btn rkm-btn-secondary"
+            to="/demo-autoplay"
+            aria-label={lang === "en" ? "Open guided autoplay demo" : "Abrir demo guiada em autoplay"}
+          >
+            {c.demoCtaSecondary}
           </Link>
           <p className="startup-demo-cta-support">{c.demoCtaSupport}</p>
         </div>
       </div>
 
-      {/* Hero */}
       <section className="startup-hero rkm-card rkm-card-elevated">
-        <h1>RKMMAX INFINITY MATRIX STUDY / Serginho IA</h1>
+        <h1>Serginho IA</h1>
+        <p className="startup-hero-kicker">{CONTENT[lang].institutionTag}</p>
         <p>{CONTENT[lang].heroSubtitle}</p>
       </section>
 
-      {/* Company Verification */}
-      <section className="startup-section rkm-card" aria-labelledby="startup-verify-title">
-        <h2 id="startup-verify-title">{c.verify}</h2>
+      <section className="startup-section rkm-card">
+        <h2>{c.value}</h2>
+        <div className="startup-value-grid">
+          {c.valueCards.map((item, index) => (
+            <article key={index} className="startup-value-card rkm-card">
+              <h3>{item.title}</h3>
+              <p>{item.text}</p>
+            </article>
+          ))}
+        </div>
+      </section>
+
+      <section className="startup-section rkm-card">
+        <h2>{c.capabilities}</h2>
+        <div className="startup-capabilities-grid">
+          {c.capabilityItems.map((item, index) => (
+            <article key={index} className="startup-capability-card rkm-card">
+              <h3>{item.title}</h3>
+              <p>{item.text}</p>
+            </article>
+          ))}
+        </div>
+      </section>
+
+      <section className="startup-section rkm-card">
+        <h2>{c.architecture}</h2>
+        <ul className="startup-arch-list">
+          {c.architectureItems.map((item, index) => (
+            <li key={index} className="startup-arch-item">
+              <span className="startup-arch-badge">{item.badge}</span>{" "}
+              <span>{item.text}</span>
+            </li>
+          ))}
+        </ul>
+      </section>
+
+      <section className="startup-section rkm-card">
+        <h2>{c.business}</h2>
+        <p className="startup-body">{c.businessText}</p>
+      </section>
+
+      <section className="startup-section rkm-card">
+        <h2>{c.team}</h2>
         <table className="startup-verify-table">
           <tbody>
-            {c.verifyRows.map(([label, value], index) => (
+            {c.teamRows.map(([label, value], index) => (
               <tr key={index}>
                 <td>{label}</td>
                 <td>{value}</td>
               </tr>
             ))}
             <tr>
-              <td>{lang === "en" ? "Business Email" : "E-mail comercial"}</td>
+              <td>{c.contactLabel}</td>
               <td>
                 <a href="mailto:roberto@kizirianmax.site">roberto@kizirianmax.site</a>
-              </td>
-            </tr>
-            <tr>
-              <td>{lang === "en" ? "Additional Email" : "E-mail adicional"}</td>
-              <td>
-                <a href="mailto:robertokizirianmax@gmail.com">robertokizirianmax@gmail.com</a>
-              </td>
-            </tr>
-            <tr>
-              <td>Website</td>
-              <td>
-                <a href="https://kizirianmax.site" target="_blank" rel="noopener noreferrer">
-                  https://kizirianmax.site
-                </a>
               </td>
             </tr>
           </tbody>
         </table>
       </section>
 
-      {/* Product Description */}
-      <section className="startup-section rkm-card">
-        <h2>{c.product}</h2>
-        <p className="startup-body">{c.productText}</p>
-      </section>
-
-      {/* Architecture */}
-      <section className="startup-section rkm-card">
-        <h2>{c.arch}</h2>
-        <ul className="startup-arch-list">
-          {c.archItems.map((item, index) => (
-            <li key={index} className="startup-arch-item">
-              <strong className="startup-arch-badge">{item.badge}</strong>{'\u00A0\u2014\u00A0'}{item.text}
-            </li>
-          ))}
-        </ul>
-      </section>
-
-      {/* Current Stage */}
-      <section className="startup-section rkm-card">
-        <h2>{c.stage}</h2>
-        <p className="startup-body">{c.stageText}</p>
-      </section>
-
-      {/* Security and Access */}
-      <section className="startup-section rkm-card">
-        <h2>{c.security}</h2>
-        <p className="startup-body">{c.securityText}</p>
-      </section>
-
-      {/* External Validation */}
       <section className="startup-section rkm-card">
         <h2>{c.validation}</h2>
         <div className="startup-validation-grid">
@@ -242,31 +351,34 @@ export default function Projects() {
         </div>
       </section>
 
-      {/* Business Model */}
-      <section className="startup-section rkm-card">
-        <h2>{c.business}</h2>
-        <p className="startup-body">{c.businessText}</p>
+      <section className="startup-section rkm-card" aria-labelledby="startup-verify-title">
+        <h2 id="startup-verify-title">{c.verify}</h2>
+        <table className="startup-verify-table">
+          <tbody>
+            {c.verifyRows.map(([label, value], index) => (
+              <tr key={index}>
+                <td>{label}</td>
+                <td>{value}</td>
+              </tr>
+            ))}
+            <tr>
+              <td>{lang === "en" ? "Website" : "Website"}</td>
+              <td>
+                <a href="https://kizirianmax.site" target="_blank" rel="noopener noreferrer">
+                  https://kizirianmax.site
+                </a>
+              </td>
+            </tr>
+          </tbody>
+        </table>
       </section>
 
-      {/* Cloud Infrastructure */}
       <section className="startup-section rkm-card">
         <h2>{c.cloud}</h2>
         <p className="startup-body">{c.cloudText}</p>
       </section>
 
-      {/* Contact */}
       <section className="startup-section rkm-card">
-        <h2>{c.contact}</h2>
-        <div className="startup-contact-box rkm-card rkm-card-elevated">
-          <p className="startup-contact-label">{c.contactLabel}</p>
-          <p>
-            <strong>Roberto Kizirian Max</strong>
-          </p>
-          <p>
-            <a href="mailto:roberto@kizirianmax.site">roberto@kizirianmax.site</a>
-          </p>
-          <p>RKMMAX INFINITY MATRIX STUDY / Serginho IA</p>
-        </div>
         <div className="startup-notice rkm-card">{c.notice}</div>
       </section>
     </main>
