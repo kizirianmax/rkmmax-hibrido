@@ -1,3 +1,17 @@
+## 2026-05-27 — feat(ui): F7-UX-08 paridade do seletor de motor de IA entre Serginho IA, Híbrido/Construtor e Especialistas
+
+| Item | Detalhe |
+|------|---------|
+| **Título do PR** | `feat(ui): F7-UX-08 — AI engine selector parity across Serginho IA, Híbrido/Construtor, and Especialistas` |
+| **Identificação** | **Fase 7 — UI/UX (F7-UX-08)** |
+| **Objetivo** | Tornar `MANUAL_MODEL_OPTIONS` (de `src/config/modelPriority.js`) a fonte compartilhada única das opções do seletor de motor de IA nas três UIs operacionais (Serginho IA, Híbrido/Construtor e Especialistas), garantindo que a seleção manual seja real e toda execução passe pelo Serginho/orquestrador como gateway único. |
+| **Arquivos alterados** | `src/pages/HybridAgentSimple.jsx`, `src/pages/SpecialistChat.jsx`, `src/pages/SpecialistChat.css`, `api/ai.js`, `api/__tests__/specialist-model-selector.test.js`, `CHECKLIST.md` |
+| **O que foi alterado** | (1) `HybridAgentSimple.jsx`: removido import de `HYBRID_ENGINE_OPTIONS` (config paralela com labels/ordem diferentes); seletor agora usa `MANUAL_MODEL_OPTIONS` como fonte compartilhada; contrato de `forceProvider` para API preservado sem alteração. (2) `SpecialistChat.jsx`: adicionado state `selectedModel` (padrão `'auto'`); adicionado `<select>` no header do especialista renderizando `MANUAL_MODEL_OPTIONS`; envio de `forceProvider` para `/api/ai` ao selecionar motor diferente de automático; lógica corrigida para resolver `providerName` via `MANUAL_MODEL_OPTIONS.find()` (bug: antes enviava o `id` visual diretamente como `forceProvider`); corrigido erro de sintaxe no template literal do header `Authorization` que bloqueava o build/Preview da Vercel. (3) `SpecialistChat.css`: estilos mínimos para `.specialist-model-selector` / `.specialist-model-select` — compacto, alinhado à direita no header, compatível com mobile. (4) `api/ai.js`: handler do `specialist` atualizado para espelhar o padrão do handler `genius`: cache ignorado quando `forceProvider` presente; `specialistOpts` com `forceProvider` e `noFallback: true` passado para `executeAITask` via orquestrador Serginho; `source: 'specialist-api'` preservado. (5) `api/__tests__/specialist-model-selector.test.js`: 10 novos testes cobrindo `forceProvider` encaminhado pelo orquestrador, cache ignorado com provider forçado, cache usado em automático, soberania do gateway (`source: 'specialist-api'` presente, sem chamada direta a provider). |
+| **O que NÃO foi alterado** | Providers disponíveis; modelos disponíveis; prompts de identidade do Serginho ou de especialistas; autenticação/Supabase; pagamentos; rotas públicas (`/startup`, `/demo`, `/demo-autoplay`, `/login`); Home pública; header/menu global; camada ABNT; runtime de orquestração além do roteamento de `forceProvider`; `src/config/modelPriority.js` (lido apenas, não alterado). |
+| **Validações executadas** | `npm run lint` — **PASS**; `npm run build` — **PASS**; `npm test -- --runInBand` — **PASS** (7 checks verdes no GitHub, sem conflitos com `main`). Preview da Vercel ativo após correção do erro de sintaxe. |
+| **Risco** | Mudança restrita às UIs operacionais (Híbrido/Construtor e Especialistas) e ao handler `specialist` em `api/ai.js`. Sem alteração de lógica de orquestração, providers ou prompts. Risco baixo. |
+| **Rollback** | `git revert <commit-sha>` |
+
 ## 2026-05-26 — feat(ui): F7-UX-07 reposicionar página pública do Serginho IA
 
 | Item | Detalhe |

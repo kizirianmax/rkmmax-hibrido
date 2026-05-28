@@ -13,7 +13,7 @@ import {
   clearReviewCycleState,
 } from "../lib/construtor/reviewCycleStorage";
 import { buildReviewCycleMetrics } from "../lib/construtor/reviewCycleMetrics";
-import { HYBRID_ENGINE_OPTIONS, DEFAULT_HYBRID_ENGINE } from "../config/hybridEngines";
+import { MANUAL_MODEL_OPTIONS } from "../config/modelPriority.js";
 import { supabase } from "../lib/supabaseClient";
 
 /**
@@ -177,7 +177,7 @@ const buildInitialReviewHistory = (savedCycle) => {
  * Sem seleção direta de especialista — orquestração é responsabilidade do Serginho.
  */
 export default function HybridAgentSimple() {
-  const [selectedEngine, setSelectedEngine] = useState(DEFAULT_HYBRID_ENGINE);
+  const [selectedEngine, setSelectedEngine] = useState('auto');
   // PASSO 12 — restaurar rascunho salvo ao montar o componente
   const [input, setInput] = useState(() => loadInputDraft());
   // Versão do app para cache busting
@@ -564,8 +564,8 @@ export default function HybridAgentSimple() {
         agentType: "hybrid",
       };
 
-      // Seleção manual de motor para teste controlado
-      const engineOption = HYBRID_ENGINE_OPTIONS.find(e => e.id === selectedEngine);
+      // Seleção manual de motor — reutiliza contrato existente (forceProvider)
+      const engineOption = MANUAL_MODEL_OPTIONS.find(e => e.id === selectedEngine);
       if (engineOption && engineOption.providerName) {
         body.forceProvider = engineOption.providerName;
       }
@@ -684,16 +684,16 @@ export default function HybridAgentSimple() {
 
         {/* Controles */}
         <div className="header-controls">
-          {/* Seletor de motor para teste controlado */}
+          {/* Seletor de motor — fonte compartilhada MANUAL_MODEL_OPTIONS (F7-UX-08) */}
           <div className="mode-selector engine-selector">
-            <label htmlFor="engine-select">🔬 Motor:</label>
+            <label htmlFor="engine-select">🤖 Motor IA:</label>
             <select
               id="engine-select"
               className="engine-select"
               value={selectedEngine}
               onChange={(e) => setSelectedEngine(e.target.value)}
             >
-              {HYBRID_ENGINE_OPTIONS.map((engine) => (
+              {MANUAL_MODEL_OPTIONS.map((engine) => (
                 <option key={engine.id} value={engine.id}>
                   {engine.icon} {engine.label}
                 </option>
