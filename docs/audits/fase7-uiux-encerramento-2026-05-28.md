@@ -19,12 +19,12 @@ Registrar de forma auditável o encerramento documental formal da Fase 7, com do
 | Item | Eixo | Objetivo | Evidência | Resultado | Risco residual |
 |------|------|----------|-----------|-----------|----------------|
 | F7-UX-01 | Público | Auditoria premium front-end inicial da Fase 7 | `docs/audits/f7-ux-01-auditoria-premium-front-end-2026-05-26.md` | Consolidado na `main` | Baixo |
-| F7-UX-02 | Público | Refinamentos visuais premium derivados da auditoria | Histórico no `CHECKLIST.md` | Consolidado na `main` | Baixo |
-| F7-UX-03 | Público | Ajustes de tipografia, hierarquia e espaçamento públicos | Histórico no `CHECKLIST.md` | Consolidado na `main` | Baixo |
-| F7-UX-04 | Público | Reforço de identidade visual e marca em páginas públicas | Histórico no `CHECKLIST.md` | Consolidado na `main` | Baixo |
-| F7-UX-05 | Público | Ajustes responsivos mobile em rotas públicas | Histórico no `CHECKLIST.md` | Consolidado na `main` | Baixo |
-| F7-UX-06 | Público | Refinamentos de acessibilidade visíveis em rotas públicas | Histórico no `CHECKLIST.md` | Consolidado na `main` | Baixo |
-| F7-UX-07 | Público | Ajustes de copy e clareza em rotas públicas | Histórico no `CHECKLIST.md` | Consolidado na `main` | Baixo |
+| F7-UX-02 | Público | Design tokens globais premium (`--rkm-*`) | `src/index.css` | Consolidação da camada de tokens globais para cores, superfícies, tipografia, espaçamento, bordas, sombras e estados de foco. Consolidado na `main`. | Baixo |
+| F7-UX-03 | Público | Header, navegação e layout global premium | `src/components/Header.jsx`, `src/components/Header.css`, `src/App.jsx`, `src/components/Footer.jsx`, `src/components/Footer.css`, `src/index.css` | Header/navegação/layout global refinados com responsividade e acessibilidade preservadas. Consolidado na `main`. | Baixo |
+| F7-UX-04 | Público | Componentes base premium — botões, cards, inputs e badges | `src/index.css` | Criação/padronização de classes globais `.rkm-btn*`, `.rkm-card*`, `.rkm-input` e `.rkm-badge*`. Consolidado na `main`. | Baixo |
+| F7-UX-05 | Público | Refinamento premium das páginas públicas principais | `src/pages/Home.jsx/.css`, `src/pages/Projects.jsx/.css`, `src/pages/Demo.jsx/.css`, `src/pages/Auth.jsx/.css`, `src/__tests__/public-pages-premium-ui.test.js` | Aplicação consistente do visual premium em `/`, `/startup`, `/demo` e `/login`. Consolidado na `main`. | Baixo |
+| F7-UX-06 | Público | Destacar Serginho IA e proposta de valor na Home pública | `src/pages/Home.jsx`, `src/pages/Home.css`, `src/__tests__/public-pages-premium-ui.test.js` | Home reposicionada com Serginho IA como marca principal, proposta de valor objetiva e capacidades integradas. Consolidado na `main`. | Baixo |
+| F7-UX-07 | Público | Reposicionar a página pública `/startup` para apresentação natural do Serginho IA | `src/pages/Projects.jsx`, `src/pages/Projects.css`, `src/__tests__/public-pages-premium-ui.test.js`, `src/__tests__/demo-showcase-routing.test.js` | `/startup` reorganizada com apresentação institucional, problema, público-alvo, produto, CTAs públicos e arquitetura em camadas. Consolidado na `main`. | Baixo |
 | F7-UX-08 | Operacional controlado | Paridade do seletor de motor de IA entre Serginho IA, Híbrido/Construtor e Especialistas, com Serginho como gateway único | PR #503 mergeado em `3712755a249526b9eccf7f53cbb809cdb67c8620`; histórico no `CHECKLIST.md` | Consolidado na `main` | Baixo |
 | F7-UX-09 | Público | Publicar experiência relevante do fundador em `/startup` (Team Information) sem overclaim, bilíngue PT/EN | PR #504 mergeado em `35e5cf58293811c13804ce620615cbcd12dbc11a`; histórico no `CHECKLIST.md` | Consolidado na `main` | Baixo |
 
@@ -36,13 +36,16 @@ Registrar de forma auditável o encerramento documental formal da Fase 7, com do
 
 ## Matriz de requisitos públicos analisados (Google for Startups)
 
-Os requisitos públicos analisados do programa Google for Startups / Google Cloud Startup Support foram cobertos com evidência acessível nas rotas públicas listadas acima:
+| Requisito público analisado | Evidência pública pós-Fase 7 | Status documental |
+|------------------------------|------------------------------|--------------------|
+| Business Description | `/startup` com descrição do produto, proposta de valor, problema resolvido, público-alvo e estágio atual. | Evidência pública acessível. |
+| Team Information com experiência relevante | Seção bilíngue F7-UX-09 em `/startup`, com informações factuais sobre o fundador sem overclaim. | Evidência pública acessível. |
+| Products e estágio atual | `/startup`, `/demo` e `/demo-autoplay`, com apresentação do produto e indicação de protótipo funcional em desenvolvimento ativo e validação. | Evidência pública acessível. |
+| Evidência visual pública de plataforma própria | `/demo` com artefatos demonstrativos e `/demo-autoplay` com demo guiada do Construtor. | Evidência pública acessível por demo estática/guiada; P3 vídeo permanece fora do escopo. |
 
-- **Team Information (integrantes principais e experiência relevante):** atendido por F7-UX-09 em `/startup`, em PT/EN, sem overclaim (sem afirmar formação acadêmica, cargos anteriores, empresas anteriores, clientes pagantes, faturamento, investimentos, aprovações em programas não documentadas, parcerias formais, propriedade intelectual registrada, domínio técnico não comprovado ou métricas não documentadas).
-- **Demonstração pública do produto:** atendido por `/demo` e `/demo-autoplay`.
-- **Apresentação institucional pública:** atendido por `/startup`.
+Este documento não afirma que a Google aprovou, validou ou concedeu créditos à candidatura. Afirma apenas que o site público está em condição de aguardar reavaliação externa, com requisitos públicos analisados apoiados por evidência acessível e sem overclaim.
 
-> ⚠️ **Importante:** este encerramento documental **não afirma aprovação, concessão de créditos ou qualquer decisão favorável por parte do Google**. Documenta apenas que os requisitos públicos analisados possuem evidência acessível nas rotas públicas. A demo e quaisquer scores exibidos são **exemplos demonstrativos / fixture local**, sem geração ao vivo no momento da apresentação pública.
+> ⚠️ **Importante:** a demo e quaisquer scores exibidos são **exemplos demonstrativos / fixture local**, sem geração ao vivo no momento da apresentação pública.
 
 ## Confirmação arquitetural
 
