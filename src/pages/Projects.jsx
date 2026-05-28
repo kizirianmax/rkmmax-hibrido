@@ -80,6 +80,10 @@ const CONTENT = {
         ["Institutional organization", "RKMMAX INFINITY MATRIX STUDY"],
       ],
       contactLabel: "Professional contact:",
+      founderExperience: "Founder and relevant experience",
+      founderExperienceText:
+        "Roberto Kizirian Max is the founder of RKMMAX / Serginho IA and leads the conception and evolution of the platform. His work on the project includes defining its layered architecture, evolving the Constructor/Hybrid system for digital artifact generation, validation and review, and guiding the product through its current stage as a functional prototype under active development and validation.",
+      founderExperienceDemoLink: "View public demo",
 
       validation: "External validation trajectory",
       validationCards: [
@@ -191,6 +195,10 @@ const CONTENT = {
         ["Organização institucional", "RKMMAX INFINITY MATRIX STUDY"],
       ],
       contactLabel: "Contato profissional:",
+      founderExperience: "Fundador e experiência relevante",
+      founderExperienceText:
+        "Roberto Kizirian Max é o fundador do RKMMAX / Serginho IA e lidera a concepção e evolução da plataforma. Sua atuação no projeto inclui a definição da arquitetura em camadas, a evolução do Construtor/Híbrido para geração, validação e revisão de artefatos digitais, e a condução do produto em seu estágio atual de protótipo funcional em desenvolvimento ativo e validação.",
+      founderExperienceDemoLink: "Ver demonstração pública",
 
       validation: "Trajetória de validações externas",
       validationCards: [
@@ -337,6 +345,14 @@ export default function Projects() {
             </tr>
           </tbody>
         </table>
+      </section>
+
+      <section className="startup-section rkm-card">
+        <h2>{c.founderExperience}</h2>
+        <p className="startup-body">{c.founderExperienceText}</p>
+        <p className="startup-body">
+          <Link to="/demo">{c.founderExperienceDemoLink}</Link>
+        </p>
       </section>
 
       <section className="startup-section rkm-card">
