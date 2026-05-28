@@ -1,3 +1,21 @@
+## 2026-05-28 — docs(audit): encerrar formalmente a Fase 7 UI/UX após validação Google
+
+| Item | Detalhe |
+|------|---------|
+| **Título do PR** | `docs(audit): encerrar formalmente a Fase 7 UI/UX após validação Google` |
+| **Identificação** | **Encerramento documental formal da Fase 7 — UI/UX Pública Estratégica e Paridade Operacional Controlada** |
+| **Objetivo** | Registrar o encerramento formal da Fase 7 após auditoria documental final e após os merges consolidados de F7-UX-01 a F7-UX-09 na `main`. |
+| **Confirmação de merges na `main`** | PR #503 (F7-UX-08) mergeado em `main` no commit `3712755a249526b9eccf7f53cbb809cdb67c8620`; PR #504 (F7-UX-09) mergeado em `main` no commit `35e5cf58293811c13804ce620615cbcd12dbc11a`. |
+| **Evidência pública (Google for Startups)** | Os requisitos públicos analisados (Business Description, Team Information, Products/estágio atual, evidência visual pública de plataforma própria) possuem evidência pública acessível em `/startup`, `/demo` e `/demo-autoplay`, sem afirmar aprovação, validação ou concessão de créditos pela Google. |
+| **Rotas públicas verificadas** | `/startup`, `/demo` e `/demo-autoplay` oferecem evidência pública sem login, com demo demonstrativa/fixture local rotulada e sem geração ao vivo de IA. |
+| **Correções funcionais críticas** | Nenhuma correção funcional crítica foi comprovada na auditoria final desta fase. |
+| **Soberania arquitetural** | Serginho IA permanece gateway único e orquestrador soberano. Nenhum bypass foi introduzido. Híbrido/Construtor, Especialistas, ABNT e Auth/SaaS/Payments permanecem em suas camadas, sem alteração funcional. |
+| **Arquivos alterados neste PR** | `docs/audits/fase7-uiux-encerramento-2026-05-28.md`, `CHECKLIST.md` |
+| **Risco** | Mínimo. Alteração exclusivamente documental, sem impacto em runtime, providers, modelos, prompts, APIs, autenticação, pagamentos, orquestração, rotas, dependências, CSS, testes ou camadas funcionais. |
+| **Rollback** | `git revert <commit-sha>` reverte atomicamente este registro documental e a entrada correspondente em `CHECKLIST.md`. |
+| **Fora do escopo** | P3 (vídeo gravado final público), SSR/pré-renderização/SEO dedicado, Dependabot PRs #475 e #477, e quaisquer novas evoluções funcionais (sandbox real do runner, reativação de `executeArtifact`, novos providers/modelos, expansão de Especialistas, evolução ABNT, Auth/SaaS/Payments). |
+| **Decisão formal** | ✅ **FASE 7 ENCERRADA DOCUMENTALMENTE.** O site público está em condição de aguardar reavaliação externa da Google, sem que isto signifique garantia de aprovação. |
+
 ## 2026-05-28 — feat(ui): F7-UX-09 publicar experiência relevante do fundador em /startup
 
 | Item | Detalhe |
