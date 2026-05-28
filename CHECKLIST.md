@@ -1,3 +1,21 @@
+## 2026-05-28 — feat(ui): F7-UX-09 publicar experiência relevante do fundador em /startup
+
+| Item | Detalhe |
+|------|---------|
+| **Título do PR** | `feat(ui): F7-UX-09 publicar experiência relevante do fundador em /startup` |
+| **Identificação** | **Fase 7 — UI/UX (F7-UX-09)** |
+| **Objetivo** | Publicar em `/startup` uma seção pública, bilíngue e verificável sobre o fundador e sua experiência diretamente relevante na criação e evolução do RKMMAX / Serginho IA, atendendo ao requisito de Team Information com experiência relevante. |
+| **Motivação** | Exigência oficial do Google Cloud Startup Support sobre **Team Information** (integrantes principais e experiência relevante) + lacuna A confirmada pela auditoria estrutural Claude Opus 4.7. |
+| **Lacuna resolvida** | Ausência de experiência relevante pública do fundador em `/startup`. |
+| **Arquivos alterados** | `src/pages/Projects.jsx`, `src/__tests__/public-pages-premium-ui.test.js`, `CHECKLIST.md` |
+| **Texto/fatos publicados (PT + EN, citados)** | **PT:** “Roberto Kizirian Max é o fundador do RKMMAX / Serginho IA e lidera a concepção e evolução da plataforma. Sua atuação no projeto inclui a definição da arquitetura em camadas, a evolução do Construtor/Híbrido para geração, validação e revisão de artefatos digitais, e a condução do produto em seu estágio atual de protótipo funcional em desenvolvimento ativo e validação.” **EN:** “Roberto Kizirian Max is the founder of RKMMAX / Serginho IA and leads the conception and evolution of the platform. His work on the project includes defining its layered architecture, evolving the Constructor/Hybrid system for digital artifact generation, validation and review, and guiding the product through its current stage as a functional prototype under active development and validation.” |
+| **Confirmação explícita de ausência de overclaim** | Deliberadamente **não** foram afirmados: formação acadêmica; cargos anteriores; empresas anteriores; clientes pagantes; faturamento/receita; investimentos recebidos; aprovação em programas não documentada; parcerias formais; propriedade intelectual registrada; domínio técnico não comprovado; métricas não documentadas; experiência profissional externa não comprovada. |
+| **Lacuna B fora deste PR** | A lacuna residual de evidência visual pública mais explícita **permanece fora deste PR** e será avaliada separadamente. Nenhum vídeo, screenshot, iframe ou novo recurso visual foi adicionado aqui. |
+| **Validações executadas** | Baseline pré-mudança: `npm run lint` — **PASS** (com warnings pré-existentes fora do escopo), `npm run build` — **PASS**, `npm test -- --runInBand` — **PASS**. Pós-mudança: `npm test -- --runInBand src/__tests__/public-pages-premium-ui.test.js` — **PASS**; `npm run lint` — **PASS** (warnings pré-existentes fora do escopo); `npm run build` — **PASS**; `npm test -- --runInBand` — **PASS**. Verificação manual local em preview (`/startup` e `/demo`, viewport mobile 390x844) — **PASS**. |
+| **Risco** | Baixo. Mudança restrita a conteúdo público e teste estático relacionado à página `/startup`, sem alteração de runtime, APIs, autenticação, pagamentos, orquestração ou rotas públicas de demo. |
+| **Rollback** | `git revert <commit-sha>` |
+| **Confirmação explícita de ausência de alteração em runtime/camadas** | Nenhuma alteração em runtime, providers, modelos, prompts, Auth, Payments, ABNT, Serginho, Híbrido/Construtor, Especialistas, `/demo` ou `/demo-autoplay`. Nenhum bypass do Serginho foi criado. |
+
 ## 2026-05-27 — feat(ui): F7-UX-08 paridade do seletor de motor de IA entre Serginho IA, Híbrido/Construtor e Especialistas
 
 | Item | Detalhe |

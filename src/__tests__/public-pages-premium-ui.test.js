@@ -72,6 +72,13 @@ describe("Public pages premium UI adoption (static checks)", () => {
     expect(startupSource).not.toContain('to="/specialists"');
     expect(startupSource).toContain('className="startup-validation-card rkm-card"');
     expect(startupSource).toContain('className="startup-value-card rkm-card"');
+    expect(startupSource).toContain("Fundador e experiência relevante");
+    expect(startupSource).toContain("Founder and relevant experience");
+    expect(startupSource).toContain("Roberto Kizirian Max");
+    expect(startupSource).toContain("protótipo funcional em desenvolvimento ativo e validação");
+    expect(startupSource).toContain("functional prototype under active development and validation");
+    expect(startupSource).toContain("Ver demonstração pública");
+    expect(startupSource).toContain("View public demo");
     expect(startupCss).toContain("var(--rkm-");
     expect(startupCss).toContain(".startup-section");
   });
