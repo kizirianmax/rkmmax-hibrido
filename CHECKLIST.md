@@ -1,3 +1,26 @@
+## 2026-05-30 — docs(checklist): registrar transição pós-Fase 7 e recomendação documental F8
+
+| Item | Detalhe |
+|------|---------|
+| **Título do PR** | `docs(checklist): registrar transição pós-Fase 7 e recomendação documental F8` |
+| **Identificação** | **Governança documental — registro de transição pós-Fase 7 → recomendação documental da Fase 8** |
+| **Substitui** | PR #510 (fechado sem merge, travado com Files changed: 0). Esta entrada é o registro substituto, em branch nova, sem reutilizar a branch do #510. |
+| **Natureza** | Atualização **exclusivamente documental/governança**, sem runtime. Sem alteração de código, testes, CSS, rotas, dependências, providers, modelos, prompts, Auth, Payments, Vercel, Supabase, Serginho, Híbrido/Construtor, Especialistas ou ABNT. |
+| **PR de auditoria já mergeado** | PR #509 — `docs(audit): registrar auditoria de transição pós-Fase 7 e recomendação oficial da Fase 8`. |
+| **Merge SHA do PR #509** | `efbd120b3585996f4039a843efda897943698372` |
+| **Documento relacionado** | [`docs/audits/fase7-para-fase8-auditoria-transicao-2026-05-29.md`](docs/audits/fase7-para-fase8-auditoria-transicao-2026-05-29.md) |
+| **Status da Fase 7** | **100% no escopo documental/estático confirmado**. |
+| **Percentual da auditoria de transição** | **≈ 95%**. |
+| **Relato do seletor de IA** | **NÃO-PENDÊNCIA CONFIRMADA**. `/startup` é página institucional pública do RKMMAX e corretamente **sem seletor de IA**; o seletor pertence apenas às UIs operacionais: Serginho IA, Híbrido/Construtor e Especialistas. |
+| **Evidências de CI utilizadas** | **Apenas agregadas**, baseadas na conclusão dos workflows `test.yml` (run 26585673516) e `coverage.yml` (run 26585673844) com `conclusion: success` para o HEAD `e7a178e009ff13aac956f69e0812fe7a8459311f`; **sem** alegar execução local ou execução nominal de testes não comprovada. |
+| **Recomendação documental da Fase 8** | **Definida** no documento do PR #509: *Fase 8 — Hardening operacional pós-UI/UX (observabilidade pública mínima e fechamento das lacunas residuais), sem expansão funcional do produto*. Entrega mínima recomendada: **F8-OBS-01**. |
+| **Status da Fase 8** | **Não iniciada nesta tarefa.** |
+| **Confirmação explícita de ausência de alteração funcional** | Nenhuma alteração em `src/`, `api/`, testes, CSS, rotas, dependências, providers, modelos, prompts, Auth, Payments, Vercel, Supabase, Stripe, Dependabot, Serginho, Híbrido/Construtor, Especialistas ou ABNT. Nenhum bypass do Serginho. Nenhuma confusão de camadas. |
+| **Arquivos alterados** | `CHECKLIST.md` (prepend de uma única entrada nova no topo, sem truncamento, sem reordenação e sem reformatação do histórico anterior). |
+| **Validação de diff** | `git diff --name-only` lista somente `CHECKLIST.md`; `git diff CHECKLIST.md` mostra somente adições no topo; zero deleções; zero alterações em linhas históricas. |
+| **Risco** | Mínimo. Entrega exclusivamente documental, sem efeito em runtime. |
+| **Rollback** | `git revert <commit-sha>`, **sem impacto em runtime**. |
+
 ## 2026-05-28 — docs(audit): encerramento documental formal da Fase 7 UI/UX
 
 | Item | Detalhe |
