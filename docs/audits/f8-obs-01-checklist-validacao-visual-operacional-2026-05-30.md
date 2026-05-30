@@ -26,9 +26,9 @@ Fornecer um checklist manual, claro e reproduzível para validação visual oper
 
 ### Não-escopo
 
-- [ ] Não corrigir UI/UX, runtime, rotas, estilos, testes, APIs ou código.
-- [ ] Não alterar `src/`, `api/`, dependências, workflows, Auth, Payments, ABNT, Serginho, Híbrido/Construtor ou Especialistas.
-- [ ] Não executar mudanças funcionais nesta tarefa.
+- Não corrigir UI/UX, runtime, rotas, estilos, testes, APIs ou código.
+- Não alterar `src/`, `api/`, dependências, workflows, Auth, Payments, ABNT, Serginho, Híbrido/Construtor ou Especialistas.
+- Não executar mudanças funcionais nesta tarefa.
 
 ---
 
