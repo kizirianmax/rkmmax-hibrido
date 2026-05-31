@@ -1,3 +1,19 @@
+## 2026-05-31 — docs(f9): abrir formalmente a Fase 9
+
+| Item | Detalhe |
+|------|---------|
+| **Título do PR** | `docs(f9): abrir formalmente a Fase 9` |
+| **Identificação** | **F9-01 — Abertura formal da Fase 9** |
+| **Escopo** | Documental / governança / abertura de fase, sem implementação funcional. |
+| **Documento criado** | [`docs/audits/f9-01-abertura-formal-fase9-2026-05-31.md`](docs/audits/f9-01-abertura-formal-fase9-2026-05-31.md) |
+| **Veredito** | Fase 9 aberta documentalmente, sem implementação funcional. |
+| **Plano** | Fase 9 estruturada em até 6 blocos (Bloco 1 a Bloco 6) com trilha curta, controlada e reversível. |
+| **Pendências preservadas** | Dependabot #475/#477, tag/release, validação visual manual, observabilidade real, métricas reais, telemetria real e implementação funcional futura. |
+| **Confirmação de não alteração funcional** | Sem alteração em runtime, UI, código, rotas, testes, dependências, workflows, providers/modelos, prompts, registry, fallback, Serginho, Híbrido/Construtor, Especialistas, ABNT, Auth/SaaS/Payments, Vercel, Supabase, Stripe, secrets ou tag/release. |
+| **Rollback** | `git revert <commit-sha>` |
+
+---
+
 ## 2026-05-31 — docs(audit): revisar auditoria de transição F7→F8 sem overclaim do seletor
 
 | Item | Detalhe |
