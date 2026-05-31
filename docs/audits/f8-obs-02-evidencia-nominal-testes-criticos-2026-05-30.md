@@ -2,7 +2,7 @@
 
 **ID:** F8-OBS-02  
 **Fase:** 8 — Observabilidade operacional mínima  
-**Data do registro documental:** 2026-05-30  
+**Data local de referência do registro:** 2026-05-30  
 **Tipo:** Documental (sem implementação funcional)  
 **Repositório auditado:** `kizirianmax/rkmmax-hibrido` (exclusivo)  
 
@@ -30,7 +30,8 @@ Registrar evidência **nominal e verificável** dos testes críticos relacionado
 
 ## Execução nominal controlada
 
-- **Data/hora da execução (UTC):** `2026-05-31T00:08:40Z`
+- **Data local de referência desta evidência:** `2026-05-30`
+- **Data/hora da execução nominal (UTC):** `2026-05-31T00:08:40Z`
 - **Branch auditada:** `copilot/f8-obs-02-registrar-evidencia-nominal`
 - **Commit auditado:** `3117dfe40bbde663299f16e31e759bf1be22ebca`
 - **Comando executado:**

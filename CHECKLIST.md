@@ -4,7 +4,8 @@
 |------|---------|
 | **Título do PR** | `docs(f8): registrar evidência nominal dos testes críticos` |
 | **Identificação** | **F8-OBS-02 — Evidência nominal dos testes críticos (seletor de IA e prioridade/modelos)** |
-| **Data da execução nominal (UTC)** | `2026-05-31T00:08:40Z` |
+| **Data local/de referência** | `2026-05-30` |
+| **Data/hora da execução nominal (UTC)** | `2026-05-31T00:08:40Z` |
 | **Branch / commit auditado** | `copilot/f8-obs-02-registrar-evidencia-nominal` / `3117dfe40bbde663299f16e31e759bf1be22ebca` |
 | **Comando executado** | `npm test -- --runInBand api/__tests__/model-priority.test.js api/__tests__/specialist-model-selector.test.js` |
 | **Arquivos de teste executados** | `api/__tests__/model-priority.test.js`; `api/__tests__/specialist-model-selector.test.js` |
