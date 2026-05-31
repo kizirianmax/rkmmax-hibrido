@@ -1,3 +1,20 @@
+## 2026-05-30 — docs(f8): documentar observabilidade mínima da camada de IA
+
+| Item | Detalhe |
+|------|---------|
+| **Título do PR** | `docs(f8): documentar observabilidade mínima da camada de IA` |
+| **Identificação** | **F8-OBS-05 — Observabilidade mínima da camada de IA/providers usados pelo Serginho (documental)** |
+| **Data** | 2026-05-30 |
+| **Escopo** | Documental/observabilidade (Fase 8), sem implementação funcional |
+| **Documento criado** | [`docs/audits/f8-obs-05-observabilidade-camada-ia-providers-serginho-2026-05-30.md`](docs/audits/f8-obs-05-observabilidade-camada-ia-providers-serginho-2026-05-30.md) |
+| **Pré-condições confirmadas** | Base `main`; PRs #511/#512/#513/#514/#515 mergeados; existência de `api/lib/serginho-orchestrator.js`, `api/lib/providers-config.js`, `api/lib/model-registry.js`, `src/utils/intelligentRouter.js`, `src/config/modelPriority.js` e `api/health.js`. |
+| **Mapeamento documental entregue** | Orquestração soberana do Serginho; aliases/modelos/providers encontrados; distinção entre provider físico/alias/tier; fallback/prioridade/seleção manual; endpoint de health/status; testes relevantes já documentados. |
+| **Confirmação arquitetural** | Serginho permanece gateway único e soberano; Groq/Gemini/outros são motores abaixo da orquestração; nenhum bypass introduzido. |
+| **Limitações explícitas** | Sem chamada real a modelos com secret/custo; sem acesso a Vercel/Supabase/logs externos; sem inventar latência/SLA/uptime/status operacional não comprovado. |
+| **Confirmação de não alteração funcional** | Sem alterações em `src/`, `api/`, testes, CSS, rotas, dependências, workflows, `package.json`, `package-lock.json`, providers/modelos/prompts/registry/fallback. |
+| **Fase 8** | Mantida no escopo documental/observabilidade (sem expansão funcional). |
+| **Rollback** | `git revert <commit-sha>` |
+
 ## 2026-05-30 — docs(f8): avaliar PRs Dependabot pendentes
 
 | Item | Detalhe |
