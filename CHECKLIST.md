@@ -1,3 +1,19 @@
+## 2026-05-30 — docs(f8): registrar encerramento formal da Fase 8
+
+| Item | Detalhe |
+|------|---------|
+| **Título do PR** | `docs(f8): registrar encerramento formal da Fase 8` |
+| **Identificação** | **F8-OBS-06 — Encerramento formal da Fase 8 (documental/observabilidade)** |
+| **Escopo** | Encerramento documental/observabilidade da Fase 8, sem implementação funcional e sem iniciar Fase 9. |
+| **Documento criado** | [`docs/audits/fase8-encerramento-formal-2026-05-30.md`](docs/audits/fase8-encerramento-formal-2026-05-30.md) |
+| **Entregas consolidadas** | PR #511 (transição F7→F8), PR #512 (F8-OBS-01), PR #513 (F8-OBS-02), PR #514 (F8-OBS-03), PR #515 (F8-OBS-04), PR #516 (F8-OBS-05) e este PR (F8-OBS-06). |
+| **Veredito da Fase 8** | **Concluída no escopo documental/observabilidade**. Sem alteração de runtime, UI, código, providers/modelos, dependências ou workflows. |
+| **Pendências adiadas** | Dependabot #475 e #477, tag/release, dashboard e qualquer evolução funcional permanecem fora desta tarefa. |
+| **Confirmação de não alteração funcional** | Nenhuma alteração em `src/`, `api/`, testes, CSS, rotas, dependências, `package.json`, `package-lock.json`, workflows, providers/modelos, prompts, registry ou fallback. |
+| **Status pós-encerramento** | Fase 7 encerrada documentalmente; Fase 8 encerrada documentalmente; arquitetura preservada; Fase 9 **não iniciada**. |
+| **Repositório** | Uso exclusivo de `kizirianmax/rkmmax-hibrido` (sem uso de outros repositórios). |
+| **Rollback** | `git revert <commit-sha>` |
+
 ## 2026-05-30 — docs(f8): documentar observabilidade mínima da camada de IA
 
 | Item | Detalhe |
