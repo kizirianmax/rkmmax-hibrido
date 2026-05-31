@@ -1,3 +1,19 @@
+## 2026-05-31 — docs(f9): auditar pendências Dependabot
+
+| Item | Detalhe |
+|------|---------|
+| **Título do PR** | `docs(f9): auditar pendências Dependabot` |
+| **Identificação** | **F9-03 — Auditoria controlada das pendências Dependabot** |
+| **Escopo** | Documental / governança / decisão técnica, sem atualização de dependências e sem implementação funcional. |
+| **Documento criado** | [`docs/audits/f9-03-auditoria-pendencias-dependabot-2026-05-31.md`](docs/audits/f9-03-auditoria-pendencias-dependabot-2026-05-31.md) |
+| **Veredito** | Bloco 3 da Fase 9 concluído em modo documental; #475 e #477 devem seguir separados em trilhas técnicas posteriores e isoladas. |
+| **Decisão sobre #475** | `@stripe/stripe-js` 9.2.0→9.6.0: manter pendente e tratar apenas em PR técnico isolado futuro (risco menor/isolado, sem mistura com Auth/SaaS/Payments). |
+| **Decisão sobre #477** | `archiver` 7.0.1→8.0.0: não aceitar automaticamente; tratar somente em PR técnico isolado com adaptação e testes (risco maior por breaking change). |
+| **Confirmação de não alteração funcional** | Sem alteração em runtime, UI, código, testes, dependências, workflows, providers/modelos, prompts, registry, fallback, Serginho, Híbrido/Construtor, Especialistas, ABNT, Auth/SaaS/Payments, Vercel, Supabase, Stripe, secrets, tag/release ou implementação funcional. |
+| **Rollback** | `git revert <commit-sha>` |
+
+---
+
 ## 2026-05-31 — docs(f9): registrar decisão sobre baseline/tag/release
 
 | Item | Detalhe |
