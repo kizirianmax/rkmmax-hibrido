@@ -1,3 +1,17 @@
+## 2026-05-30 — docs(f8): criar checklist de validação visual operacional
+
+| Item | Detalhe |
+|------|---------|
+| **Título do PR** | `docs(f8): criar checklist de validação visual operacional` |
+| **Identificação** | **F8-OBS-01 — Checklist de validação visual operacional pós-Fase 7** |
+| **Data** | 2026-05-30 |
+| **Escopo** | Documental / observabilidade operacional mínima (Fase 8) |
+| **Documento criado** | [`docs/audits/f8-obs-01-checklist-validacao-visual-operacional-2026-05-30.md`](docs/audits/f8-obs-01-checklist-validacao-visual-operacional-2026-05-30.md) |
+| **Referências** | PR #511 (transição Fase 7 → Fase 8) e `docs/audits/fase7-para-fase8-auditoria-transicao-2026-05-29.md` |
+| **Status** | ✅ Documento criado; **aguardando execução manual pelo owner** em preview/produção |
+| **Confirmação de escopo** | Sem alteração de runtime, UI, rotas, estilos, testes, dependências, workflows, `src/` ou `api/`; nenhuma camada funcional alterada; nenhum bypass do Serginho. |
+| **Rollback** | `git revert <commit-sha>` |
+
 ## 2026-05-30 — docs(checklist): registrar transição pós-Fase 7 e recomendação documental F8
 
 | Item | Detalhe |
