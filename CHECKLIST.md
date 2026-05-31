@@ -1,3 +1,21 @@
+## 2026-05-30 — docs(f8): registrar decisão pós-baseline sobre tag/release
+
+| Item | Detalhe |
+|------|---------|
+| **Título do PR** | `docs(f8): registrar decisão pós-baseline sobre tag/release` |
+| **Identificação** | **F8-BL-02 — Decisão formal sobre tag/release e próxima trilha pós-baseline** |
+| **Data** | 2026-05-30 |
+| **Escopo** | Documental pós-baseline, sem implementação funcional |
+| **Documento criado** | [`docs/audits/f8-bl-02-decisao-tag-release-proxima-trilha-2026-05-30.md`](docs/audits/f8-bl-02-decisao-tag-release-proxima-trilha-2026-05-30.md) |
+| **Veredito** | Baseline pós-Fase 8 formalizado; Fase 8 encerrada documentalmente; Fase 9 não iniciada. |
+| **Tag/Release** | Não criada nesta tarefa; recomendação condicionada/adiada para decisão explícita do owner. |
+| **Próxima trilha recomendada** | Auditoria específica da Fase 9 antes de qualquer tag/release; manter implementação funcional adiada. |
+| **Pendências preservadas** | Dependabot #475/#477, validação visual manual do owner, tag/release, métricas reais e telemetria real. |
+| **Restrições preservadas** | Não altera runtime, UI, código, providers/modelos, dependências, workflows, prompts, registry, fallback; não inicia Fase 9. |
+| **Rollback** | `git revert <commit-sha>` |
+
+---
+
 ## 2026-05-30 — docs(f8): registrar baseline de transição pós-Fase 8
 
 | Item | Detalhe |
