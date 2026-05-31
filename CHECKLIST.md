@@ -1,3 +1,20 @@
+## 2026-05-30 — docs(f8): avaliar PRs Dependabot pendentes
+
+| Item | Detalhe |
+|------|---------|
+| **Título do PR** | `docs(f8): avaliar PRs Dependabot pendentes` |
+| **Identificação** | **F8-OBS-04 — Avaliação controlada dos PRs Dependabot #475 e #477 (sem upgrade funcional)** |
+| **Data** | 2026-05-30 |
+| **Escopo** | Documental/decisão (Fase 8), sem implementação funcional, sem alteração de dependências |
+| **Documento criado** | [`docs/audits/f8-obs-04-avaliacao-controlada-dependabot-2026-05-30.md`](docs/audits/f8-obs-04-avaliacao-controlada-dependabot-2026-05-30.md) |
+| **Pré-condições confirmadas** | Base `main`; PRs #511/#512/#513/#514 mergeados; PRs #475/#477 existentes e abertos; presença de `package.json` e `package-lock.json`. |
+| **Avaliação PR #475** | Upgrade **minor** (`@stripe/stripe-js` 9.2.0→9.6.0), sem uso ativo encontrado no código; recomendação: **adiar para PR isolado** de decisão técnica. |
+| **Avaliação PR #477** | Upgrade **major** (`archiver` 7.0.1→8.0.0), com falhas de CI na branch Dependabot e regressão de import (`default` export); recomendação: **não aprovar como está** e tratar em PR próprio. |
+| **Confirmação de não alteração funcional** | Sem alterações em runtime, UI, código, rotas, estilos, testes, `src/`, `api/`, `package.json`, `package-lock.json`, workflows ou configurações externas. |
+| **Dependabot PRs** | Nenhum PR Dependabot foi mergeado, fechado ou aprovado nesta tarefa. |
+| **Fase 8** | Mantida no escopo documental/observabilidade (sem expansão funcional). |
+| **Rollback** | `git revert <commit-sha>` |
+
 ## 2026-05-30 — docs(f8): consolidar dossiê externo para incubadoras e editais
 
 | Item | Detalhe |
