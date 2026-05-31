@@ -1,3 +1,18 @@
+## 2026-05-31 — docs(f9): registrar decisão sobre baseline/tag/release
+
+| Item | Detalhe |
+|------|---------|
+| **Título do PR** | `docs(f9): registrar decisão sobre baseline/tag/release` |
+| **Identificação** | **F9-02 — Decisão explícita sobre baseline/tag/release** |
+| **Escopo** | Documental / governança / decisão, sem implementação funcional. |
+| **Documento criado** | [`docs/audits/f9-02-decisao-baseline-tag-release-2026-05-31.md`](docs/audits/f9-02-decisao-baseline-tag-release-2026-05-31.md) |
+| **Decisão** | Tag/release condicionada e não criada nesta tarefa. |
+| **Pendências preservadas** | Dependabot #475/#477, validação visual manual controlada, observabilidade/métricas/telemetria reais, tag/release futura e implementação funcional futura. |
+| **Confirmação de não alteração funcional** | Sem alteração em runtime, UI, código, rotas, testes, dependências, workflows, providers/modelos, prompts, registry, fallback, Serginho, Híbrido/Construtor, Especialistas, ABNT, Auth/SaaS/Payments, Vercel, Supabase, Stripe, secrets ou tag/release. |
+| **Rollback** | `git revert <commit-sha>` |
+
+---
+
 ## 2026-05-31 — docs(f9): abrir formalmente a Fase 9
 
 | Item | Detalhe |
