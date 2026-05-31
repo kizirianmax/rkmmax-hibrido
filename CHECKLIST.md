@@ -1,3 +1,19 @@
+## 2026-05-30 — docs(f8): registrar evidência nominal dos testes críticos
+
+| Item | Detalhe |
+|------|---------|
+| **Título do PR** | `docs(f8): registrar evidência nominal dos testes críticos` |
+| **Identificação** | **F8-OBS-02 — Evidência nominal dos testes críticos (seletor de IA e prioridade/modelos)** |
+| **Data da execução nominal (UTC)** | `2026-05-31T00:08:40Z` |
+| **Branch / commit auditado** | `copilot/f8-obs-02-registrar-evidencia-nominal` / `3117dfe40bbde663299f16e31e759bf1be22ebca` |
+| **Comando executado** | `npm test -- --runInBand api/__tests__/model-priority.test.js api/__tests__/specialist-model-selector.test.js` |
+| **Arquivos de teste executados** | `api/__tests__/model-priority.test.js`; `api/__tests__/specialist-model-selector.test.js` |
+| **Resultado nominal local** | ✅ **PASS** (`2/2` suites, `28/28` testes) |
+| **Documento de evidência** | [`docs/audits/f8-obs-02-evidencia-nominal-testes-criticos-2026-05-30.md`](docs/audits/f8-obs-02-evidencia-nominal-testes-criticos-2026-05-30.md) |
+| **Escopo / limitação** | Entrega exclusivamente documental/observabilidade; evidência nominal local (não substitui CI nominal do mesmo comando); sem uso de outros repositórios. |
+| **Confirmação de não alteração funcional** | Sem alteração em runtime, UI, código, rotas, estilos, testes, dependências, workflows, `src/` ou `api/`. Nenhuma correção funcional aplicada nesta tarefa. |
+| **Rollback** | `git revert <commit-sha>` |
+
 ## 2026-05-30 — docs(f8): criar checklist de validação visual operacional
 
 | Item | Detalhe |
