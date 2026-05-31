@@ -1,3 +1,19 @@
+## 2026-05-31 — docs(f9): planejar observabilidade real mínima
+
+| Item | Detalhe |
+|------|---------|
+| **Título do PR** | `docs(f9): planejar observabilidade real mínima` |
+| **Identificação** | **F9-05 — Plano mínimo de observabilidade real sem implementação externa** |
+| **Escopo** | Documental / governança / planejamento de observabilidade, sem implementação funcional. |
+| **Documento criado** | [`docs/audits/f9-05-plano-minimo-observabilidade-real-2026-05-31.md`](docs/audits/f9-05-plano-minimo-observabilidade-real-2026-05-31.md) |
+| **Veredito** | Bloco 5 da Fase 9 registrado como plano mínimo e seguro de observabilidade futura, sem criação de dashboard/endpoint/integração externa/telemetria nova. |
+| **Limites explícitos** | Sem SLA, uptime, p95/p99, custo real, volume real de usuários, clientes/receita/tração, dashboard real, integração externa ou alteração de runtime comprovados nesta tarefa. |
+| **Pendências preservadas** | Dependabot #475/#477, tag/release futura, validação visual manual real, observabilidade/métricas/telemetria reais ainda não implementadas, implementação funcional futura, evoluções de Auth/SaaS/Payments e alterações em providers/modelos/prompts/registry/fallback, Serginho, Híbrido/Construtor, Especialistas ou ABNT. |
+| **Confirmação de não alteração funcional** | Sem alteração em runtime, UI, código, rotas, testes, dependências, workflows, providers/modelos, prompts, registry, fallback, Serginho, Híbrido/Construtor, Especialistas, ABNT, Auth/SaaS/Payments, Vercel, Supabase, Stripe, secrets, tag/release, dashboard, endpoint, telemetria real ou implementação funcional. |
+| **Rollback** | `git revert <commit-sha>` |
+
+---
+
 ## 2026-05-31 — docs(f9): registrar validação visual manual controlada
 
 | Item | Detalhe |
