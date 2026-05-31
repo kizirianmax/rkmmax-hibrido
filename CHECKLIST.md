@@ -1,3 +1,19 @@
+## 2026-05-30 — docs(f8): consolidar dossiê externo para incubadoras e editais
+
+| Item | Detalhe |
+|------|---------|
+| **Título do PR** | `docs(f8): consolidar dossiê externo para incubadoras e editais` |
+| **Identificação** | **F8-OBS-03 — Dossiê externo para incubadoras/editais + matriz de evidências públicas** |
+| **Data** | 2026-05-30 |
+| **Escopo** | Documental / observabilidade e apresentação externa (Fase 8), sem implementação funcional |
+| **Documento criado** | [`docs/audits/f8-obs-03-dossie-externo-incubadoras-editais-2026-05-30.md`](docs/audits/f8-obs-03-dossie-externo-incubadoras-editais-2026-05-30.md) |
+| **Referências** | PR #511 (transição F7→F8), PR #512 (F8-OBS-01), PR #513 (F8-OBS-02) |
+| **Conteúdo consolidado** | Descrição objetiva do RKMMAX/Serginho IA, problema, público-alvo, estágio de **protótipo funcional em validação**, arquitetura em camadas, rotas públicas, limites honestos, riscos de interpretação e roteiro de verificação em até 10 minutos. |
+| **Matriz de evidências** | Inclui `/startup`, `/demo`, `/demo-autoplay`, auditoria Fase 7, F8-OBS-01, F8-OBS-02, status do seletor de IA (presente nas UIs operacionais e ausente em `/startup`), status dos testes críticos e limitações de overclaim comercial. |
+| **Confirmação de não alteração funcional** | Sem alteração de runtime, UI, código, rotas, estilos, testes, dependências, workflows, `src/` ou `api/`. |
+| **Arquivos alterados nesta entrega** | `docs/audits/f8-obs-03-dossie-externo-incubadoras-editais-2026-05-30.md`, `README.md`, `CHECKLIST.md`. |
+| **Rollback** | `git revert <commit-sha>` |
+
 ## 2026-05-30 — docs(f8): registrar evidência nominal dos testes críticos
 
 | Item | Detalhe |
