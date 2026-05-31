@@ -3,15 +3,18 @@
 ## Identificação
 
 - **Data:** 2026-05-29
-- **Status do documento:** versão final aprovada para registro documental (histórico de revisão interno até v5 antes da aprovação).
 - **Tipo:** Auditoria documental de transição (sem alteração de runtime).
-- **Escopo:** Confirmar estaticamente o encerramento da Fase 7, registrar a verificação da pendência relatada sobre o "seletor de IA em Projetos/Startup" — com confirmação fornecida pelo owner — e propor formalmente a próxima fase (Fase 8).
+- **Status do documento:** revisão documental aprovada para registro, com limitações explicitadas. Esta revisão remove overclaim sobre o seletor de IA presente em versões anteriores deste arquivo.
+- **Escopo:** confirmar estaticamente o encerramento documental da Fase 7, registrar os limites da verificação do relato sobre o seletor de IA e recomendar/confirmar a transição para a Fase 8 sem abrir nova frente funcional.
 - **HEAD auditado em `main`:** `e7a178e009ff13aac956f69e0812fe7a8459311f`.
-- **Natureza desta entrega:** **Exclusivamente documental.** Nenhuma alteração em `src/`, `api/`, testes, CSS, rotas, dependências, configurações, providers, modelos, prompts, Auth, Payments, Vercel, Supabase, Serginho, Construtor/Híbrido, Especialistas ou ABNT.
+- **Natureza desta entrega:** **exclusivamente documental.** Nenhuma alteração em `src/`, `api/`, testes, CSS, rotas, dependências, configurações, providers, modelos, prompts, Auth, Payments, Vercel, Supabase, Serginho, Construtor/Híbrido, Especialistas ou ABNT.
 - **Limites desta auditoria (explícitos, não classificados como falha):**
-  - **Nenhuma execução local direcionada de testes** foi realizada neste ciclo. O ambiente desta auditoria não possui executor de shell/Node, portanto comandos como `npm run lint`, `npm run build`, `npm test`, `jest api/__tests__/specialist-model-selector.test.js` e `jest api/__tests__/model-priority.test.js` **não foram executados** por esta auditoria. Esta é uma limitação de ambiente, **não uma falha de baseline**.
-  - **Sem acesso a preview/produção (Vercel) e sem inspeção visual de runtime** das UIs operacionais.
-  - Evidência de execução de testes é **somente indireta e agregada**, baseada na conclusão dos workflows `test.yml` e `coverage.yml` registrada no GitHub Actions para o HEAD auditado; logs brutos nominais por arquivo de teste não foram obtidos neste ciclo.
+  - **sem execução local direcionada** de testes, lint ou build nesta auditoria;
+  - **sem acesso a preview/produção (Vercel)** e **sem inspeção visual de runtime** das UIs operacionais;
+  - **evidência de execução de testes apenas indireta/agregada**, baseada na conclusão dos workflows `test.yml` e `coverage.yml` registrada no GitHub Actions para o HEAD auditado;
+  - **logs brutos nominais por arquivo de teste não foram obtidos** neste ciclo;
+  - **sem comprovação nominal dos testes do seletor** (`api/__tests__/model-priority.test.js`, `api/__tests__/specialist-model-selector.test.js`) nesta auditoria;
+  - **buscas textuais/code search podem ser limitadas ou truncadas** pela ferramenta utilizada e **não constituem evidência conclusiva isolada**.
 
 ## Verdade arquitetural preservada
 
@@ -19,8 +22,12 @@
 - **Híbrido/Construtor** = geração e revisão de artefatos concretos.
 - **Especialistas** = especialistas de domínio sob coordenação do Serginho.
 - **ABNT** = camada de validação/conformidade documental.
-- **Auth / SaaS / Payments / UI/UX / Demo** = camadas separadas.
-- Esta auditoria **não introduz bypass** e **não confunde camadas**.
+- **UI/UX/Demo** = camada pública de apresentação e demonstração.
+- **Auth / SaaS / Payments** = camadas separadas.
+- `/startup` = página institucional pública do RKMMAX, corretamente **sem** seletor de IA.
+- O **seletor de IA** pertence somente às UIs operacionais: **Serginho IA, Híbrido/Construtor e Especialistas**.
+- **Providers/modelos** são motores abaixo do Serginho, **não** substituem o Serginho.
+- Esta auditoria **não introduz bypass ao Serginho** e **não confunde camadas**.
 
 ## 1. Status da Fase 7
 
@@ -49,71 +56,90 @@ Verificação estritamente estática (presença em `main`, leitura de arquivos e
 ### 1.3. Percentual de conclusão da Fase 7 (qualificado)
 
 - **Escopo documental/estático confirmado:** 100% das entregas planejadas F7-UX-01 → F7-UX-09 presentes em `main` e referenciadas no `CHECKLIST.md` e no documento de encerramento.
-- **Validação visual/runtime das três UIs operacionais (Serginho, Híbrido/Construtor, Especialistas):** não verificada nesta auditoria — classificada apenas como refinamento/verificação futura não bloqueadora (seção 3.3), pois o relato original não se referia a essas telas.
+- **Validação visual/runtime das três UIs operacionais (Serginho, Híbrido/Construtor, Especialistas):** **não verificada** nesta auditoria. Qualquer percentual de 100% **não cobre** a renderização visual/runtime do seletor e **não deve ser interpretado** como confirmação visual/runtime.
 
-> **Percentual real da Fase 7 (qualificado): 100% no escopo documental/estático confirmado.**
+> **Percentual real da Fase 7 (qualificado): 100% somente no escopo documental/estático confirmado; a verificação visual/runtime do seletor permanece ausente e não deve ser interpretada como concluída.**
 
 ## 2. Verificação do relato — "opções do seletor de IA não apareceram em Projetos"
 
-### 2.1. Confirmação do owner sobre o contexto do relato
+### 2.1. Limite de contexto do relato
 
-O owner confirmou (2026-05-29) que a tela mencionada no relato é a página pública **`/startup`** (anteriormente relacionada à identificação "Projetos").
+- Esta auditoria **não possui evidência direta suficiente** para afirmar que o relato original tenha confundido páginas, rotas ou interfaces. Qualquer afirmação nesse sentido seria extrapolação não suportada por evidência reproduzível neste ciclo.
+- `/startup` é **página institucional pública** do RKMMAX e **não é uma UI operacional de execução por IA**; portanto, não renderiza seletor de IA por arquitetura.
 
-A página `/startup` é a **página institucional pública do RKMMAX**, destinada a qualquer usuário, avaliador, parceiro, incubadora ou interessado que precise verificar informações sobre a startup, o fundador, o projeto, o produto, seu estágio e suas validações externas, **sem acessar áreas privadas do sistema**.
+### 2.2. Confirmação estática do escopo planejado da F7-UX-08
 
-A exigência da Google (Google for Startups / Google Cloud Startup Support, Team Information) é **apenas um dos contextos concretos** em que essa página pública foi necessária — **não é a finalidade exclusiva** da página.
+Inspeção estritamente estática realizada nos seguintes arquivos do HEAD `e7a178e`:
 
-`/startup` **não é uma UI operacional de execução por IA.**
+- `src/pages/Projects.jsx` — página institucional pública bilíngue PT/EN renderizada em `/startup`. **Não importa** `MANUAL_MODEL_OPTIONS` e **não renderiza** seletor de motor de IA.
+- `src/config/modelPriority.js` — define `MANUAL_MODEL_OPTIONS` (auto + 5 modelos).
+- `src/pages/Serginho.jsx` — importa e renderiza `MANUAL_MODEL_OPTIONS` em `<select>` flutuante.
+- `src/pages/HybridAgentSimple.jsx` — importa e renderiza `MANUAL_MODEL_OPTIONS` em `#engine-select` no header.
+- `src/pages/SpecialistChat.jsx` — importa e renderiza `MANUAL_MODEL_OPTIONS` em `<select>` no header, com state `selectedModel`.
+- `CHECKLIST.md` — entrada de 2026-05-27 (F7-UX-08) declara o escopo do seletor como **três UIs operacionais (Serginho, Híbrido/Construtor, Especialistas)** e lista `/startup` (e demais rotas públicas) explicitamente como **não alteradas**.
 
-### 2.2. Inspeção estática realizada
+**Resultado estático:** a inspeção estática de código **não identificou inconsistência** com o escopo declarado de **F7-UX-08**. Esta é uma constatação estática; **não** é evidência visual/runtime.
 
-- `src/pages/Projects.jsx` (HEAD `e7a178e`): página institucional pública bilíngue PT/EN renderizada em `/startup`. **Não importa** `MANUAL_MODEL_OPTIONS` e **não renderiza** seletor de motor de IA.
-- `src/config/modelPriority.js`: define `MANUAL_MODEL_OPTIONS` (auto + 5 modelos).
-- `src/pages/Serginho.jsx` (L513–L613): importa e renderiza `MANUAL_MODEL_OPTIONS` em `<select>` flutuante.
-- `src/pages/HybridAgentSimple.jsx` (L631–L736): importa e renderiza `MANUAL_MODEL_OPTIONS` em `#engine-select` no header.
-- `src/pages/SpecialistChat.jsx` (L63–L173): importa e renderiza `MANUAL_MODEL_OPTIONS` em `<select>` no header, com state `selectedModel`.
-- Entrada `CHECKLIST.md` (2026-05-27 — F7-UX-08) declara o escopo do seletor como **três UIs operacionais (Serginho, Híbrido/Construtor, Especialistas)** e lista `/startup` (e demais rotas públicas) explicitamente como **não alteradas**.
-- Testes presentes no repositório (presença confirmada, **não executados nesta auditoria**): `api/__tests__/model-priority.test.js`, `api/__tests__/specialist-model-selector.test.js`.
+### 2.3. Lacuna de verificação visual/runtime do seletor
 
-### 2.3. Confirmação arquitetural
+- Esta auditoria **não validou visualmente o seletor** em preview/produção e **não executou runtime local**.
+- A inspeção estática **não comprova** que o seletor aparece corretamente em ambiente visual/runtime.
+- A renderização efetiva do seletor nas três UIs operacionais permanece **lacuna documentada**, a ser tratada por execução manual de checklist visual (F8-OBS-01).
 
-- A ausência de seletor de IA em `/startup` é **comportamento correto e esperado por arquitetura**, não uma pendência.
-- O seletor de IA pertence somente às UIs operacionais previstas no escopo de F7-UX-08: **Serginho IA, Híbrido/Construtor e Especialistas**.
+### 2.4. Testes efetivamente executados nesta auditoria
 
-### 2.4. Evidências indiretas observadas no GitHub Actions (utilizadas)
+**Nenhum teste foi executado localmente ou nominalmente por esta auditoria.** Os testes mencionados existem no repositório por inspeção estática, mas não foram executados neste ciclo. Esta é uma limitação explicitada, não falha de baseline.
 
-A consulta à API do GitHub Actions retornou, para o HEAD `e7a178e009ff13aac956f69e0812fe7a8459311f` em `main`, as seguintes execuções de workflow concluídas (evidência **agregada**, não nominal por arquivo de teste):
+| Comando | Resultado nesta auditoria |
+|---------|---------------------------|
+| `npm run lint` | Não executado nesta auditoria |
+| `npm run build` | Não executado nesta auditoria |
+| `npm test -- api/__tests__/model-priority.test.js` | Não executado nesta auditoria |
+| `npm test -- api/__tests__/specialist-model-selector.test.js` | Não executado nesta auditoria |
+
+### 2.5. Confirmação arquitetural
+
+- A **ausência de seletor de IA em `/startup`** é **comportamento esperado pela arquitetura documentada**, **não** evidência visual/runtime sobre o relato.
+- O **seletor de IA** pertence **somente** às UIs operacionais previstas no escopo de **F7-UX-08**: **Serginho IA, Híbrido/Construtor e Especialistas**.
+
+### 2.6. Evidências indiretas observadas no GitHub Actions
+
+A consulta à API do GitHub Actions retornou, para o HEAD `e7a178e009ff13aac956f69e0812fe7a8459311f` em `main`, as seguintes execuções de workflow concluídas. **Esta é evidência agregada por workflow, não evidência nominal por arquivo de teste.**
 
 | Workflow | Path | Run ID | Run number | Início (UTC) | Conclusão (agregada) | Link |
 |---------|------|--------|------------|--------------|----------------------|------|
 | Test & Coverage | `.github/workflows/test.yml` | 26585673516 | 2088 | 2026-05-28T15:49:44Z | `success` | https://github.com/kizirianmax/rkmmax-hibrido/actions/runs/26585673516 |
 | Coverage | `.github/workflows/coverage.yml` | 26585673844 | 1982 | 2026-05-28T15:49:45Z | `success` | https://github.com/kizirianmax/rkmmax-hibrido/actions/runs/26585673844 |
 
-Esta auditoria **não declara execução nominal** dos testes `api/__tests__/specialist-model-selector.test.js` ou `api/__tests__/model-priority.test.js`, pois os logs brutos por arquivo de teste não foram obtidos neste ciclo. Esta auditoria **também não declara execução local** — limitação documentada como restrição de ambiente, não como falha de baseline.
+Esta auditoria **não declara execução nominal** dos testes `api/__tests__/specialist-model-selector.test.js` ou `api/__tests__/model-priority.test.js`, pois os logs brutos por arquivo de teste não foram obtidos neste ciclo. A evidência agregada acima **não substitui** validação visual/runtime nem execução nominal por arquivo.
 
 > **Nota isolada de descarte (não compõe as evidências utilizadas):** uma terceira run associada ao mesmo HEAD na branch `docs/audit-transicao-pos-fase7-2026-05-29` foi observada (run id `26618762393`) com `conclusion: startup_failure` em workflow externo (`path: "BuildFailed"`), distinto de `test.yml` e `coverage.yml`. Esta run não comprova nem contradiz o baseline da Fase 7 e foi descartada das evidências desta auditoria; é registrada aqui apenas para transparência.
 
-### 2.5. Classificação do relato
+### 2.7. Classificação do relato
 
-> **Classificação: NÃO-PENDÊNCIA CONFIRMADA.**
->
-> `/startup` é página institucional pública e corretamente **não renderiza** seletor de IA. Confirmação fornecida pelo owner (2026-05-29) e **coerente** com a inspeção estática do escopo declarado em F7-UX-08.
+> **Classificação: não verificável no ambiente disponível quanto à renderização visual/runtime; inspeção estática não identificou inconsistência com o escopo declarado de F7-UX-08.**
+
+- O relato **não deve ser classificado** como *"resolvido com evidência"*.
+- O relato **não deve ser classificado** como *"não-pendência confirmada"* em sentido visual/runtime.
+- O relato **não deve ser classificado** como *"NÃO-PENDÊNCIA — resolvido com evidência"*.
+- A inspeção estática **não encontrou inconsistência** com o escopo planejado de F7-UX-08; isto **NÃO comprova** renderização visual/runtime do seletor.
+- Os testes do seletor **não devem ser declarados como executados** sem comando e resultado correspondentes — e, nesta auditoria, **não foram executados**.
 
 ## 3. Pendências residuais
 
 ### 3.1. Bloqueadoras
 
-- **Nenhuma.**
+- **Nenhuma** identificada para o encerramento documental da Fase 7.
 
 ### 3.2. Importantes (não bloqueadoras)
 
 - Dívida pré-existente rastreada: ~256–258 warnings de lint (desde F5-01); chunk Vite >500 kB; latência Groq variável. Nenhuma é bloqueadora.
-- **Atualização do `CHECKLIST.md`** com a entrada correspondente a esta auditoria **permanece pendente**, a ser tratada em PR documental separado, exclusivamente para preservar integralmente o histórico append-only real do arquivo (o ambiente atual não permite prepend seguro sem risco de truncamento das entradas históricas).
+- **Atualização do `CHECKLIST.md`** correspondente a esta auditoria **será realizada/foi realizada neste PR documental**, sem qualquer alteração funcional. Esta operação **não substitui** a verificação visual/runtime futura.
 
 ### 3.3. Refinamentos futuros (não bloqueadores)
 
-- **Verificação visual manual das três UIs operacionais** (Serginho IA, Híbrido/Construtor, Especialistas) confirmando renderização efetiva do seletor de motor de IA em preview/produção. **Não bloqueadora**, pois o relato original referia-se a `/startup` (página institucional pública), não às UIs operacionais.
-- Captura nominal de logs dos testes `api/__tests__/specialist-model-selector.test.js` e `api/__tests__/model-priority.test.js`, como reforço de observabilidade. **Não bloqueadora**, dado o status agregado verde dos workflows `test.yml` e `coverage.yml` para o HEAD `e7a178e`.
+- **Verificação visual manual das três UIs operacionais** (Serginho IA, Híbrido/Construtor, Especialistas) confirmando renderização efetiva do seletor de motor de IA em preview/produção. **Permanece lacuna documentada enquanto não houver evidência visual/runtime.**
+- Captura nominal de logs dos testes `api/__tests__/specialist-model-selector.test.js` e `api/__tests__/model-priority.test.js`, como reforço de observabilidade.
 - **Lacuna B (F7-UX-09):** evidência visual pública mais explícita (vídeo gravado / P3).
 - **SSR / SEO** das rotas públicas.
 - **Dependabot #475, #477** (não tocados).
@@ -128,18 +154,18 @@ Esta auditoria **não declara execução nominal** dos testes `api/__tests__/spe
 | Inspeção estática dos artefatos F7-UX-01 → F7-UX-09 | ✅ | PRs #495–#504, #508 referenciados; arquivos lidos |
 | Inspeção estática do seletor de IA nas três UIs operacionais e em `Projects.jsx` | ✅ | `Serginho.jsx`, `HybridAgentSimple.jsx`, `SpecialistChat.jsx`, `Projects.jsx`, `modelPriority.js` lidos |
 | Evidência indireta de CI agregado (workflows `test.yml`/`coverage.yml`) para HEAD `e7a178e` | ✅ (agregado) | Runs 26585673516 e 26585673844 com `conclusion: success` |
-| Confirmação do contexto do relato original com o owner | ✅ | Owner confirmou em 2026-05-29 que o relato se refere a `/startup` (página institucional pública) |
-| Classificação do relato | ✅ | NÃO-PENDÊNCIA CONFIRMADA (seção 2.5) |
+| Confirmação direta do contexto do relato original | ⚠️ | Não há evidência direta suficiente para afirmar confusão entre páginas/interfaces |
+| Classificação do relato | ⚠️ | Não verificável visual/runtime; inspeção estática sem inconsistência com F7-UX-08 |
 | Classificação de pendências | ✅ | Seção 3 |
 | Recomendação oficial da Fase 8 | ✅ | Seção 5 |
 | Sem alteração de código funcional | ✅ | Entrega exclusivamente documental |
-| Evidência nominal por arquivo de teste (`specialist-model-selector`, `model-priority`) | ⚠️ | Limitação de ambiente (sem executor local; log bruto não obtido). Não bloqueadora — refinamento futuro |
-| Validação visual em preview/produção das UIs operacionais | ⚠️ | Limitação de ambiente. Não bloqueadora — refinamento futuro (seção 3.3), pois o relato não se referia a essas telas |
-| Atualização do `CHECKLIST.md` correspondente a esta auditoria | ⚠️ | **Pendente** — a ser tratada em PR documental separado para preservar integralmente o histórico append-only do arquivo |
+| Evidência nominal por arquivo de teste (`specialist-model-selector`, `model-priority`) | ⚠️ | Não executados nesta auditoria; sem comando e resultado nominais |
+| Validação visual em preview/produção das UIs operacionais | ⚠️ | Lacuna preservada até haver evidência visual/runtime |
+| Atualização do `CHECKLIST.md` correspondente a esta auditoria | ✅ | Realizada neste PR documental |
 
-> **Percentual de conclusão da auditoria de transição pós-Fase 7: ~95%.**
+> **Percentual de conclusão da auditoria de transição pós-Fase 7: ~90%.**
 >
-> A reserva de ~5% reflete os refinamentos futuros não bloqueadores e a pendência operacional do registro seguro no `CHECKLIST.md`. A análise técnica/documental desta auditoria está concluída e a recomendação da Fase 8 está definida; contudo, o encerramento de governança integral da transição permanece pendente até que a entrada correspondente seja registrada com segurança no `CHECKLIST.md`, sem truncamento do histórico.
+> A reserva de ~10% reflete: (i) ausência de verificação visual/runtime das UIs operacionais; (ii) ausência de execução nominal dos testes relacionados ao seletor (`api/__tests__/model-priority.test.js`, `api/__tests__/specialist-model-selector.test.js`); (iii) limitação de evidência visual/runtime, com buscas textuais/code search potencialmente limitadas ou truncadas e não conclusivas de forma isolada. A atualização do `CHECKLIST.md` **não** é citada como pendência por já estar sendo realizada neste mesmo PR documental.
 
 ## 5. Recomendação oficial da Fase 8
 
@@ -149,15 +175,15 @@ Esta auditoria **não declara execução nominal** dos testes `api/__tests__/spe
 
 ### 5.2. Justificativa
 
-- A Fase 7 entregou e consolidou estaticamente o eixo UI/UX público + paridade do seletor de IA. Os refinamentos restantes (verificação visual operacional, evidência visual pública mais explícita, SSR/SEO, Dependabot, captura nominal de logs) não bloqueiam o encerramento documental já confirmado da Fase 7 nem a recomendação documental da Fase 8; qualquer execução da Fase 8 dependerá de autorização posterior do owner após revisão conjunta.
+- A Fase 7 entregou e consolidou **estaticamente** o eixo UI/UX público + paridade do seletor de IA no escopo documental/estático. Os refinamentos restantes (verificação visual/runtime operacional, evidência visual pública mais explícita, SSR/SEO, Dependabot, captura nominal de logs) **não bloqueiam** o encerramento documental já confirmado da Fase 7 nem a recomendação documental da Fase 8; qualquer execução da Fase 8 dependerá de autorização posterior do owner após revisão conjunta.
 - A Fase 8 deve **proteger o que a Fase 7 entregou** e **fechar lacunas residuais leves**, sem abrir novas frentes funcionais (Auth/SaaS/Payments avançado, novos providers/modelos, sandbox real do runner), preservando a arquitetura soberana do Serginho.
 
 ### 5.3. Primeira entrega mínima recomendada — **F8-OBS-01**
 
-> **F8-OBS-01:** Checklist operacional reproduzível de verificação visual manual das três UIs operacionais (Serginho IA, Híbrido/Construtor, Especialistas — confirmando renderização real do seletor de motor de IA) e das rotas públicas (`/`, `/startup`, `/demo`, `/demo-autoplay`, `/login`) em preview/produção, **sem alteração de código**.
+> **F8-OBS-01:** Checklist operacional reproduzível de verificação visual manual das três UIs operacionais (Serginho IA, Híbrido/Construtor, Especialistas — **confirmando ou rejeitando a renderização real do seletor** de motor de IA) e das rotas públicas (`/`, `/startup`, `/demo`, `/demo-autoplay`, `/login`) em preview/produção, **sem alteração de código**.
 
 - **Entrega:** único documento novo em `docs/audits/f8-obs-01-checklist-validacao-visual-AAAA-MM-DD.md`.
-- **Critério de sucesso:** owner consegue executar o checklist em <30 min e registrar visualmente que o seletor de IA aparece nas três UIs operacionais e que as rotas públicas carregam corretamente.
+- **Critério de sucesso:** owner consegue executar o checklist em <30 min e registrar visualmente se o seletor de IA aparece nas três UIs operacionais e se as rotas públicas carregam corretamente.
 - **Por que F8-OBS-01 primeiro:** consolida o refinamento de maior valor entre os pendentes não bloqueadores, sem tocar em runtime.
 
 ### 5.4. Backlog inicial sugerido (referencial)
@@ -192,11 +218,12 @@ Esta auditoria **não declara execução nominal** dos testes `api/__tests__/spe
 - **Nenhum bypass do Serginho** foi criado ou sugerido.
 - **Nenhuma camada foi confundida** com outra.
 - **Nenhum código** em `src/`, `api/`, testes, CSS, configs, providers, Auth, Payments, Serginho, Construtor, Especialistas ou ABNT foi alterado.
-- **Nenhum teste foi executado localmente por esta auditoria neste ciclo** (limitação de ambiente, não falha de baseline). A única evidência de execução utilizada é **indireta e agregada**, proveniente do GitHub Actions já registrado para o HEAD `e7a178e` (workflows `test.yml` e `coverage.yml`).
+- **Esta revisão documental altera somente dois arquivos:** este próprio `docs/audits/fase7-para-fase8-auditoria-transicao-2026-05-29.md` e `CHECKLIST.md`.
+- **A entrada do `CHECKLIST.md` foi atualizada neste PR documental** para registrar a correção de overclaim e as limitações visual/runtime aqui explicitadas.
+- **Nenhum teste foi executado localmente** por esta auditoria neste ciclo (limitação explicitada, não falha de baseline). A única evidência de execução utilizada é **indireta e agregada**, proveniente do GitHub Actions já registrado para o HEAD `e7a178e` (workflows `test.yml` e `coverage.yml`).
 - **Nenhuma execução nominal por arquivo de teste** foi declarada.
-- **A branch `docs/audit-transicao-pos-fase7-2026-05-29` já existe** no repositório (criada em ação previamente autorizada). Esta auditoria **não criou** branch nova.
-- **O `CHECKLIST.md` NÃO foi alterado** por esta operação. A entrada correspondente a esta auditoria está **pendente de registro** em PR documental separado, exclusivamente para preservar integralmente o histórico append-only real do arquivo, pois o ambiente atual não permite prepend seguro sem risco de truncamento das entradas históricas existentes.
-- O PR documental que registra este arquivo deve permanecer em **Draft** e **não deve ser marcado como pronto para merge** enquanto a estratégia segura para atualizar o `CHECKLIST.md` não for definida e/ou enquanto essa pendência não for formalmente tratada em PR separado. **Quem decide eventual merge é exclusivamente o owner após análise conjunta.**
+- **A branch `copilot/revisao-documental-auditoria-transicao`** é a branch desta revisão documental; nenhuma branch funcional foi criada por esta auditoria.
+- O PR documental que registra esta revisão **deve permanecer em Draft até revisão do owner** e **não deve ser marcado como Ready for review** por este agente. **Quem decide eventual merge é exclusivamente o owner após análise conjunta.**
 
 ## 7. Rollback
 

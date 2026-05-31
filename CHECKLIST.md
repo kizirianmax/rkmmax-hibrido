@@ -1,3 +1,18 @@
+## 2026-05-31 — docs(audit): revisar auditoria de transição F7→F8 sem overclaim do seletor
+
+| Item | Detalhe |
+|------|---------|
+| **Título do PR** | `docs(audit): revisar auditoria de transição F7→F8 sem overclaim do seletor` |
+| **Identificação** | **Revisão documental — Auditoria de transição Pós-Fase 7 → Fase 8** |
+| **Escopo** | Revisão exclusivamente documental da auditoria de transição F7→F8, sem implementação funcional. |
+| **Documento revisado** | [`docs/audits/fase7-para-fase8-auditoria-transicao-2026-05-29.md`](docs/audits/fase7-para-fase8-auditoria-transicao-2026-05-29.md) |
+| **Correção aplicada** | Remoção de overclaim sobre o seletor de IA; relato reclassificado como não verificável visual/runtime no ambiente disponível, com inspeção estática sem inconsistência com F7-UX-08. |
+| **Limitação preservada** | Sem validação visual/runtime em preview/produção e sem execução nominal comprovada dos testes do seletor nesta auditoria. |
+| **Confirmação de não alteração funcional** | Sem alteração em `src/`, `api/`, testes, CSS, rotas, dependências, workflows, providers/modelos, prompts, Auth, Payments, Serginho, Híbrido/Construtor, Especialistas ou ABNT. |
+| **Rollback** | `git revert <commit-sha>` |
+
+---
+
 ## 2026-05-30 — docs(f8): registrar decisão pós-baseline sobre tag/release
 
 | Item | Detalhe |
