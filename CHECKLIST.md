@@ -1,3 +1,19 @@
+## 2026-05-30 — docs(f8): registrar baseline de transição pós-Fase 8
+
+| Item | Detalhe |
+|------|---------|
+| **Título do PR** | `docs(f8): registrar baseline de transição pós-Fase 8` |
+| **Identificação** | **F8-BL-01 — Baseline de Transição Pós-Fase 8** |
+| **Data** | 2026-05-30 |
+| **Escopo** | Documental/baseline de decisão, sem implementação funcional |
+| **Documento criado** | [`docs/audits/f8-bl-01-baseline-transicao-pos-fase8-2026-05-30.md`](docs/audits/f8-bl-01-baseline-transicao-pos-fase8-2026-05-30.md) |
+| **Veredito** | Fase 8 encerrada documentalmente; auditoria pós-Fase 8 ≈ 92%; prontidão próxima etapa ≈ 78%; Fase 9 não iniciada. |
+| **Decisão tag/release** | Não criada nesta tarefa; condicionada a decisão explícita do owner e CI/revisão final. |
+| **Pendências preservadas** | Dependabot #475; Dependabot #477; validação visual manual quando aplicável; métricas/telemetria reais; implementação funcional. |
+| **Confirmação de não alteração funcional** | Sem alterações em `src/`, `api/`, testes, CSS, rotas, dependências, `package.json`, `package-lock.json`, workflows, providers/modelos, prompts, registry, fallback, Serginho, Híbrido/Construtor, Especialistas, ABNT, Auth/SaaS/Payments. |
+| **Repositório** | Uso exclusivo de `kizirianmax/rkmmax-hibrido`. |
+| **Rollback** | `git revert <commit-sha>` |
+
 ## 2026-05-30 — docs(f8): registrar encerramento formal da Fase 8
 
 | Item | Detalhe |
