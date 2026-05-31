@@ -1,3 +1,18 @@
+## 2026-05-31 — docs(f9): registrar validação visual manual controlada
+
+| Item | Detalhe |
+|------|---------|
+| **Título do PR** | `docs(f9): registrar validação visual manual controlada` |
+| **Identificação** | **F9-04 — Validação visual manual controlada** |
+| **Escopo** | Documental / checklist / validação manual, sem implementação funcional. |
+| **Documento criado** | [`docs/audits/f9-04-validacao-visual-manual-controlada-2026-05-31.md`](docs/audits/f9-04-validacao-visual-manual-controlada-2026-05-31.md) |
+| **Veredito** | Bloco 4 da Fase 9 registrado como checklist visual manual controlado; execução visual real permanece pendente do owner sem evidência anexada nesta tarefa. |
+| **Pendências preservadas** | Dependabot #475/#477, tag/release futura, observabilidade/métricas/telemetria reais, implementação funcional futura, evoluções de Auth/SaaS/Payments e alterações em providers/modelos/prompts/registry/fallback, Serginho, Híbrido/Construtor, Especialistas ou ABNT. |
+| **Confirmação de não alteração funcional** | Sem alteração em runtime, UI, código, rotas, testes, dependências, workflows, providers/modelos, prompts, registry, fallback, Serginho, Híbrido/Construtor, Especialistas, ABNT, Auth/SaaS/Payments, Vercel, Supabase, Stripe, secrets, tag/release ou implementação funcional. |
+| **Rollback** | `git revert <commit-sha>` |
+
+---
+
 ## 2026-05-31 — docs(f9): auditar pendências Dependabot
 
 | Item | Detalhe |
