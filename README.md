@@ -11,6 +11,9 @@ RKMMAX Híbrido is an AI agent orchestration system with a React frontend and Ve
 
 **RKMMAX / Serginho IA** é um sistema de orquestração de IA com um orquestrador soberano (Serginho), 47 especialistas de domínio, uma camada de geração/validação/exportação de artefatos (Construtor/Híbrido) e uma camada de conformidade ABNT — projetado para reduzir o esforço de produzir entregáveis estruturados (não apenas respostas de chat) com rastreabilidade arquitetural.
 
+- **Problema que endereça:** quando se usa IA para gerar entregáveis (documentos, pacotes, conteúdo estruturado), a saída tende a ser texto solto, sem validação, sem ciclo de revisão e sem auditoria. O Construtor/Híbrido encapsula geração → validação → preview → revisão → aprovação → exportação dentro de um único pipeline, sob orquestração soberana do Serginho.
+- **Público-alvo inicial (ICP):** estudantes, pesquisadores e profissionais que precisam de entregáveis estruturados (com viés inicial para conformidade ABNT) e avaliadores técnicos de banca/incubadora que precisam inspecionar a arquitetura e o baseline reproduzível.
+- **O que diferencia:** Serginho é o ponto de entrada único — não há bypass do orquestrador; o Construtor entrega artefatos empacotados com manifest e UUID, não apenas mensagens; especialistas e ABNT são camadas separadas e auditáveis.
 - **Dossiê externo para avaliadores (F8-OBS-03):** [`docs/audits/f8-obs-03-dossie-externo-incubadoras-editais-2026-05-30.md`](docs/audits/f8-obs-03-dossie-externo-incubadoras-editais-2026-05-30.md)
 
 > **Development policy:** This is an individual project by [@kizirianmax](https://github.com/kizirianmax). All merges to `main` require a passing CI run. See [docs/DEVELOPMENT_GUIDELINES.md](docs/DEVELOPMENT_GUIDELINES.md) for details.
