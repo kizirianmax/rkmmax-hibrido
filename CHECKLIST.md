@@ -1,3 +1,18 @@
+## 2026-06-01 — chore(deps): tratar Dependabot #475 isoladamente
+
+| Item | Detalhe |
+|------|---------|
+| **Título do PR** | `chore(deps): tratar Dependabot #475 isoladamente` |
+| **Escopo** | PR técnico isolado para atualização mínima de dependência, sem alteração funcional. |
+| **Origem da pendência** | Dependabot #475 (`@stripe/stripe-js` de `^9.2.0` para `^9.6.0`). |
+| **Confirmação de escopo** | Dependabot #477 (`archiver`) não foi tocado neste PR. |
+| **Arquivos alterados** | `package.json`, `package-lock.json`, `CHECKLIST.md`. |
+| **Validações executadas** | `npm install` ✅; `npm run lint` ✅ (253 warnings pré-existentes, 0 errors); `npm run build` ✅; `npm test -- --runInBand` ✅ (68 suítes, 2471 testes). |
+| **Confirmação de não alteração funcional** | Sem alterações em `src/`, `api/`, testes, CSS, rotas, workflows, providers/modelos, prompts, Serginho, Híbrido/Construtor, Especialistas, ABNT, Auth/SaaS/Payments ou integrações externas. |
+| **Rollback** | `git revert <commit-sha>` |
+
+---
+
 ## 2026-05-31 — docs(f9): registrar encerramento e decisão da Fase 9
 
 | Item | Detalhe |
