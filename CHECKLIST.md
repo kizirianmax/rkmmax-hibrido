@@ -1,3 +1,20 @@
+## 2026-05-31 — docs(f9): registrar encerramento e decisão da Fase 9
+
+| Item | Detalhe |
+|------|---------|
+| **Título do PR** | `docs(f9): registrar encerramento e decisão da Fase 9` |
+| **Identificação** | **F9-06 — Encerramento e decisão da Fase 9** |
+| **Escopo** | Documental / governança / encerramento de fase, sem implementação funcional. |
+| **Documento criado** | [`docs/audits/f9-06-encerramento-decisao-fase9-2026-05-31.md`](docs/audits/f9-06-encerramento-decisao-fase9-2026-05-31.md) |
+| **Veredito** | Bloco 6 da Fase 9 concluído com encerramento documental e decisão conservadora sobre próxima etapa. |
+| **Consolidação da Fase 9** | Blocos F9-01 a F9-06 registrados e rastreáveis, sem implementação funcional, sem tag/release e sem resolver #475/#477 nesta tarefa. |
+| **Pendências preservadas** | Dependabot #475/#477, tag/release futura, validação visual manual real com evidência, observabilidade/métricas/telemetria reais, implementação funcional futura, evoluções de Auth/SaaS/Payments e alterações em providers/modelos/prompts/registry/fallback, Serginho, Híbrido/Construtor, Especialistas ou ABNT. |
+| **Recomendação sobre próxima etapa** | Encerrar Fase 9 documentalmente e só avançar após decisão explícita do owner (PR técnico isolado #475, PR técnico isolado #477, validação visual real com evidência, tag/release de baseline ou auditoria de transição para eventual Fase 10). |
+| **Confirmação de não alteração funcional** | Sem alteração em runtime, UI, código, rotas, testes, dependências, workflows, providers/modelos, prompts, registry, fallback, Serginho, Híbrido/Construtor, Especialistas, ABNT, Auth/SaaS/Payments, Vercel, Supabase, Stripe, secrets, tag/release, dashboard, endpoint, telemetria real ou implementação funcional. |
+| **Rollback** | `git revert <commit-sha>` |
+
+---
+
 ## 2026-05-31 — docs(f9): planejar observabilidade real mínima
 
 | Item | Detalhe |
