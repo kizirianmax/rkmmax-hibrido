@@ -1,3 +1,18 @@
+## 2026-06-01 — docs(audit): registrar transição pós-Fase 9 para decisão sobre Fase 10
+
+| Item | Detalhe |
+|------|---------|
+| **Título do PR** | `docs(audit): registrar transição pós-Fase 9 para decisão sobre Fase 10` |
+| **Documento criado** | `docs/audits/transicao-pos-fase9-para-fase10-2026-06-01.md` |
+| **Estado pós-Fase 9 confirmado** | PR #532 incorporado em `main`; `main` limpa; sem PRs abertos; Dependabot #475/#477 tratados isoladamente em #527/#528. |
+| **Pendências não bloqueantes preservadas** | Seletor de IA/modelo não visível no Híbrido/Construtor; seletor de IA/modelo não claramente visível no Serginho/generalista; pequeno ajuste visual no Serginho/generalista. |
+| **Recomendação sobre Fase 10** | `Fase 10 — Unificação operacional Serginho + Híbrido e saneamento UX do seletor de IA`, sem iniciar implementação neste PR. |
+| **Confirmação de não alteração funcional** | Sem alteração em `src/`, `api/`, rotas, CSS, testes, dependências, `package.json`, `package-lock.json`, workflows, providers/modelos, prompts, Serginho, Híbrido/Construtor, Especialistas, ABNT, Auth/SaaS/Payments. |
+| **Limites sem overclaim** | Sem clientes/receita/SLA/uptime/p95/p99/tração/maturidade comercial; seletor de IA/modelo não plenamente validado; posicionamento oficial = **protótipo avançado em validação**. |
+| **Rollback** | `git revert <commit-sha>` |
+
+---
+
 ## 2026-06-01 — docs(validation): registrar validação autenticada manual das UIs operacionais pós-Fase 9
 
 | Item | Detalhe |
