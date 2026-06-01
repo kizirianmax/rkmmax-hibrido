@@ -7,6 +7,9 @@
 - **Status:** protótipo avançado em validação
 - **Escopo:** roteiro conservador para banca/startups
 
+## Pitch funcional estático
+- Página estática pública do pitch disponível em `/pitch/` (arquivo: `public/pitch/index.html`).
+
 ## Frase curta de apresentação
 “O Serginho IA é uma plataforma da RKMMAX que transforma inteligência artificial em entregas estruturadas, com orquestração soberana, especialistas, geração de artefatos e validação documental.”
 
