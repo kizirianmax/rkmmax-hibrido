@@ -1,3 +1,31 @@
+## 2026-06-01 — docs(pitch): adicionar página estática funcional em /pitch/
+
+| Item | Detalhe |
+|------|---------|
+| **PR alvo** | #530 (`docs(pitch): preparar roteiro de banca do Serginho IA`) |
+| **Página criada** | `public/pitch/index.html` |
+| **URL esperada** | `/pitch/` |
+| **Ajustes de link interno** | Link institucional aponta para `/startup` e link de demonstração aponta para `/demo`. |
+| **Apoio textual mantido** | `docs/pitch/roteiro-banca-serginho-ia-2026-06-01.md` mantido com menção discreta ao pitch funcional em `/pitch/`. |
+| **Confirmação de não alteração funcional do app principal** | Sem alterações em `src/`, `api/`, testes, rotas React, dependências, workflows, providers/modelos, prompts, registry/fallback, Serginho, Híbrido/Construtor, Especialistas, ABNT, Auth/SaaS/Payments, Vercel, Supabase, Stripe, secrets, tag/release ou runtime do app principal. |
+| **Validações executadas** | Baseline pré-mudança: `npm run build` ✅, `npm run lint` ✅ (warnings pré-existentes), `npm test -- --runInBand` ✅. Pós-mudança: `npm run build` ✅, `npm run lint` ✅ (warnings pré-existentes), `npm test -- --runInBand` ✅. Verificação de artefato estático: `dist/pitch/index.html` ✅. |
+| **Rollback** | `git revert <commit-sha>` |
+
+---
+
+## 2026-06-01 — docs(pitch): preparar roteiro de banca do Serginho IA
+
+| Item | Detalhe |
+|------|---------|
+| **Título do PR** | `docs(pitch): preparar roteiro de banca do Serginho IA` |
+| **Documento criado** | `docs/pitch/roteiro-banca-serginho-ia-2026-06-01.md` |
+| **Objetivo do roteiro** | Preparar roteiro conservador, claro e demonstrável para banca/startups, com foco em apresentação institucional pós-Fase 9 sem overclaim comercial. |
+| **Decisão de nomenclatura** | Produto = **Serginho IA**; nome completo = **Serginho Inteligência Artificial**; RKMMAX = ecossistema/projeto. |
+| **Confirmação de não alteração funcional** | PR estritamente documental; sem alterações em runtime, UI, código, rotas, testes, dependências, workflows, providers/modelos, prompts, registry/fallback, Serginho, Híbrido/Construtor, Especialistas, ABNT, Auth/SaaS/Payments, Vercel, Supabase, Stripe, secrets, tag/release ou implementação funcional. |
+| **Rollback** | `git revert <commit-sha>` |
+
+---
+
 ## 2026-06-01 — docs(validation): registrar validação visual pós-Fase 9
 
 | Item | Detalhe |

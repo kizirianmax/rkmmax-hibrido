@@ -1,0 +1,339 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Pitch — Serginho IA</title>
+    <meta
+      name="description"
+      content="Pitch público do Serginho IA para banca/startups com linguagem conservadora e foco em evidência."
+    />
+    <style>
+      :root {
+        --bg: #081226;
+        --card: #101d38;
+        --muted: #9eb1d9;
+        --text: #ecf2ff;
+        --accent: #5ea1ff;
+        --accent-2: #77e6d5;
+        --danger: #ff8ca5;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+        color: var(--text);
+        background: radial-gradient(circle at top, #12244a 0%, var(--bg) 55%);
+      }
+
+      .container {
+        width: min(1040px, 92vw);
+        margin: 0 auto;
+      }
+
+      header {
+        padding: 2rem 0 1rem;
+      }
+
+      .badge {
+        display: inline-block;
+        margin-bottom: 0.75rem;
+        padding: 0.25rem 0.7rem;
+        border: 1px solid #2d4b84;
+        border-radius: 999px;
+        color: var(--accent-2);
+        font-size: 0.85rem;
+      }
+
+      h1 {
+        margin: 0.2rem 0 0.5rem;
+        font-size: clamp(1.7rem, 3vw, 2.7rem);
+      }
+
+      .subtitle {
+        margin: 0;
+        color: var(--muted);
+        line-height: 1.55;
+      }
+
+      .actions {
+        margin-top: 1rem;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.65rem;
+      }
+
+      .btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        text-decoration: none;
+        color: #fff;
+        background: #1d335e;
+        border: 1px solid #365ea7;
+        border-radius: 0.7rem;
+        padding: 0.6rem 0.95rem;
+        font-weight: 600;
+      }
+
+      .btn-primary {
+        background: linear-gradient(135deg, #2c65c7, #2a8ae8);
+        border-color: #4ea3ff;
+      }
+
+      .grid {
+        display: grid;
+        gap: 1rem;
+        margin: 1.2rem 0 1.5rem;
+      }
+
+      @media (min-width: 930px) {
+        .grid {
+          grid-template-columns: 1.4fr 1fr;
+        }
+      }
+
+      .card {
+        background: color-mix(in srgb, var(--card) 88%, #17326a 12%);
+        border: 1px solid #243b68;
+        border-radius: 0.95rem;
+        padding: 1rem;
+      }
+
+      h2 {
+        margin: 0 0 0.8rem;
+        font-size: 1.2rem;
+      }
+
+      h3 {
+        margin: 1rem 0 0.35rem;
+        font-size: 1rem;
+        color: #d2e2ff;
+      }
+
+      ol,
+      ul {
+        margin: 0.5rem 0 0.7rem 1.2rem;
+        padding: 0;
+        line-height: 1.5;
+      }
+
+      li + li {
+        margin-top: 0.28rem;
+      }
+
+      .meta {
+        margin: 0;
+        padding: 0;
+        list-style: none;
+      }
+
+      .meta li {
+        padding: 0.28rem 0;
+        border-bottom: 1px dashed #294679;
+      }
+
+      .meta li:last-child {
+        border-bottom: 0;
+      }
+
+      .timer {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        flex-wrap: wrap;
+      }
+
+      .timer__value {
+        font-size: 1.35rem;
+        font-weight: 700;
+        letter-spacing: 0.04em;
+        min-width: 4.2ch;
+      }
+
+      .pill {
+        display: inline-block;
+        padding: 0.25rem 0.6rem;
+        border: 1px solid #2b4b85;
+        border-radius: 999px;
+        font-size: 0.82rem;
+        color: var(--muted);
+      }
+
+      details {
+        border: 1px solid #274374;
+        border-radius: 0.75rem;
+        padding: 0.55rem 0.7rem;
+        background: #0f1f3d;
+      }
+
+      details + details {
+        margin-top: 0.55rem;
+      }
+
+      summary {
+        cursor: pointer;
+        font-weight: 600;
+      }
+
+      .warn {
+        color: var(--danger);
+      }
+
+      footer {
+        color: var(--muted);
+        font-size: 0.9rem;
+        padding: 0.6rem 0 1.5rem;
+      }
+
+      code {
+        font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      }
+    </style>
+  </head>
+  <body>
+    <header class="container">
+      <span class="badge">Pitch público • pós-Fase 9</span>
+      <h1>Serginho IA — roteiro de banca em página estática</h1>
+      <p class="subtitle">
+        O Serginho IA é uma plataforma da RKMMAX que transforma inteligência artificial em entregas
+        estruturadas, com orquestração soberana, especialistas, geração de artefatos e validação
+        documental.
+      </p>
+      <div class="actions">
+        <a class="btn btn-primary" href="/startup">Página institucional (/startup)</a>
+        <a class="btn" href="/demo">Demonstração pública (/demo)</a>
+      </div>
+    </header>
+
+    <main class="container grid">
+      <section class="card">
+        <h2>Identificação oficial</h2>
+        <ul class="meta">
+          <li><strong>Produto:</strong> Serginho IA</li>
+          <li><strong>Nome completo:</strong> Serginho Inteligência Artificial</li>
+          <li><strong>Ecossistema/projeto:</strong> RKMMAX / RKMMAX Infinity Matrix Study</li>
+          <li><strong>Status:</strong> protótipo avançado em validação</li>
+          <li><strong>Escopo:</strong> roteiro conservador para banca/startups</li>
+        </ul>
+
+        <h3>Roteiro de apresentação (até 5 minutos)</h3>
+        <ol>
+          <li><strong>Abertura:</strong> apresentar o Serginho IA como produto principal e RKMMAX como ecossistema/projeto.</li>
+          <li><strong>Problema:</strong> transformar IA em entregas estruturadas e auditáveis sem confundir camadas.</li>
+          <li><strong>Solução:</strong> Serginho IA como orquestrador soberano; Híbrido/Construtor, Especialistas e ABNT como camadas complementares.</li>
+          <li><strong>Diferencial técnico:</strong> separação de responsabilidades entre orquestração, construção, especialistas e validação documental.</li>
+          <li><strong>Demonstração sugerida:</strong> <code>/startup</code> e <code>/demo</code>, com explicação clara dos limites.</li>
+          <li><strong>Limites honestos:</strong> sem promessas comerciais ou operacionais não comprovadas.</li>
+          <li><strong>Fechamento:</strong> posicionar produto e ecossistema com discurso conservador.</li>
+        </ol>
+
+        <h3>Demonstração sugerida (sequência)</h3>
+        <ol>
+          <li>Abrir <code>/startup</code> e reforçar que é página institucional pública, sem seletor de IA.</li>
+          <li>Abrir <code>/demo</code> para vitrine controlada.</li>
+          <li>Explicar que as UIs operacionais autenticadas são <code>/serginho</code>, <code>/hybrid</code> e <code>/specialists</code>.</li>
+          <li>Explicar que seletor de IA pertence às UIs operacionais, não à página institucional.</li>
+          <li>Usar evidências visuais/documentais pós-Fase 9 como apoio.</li>
+        </ol>
+      </section>
+
+      <aside class="card">
+        <h2>Apoio rápido para banca</h2>
+        <p class="pill">Timer de 5 minutos</p>
+        <div class="timer" style="margin-top: 0.55rem">
+          <span class="timer__value" id="timer">05:00</span>
+          <button class="btn" type="button" id="start">Iniciar</button>
+          <button class="btn" type="button" id="pause">Pausar</button>
+          <button class="btn" type="button" id="reset">Reset</button>
+        </div>
+
+        <h3>Formulações seguras</h3>
+        <ul>
+          <li>“O Serginho IA é um protótipo avançado em validação.”</li>
+          <li>“A arquitetura separa orquestração, construção de artefatos, especialistas e validação documental.”</li>
+          <li>“A demo pública é uma vitrine controlada, sem prometer IA em tempo real onde não há evidência.”</li>
+          <li>“O projeto tem CI verde, documentação rastreável e validação visual/documental pós-Fase 9.”</li>
+        </ul>
+
+        <h3 class="warn">O que NÃO dizer</h3>
+        <ul>
+          <li>Não prometer Top 30, clientes, receita ou tração sem evidência.</li>
+          <li>Não prometer SLA, uptime, p95/p99 ou observabilidade real sem medição.</li>
+          <li>Não dizer que <code>/startup</code> deveria ter seletor de IA.</li>
+          <li>Não dizer que providers/modelos substituem o Serginho IA.</li>
+          <li>Não declarar validação autenticada sem evidência manual/autenticada.</li>
+        </ul>
+
+        <h3>Perguntas prováveis</h3>
+        <details>
+          <summary>O que é o Serginho IA?</summary>
+          <p>É o produto principal apresentado: plataforma de orquestração soberana para transformar IA em entregas estruturadas.</p>
+        </details>
+        <details>
+          <summary>Por que não é apenas um chat?</summary>
+          <p>Porque organiza camadas de orquestração, construção de artefatos, especialistas e validação documental.</p>
+        </details>
+        <details>
+          <summary>Qual o estágio atual?</summary>
+          <p>Protótipo avançado em validação, com evidência visual/documental pós-Fase 9.</p>
+        </details>
+      </aside>
+    </main>
+
+    <footer class="container">
+      Posicionamento final: <strong>Serginho IA é o produto apresentado. RKMMAX é o ecossistema/projeto que sustenta a plataforma.</strong>
+    </footer>
+
+    <script>
+      (() => {
+        const timerEl = document.getElementById('timer');
+        const startBtn = document.getElementById('start');
+        const pauseBtn = document.getElementById('pause');
+        const resetBtn = document.getElementById('reset');
+
+        let remaining = 300;
+        let intervalId = null;
+
+        const render = () => {
+          const m = String(Math.floor(remaining / 60)).padStart(2, '0');
+          const s = String(remaining % 60).padStart(2, '0');
+          timerEl.textContent = `${m}:${s}`;
+          timerEl.style.color = remaining <= 30 ? '#ff8ca5' : '#ecf2ff';
+        };
+
+        const stop = () => {
+          if (intervalId) {
+            clearInterval(intervalId);
+            intervalId = null;
+          }
+        };
+
+        startBtn.addEventListener('click', () => {
+          if (intervalId) return;
+          intervalId = setInterval(() => {
+            if (remaining <= 0) {
+              stop();
+              return;
+            }
+            remaining -= 1;
+            render();
+          }, 1000);
+        });
+
+        pauseBtn.addEventListener('click', stop);
+        resetBtn.addEventListener('click', () => {
+          stop();
+          remaining = 300;
+          render();
+        });
+
+        render();
+      })();
+    </script>
+  </body>
+</html>
