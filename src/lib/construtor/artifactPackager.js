@@ -19,7 +19,7 @@
  */
 
 import { randomUUID } from 'node:crypto';
-import archiver from 'archiver';
+import { ZipArchive } from 'archiver';
 
 import { generateManifest } from './artifactManifest.js';
 import { generateGenerationLog, generateStructureLog } from './artifactLogger.js';
@@ -241,7 +241,7 @@ async function packageMultiFileArtifact({ id, content, multiFiles, metadata, sta
   const structureLog = generateStructureLog({ files: filesForLog });
 
   const zipBuffer = await new Promise((resolve, reject) => {
-    const archive = archiver('zip', { zlib: { level: 6 } });
+    const archive = new ZipArchive({ zlib: { level: 6 } });
     const chunks = [];
 
     archive.on('data', (chunk) => chunks.push(chunk));
@@ -423,7 +423,7 @@ function createZipBuffer({
   structureLog,
 }) {
   return new Promise((resolve, reject) => {
-    const archive = archiver('zip', { zlib: { level: 6 } });
+    const archive = new ZipArchive({ zlib: { level: 6 } });
     const chunks = [];
 
     archive.on('data', (chunk) => chunks.push(chunk));

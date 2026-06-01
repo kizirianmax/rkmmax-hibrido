@@ -1,3 +1,21 @@
+## 2026-06-01 — chore(deps): tratar Dependabot #477 isoladamente
+
+| Item | Detalhe |
+|------|---------|
+| **Título do PR** | `chore(deps): tratar Dependabot #477 isoladamente` |
+| **Escopo** | PR técnico isolado para atualizar `archiver` no pipeline de empacotamento ZIP do Construtor/Híbrido, sem expansão funcional. |
+| **Origem da pendência** | Dependabot #477. |
+| **Pacote** | `archiver` (`^7.0.1` → `^8.0.0`). |
+| **Arquivos alterados** | `package.json`, `package-lock.json`, `src/lib/construtor/artifactPackager.js`, `CHECKLIST.md`. |
+| **Compatibilidade `artifactPackager.js`** | Ajuste mínimo necessário no import/instanciação para `archiver@8` (substituição de default import por `ZipArchive`). |
+| **Validações executadas** | `npm install` ✅; `npm test -- --runInBand src/lib/construtor/__tests__/artifactPackager.test.js` ✅; `npm run lint` ✅ (253 warnings pré-existentes, 0 errors); `npm run build` ✅; `npm test -- --runInBand` ✅ (68 suítes, 2471 testes). |
+| **Risco** | Moderado controlado: upgrade major de `archiver` no empacotador ZIP, mitigado por adaptação mínima e validações específicas/completas. |
+| **Confirmação sobre #475** | #475 não foi tocado neste PR. |
+| **Confirmação de não alteração funcional ampla** | Houve alteração técnica mínima e isolada em `src/lib/construtor/artifactPackager.js`, restrita à compatibilidade com `archiver@8`, sem expansão funcional do Construtor/Híbrido; sem alterações em Serginho, Especialistas, ABNT, Auth/SaaS/Payments, providers/modelos, prompts, registry, fallback, rotas, workflows ou UI. |
+| **Rollback** | `git revert <commit-sha>` |
+
+---
+
 ## 2026-06-01 — chore(deps): tratar Dependabot #475 isoladamente
 
 | Item | Detalhe |
