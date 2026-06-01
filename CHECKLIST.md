@@ -1,8 +1,8 @@
-## 2026-06-01 — docs(validation): registrar evidência operacional do pitch pós-Fase 9
+## 2026-06-01 — docs(validation): registrar evidência operacional pós-Fase 9 e reduzir overclaim no pitch
 
 | Item | Detalhe |
 |------|---------|
-| **Título do PR** | `docs(validation): registrar evidência operacional do pitch pós-Fase 9` |
+| **Título do PR** | `docs(validation): registrar evidência operacional pós-Fase 9 e reduzir overclaim no pitch` |
 | **Documento criado** | `docs/audits/validacao-operacional-pitch-pos-fase9-2026-06-01.md` |
 | **Rotas públicas validadas manualmente em produção (owner / Android / Chrome)** | `/pitch/`, `/startup`, `/demo`, `/demo-autoplay` |
 | **Pitch (texto)** | Frases suavizadas em `public/pitch/index.html` para reduzir overclaim e reforçar posição conservadora. |
