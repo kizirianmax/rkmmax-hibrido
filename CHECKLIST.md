@@ -1,3 +1,17 @@
+## 2026-06-01 — docs(validation): registrar validação visual pós-Fase 9
+
+| Item | Detalhe |
+|------|---------|
+| **Título do PR** | `docs(validation): registrar validação visual pós-Fase 9` |
+| **Documento criado** | `docs/audits/validacao-visual-pos-fase9-2026-06-01.md` |
+| **Rotas públicas** | `/`, `/startup`, `/demo`, `/demo-autoplay`, `/showcase`, `/login` tentadas via Playwright local; `/showcase` redirecionou para `/demo`. |
+| **Screenshots automáticos** | Gerados e anexados em `docs/audits/evidence/visual-pos-fase9/` (sem imagem manual do owner). |
+| **UIs operacionais** | Serginho IA (`/serginho`), Híbrido/Construtor (`/hybrid`) e Especialistas (`/specialists`) redirecionaram para `/login`; validação visual autenticada e presença do seletor de IA permanecem pendentes do owner. |
+| **Confirmação de não alteração funcional** | Mudança documental/evidências apenas; sem alteração em runtime, UI funcional, código, rotas, testes, dependências, workflows, providers/modelos, prompts, registry/fallback, Serginho, Híbrido/Construtor, Especialistas, ABNT, Auth/SaaS/Payments, Vercel, Supabase, Stripe, secrets, tag/release ou implementação funcional. |
+| **Rollback** | `git revert <commit-sha>` |
+
+---
+
 ## 2026-06-01 — chore(deps): tratar Dependabot #477 isoladamente
 
 | Item | Detalhe |
