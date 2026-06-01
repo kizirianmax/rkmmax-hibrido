@@ -1,3 +1,17 @@
+## 2026-06-01 — docs(validation): registrar evidência operacional pós-Fase 9 e reduzir overclaim no pitch
+
+| Item | Detalhe |
+|------|---------|
+| **Título do PR** | `docs(validation): registrar evidência operacional pós-Fase 9 e reduzir overclaim no pitch` |
+| **Documento criado** | `docs/audits/validacao-operacional-pitch-pos-fase9-2026-06-01.md` |
+| **Rotas públicas validadas manualmente em produção (owner / Android / Chrome)** | `/pitch/`, `/startup`, `/demo`, `/demo-autoplay` |
+| **Pitch (texto)** | Frases suavizadas em `public/pitch/index.html` para reduzir overclaim e reforçar posição conservadora. |
+| **Pendências preservadas** | Validação autenticada manual de `/serginho`, `/hybrid` e `/specialists` permanece pendente. |
+| **Confirmação de não alteração funcional** | Mudança estritamente documental/textual; sem alteração em `src/`, `api/`, rotas React, CSS global, dependências, workflows, integrações externas, runtime, Auth/SaaS/Payments ou arquitetura do Serginho IA. |
+| **Rollback** | Reverter este PR restaura o estado anterior; nenhuma migração, efeito colateral ou ajuste de infraestrutura é necessário. |
+
+---
+
 ## 2026-06-01 — docs(pitch): adicionar página estática funcional em /pitch/
 
 | Item | Detalhe |
