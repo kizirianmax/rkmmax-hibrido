@@ -1,3 +1,18 @@
+## 2026-06-01 — docs(validation): registrar validação autenticada manual das UIs operacionais pós-Fase 9
+
+| Item | Detalhe |
+|------|---------|
+| **Título do PR** | `docs(validation): registrar validação autenticada manual das UIs operacionais pós-Fase 9` |
+| **Documento criado** | `docs/audits/validacao-autenticada-uis-operacionais-pos-fase9-2026-06-01.md` |
+| **Rotas autenticadas validadas manualmente em produção (owner / Android / Chrome)** | `/serginho`, `/hybrid`, `/specialists`, fluxo de especialista individual em `/specialist/...` (incluindo Didak). |
+| **Funcionamento confirmado** | Serginho respondeu autenticado; Híbrido/Construtor respondeu autenticado; Especialistas abriu com lista e acesso a especialista individual; Didak abriu e respondeu; sem redirecionamento indevido para `/login`. |
+| **Pendências preservadas (UX, não bloqueio técnico)** | Seletor de IA/modelo não está claramente visível no Serginho/generalista e no Híbrido/Construtor; pequeno ajuste visual no Serginho/generalista; organização/correção do seletor e ajustes visuais devem ser tratados em etapa futura (preferencialmente com possível unificação Serginho + Híbrido). |
+| **Confirmação de não alteração funcional** | PR estritamente documental; sem alterações em `src/`, `api/`, rotas React, CSS, testes, dependências, `package.json`, `package-lock.json`, workflows, providers/modelos, prompts, Serginho, Híbrido/Construtor, Especialistas, ABNT, Auth/SaaS/Payments ou configurações externas. |
+| **Limites sem overclaim** | Esta validação não comprova clientes, receita, SLA, uptime, p95/p99, tração ou maturidade comercial; não afirmar validação plena do seletor de IA/modelo em todas as UIs; posicionamento oficial mantido: **protótipo avançado em validação**. |
+| **Rollback** | `git revert <commit-sha>` |
+
+---
+
 ## 2026-06-01 — docs(validation): registrar evidência operacional pós-Fase 9 e reduzir overclaim no pitch
 
 | Item | Detalhe |
