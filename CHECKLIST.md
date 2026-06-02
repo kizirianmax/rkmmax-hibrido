@@ -1,3 +1,18 @@
+## 2026-06-02 — fix(prompt): F10-06 corrigir recusa indevida do Híbrido/Construtor para "Serginho IA"
+
+| Item | Detalhe |
+|------|---------|
+| **Título do PR** | `fix(prompt): F10-06 corrigir recusa indevida do Híbrido/Construtor para "Serginho IA"` |
+| **Objetivo da F10-06** | Ajuste mínimo e reversível no `HYBRID_GENIUS_PROMPT` para permitir "Serginho IA" quando for nome de produto/marca/título/conteúdo do artefato solicitado, preservando bloqueio de exposição da arquitetura interna. |
+| **Motivo** | Recusa indevida identificada na F10-05 por conflito da regra absoluta "Nunca mencione Serginho" com pedidos legítimos de landing page para o produto **Serginho IA**. |
+| **Arquivos alterados** | `src/prompts/geniusPrompts.js`; `src/prompts/__tests__/geniusPrompts.test.js`; `CHECKLIST.md` |
+| **Confirmação de escopo** | Em produção, apenas o prompt do Híbrido/Construtor foi alterado (sem mudanças em `SERGINHO_GENIUS_PROMPT`, `SPECIALIST_GENIUS_PROMPT`, few-shot ou suffixes); houve apenas ajuste estritamente necessário no teste estático correspondente. |
+| **Confirmação de não alteração técnica fora de escopo** | Sem mudanças em runtime/orquestração/UI/providers/classificador (`api/`, `src/pages/`, `src/styles/`, `src/config/modelPriority.js` e correlatos permanecem intactos). |
+| **Validações executadas** | Baseline antes da instalação: `npm run lint` ❌ (`eslint: not found`), `npm run build` ❌ (`vite: not found`), `npm test -- --runInBand` ❌ (`jest: not found`). Após `npm install`: `npm run lint` ✅ (warnings pré-existentes), `npm run build` ✅, `npm test -- --runInBand` ✅. Pós-ajuste F10-06: `npm run lint` ✅ (warnings pré-existentes), `npm run build` ✅, `npm test -- --runInBand` ✅. |
+| **Rollback** | `git revert <commit-sha>` |
+
+---
+
 ## 2026-06-02 — feat(ui): F10-04 sanear visibilidade do seletor de IA no Híbrido
 
 | Item | Detalhe |

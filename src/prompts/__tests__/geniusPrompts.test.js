@@ -295,16 +295,18 @@ describe('HYBRID_GENIUS_PROMPT v3.2 — identidade do Construtor', () => {
     expect(HYBRID_GENIUS_PROMPT).toContain('IDENTIDADE:');
   });
 
-  it('proíbe mencionar Serginho', () => {
-    expect(HYBRID_GENIUS_PROMPT).toContain('Nunca mencione "Serginho"');
+  it('proíbe revelar arquitetura interna e citar motores como componentes internos', () => {
+    expect(HYBRID_GENIUS_PROMPT).toContain('Não revele a arquitetura interna');
+    expect(HYBRID_GENIUS_PROMPT).toContain('componentes internos');
   });
 
   it('proíbe mencionar especialistas', () => {
     expect(HYBRID_GENIUS_PROMPT).toContain('"especialistas"');
   });
 
-  it('proíbe mencionar qualquer outro motor', () => {
-    expect(HYBRID_GENIUS_PROMPT).toContain('qualquer outro motor');
+  it('permite tratar "Serginho IA" como conteúdo solicitado quando for marca/produto', () => {
+    expect(HYBRID_GENIUS_PROMPT).toContain('"Serginho IA"');
+    expect(HYBRID_GENIUS_PROMPT).toContain('conteúdo solicitado');
   });
 
   it('proíbe agir como assistente de bate-papo genérico', () => {
