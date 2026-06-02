@@ -1,3 +1,19 @@
+## 2026-06-01 — docs(f10): abrir formalmente a Fase 10
+
+| Item | Detalhe |
+|------|---------|
+| **Título do PR** | `docs(f10): abrir formalmente a Fase 10` |
+| **Documento criado** | `docs/audits/f10-01-abertura-formal-fase10-2026-06-01.md` |
+| **Nome oficial da Fase 10** | `Fase 10 — Unificação operacional Serginho + Híbrido e saneamento UX do seletor de IA` |
+| **Objetivo da Fase 10 (resumo)** | Unificar a experiência operacional entre Serginho/generalista e Híbrido/Construtor e sanear a visibilidade/organização do seletor de IA/modelo nas UIs operacionais autenticadas, preservando o Serginho IA como gateway único sem bypass. |
+| **Pendências que motivam a fase** | Seletor de IA/modelo não visível no Híbrido/Construtor; seletor de IA/modelo não claramente visível no Serginho/generalista; pequeno ajuste visual no Serginho/generalista. |
+| **Confirmação de não alteração funcional** | Sem alteração em `src/`, `api/`, rotas, CSS, testes, dependências, `package.json`, `package-lock.json`, workflows, providers/modelos, prompts, Serginho, Híbrido/Construtor, Especialistas, ABNT, Auth/SaaS/Payments. |
+| **Limites sem overclaim** | Sem clientes/receita/SLA/uptime/p95/p99/tração/maturidade comercial; seletor não plenamente validado; posicionamento oficial = **protótipo avançado em validação**. |
+| **Próximo passo recomendado** | Executar auditoria/diagnóstico **F10-02 em modo leitura** antes de qualquer implementação. |
+| **Rollback** | `git revert <commit-sha>` |
+
+---
+
 ## 2026-06-01 — docs(audit): registrar transição pós-Fase 9 para decisão sobre Fase 10
 
 | Item | Detalhe |
