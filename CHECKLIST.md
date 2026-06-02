@@ -1,8 +1,8 @@
-## 2026-06-02 — fix(prompt): F10-06 corrigir recusa indevida do Híbrido/Construtor para "Serginho IA"
+## 2026-06-02 — fix(prompt): remover conflito no HYBRID_GENIUS_PROMPT para permitir “Serginho IA” como conteúdo de artefato
 
 | Item | Detalhe |
 |------|---------|
-| **Título do PR** | `fix(prompt): F10-06 corrigir recusa indevida do Híbrido/Construtor para "Serginho IA"` |
+| **Título do PR** | `fix(prompt): remover conflito no HYBRID_GENIUS_PROMPT para permitir “Serginho IA” como conteúdo de artefato` |
 | **Objetivo da F10-06** | Ajuste mínimo e reversível no `HYBRID_GENIUS_PROMPT` para permitir "Serginho IA" quando for nome de produto/marca/título/conteúdo do artefato solicitado, preservando bloqueio de exposição da arquitetura interna. |
 | **Motivo** | Recusa indevida identificada na F10-05 por conflito da regra absoluta "Nunca mencione Serginho" com pedidos legítimos de landing page para o produto **Serginho IA**. |
 | **Arquivos alterados** | `src/prompts/geniusPrompts.js`; `src/prompts/__tests__/geniusPrompts.test.js`; `CHECKLIST.md` |
