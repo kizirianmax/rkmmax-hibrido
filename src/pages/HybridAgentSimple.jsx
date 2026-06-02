@@ -684,23 +684,6 @@ export default function HybridAgentSimple() {
 
         {/* Controles */}
         <div className="header-controls">
-          {/* Seletor de motor — fonte compartilhada MANUAL_MODEL_OPTIONS (F7-UX-08) */}
-          <div className="mode-selector engine-selector">
-            <label htmlFor="engine-select">🤖 Motor IA:</label>
-            <select
-              id="engine-select"
-              className="engine-select"
-              value={selectedEngine}
-              onChange={(e) => setSelectedEngine(e.target.value)}
-            >
-              {MANUAL_MODEL_OPTIONS.map((engine) => (
-                <option key={engine.id} value={engine.id}>
-                  {engine.icon} {engine.label}
-                </option>
-              ))}
-            </select>
-          </div>
-
           {/* Info Box */}
           <div className="info-section">
             <div className="info-box">
@@ -825,6 +808,24 @@ export default function HybridAgentSimple() {
 
       {/* Input Area */}
       <div className="input-area">
+        {/* Seletor de motor — fonte compartilhada MANUAL_MODEL_OPTIONS (F10-04) */}
+        <div className="input-engine-selector">
+          <label htmlFor="engine-select">🤖 Motor IA:</label>
+          <select
+            id="engine-select"
+            className="engine-select"
+            value={selectedEngine}
+            onChange={(e) => setSelectedEngine(e.target.value)}
+            title="Selecionar motor de IA"
+          >
+            {MANUAL_MODEL_OPTIONS.map((engine) => (
+              <option key={engine.id} value={engine.id}>
+                {engine.icon} {engine.label}
+              </option>
+            ))}
+          </select>
+        </div>
+
         <div className="input-toolbar">
           <button
             onClick={handleGitHubClick}

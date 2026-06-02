@@ -1,3 +1,20 @@
+## 2026-06-02 — feat(ui): F10-04 sanear visibilidade do seletor de IA no Híbrido
+
+| Item | Detalhe |
+|------|---------|
+| **Título do PR** | `feat(ui): F10-04 sanear visibilidade do seletor de IA no Híbrido` |
+| **Objetivo da F10-04** | Saneamento mínimo de UX do seletor de IA/modelo no `/hybrid`, com visibilidade e legibilidade reforçadas perto da área de input/ação do Construtor. |
+| **Arquivos alterados** | `src/pages/HybridAgentSimple.jsx`; `src/styles/HybridAgent.css`; `CHECKLIST.md` |
+| **Confirmação sobre Serginho** | `src/pages/Serginho.jsx` e `src/pages/Serginho.css` não foram alterados nesta entrega. |
+| **Preservação do Híbrido/Construtor** | Fluxo funcional preservado: input do Construtor, geração, `ArtifactPreviewPanel`, Revisar/Aprovar/Solicitar ajuste, histórico/revisão, `reviewCycleMetrics`, empacotamento/exportação, `zipBase64`, persistências em `sessionStorage`. |
+| **MANUAL_MODEL_OPTIONS preservado** | Mantido como fonte única das opções do seletor (sem duplicação de lista e sem alteração em `src/config/modelPriority.js`). |
+| **`forceProvider` preservado** | Contrato mantido: `forceProvider` só é enviado quando `providerName != null` (modo diferente de `auto`); `auto` segue sem `forceProvider`. |
+| **Sem bypass ao Serginho** | Fluxo continua via `/api/ai` e orquestrador; nenhuma chamada direta a provider/modelo foi adicionada. |
+| **Validações executadas** | `npm run lint` ✅ (warnings pré-existentes); `npm run build` ✅; `npm test -- --runInBand` ✅ |
+| **Rollback** | `git revert <commit-sha>` |
+
+---
+
 ## 2026-06-02 — feat(ui): F10-03 sanear visibilidade do seletor de IA no Serginho
 
 | Item | Detalhe |
