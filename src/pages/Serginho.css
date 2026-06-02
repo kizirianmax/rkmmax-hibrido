@@ -130,7 +130,7 @@
   overflow-y: auto;
   overflow-x: hidden;
   -webkit-overflow-scrolling: touch;
-  padding: 0 20px 176px;
+  padding: 0 20px 200px;
   max-width: 900px;
   margin: 0 auto;
   width: 100%;
@@ -257,7 +257,7 @@
   padding-bottom: max(12px, env(safe-area-inset-bottom));
   box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.08);
   z-index: 1000;
-  max-height: 180px;
+  max-height: 220px;
   box-sizing: border-box;
   width: 100%;
   max-width: 100%;
@@ -266,30 +266,35 @@
 
 .serginho-model-selector {
   display: flex;
-  align-items: center;
-  gap: 8px;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 6px;
   max-width: 900px;
   margin: 0 auto 10px;
   width: 100%;
+  padding: 8px 10px;
+  border-radius: 10px;
+  border: 1px solid #dbeafe;
+  background: #f8fbff;
 }
 
 .serginho-model-selector label {
   font-size: 14px;
   font-weight: 600;
-  color: #334155;
-  white-space: nowrap;
+  color: #1e3a8a;
+  white-space: normal;
 }
 
 .serginho-model-select {
-  flex: 1;
-  min-height: 42px;
+  width: 100%;
+  min-height: 44px;
   border-radius: 12px;
-  border: 1px solid #cbd5e1;
-  background: #f8fafc;
+  border: 1px solid #93c5fd;
+  background: #ffffff;
   color: #334155;
   font-size: 15px;
   font-weight: 500;
-  padding: 8px 12px;
+  padding: 10px 12px;
   cursor: pointer;
   outline: none;
   appearance: none;
@@ -525,7 +530,7 @@
   }
 
   .messages-container {
-    padding: 0 16px 188px;
+    padding: 0 16px 214px;
   }
 
   .message-bubble {
@@ -539,15 +544,17 @@
 
   .serginho-model-selector {
     margin-bottom: 8px;
+    padding: 8px 9px;
   }
 
   .serginho-model-selector label {
-    font-size: 13px;
+    font-size: 14px;
   }
 
   .serginho-model-select {
     min-height: 44px;
     font-size: 16px;
+    border-width: 2px;
   }
 
   .action-btn {
@@ -575,6 +582,10 @@
 }
 
 @media (max-width: 480px) {
+  .messages-container {
+    padding: 0 10px 222px;
+  }
+
   .action-buttons {
     gap: 2px;
   }
