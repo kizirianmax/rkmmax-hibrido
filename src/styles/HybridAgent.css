@@ -108,10 +108,10 @@
 /* Engine Selector (dropdown) */
 .engine-select {
   padding: 0.75rem 1rem;
-  background: rgba(30, 27, 75, 0.5);
-  border: 1px solid rgba(168, 85, 247, 0.4);
+  background: rgba(15, 23, 42, 0.9);
+  border: 1px solid rgba(168, 85, 247, 0.6);
   border-radius: 0.5rem;
-  color: #e9d5ff;
+  color: #f5f3ff;
   font-size: 0.875rem;
   font-weight: 500;
   cursor: pointer;
@@ -121,8 +121,8 @@
 }
 
 .engine-select:hover {
-  background: rgba(30, 27, 75, 0.8);
-  border-color: rgba(168, 85, 247, 0.6);
+  background: rgba(30, 41, 59, 0.95);
+  border-color: rgba(192, 132, 252, 0.75);
 }
 
 .engine-select:focus {
@@ -423,6 +423,20 @@
   border-radius: 0 0 0.75rem 0.75rem;
 }
 
+.input-engine-selector {
+  display: flex;
+  flex-direction: column;
+  gap: 0.375rem;
+  width: 100%;
+}
+
+.input-engine-selector label {
+  font-size: 0.8125rem;
+  font-weight: 700;
+  color: #f5d0fe;
+  letter-spacing: 0.01em;
+}
+
 /* Input Toolbar */
 .input-toolbar {
   display: flex;
@@ -669,6 +683,10 @@ textarea:disabled {
     padding: 0.75rem;
   }
 
+  .input-engine-selector label {
+    font-size: 0.75rem;
+  }
+
   textarea {
     min-height: 50px;
   }
@@ -709,6 +727,21 @@ textarea:disabled {
 
   .recording-timer {
     font-size: 0.65rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .input-area {
+    gap: 0.625rem;
+  }
+
+  .input-engine-selector label {
+    font-size: 0.72rem;
+  }
+
+  .engine-select {
+    padding: 0.65rem 0.75rem;
+    font-size: 0.8125rem;
   }
 }
 
