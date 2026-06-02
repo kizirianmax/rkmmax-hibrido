@@ -520,47 +520,24 @@ export default function Serginho() {
         <div ref={messagesEndRef} />
       </div>
 
-      {/* Seletor de modelo — modo Automático e Manual (reversível: remover este bloco) */}
-      {/* Positioned above input-container as a floating strip, not inside it */}
-      <div
-        style={{
-          position: "fixed",
-          bottom: "max(68px, calc(56px + env(safe-area-inset-bottom)))",
-          right: "16px",
-          zIndex: 1001,
-        }}
-      >
-        <select
-          value={selectedModel}
-          onChange={(e) => setSelectedModel(e.target.value)}
-          style={{
-            fontSize: "0.65rem",
-            background: selectedModel !== 'auto'
-              ? "linear-gradient(135deg, #4285f4, #34a853)"
-              : "rgba(0,0,0,0.06)",
-            color: selectedModel !== 'auto' ? "white" : "#94a3b8",
-            padding: "3px 8px",
-            borderRadius: "10px",
-            cursor: "pointer",
-            border: selectedModel !== 'auto' ? "1px solid rgba(66,133,244,0.4)" : "1px solid transparent",
-            fontWeight: selectedModel !== 'auto' ? 600 : 400,
-            outline: "none",
-            appearance: "none",
-            WebkitAppearance: "none",
-            boxShadow: selectedModel !== 'auto' ? "0 2px 8px rgba(66,133,244,0.3)" : "none",
-          }}
-          title="Selecionar modelo de IA"
-        >
-          {MANUAL_MODEL_OPTIONS.map((opt) => (
-            <option key={opt.id} value={opt.id}>
-              {opt.icon} {opt.label}
-            </option>
-          ))}
-        </select>
-      </div>
-
       {/* Input fixo na parte inferior */}
       <div className="input-container">
+        <div className="serginho-model-selector">
+          <label htmlFor="serginho-model-select">🤖 Motor IA:</label>
+          <select
+            id="serginho-model-select"
+            className={`serginho-model-select ${selectedModel !== "auto" ? "is-manual" : ""}`}
+            value={selectedModel}
+            onChange={(e) => setSelectedModel(e.target.value)}
+            title="Selecionar modelo de IA"
+          >
+            {MANUAL_MODEL_OPTIONS.map((opt) => (
+              <option key={opt.id} value={opt.id}>
+                {opt.icon} {opt.label}
+              </option>
+            ))}
+          </select>
+        </div>
         <div className="input-wrapper">
           {/* Botões de ação */}
           <div className="action-buttons">
