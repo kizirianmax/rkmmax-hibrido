@@ -1,3 +1,20 @@
+## 2026-06-02 — feat(ui): F10-03 sanear visibilidade do seletor de IA no Serginho
+
+| Item | Detalhe |
+|------|---------|
+| **Título do PR** | `feat(ui): F10-03 sanear visibilidade do seletor de IA no Serginho` |
+| **Objetivo da F10-03** | Saneamento mínimo de UX no `/serginho` para tornar o seletor de IA/modelo visível, legível e rotulado, sem alteração de runtime. |
+| **Escopo confirmado deste PR (#535)** | F10-03 permanece restrita ao `/serginho`; qualquer ajuste de visibilidade do seletor no `/hybrid` fica explicitamente para PR futuro separado (**F10-04**). |
+| **Arquivos alterados** | `src/pages/Serginho.jsx`; `src/pages/Serginho.css`; `CHECKLIST.md` |
+| **Confirmação de UX mínima (sem runtime)** | Remoção do seletor flutuante minúsculo e reposicionamento para bloco legível e rotulado próximo ao input, mantendo o comportamento funcional do chat inalterado. |
+| **MANUAL_MODEL_OPTIONS preservado** | Mantido como fonte única de opções do seletor em `/serginho` (sem duplicação de lista). |
+| **Sem bypass ao Serginho** | Fluxo continua via `/api/ai` com orquestração do Serginho; nenhuma chamada direta a provider foi adicionada. |
+| **`forceProvider` preservado** | Contrato mantido: envio de `forceProvider: selectedModel` apenas quando `selectedModel !== 'auto'`; modo `'auto'` segue sem `forceProvider`. |
+| **Validações executadas** | `npm run lint` ✅ (warnings pré-existentes); `npm run build` ✅; `npm test -- --runInBand` ✅ |
+| **Rollback** | `git revert <commit-sha>` |
+
+---
+
 ## 2026-06-01 — docs(f10): abrir formalmente a Fase 10
 
 | Item | Detalhe |
