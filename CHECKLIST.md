@@ -1,3 +1,21 @@
+## 2026-06-03 — feat(ledger): F11-04 propagar traceId no artifact ledger
+
+| Item | Detalhe |
+|------|---------|
+| **Título do PR** | `feat(ledger): F11-04 propagar traceId no artifact ledger` |
+| **Objetivo F11-04** | Propagar `traceId` como metadado observacional no `artifact_ledger`, sem alterar decisão de runtime do Construtor/Híbrido. |
+| **Arquivos alterados** | `supabase/migrations/20260603_add_trace_id_to_artifact_ledger.sql`; `api/_utils/artifactLedger.js`; `api/artifact-preview.js`; `api/artifact-ledger.js`; `api/__tests__/artifactLedger.test.js`; `api/__tests__/artifact-ledger.test.js`; `api/__tests__/artifact-preview.test.js`; `CHECKLIST.md` |
+| **Confirmação traceId observacional** | `traceId` é tratado apenas como metadado de rastreabilidade/proveniência no ledger; sem impacto no fluxo decisório de execução. |
+| **Confirmação de opcionalidade** | `trace_id` é nullable e `normalizeTraceId` converte vazio/`undefined`/`null` para `null`. |
+| **Ausência de traceId não quebra fluxo** | POST/PATCH de `/api/artifact-preview`, leitura de `/api/artifact-ledger` e persistência no ledger continuam funcionais sem `traceId`. |
+| **Garantias do ledger preservadas** | Ledger segue observacional; write path append-only (insert), endpoint read-only (`GET`) e escrita fail-silent (erro no ledger não bloqueia resposta do endpoint). |
+| **Confirmação de payload seguro** | Não grava nem expõe conteúdo bruto, arquivos, `zipBase64` ou `contentPreview`. |
+| **Escopo preservado** | Sem alterações em Serginho, orquestração, prompts, providers/modelos, UI, ZIP, geração, validação ou Dependabot. |
+| **Validações executadas** | `npm run lint` ✅ (warnings pré-existentes), `npm run build` ✅, `npm test -- --runInBand` ✅ |
+| **Rollback** | `git revert <commit-sha>` |
+
+---
+
 ## 2026-06-03 — feat(ledger): F11-03 consultar histórico read-only do artifact ledger
 
 | Item | Detalhe |

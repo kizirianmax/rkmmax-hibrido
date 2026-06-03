@@ -108,6 +108,7 @@ describe('/api/artifact-ledger', () => {
           ledger_id: '1',
           artifact_id: 'a-1',
           event_type: 'preview_generated',
+          trace_id: 'trace-abc',
           artifact_checksum: 'sha256:abc',
           created_at: '2026-06-03T00:00:00.000Z',
           zipBase64: 'UEsDBA==',
@@ -129,6 +130,7 @@ describe('/api/artifact-ledger', () => {
         ledger_id: '1',
         artifact_id: 'a-1',
         event_type: 'preview_generated',
+        trace_id: 'trace-abc',
       }),
     );
     expect(event).not.toHaveProperty('zipBase64');

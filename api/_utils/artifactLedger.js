@@ -6,6 +6,7 @@ const SAFE_LEDGER_FIELDS = [
   'ledger_id',
   'artifact_id',
   'event_type',
+  'trace_id',
   'artifact_checksum',
   'origin_model',
   'origin_prompt_id',
@@ -33,6 +34,12 @@ function normalizeFeedback(feedback) {
   return trimmed.slice(0, MAX_FEEDBACK_LENGTH);
 }
 
+function normalizeTraceId(traceId) {
+  if (typeof traceId !== 'string') return null;
+  const trimmed = traceId.trim();
+  return trimmed || null;
+}
+
 function buildLedgerRow(event = {}) {
   const eventType = event.eventType;
   if (!ALLOWED_EVENT_TYPES.has(eventType)) return null;
@@ -40,6 +47,7 @@ function buildLedgerRow(event = {}) {
   const manifest = event.manifest && typeof event.manifest === 'object' ? event.manifest : {};
   const summary = event.preview?.summary && typeof event.preview.summary === 'object' ? event.preview.summary : {};
   const origin = manifest.origin || summary.origin || {};
+  const traceId = event.traceId ?? origin.traceId ?? null;
 
   const artifactId = manifest.id || summary.id || event.artifactId || null;
   if (!artifactId) return null;
@@ -47,6 +55,7 @@ function buildLedgerRow(event = {}) {
   return {
     artifact_id: artifactId,
     event_type: eventType,
+    trace_id: normalizeTraceId(traceId),
     artifact_checksum: manifest.checksum || null,
     origin_model: origin.model || null,
     origin_prompt_id: origin.promptId || null,
