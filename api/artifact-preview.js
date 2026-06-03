@@ -119,6 +119,7 @@ export default async function handler(req, res) {
         eventType: 'preview_generated',
         manifest: artifact?.manifest,
         preview,
+        traceId: metadata?.traceId ?? null,
         user,
       });
 
@@ -138,7 +139,7 @@ export default async function handler(req, res) {
   // ── PATCH: aplicar decisão ────────────────────────────────────────────────
   if (req.method === 'PATCH') {
     try {
-      const { preview, decision, feedback = null, content } = req.body || {};
+      const { preview, decision, feedback = null, content, metadata = {} } = req.body || {};
 
       if (!preview || typeof preview !== 'object') {
         return res.status(400).json({
@@ -162,6 +163,7 @@ export default async function handler(req, res) {
         decision,
         feedback,
         decisionTimestamp: updatedPreview?.decisionTimestamp || null,
+        traceId: metadata?.traceId ?? preview?.summary?.origin?.traceId ?? null,
         user,
       });
 

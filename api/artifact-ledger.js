@@ -5,6 +5,7 @@ const SAFE_RESPONSE_FIELDS = [
   'ledger_id',
   'artifact_id',
   'event_type',
+  'trace_id',
   'artifact_checksum',
   'origin_model',
   'origin_prompt_id',

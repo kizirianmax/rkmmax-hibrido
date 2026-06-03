@@ -73,7 +73,7 @@ describe('recordLedgerEvent', () => {
 
       expect(fromMock).toHaveBeenCalledWith('artifact_ledger');
       expect(selectMock).toHaveBeenCalledWith(
-        'ledger_id,artifact_id,event_type,artifact_checksum,origin_model,origin_prompt_id,artifact_timestamp,preview_validation,preview_status,preview_files_summary,decision,feedback,decision_timestamp,created_at',
+        'ledger_id,artifact_id,event_type,trace_id,artifact_checksum,origin_model,origin_prompt_id,artifact_timestamp,preview_validation,preview_status,preview_files_summary,decision,feedback,decision_timestamp,created_at',
       );
       expect(eqArtifactMock).toHaveBeenCalledWith('artifact_id', 'a1');
       expect(eqUserMock).toHaveBeenCalledWith('user_id', 'user-1');
@@ -147,7 +147,7 @@ describe('recordLedgerEvent', () => {
           id: '123e4567-e89b-42d3-a456-426614174000',
           checksum: 'sha256:abc',
           timestamp: '2026-06-03T00:00:00.000Z',
-          origin: { model: 'gpt-test', promptId: 'hybrid-genius' },
+          origin: { model: 'gpt-test', promptId: 'hybrid-genius', traceId: 'trace-123' },
         },
         preview: {
           summary: {
@@ -172,6 +172,7 @@ describe('recordLedgerEvent', () => {
       expect.objectContaining({
         artifact_id: '123e4567-e89b-42d3-a456-426614174000',
         event_type: 'preview_generated',
+        trace_id: 'trace-123',
         artifact_checksum: 'sha256:abc',
         origin_model: 'gpt-test',
         origin_prompt_id: 'hybrid-genius',
@@ -248,5 +249,6 @@ describe('recordLedgerEvent', () => {
       }),
     );
     expect(row.feedback).toHaveLength(1000);
+    expect(row.trace_id).toBeNull();
   });
 });

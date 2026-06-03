@@ -138,7 +138,7 @@ describe('POST /api/artifact-preview', () => {
   test('deve retornar 200 com preview para content válido', async () => {
     const { req, res } = makeReqRes('POST', {
       content: '# Artefato\n\nConteúdo gerado.',
-      metadata: { model: 'llama-3.3-70b', tier: 'free' },
+      metadata: { model: 'llama-3.3-70b', tier: 'free', traceId: 'trace-post-1' },
     });
     await handler(req, res);
     expect(res._status).toBe(200);
@@ -148,6 +148,7 @@ describe('POST /api/artifact-preview', () => {
     expect(recordLedgerEventMock).toHaveBeenCalledWith(
       expect.objectContaining({
         eventType: 'preview_generated',
+        traceId: 'trace-post-1',
         user: { id: 'test-user', email: 'test@example.com' },
       }),
     );
@@ -189,7 +190,11 @@ describe('PATCH /api/artifact-preview', () => {
   });
 
   test('deve retornar 200 com preview aprovado', async () => {
-    const { req, res } = makeReqRes('PATCH', { preview: validPreview, decision: 'approved' });
+    const previewWithTraceId = {
+      ...validPreview,
+      summary: { ...validPreview.summary, origin: { traceId: 'trace-patch-1' } },
+    };
+    const { req, res } = makeReqRes('PATCH', { preview: previewWithTraceId, decision: 'approved' });
     await handler(req, res);
     expect(res._status).toBe(200);
     expect(res._json.success).toBe(true);
@@ -198,6 +203,7 @@ describe('PATCH /api/artifact-preview', () => {
       expect.objectContaining({
         eventType: 'decision_applied',
         decision: 'approved',
+        traceId: 'trace-patch-1',
         user: { id: 'test-user', email: 'test@example.com' },
       }),
     );
