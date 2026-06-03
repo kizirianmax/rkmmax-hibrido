@@ -1,3 +1,17 @@
+## 2026-06-03 — feat(ui): F10-07 adicionar copiar arquivo completo no preview do Construtor
+
+| Item | Detalhe |
+|------|---------|
+| **Título do PR** | `feat(ui): F10-07 adicionar copiar arquivo completo no preview do Construtor` |
+| **Arquivos alterados** | `src/components/construtor/ArtifactPreviewPanel.jsx`; `src/components/construtor/__tests__/ArtifactPreviewPanel.test.jsx`; `src/lib/construtor/artifactPreview.js`; `src/lib/construtor/__tests__/artifactPreview.test.js`; `CHECKLIST.md` |
+| **Justificativa para `src/lib/construtor/artifactPreview.js`** | Alteração **necessária** para o painel acessar conteúdo integral por arquivo via `summary.fileContents`; sem isso o `ArtifactPreviewPanel` só teria `contentPreview` truncado e não conseguiria copiar o conteúdo completo com segurança. |
+| **Escopo funcional preservado** | Mudança restrita ao Híbrido/Construtor (preview/revisão de artefatos). Sem alterações em API, prompts, providers/modelos, `src/config/modelPriority.js`, orquestração, Serginho, Especialistas, ABNT, Auth/SaaS/Payments, Supabase/Stripe/Vercel, secrets, workflows ou Dependabot. |
+| **Hardening aplicado na cópia** | Cópia individual e “copiar tudo” usam conteúdo completo apenas para arquivos textuais, com feedback quando conteúdo está ausente/vazio e sem tentativa de cópia de binários. A prévia visual (`contentPreview`) permanece truncada. |
+| **Validações executadas** | Baseline após `npm install`: `npm run lint` ✅ (warnings pré-existentes, 0 errors), `npm run build` ✅, `npm test -- --runInBand` ✅. Pós-microajuste: `npm run lint` ✅ (warnings pré-existentes, 0 errors), `npm run build` ✅, `npm test -- --runInBand` ✅. |
+| **Rollback** | `git revert <commit-sha>` |
+
+---
+
 ## 2026-06-02 — fix(prompt): remover conflito no HYBRID_GENIUS_PROMPT para permitir “Serginho IA” como conteúdo de artefato
 
 | Item | Detalhe |

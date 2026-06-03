@@ -31,6 +31,21 @@ const ADJUSTMENT_CATEGORIES = [
 
 // PASSO 6 — Limite de caracteres para exibição de texto no histórico de revisão
 const MAX_REVIEW_TEXT_LENGTH = 120;
+const COPYABLE_MIME_TYPES = new Set([
+  'application/javascript',
+  'application/json',
+  'application/xml',
+  'image/svg+xml',
+]);
+
+function isTextFile(file) {
+  const type = file?.type || '';
+  if (type.startsWith('text/')) return true;
+  if (COPYABLE_MIME_TYPES.has(type)) return true;
+  const path = file?.path || '';
+  if (/\.(md|txt|js|jsx|ts|tsx|json|html|css|xml|svg|csv|ya?ml)$/i.test(path)) return true;
+  return false;
+}
 
 export default function ArtifactPreviewPanel({ preview, onDecision, onRevision, loading = false, delivery, lastAdjustment = null, reviewHistory = [], artifactVersion = 1, onClearCycle, reviewCycleMetrics = null }) {
   const [rejectionFeedback, setRejectionFeedback] = useState('');
@@ -137,7 +152,7 @@ export default function ArtifactPreviewPanel({ preview, onDecision, onRevision, 
   };
 
   const copyText = async (text, successMessage) => {
-    if (typeof text !== 'string') {
+    if (typeof text !== 'string' || text.length === 0) {
       showCopyFeedback('⚠️ Conteúdo vazio para copiar.');
       return;
     }
@@ -153,8 +168,9 @@ export default function ArtifactPreviewPanel({ preview, onDecision, onRevision, 
         textArea.style.left = '-9999px';
         document.body.appendChild(textArea);
         textArea.select();
-        document.execCommand?.('copy');
+        const copied = document.execCommand?.('copy');
         document.body.removeChild(textArea);
+        if (!copied) throw new Error('copy-failed');
       }
       showCopyFeedback(successMessage);
     } catch {
@@ -163,22 +179,38 @@ export default function ArtifactPreviewPanel({ preview, onDecision, onRevision, 
   };
 
   const handleCopyFile = (path) => {
+    const file = summary.files?.find((item) => item.path === path);
+    if (!isTextFile(file)) {
+      showCopyFeedback('⚠️ Arquivo não textual não pode ser copiado.');
+      return;
+    }
+
     const content = summary.fileContents?.[path];
     copyText(content, `📋 ${path} copiado.`);
   };
 
   const handleCopyAllFiles = () => {
-    const fileNames = summary.files?.map((f) => f.path) || [];
-    if (fileNames.length === 0) {
+    const files = summary.files || [];
+    if (files.length === 0) {
       showCopyFeedback('⚠️ Nenhum arquivo para copiar.');
       return;
     }
 
-    const combined = fileNames
-      .map((path) => `--- ${path} ---\n\n${summary.fileContents?.[path] || ''}`)
+    const copyableBlocks = files
+      .filter((file) => isTextFile(file))
+      .map((file) => ({ path: file.path, content: summary.fileContents?.[file.path] }))
+      .filter((file) => typeof file.content === 'string' && file.content.length > 0);
+
+    if (copyableBlocks.length === 0) {
+      showCopyFeedback('⚠️ Nenhum conteúdo textual completo disponível para copiar.');
+      return;
+    }
+
+    const combined = copyableBlocks
+      .map((file) => `--- ${file.path} ---\n\n${file.content}`)
       .join('\n\n');
 
-    copyText(combined, '📋 Todos os arquivos copiados.');
+    copyText(combined, `📋 ${copyableBlocks.length} arquivo(s) copiado(s).`);
   };
 
   return (

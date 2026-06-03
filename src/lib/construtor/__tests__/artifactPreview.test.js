@@ -14,6 +14,7 @@
  */
 
 import { jest } from '@jest/globals';
+import AdmZip from 'adm-zip';
 import { packageArtifact } from '../artifactPackager.js';
 import { validateArtifact } from '../artifactValidator.js';
 import { generatePreview, applyDecision } from '../artifactPreview.js';
@@ -202,6 +203,33 @@ describe('generatePreview', () => {
 
       expect(preview.summary.contentPreview.length).toBeLessThanOrEqual(500);
       expect(preview.summary.fileContents['content.md']).toHaveLength(1200);
+    });
+
+    test('não deve tentar preservar conteúdo completo de arquivo binário', () => {
+      const zip = new AdmZip();
+      zip.addFile('index.html', Buffer.from('<html>ok</html>', 'utf-8'));
+      zip.addFile('logo.png', Buffer.from([0x89, 0x50, 0x4e, 0x47, 0x00, 0xff]));
+      zip.addFile(
+        'manifest.json',
+        Buffer.from(
+          JSON.stringify({
+            version: '1.0.0',
+            timestamp: new Date().toISOString(),
+            origin: { specialist: 'hybrid', model: 'test-model', promptId: 'test-prompt' },
+            files: [{ path: 'index.html' }, { path: 'logo.png' }],
+          }),
+          'utf-8',
+        ),
+      );
+
+      const preview = generatePreview(
+        { id: 'artifact-bin', manifest: { files: [{ path: 'index.html' }] }, zipBuffer: zip.toBuffer() },
+        null,
+        null,
+      );
+
+      expect(preview.summary.fileContents['index.html']).toBe('<html>ok</html>');
+      expect(preview.summary.fileContents['logo.png']).toBeUndefined();
     });
   });
 

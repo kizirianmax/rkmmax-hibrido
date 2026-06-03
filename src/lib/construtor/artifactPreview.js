@@ -25,6 +25,12 @@ const MIME_MAP = {
   '.html': 'text/html',
   '.css': 'text/css',
 };
+const COPYABLE_MIME_TYPES = new Set([
+  'application/javascript',
+  'application/json',
+  'application/xml',
+  'image/svg+xml',
+]);
 
 /**
  * Resolve o tipo MIME a partir do caminho do arquivo.
@@ -35,6 +41,12 @@ function resolveMime(filePath) {
   const dot = filePath.lastIndexOf('.');
   const ext = dot !== -1 ? filePath.slice(dot).toLowerCase() : '';
   return MIME_MAP[ext] || 'application/octet-stream';
+}
+
+function isTextMime(mime) {
+  if (typeof mime !== 'string' || mime.length === 0) return false;
+  if (mime.startsWith('text/')) return true;
+  return COPYABLE_MIME_TYPES.has(mime);
 }
 
 // ── Extração de arquivos e conteúdo do ZIP ────────────────────────────────────
@@ -58,13 +70,15 @@ function extractZipInfo(zipBuffer, contentFilename = 'content.md') {
 
     for (const entry of entries) {
       if (entry.isDirectory) continue;
-      const raw = entry.getData().toString('utf-8');
+      const type = resolveMime(entry.entryName);
       files.push({
         path: entry.entryName,
         size: entry.header.size,
-        type: resolveMime(entry.entryName),
+        type,
       });
-      fileContents[entry.entryName] = raw;
+      if (isTextMime(type)) {
+        fileContents[entry.entryName] = entry.getData().toString('utf-8');
+      }
     }
 
     // Extrair preview do conteúdo principal
@@ -81,7 +95,10 @@ function extractZipInfo(zipBuffer, contentFilename = 'content.md') {
       entries.find((e) => !e.isDirectory && e.entryName.startsWith('content/'));
 
     if (contentEntry) {
-      const raw = fileContents[contentEntry.entryName] || contentEntry.getData().toString('utf-8');
+      const contentMime = resolveMime(contentEntry.entryName);
+      const raw = isTextMime(contentMime)
+        ? fileContents[contentEntry.entryName] || contentEntry.getData().toString('utf-8')
+        : '';
       contentPreview = raw.slice(0, MAX_CONTENT_PREVIEW_LENGTH);
     }
   } catch {

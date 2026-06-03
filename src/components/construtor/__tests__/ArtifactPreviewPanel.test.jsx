@@ -28,6 +28,7 @@ const buildPreview = (fileNames = []) => ({
 
 describe('ArtifactPreviewPanel — PASSO 4 Feedback Estruturado', () => {
   let writeTextMock;
+  const originalClipboard = global.navigator.clipboard;
 
   beforeEach(() => {
     writeTextMock = jest.fn().mockResolvedValue(undefined);
@@ -36,6 +37,13 @@ describe('ArtifactPreviewPanel — PASSO 4 Feedback Estruturado', () => {
       value: {
         writeText: writeTextMock,
       },
+    });
+  });
+
+  afterEach(() => {
+    Object.defineProperty(global.navigator, 'clipboard', {
+      configurable: true,
+      value: originalClipboard,
     });
   });
 
@@ -183,6 +191,38 @@ describe('ArtifactPreviewPanel — PASSO 4 Feedback Estruturado', () => {
       expect(writeTextMock).toHaveBeenCalledWith(
         expect.stringContaining('--- style.css ---\n\nbody{color:#000;}'),
       );
+    });
+  });
+
+  test('botão "📋 Copiar" não tenta copiar conteúdo vazio', async () => {
+    const preview = buildPreview(['script.js']);
+    preview.summary.fileContents = {};
+    render(<ArtifactPreviewPanel preview={preview} onRevision={jest.fn()} onDecision={jest.fn()} />);
+
+    fireEvent.click(screen.getByRole('button', { name: '📋 Copiar' }));
+
+    await waitFor(() => {
+      expect(screen.getByText('⚠️ Conteúdo vazio para copiar.')).toBeInTheDocument();
+    });
+    expect(writeTextMock).not.toHaveBeenCalled();
+  });
+
+  test('botão "📋 Copiar tudo" ignora binários e copia apenas conteúdo textual', async () => {
+    const preview = buildPreview(['index.html', 'logo.png']);
+    preview.summary.files = [
+      { path: 'index.html', size: 100, type: 'text/html' },
+      { path: 'logo.png', size: 50, type: 'image/png' },
+    ];
+    preview.summary.fileContents = {
+      'index.html': '<html>ok</html>',
+    };
+    render(<ArtifactPreviewPanel preview={preview} onRevision={jest.fn()} onDecision={jest.fn()} />);
+
+    fireEvent.click(screen.getByRole('button', { name: /copiar tudo/i }));
+
+    await waitFor(() => {
+      expect(writeTextMock).toHaveBeenCalledWith(expect.stringContaining('--- index.html ---'));
+      expect(writeTextMock).not.toHaveBeenCalledWith(expect.stringContaining('logo.png'));
     });
   });
 });
