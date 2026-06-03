@@ -1,3 +1,21 @@
+## 2026-06-03 — docs(replay): F12-04 formalizar contrato de consumo do replay/diff observacional
+
+| Item | Detalhe |
+|------|---------|
+| **Título do PR** | `docs(replay): F12-04 formalizar contrato de consumo do replay/diff observacional` |
+| **Objetivo F12-04** | Formalizar o contrato documental de consumo do replay/diff observacional para auditoria e monitoramento, sem acoplamento funcional ao runtime. |
+| **Documento criado** | `docs/audits/f12-04-contrato-consumo-replay-diff-2026-06-03.md` |
+| **Confirmação de PR exclusivamente documental** | Alterações restritas a `CHECKLIST.md` e ao documento de auditoria F12-04; sem implementação funcional. |
+| **Confirmação do contrato de consumo** | Replay/diff mantidos como camada observacional read-only, consumida apenas como metadados e sempre com `artifact_id + user_id`, sem controle de runtime. |
+| **Confirmação dos endpoints contemplados** | `GET /api/artifact-replay?artifactId=<uuid>` e `GET /api/artifact-replay-diff?artifactId=<uuid>`. |
+| **Confirmação de limites sem overclaim** | Registrado que replay/diff não são restauração funcional, time-travel funcional, histórico Git, versionamento completo ou prova criptográfica completa; também não revalidam conteúdo atual nem substituem auditoria externa, e não garantem SLA/uptime/p95/p99/segurança absoluta/clientes/receita/tração. |
+| **Confirmação de payload proibido** | Mantida vedação de conteúdo bruto, `zipBase64`, `files`, `content`, `contentPreview`, `user_email` e feedback bruto. |
+| **Confirmação de ausência de alteração funcional** | Sem alterações em `api/`, `src/`, `supabase/migrations/`, testes, prompts, providers/modelos, orquestração, geração, ZIP, preview, execução, UI, Auth/SaaS/Payments, Stripe/Vercel/secrets/workflows, `package.json` ou `package-lock.json`. |
+| **Confirmação de que Dependabot não foi tratado** | Dependabot permanece fora de escopo nesta entrega. |
+| **Rollback** | `git revert <commit-sha>` |
+
+---
+
 ## 2026-06-03 — feat(replay): F12-03 criar diff observacional do ciclo de revisão
 
 | Item | Detalhe |
