@@ -1,3 +1,21 @@
+## 2026-06-03 — docs(replay): F12-05 registrar encerramento formal da Fase 12
+
+| Item | Detalhe |
+|------|---------|
+| **Título do PR** | `docs(replay): F12-05 registrar encerramento formal da Fase 12` |
+| **Objetivo** | Registrar o encerramento formal da Fase 12 (replay/diff observacional do ciclo de revisão), consolidando F12-01 a F12-04 no escopo observacional/read-only atual. |
+| **Documento criado** | `docs/audits/f12-05-encerramento-formal-fase12-replay-diff-2026-06-03.md` |
+| **Confirmação de encerramento formal da Fase 12** | Fase 12 encerrada formalmente no escopo documental/observacional definido. |
+| **F12-01 a F12-04 consolidadas** | Consolidação registrada: abertura formal da fase, endpoint replay read-only, endpoint diff/veredito observacional read-only e contrato de consumo do replay/diff. |
+| **Confirmação de PR exclusivamente documental** | Alterações restritas a `CHECKLIST.md` e ao documento de auditoria F12-05. |
+| **Confirmação de ausência de alteração funcional** | Sem alterações em `api/`, `src/`, `supabase/migrations/`, testes, prompts, providers/modelos, orquestração, geração, ZIP, preview, execução, UI, Auth/SaaS/Payments, Stripe/Vercel/secrets/workflows, `package.json` ou `package-lock.json`. |
+| **Confirmação de limites sem overclaim** | Mantido: replay/diff não são restauração funcional, time-travel funcional, histórico Git, versionamento completo ou prova criptográfica completa; não revalidam conteúdo atual, não substituem auditoria externa e não garantem SLA/uptime/p95/p99/segurança absoluta/clientes/receita/tração. |
+| **Confirmação de próximos itens fora de escopo** | Permanecem fora de escopo: UI, certificado exportável, consulta por `traceId`, execução sandboxed real, reativar `executeArtifact`, geração/ZIP/preview/execução, prompts, providers/modelos, Auth/SaaS/Payments, Especialistas e ABNT. |
+| **Confirmação de que Dependabot não foi tratado** | Dependabot não foi tratado neste PR e permanece em janela técnica separada. |
+| **Rollback** | `git revert <commit-sha>` |
+
+---
+
 ## 2026-06-03 — docs(replay): F12-04 formalizar contrato de consumo do replay/diff observacional
 
 | Item | Detalhe |
