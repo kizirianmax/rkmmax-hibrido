@@ -2,6 +2,22 @@ import { createClient } from '@supabase/supabase-js';
 
 const ALLOWED_EVENT_TYPES = new Set(['preview_generated', 'decision_applied']);
 const MAX_FEEDBACK_LENGTH = 1000;
+const SAFE_LEDGER_FIELDS = [
+  'ledger_id',
+  'artifact_id',
+  'event_type',
+  'artifact_checksum',
+  'origin_model',
+  'origin_prompt_id',
+  'artifact_timestamp',
+  'preview_validation',
+  'preview_status',
+  'preview_files_summary',
+  'decision',
+  'feedback',
+  'decision_timestamp',
+  'created_at',
+];
 
 function getSupabaseClient() {
   const url = process.env.SUPABASE_URL;
@@ -66,3 +82,32 @@ export async function recordLedgerEvent(event) {
   }
 }
 
+export async function readLedgerEvents({ artifactId, userId } = {}) {
+  try {
+    if (!artifactId || !userId) {
+      return { events: [], error: 'invalid_params' };
+    }
+
+    const supabase = getSupabaseClient();
+    if (!supabase) {
+      return { events: [], error: 'supabase_unavailable' };
+    }
+
+    const { data, error } = await supabase
+      .from('artifact_ledger')
+      .select(SAFE_LEDGER_FIELDS.join(','))
+      .eq('artifact_id', artifactId)
+      .eq('user_id', userId)
+      .order('created_at', { ascending: true });
+
+    if (error) {
+      console.error('[artifactLedger] read error:', error.message);
+      return { events: [], error: 'read_failed' };
+    }
+
+    return { events: Array.isArray(data) ? data : [], error: null };
+  } catch (error) {
+    console.error('[artifactLedger] readLedgerEvents exception:', error.message);
+    return { events: [], error: 'read_failed' };
+  }
+}

@@ -1,3 +1,19 @@
+## 2026-06-03 — feat(ledger): F11-03 consultar histórico read-only do artifact ledger
+
+| Item | Detalhe |
+|------|---------|
+| **Título do PR** | `feat(ledger): F11-03 consultar histórico read-only do artifact ledger` |
+| **Objetivo F11-03** | Criar endpoint read-only autenticado para consultar histórico do `artifact_ledger` por `artifactId`, com filtro obrigatório por usuário autenticado. |
+| **Arquivos alterados** | `api/artifact-ledger.js`; `api/_utils/artifactLedger.js`; `api/__tests__/artifact-ledger.test.js`; `api/__tests__/artifactLedger.test.js`; `CHECKLIST.md` |
+| **Confirmação endpoint read-only** | Novo endpoint `GET /api/artifact-ledger` realiza apenas leitura (`select`) e não executa escrita no banco. |
+| **Confirmação de filtro por usuário autenticado** | Consulta sempre filtrada por `artifact_id` + `user_id` com `verifyAuth(req)` obrigatório. |
+| **Confirmação de privacidade de payload** | Resposta inclui somente metadados seguros e não retorna conteúdo bruto, arquivos brutos, `zipBase64` ou `contentPreview`. |
+| **Escopo preservado** | Sem alterações em geração, preview, ZIP, UI, prompts, providers/modelos, Serginho/orquestração ou Dependabot. |
+| **Validações executadas** | Baseline pré-alteração: `npm run lint` ✅ (warnings pré-existentes), `npm run build` ✅, `npm test -- --runInBand` ✅. Pós-alteração: `npm run lint` ✅, `npm run build` ✅, `npm test -- --runInBand` ✅. |
+| **Rollback** | `git revert <commit-sha>` |
+
+---
+
 ## 2026-06-03 — feat(ledger): F11-02 criar artifact ledger write-only
 
 | Item | Detalhe |
