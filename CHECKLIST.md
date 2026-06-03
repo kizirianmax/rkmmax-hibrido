@@ -1,3 +1,19 @@
+## 2026-06-03 — docs(replay): F12-01 abrir fase de replay observacional do ciclo de revisão
+
+| Item | Detalhe |
+|------|---------|
+| **Título do PR** | `docs(replay): F12-01 abrir fase de replay observacional do ciclo de revisão` |
+| **Objetivo F12-01** | Abrir formalmente a Fase 12 para replay/diff observacional do ciclo de revisão, derivado do Artifact Ledger e sem alteração de runtime. |
+| **Documento criado** | `docs/audits/f12-01-abertura-formal-fase12-replay-diff-2026-06-03.md` |
+| **Confirmação de abertura formal da Fase 12** | Fase 12 aberta formalmente: **Replay/diff observacional do ciclo de revisão**. |
+| **Confirmação de PR exclusivamente documental** | Alterações restritas a `CHECKLIST.md` e documento de auditoria em `docs/audits/`; sem implementação funcional. |
+| **Confirmação de que nenhuma camada funcional foi alterada** | Sem alterações em `api/`, `src/`, `supabase/migrations/`, testes, prompts, providers/modelos, orquestração, geração, ZIP, preview, execução, UI, Auth/SaaS/Payments, Stripe, Vercel/secrets/workflows, `package.json` ou `package-lock.json`. |
+| **Confirmação dos limites read-only/observacionais** | Mantido: replay/diff apenas observacional/read-only, sem conteúdo bruto, sem `zipBase64`, sem arquivos brutos, sem `contentPreview`, sem restauração funcional e sem time-travel funcional. |
+| **Confirmação de que Dependabot não foi tratado** | Dependabot permanece fora de escopo neste PR. |
+| **Rollback** | `git revert <commit-sha>` |
+
+---
+
 ## 2026-06-03 — docs(ledger): registrar encerramento formal da Fase 11
 
 | Item | Detalhe |
