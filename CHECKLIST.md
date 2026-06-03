@@ -1,3 +1,21 @@
+## 2026-06-03 — feat(replay): F12-02 criar endpoint replay read-only do ciclo de revisão
+
+| Item | Detalhe |
+|------|---------|
+| **Título do PR** | `feat(replay): F12-02 criar endpoint replay read-only do ciclo de revisão` |
+| **Objetivo F12-02** | Criar endpoint replay observacional/read-only do ciclo de revisão derivado do Artifact Ledger, autenticado e filtrado por `artifact_id + user_id`. |
+| **Endpoint criado** | `GET /api/artifact-replay?artifactId=<uuid>` |
+| **Arquivos alterados** | `api/artifact-replay.js`; `api/_utils/artifactReplay.js`; `api/__tests__/artifact-replay.test.js`; `CHECKLIST.md` |
+| **Confirmação replay read-only** | Endpoint realiza apenas leitura via `readLedgerEvents`; sem insert/update/delete e sem alteração de decisão/runtime. |
+| **Confirmação de filtro por `artifact_id` + `user_id`** | Consulta obrigatória com `readLedgerEvents({ artifactId, userId: user.id })` após `verifyAuth(req)`. |
+| **Confirmação de payload seguro** | Retorna somente `replay` derivado (timeline segura e metadados), sem eventos brutos. |
+| **Confirmação de dados não expostos** | Não retorna conteúdo bruto, `zipBase64`, `files`, `content`, `contentPreview`, `user_email` nem feedback bruto (apenas `hasFeedback`). |
+| **Confirmação de escopo preservado** | Não altera runtime, geração, ZIP, preview, execução, prompts, providers/modelos, UI, orquestração ou Dependabot. |
+| **Validações executadas** | Baseline pré-alteração: `npm run lint` ✅ (warnings pré-existentes), `npm run build` ✅, `npm test -- --runInBand` ✅. Pós-alteração: `npm run lint` ✅ (warnings pré-existentes), `npm run build` ✅, `npm test -- --runInBand` ✅. Teste alvo: `npm test -- --runInBand api/__tests__/artifact-replay.test.js` ✅. |
+| **Rollback** | `git revert <commit-sha>` |
+
+---
+
 ## 2026-06-03 — docs(replay): F12-01 abrir fase de replay observacional do ciclo de revisão
 
 | Item | Detalhe |
