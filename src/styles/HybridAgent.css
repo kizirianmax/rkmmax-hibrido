@@ -947,22 +947,100 @@ textarea:disabled {
 .artifact-file-item {
   display: flex;
   justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
   gap: 0.5rem;
   background: rgba(255, 255, 255, 0.03);
-  padding: 2px 6px;
+  padding: 6px;
   border-radius: 4px;
+}
+
+.artifact-file-meta {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  min-width: 0;
 }
 
 .artifact-file-path {
   font-family: monospace;
   font-size: 0.7rem;
   color: #a78bfa;
+  word-break: break-word;
 }
 
 .artifact-file-size {
   color: #64748b;
   font-size: 0.7rem;
   flex-shrink: 0;
+}
+
+.artifact-file-local-edit-tag {
+  font-size: 0.68rem;
+  color: #facc15;
+  background: rgba(250, 204, 21, 0.12);
+  border: 1px solid rgba(250, 204, 21, 0.25);
+  border-radius: 999px;
+  padding: 2px 8px;
+}
+
+.artifact-file-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+.artifact-local-edit-notice {
+  margin-top: 0.5rem;
+  font-size: 0.72rem;
+  color: #f8fafc;
+  background: rgba(59, 130, 246, 0.14);
+  border: 1px solid rgba(96, 165, 250, 0.35);
+  border-radius: 6px;
+  padding: 0.45rem 0.55rem;
+}
+
+.artifact-local-editor {
+  margin-top: 0.6rem;
+  background: rgba(15, 23, 42, 0.85);
+  border: 1px solid rgba(168, 85, 247, 0.25);
+  border-radius: 8px;
+  padding: 0.6rem;
+}
+
+.artifact-local-editor-header {
+  margin-bottom: 0.4rem;
+}
+
+.artifact-local-editor-title {
+  color: #e9d5ff;
+  font-size: 0.78rem;
+  font-weight: 600;
+  word-break: break-word;
+}
+
+.artifact-local-editor-textarea {
+  width: 100%;
+  min-height: 180px;
+  margin-top: 0.5rem;
+  background: rgba(2, 6, 23, 0.9);
+  border: 1px solid rgba(168, 85, 247, 0.3);
+  border-radius: 6px;
+  color: #e2e8f0;
+  padding: 0.55rem 0.6rem;
+  resize: vertical;
+  box-sizing: border-box;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  font-size: 0.76rem;
+  line-height: 1.4;
+}
+
+.artifact-local-editor-actions {
+  margin-top: 0.55rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
 }
 
 .artifact-preview-content {
@@ -1004,6 +1082,7 @@ textarea:disabled {
 
 .artifact-btn {
   padding: 0.4rem 0.9rem;
+  min-height: 36px;
   border: none;
   border-radius: 6px;
   font-size: 0.8rem;
@@ -1118,6 +1197,24 @@ textarea:disabled {
   font-size: 0.68rem;
   color: #64748b;
   margin-bottom: 0.3rem;
+}
+
+@media (max-width: 640px) {
+  .artifact-file-item {
+    align-items: stretch;
+  }
+
+  .artifact-file-actions {
+    width: 100%;
+  }
+
+  .artifact-file-actions .artifact-btn {
+    flex: 1 1 140px;
+  }
+
+  .artifact-local-editor-actions .artifact-btn {
+    flex: 1 1 160px;
+  }
 }
 
 .artifact-preview-entry {
