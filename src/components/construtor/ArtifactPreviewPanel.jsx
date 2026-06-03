@@ -69,6 +69,12 @@ export default function ArtifactPreviewPanel({ preview, onDecision, onRevision, 
   const [editingFilePath, setEditingFilePath] = useState(null);
   const [editingDraft, setEditingDraft] = useState('');
 
+  useEffect(() => {
+    setEditedFileContents({});
+    setEditingFilePath(null);
+    setEditingDraft('');
+  }, [preview?.summary?.id, preview?.summary?.timestamp]);
+
   if (loading) {
     return (
       <div className="artifact-preview-panel artifact-preview-loading">
@@ -86,12 +92,6 @@ export default function ArtifactPreviewPanel({ preview, onDecision, onRevision, 
   }
 
   const { summary, decision, feedback, decisionTimestamp } = preview;
-
-  useEffect(() => {
-    setEditedFileContents({});
-    setEditingFilePath(null);
-    setEditingDraft('');
-  }, [summary?.id, summary?.timestamp]);
 
   const validationBadge = summary.validation?.valid
     ? <span className="artifact-badge artifact-badge-ok">✅ Válido</span>
