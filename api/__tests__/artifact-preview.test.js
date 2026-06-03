@@ -58,6 +58,10 @@ jest.unstable_mockModule('../lib/auth.js', () => ({
   }),
 }));
 
+jest.unstable_mockModule('../_utils/artifactLedger.js', () => ({
+  recordLedgerEvent: jest.fn().mockResolvedValue(true),
+}));
+
 jest.unstable_mockModule('../../src/lib/construtor/artifactPreview.js', () => ({
   generatePreview: jest.fn().mockReturnValue({
     previewAvailable: true,
@@ -102,12 +106,19 @@ function makeReqRes(method, body) {
 
 let handler;
 let executeArtifactMock;
+let recordLedgerEventMock;
 
 beforeAll(async () => {
   const mod = await import('../artifact-preview.js');
   handler = mod.default;
   const runnerMod = await import('../../src/lib/construtor/artifactRunner.js');
   executeArtifactMock = runnerMod.executeArtifact;
+  const ledgerMod = await import('../_utils/artifactLedger.js');
+  recordLedgerEventMock = ledgerMod.recordLedgerEvent;
+});
+
+beforeEach(() => {
+  recordLedgerEventMock.mockClear();
 });
 
 describe('POST /api/artifact-preview', () => {
@@ -134,6 +145,12 @@ describe('POST /api/artifact-preview', () => {
     expect(res._json.success).toBe(true);
     expect(res._json.preview).toHaveProperty('previewAvailable', true);
     expect(res._json.preview).toHaveProperty('decision', 'pending');
+    expect(recordLedgerEventMock).toHaveBeenCalledWith(
+      expect.objectContaining({
+        eventType: 'preview_generated',
+        user: { id: 'test-user', email: 'test@example.com' },
+      }),
+    );
   });
 
   // Fase 2 — Contenção P0: execução automática foi desativada.
@@ -177,6 +194,13 @@ describe('PATCH /api/artifact-preview', () => {
     expect(res._status).toBe(200);
     expect(res._json.success).toBe(true);
     expect(res._json.preview.decision).toBe('approved');
+    expect(recordLedgerEventMock).toHaveBeenCalledWith(
+      expect.objectContaining({
+        eventType: 'decision_applied',
+        decision: 'approved',
+        user: { id: 'test-user', email: 'test@example.com' },
+      }),
+    );
   });
 
   test('deve retornar 200 com preview rejeitado e feedback', async () => {

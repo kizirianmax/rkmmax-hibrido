@@ -32,6 +32,7 @@
 import { packageArtifact } from '../src/lib/construtor/artifactPackager.js';
 import { validateArtifact } from '../src/lib/construtor/artifactValidator.js';
 import { generatePreview, applyDecision } from '../src/lib/construtor/artifactPreview.js';
+import { recordLedgerEvent } from './_utils/artifactLedger.js';
 import { applyCorsRestricted } from './lib/cors.js';
 import { verifyAuth } from './lib/auth.js';
 
@@ -71,7 +72,7 @@ export default async function handler(req, res) {
   }
 
   // Auth guard — rejeitar requisições sem JWT válido (padrão de /api/ai)
-  const { error: authError } = await verifyAuth(req);
+  const { user, error: authError } = await verifyAuth(req);
   if (authError) {
     const statusMap = {
       missing_token: 401,
@@ -114,6 +115,12 @@ export default async function handler(req, res) {
 
       // Fase 2D — gerar preview
       const preview = generatePreview(artifact, validationResult, executionResult);
+      void recordLedgerEvent({
+        eventType: 'preview_generated',
+        manifest: artifact?.manifest,
+        preview,
+        user,
+      });
 
       return res.status(200).json({ success: true, preview });
     } catch (error) {
@@ -149,6 +156,14 @@ export default async function handler(req, res) {
       }
 
       const updatedPreview = applyDecision(preview, decision, feedback);
+      void recordLedgerEvent({
+        eventType: 'decision_applied',
+        preview: updatedPreview,
+        decision,
+        feedback,
+        decisionTimestamp: updatedPreview?.decisionTimestamp || null,
+        user,
+      });
 
       // Quando aprovado e content fornecido, empacotar o artefato e retornar zipBase64
       if (decision === 'approved' && content && typeof content === 'string' && content.trim() !== '') {
