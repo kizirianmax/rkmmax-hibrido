@@ -1,3 +1,20 @@
+## 2026-06-03 — feat(ledger): F11-05 gerar veredito read-only de proveniência
+
+| Item | Detalhe |
+|------|---------|
+| **Título do PR** | `feat(ledger): F11-05 gerar veredito read-only de proveniência` |
+| **Objetivo F11-05** | Gerar veredito/certificado determinístico e conservador de proveniência, em modo read-only, a partir dos eventos existentes do Artifact Ledger. |
+| **Arquivos alterados** | `api/_utils/artifactProvenance.js`; `api/artifact-provenance.js`; `api/__tests__/artifact-provenance.test.js`; `CHECKLIST.md` |
+| **Confirmação endpoint/veredito read-only** | Novo endpoint `GET /api/artifact-provenance` autentica usuário, lê ledger via `readLedgerEvents` e retorna apenas veredito derivado; sem escrita no banco. |
+| **Confirmação de filtro por usuário autenticado** | Consulta sempre filtrada por `artifact_id + user_id` por meio de `readLedgerEvents({ artifactId, userId: user.id })` após `verifyAuth(req)`. |
+| **Confirmação de payload seguro** | Resposta retorna somente metadados seguros (`provenance`) e não expõe `user_email`. |
+| **Confirmação de não gravação de conteúdo bruto** | Não grava nem retorna conteúdo bruto, `zipBase64`, raw files ou `contentPreview`. |
+| **Escopo preservado** | Sem alterações em Serginho, orquestração, prompts, providers/modelos, UI, ZIP, geração, validação, execução ou Dependabot. |
+| **Validações executadas** | `npm run lint` ✅ (warnings pré-existentes), `npm run build` ✅, `npm test -- --runInBand` ✅ |
+| **Rollback** | `git revert <commit-sha>` |
+
+---
+
 ## 2026-06-03 — feat(ledger): F11-04 propagar traceId no artifact ledger
 
 | Item | Detalhe |
