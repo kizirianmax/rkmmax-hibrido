@@ -25,6 +25,12 @@ const MIME_MAP = {
   '.html': 'text/html',
   '.css': 'text/css',
 };
+const COPYABLE_MIME_TYPES = new Set([
+  'application/javascript',
+  'application/json',
+  'application/xml',
+  'image/svg+xml',
+]);
 
 /**
  * Resolve o tipo MIME a partir do caminho do arquivo.
@@ -37,6 +43,12 @@ function resolveMime(filePath) {
   return MIME_MAP[ext] || 'application/octet-stream';
 }
 
+function isTextMime(mime) {
+  if (typeof mime !== 'string' || mime.length === 0) return false;
+  if (mime.startsWith('text/')) return true;
+  return COPYABLE_MIME_TYPES.has(mime);
+}
+
 // ── Extração de arquivos e conteúdo do ZIP ────────────────────────────────────
 
 /**
@@ -45,11 +57,12 @@ function resolveMime(filePath) {
  *
  * @param {Buffer} zipBuffer
  * @param {string} [contentFilename] - nome do arquivo de conteúdo principal
- * @returns {{ files: Array<{path, size, type}>, contentPreview: string }}
+ * @returns {{ files: Array<{path, size, type}>, contentPreview: string, fileContents: Record<string, string> }}
  */
 function extractZipInfo(zipBuffer, contentFilename = 'content.md') {
   let files = [];
   let contentPreview = '';
+  const fileContents = {};
 
   try {
     const zip = new AdmZip(zipBuffer);
@@ -57,11 +70,15 @@ function extractZipInfo(zipBuffer, contentFilename = 'content.md') {
 
     for (const entry of entries) {
       if (entry.isDirectory) continue;
+      const type = resolveMime(entry.entryName);
       files.push({
         path: entry.entryName,
         size: entry.header.size,
-        type: resolveMime(entry.entryName),
+        type,
       });
+      if (isTextMime(type)) {
+        fileContents[entry.entryName] = entry.getData().toString('utf-8');
+      }
     }
 
     // Extrair preview do conteúdo principal
@@ -78,14 +95,17 @@ function extractZipInfo(zipBuffer, contentFilename = 'content.md') {
       entries.find((e) => !e.isDirectory && e.entryName.startsWith('content/'));
 
     if (contentEntry) {
-      const raw = contentEntry.getData().toString('utf-8');
+      const contentMime = resolveMime(contentEntry.entryName);
+      const raw = isTextMime(contentMime)
+        ? fileContents[contentEntry.entryName] || contentEntry.getData().toString('utf-8')
+        : '';
       contentPreview = raw.slice(0, MAX_CONTENT_PREVIEW_LENGTH);
     }
   } catch {
     // ZIP ilegível — retornar listas vazias
   }
 
-  return { files, contentPreview };
+  return { files, contentPreview, fileContents };
 }
 
 // ── Funções públicas ──────────────────────────────────────────────────────────
@@ -131,9 +151,9 @@ export function generatePreview(artifact, validationResult = null, executionResu
 
   const { id, manifest, zipBuffer } = artifact;
 
-  const { files, contentPreview } = zipBuffer
+  const { files, contentPreview, fileContents } = zipBuffer
     ? extractZipInfo(zipBuffer, manifest?.files?.[0]?.path?.split('/').pop())
-    : { files: [], contentPreview: '' };
+    : { files: [], contentPreview: '', fileContents: {} };
 
   // Normalizar resultado de validação
   const validErrors = validationResult ? (validationResult.errors || []) : [];
@@ -213,6 +233,7 @@ export function generatePreview(artifact, validationResult = null, executionResu
       preview: previewMetrics,
     },
     files,
+    fileContents,
     contentPreview,
   };
 
