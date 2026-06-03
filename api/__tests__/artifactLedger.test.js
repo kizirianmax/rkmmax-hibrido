@@ -6,7 +6,7 @@ jest.unstable_mockModule('@supabase/supabase-js', () => ({
   createClient: createClientMock,
 }));
 
-const { recordLedgerEvent } = await import('../_utils/artifactLedger.js');
+const { recordLedgerEvent, readLedgerEvents } = await import('../_utils/artifactLedger.js');
 
 describe('recordLedgerEvent', () => {
   const originalEnv = process.env;
@@ -18,6 +18,102 @@ describe('recordLedgerEvent', () => {
     delete process.env.SUPABASE_SERVICE_ROLE_KEY;
     createClientMock.mockReset();
     consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
+  });
+
+  describe('readLedgerEvents', () => {
+    const originalEnv = process.env;
+    let consoleErrorSpy;
+
+    beforeEach(() => {
+      process.env = { ...originalEnv };
+      delete process.env.SUPABASE_URL;
+      delete process.env.SUPABASE_SERVICE_ROLE_KEY;
+      createClientMock.mockReset();
+      consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
+    });
+
+    afterEach(() => {
+      process.env = originalEnv;
+      consoleErrorSpy.mockRestore();
+    });
+
+    test('não quebra quando env do Supabase está ausente', async () => {
+      await expect(
+        readLedgerEvents({
+          artifactId: '123e4567-e89b-42d3-a456-426614174123',
+          userId: 'user-1',
+        }),
+      ).resolves.toEqual({
+        events: [],
+        error: 'supabase_unavailable',
+      });
+      expect(createClientMock).not.toHaveBeenCalled();
+    });
+
+    test('consulta com artifactId + userId e ordena por created_at asc', async () => {
+      const rows = [
+        { ledger_id: '1', artifact_id: 'a1', event_type: 'preview_generated', created_at: '2026-06-03T00:00:00.000Z' },
+        { ledger_id: '2', artifact_id: 'a1', event_type: 'decision_applied', created_at: '2026-06-03T00:10:00.000Z' },
+      ];
+
+      const orderMock = jest.fn().mockResolvedValue({ data: rows, error: null });
+      const eqUserMock = jest.fn().mockReturnValue({ order: orderMock });
+      const eqArtifactMock = jest.fn().mockReturnValue({ eq: eqUserMock });
+      const selectMock = jest.fn().mockReturnValue({ eq: eqArtifactMock });
+      const fromMock = jest.fn().mockReturnValue({ select: selectMock });
+      createClientMock.mockReturnValue({ from: fromMock });
+
+      process.env.SUPABASE_URL = 'https://example.supabase.co';
+      process.env.SUPABASE_SERVICE_ROLE_KEY = 'service-role';
+
+      const result = await readLedgerEvents({
+        artifactId: 'a1',
+        userId: 'user-1',
+      });
+
+      expect(fromMock).toHaveBeenCalledWith('artifact_ledger');
+      expect(selectMock).toHaveBeenCalledWith(
+        'ledger_id,artifact_id,event_type,artifact_checksum,origin_model,origin_prompt_id,artifact_timestamp,preview_validation,preview_status,preview_files_summary,decision,feedback,decision_timestamp,created_at',
+      );
+      expect(eqArtifactMock).toHaveBeenCalledWith('artifact_id', 'a1');
+      expect(eqUserMock).toHaveBeenCalledWith('user_id', 'user-1');
+      expect(orderMock).toHaveBeenCalledWith('created_at', { ascending: true });
+      expect(result).toEqual({ events: rows, error: null });
+    });
+
+    test('retorna lista vazia quando não há eventos', async () => {
+      const orderMock = jest.fn().mockResolvedValue({ data: [], error: null });
+      const eqUserMock = jest.fn().mockReturnValue({ order: orderMock });
+      const eqArtifactMock = jest.fn().mockReturnValue({ eq: eqUserMock });
+      const selectMock = jest.fn().mockReturnValue({ eq: eqArtifactMock });
+      const fromMock = jest.fn().mockReturnValue({ select: selectMock });
+      createClientMock.mockReturnValue({ from: fromMock });
+
+      process.env.SUPABASE_URL = 'https://example.supabase.co';
+      process.env.SUPABASE_SERVICE_ROLE_KEY = 'service-role';
+
+      await expect(readLedgerEvents({ artifactId: 'a1', userId: 'user-1' })).resolves.toEqual({
+        events: [],
+        error: null,
+      });
+    });
+
+    test('falha de leitura retorna erro controlado', async () => {
+      const orderMock = jest.fn().mockResolvedValue({ data: null, error: { message: 'read failed' } });
+      const eqUserMock = jest.fn().mockReturnValue({ order: orderMock });
+      const eqArtifactMock = jest.fn().mockReturnValue({ eq: eqUserMock });
+      const selectMock = jest.fn().mockReturnValue({ eq: eqArtifactMock });
+      const fromMock = jest.fn().mockReturnValue({ select: selectMock });
+      createClientMock.mockReturnValue({ from: fromMock });
+
+      process.env.SUPABASE_URL = 'https://example.supabase.co';
+      process.env.SUPABASE_SERVICE_ROLE_KEY = 'service-role';
+
+      await expect(readLedgerEvents({ artifactId: 'a1', userId: 'user-1' })).resolves.toEqual({
+        events: [],
+        error: 'read_failed',
+      });
+    });
   });
 
   afterEach(() => {
