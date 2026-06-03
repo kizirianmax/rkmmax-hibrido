@@ -75,7 +75,7 @@ function determineConfidence({ status, hasChecksum, eventCount }) {
     return hasChecksum && eventCount >= 2 ? 'high' : 'medium';
   }
 
-  if (status === 'decision_pending' || status === 'preview_generated') {
+  if (status === 'decision_pending') {
     return hasChecksum ? 'medium' : 'low';
   }
 

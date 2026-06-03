@@ -157,6 +157,23 @@ describe('/api/artifact-provenance', () => {
     expect(res._json.provenance.status).toBe('incomplete_history');
   });
 
+
+  test('retorna unknown para eventos com tipos desconhecidos', async () => {
+    verifyAuthMock.mockResolvedValueOnce({ user: { id: 'user-1' }, error: null });
+    readLedgerEventsMock.mockResolvedValueOnce({
+      events: [
+        { ledger_id: '1', event_type: 'other_event', created_at: '2026-06-03T00:00:00.000Z' },
+      ],
+      error: null,
+    });
+    const { req, res } = makeReqRes('GET', { artifactId: 'a-1' });
+
+    await handler(req, res);
+
+    expect(res._status).toBe(200);
+    expect(res._json.provenance.status).toBe('unknown');
+  });
+
   test('inclui traceId quando existir', async () => {
     verifyAuthMock.mockResolvedValueOnce({ user: { id: 'user-1' }, error: null });
     readLedgerEventsMock.mockResolvedValueOnce({
