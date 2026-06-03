@@ -3,7 +3,7 @@
 
 CREATE TABLE IF NOT EXISTS public.artifact_ledger (
   ledger_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  artifact_id TEXT NOT NULL,
+  artifact_id UUID NOT NULL,
   event_type TEXT NOT NULL CHECK (event_type IN ('preview_generated', 'decision_applied')),
   artifact_checksum TEXT,
   origin_model TEXT,

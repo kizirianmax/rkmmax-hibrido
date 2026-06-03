@@ -29,7 +29,7 @@ describe('recordLedgerEvent', () => {
     await expect(
       recordLedgerEvent({
         eventType: 'preview_generated',
-        artifactId: 'artifact-1',
+        artifactId: '11111111-1111-4111-8111-111111111111',
       }),
     ).resolves.toBe(false);
 
@@ -48,7 +48,7 @@ describe('recordLedgerEvent', () => {
       recordLedgerEvent({
         eventType: 'preview_generated',
         manifest: {
-          id: 'artifact-123',
+          id: '123e4567-e89b-42d3-a456-426614174000',
           checksum: 'sha256:abc',
           timestamp: '2026-06-03T00:00:00.000Z',
           origin: { model: 'gpt-test', promptId: 'hybrid-genius' },
@@ -74,7 +74,7 @@ describe('recordLedgerEvent', () => {
     const row = insertMock.mock.calls[0][0];
     expect(row).toEqual(
       expect.objectContaining({
-        artifact_id: 'artifact-123',
+        artifact_id: '123e4567-e89b-42d3-a456-426614174000',
         event_type: 'preview_generated',
         artifact_checksum: 'sha256:abc',
         origin_model: 'gpt-test',
@@ -105,7 +105,7 @@ describe('recordLedgerEvent', () => {
     await expect(
       recordLedgerEvent({
         eventType: 'preview_generated',
-        artifactId: 'artifact-err',
+        artifactId: '22222222-2222-4222-8222-222222222222',
       }),
     ).resolves.toBe(false);
   });
@@ -123,7 +123,7 @@ describe('recordLedgerEvent', () => {
         eventType: 'decision_applied',
         preview: {
           summary: {
-            id: 'artifact-999',
+            id: '123e4567-e89b-42d3-a456-426614174999',
             timestamp: '2026-06-03T00:00:00.000Z',
             origin: { model: 'llama-test', promptId: 'prompt-1' },
             validation: { valid: false, errorCount: 1, warningCount: 0 },
@@ -141,7 +141,7 @@ describe('recordLedgerEvent', () => {
     const row = insertMock.mock.calls[0][0];
     expect(row).toEqual(
       expect.objectContaining({
-        artifact_id: 'artifact-999',
+        artifact_id: '123e4567-e89b-42d3-a456-426614174999',
         event_type: 'decision_applied',
         origin_model: 'llama-test',
         origin_prompt_id: 'prompt-1',
@@ -154,4 +154,3 @@ describe('recordLedgerEvent', () => {
     expect(row.feedback).toHaveLength(1000);
   });
 });
-
