@@ -1,3 +1,20 @@
+## 2026-06-03 — feat(ledger): F11-02 criar artifact ledger write-only
+
+| Item | Detalhe |
+|------|---------|
+| **Título do PR** | `feat(ledger): F11-02 criar artifact ledger write-only` |
+| **Objetivo F11-02** | Implementação mínima de ledger de artefatos write-only/append-only para proveniência verificável, sem alterar o fluxo atual do Construtor. |
+| **Arquivos alterados** | `supabase/migrations/20260603_create_artifact_ledger.sql`; `api/_utils/artifactLedger.js`; `api/artifact-preview.js`; `api/__tests__/artifactLedger.test.js`; `api/__tests__/artifact-preview.test.js`; `CHECKLIST.md` |
+| **Confirmação write-only ledger** | Registro de eventos via `recordLedgerEvent(event)` apenas com `insert` em `artifact_ledger`; sem leitura para tomada de decisão de runtime. |
+| **Confirmação append-only** | Tabela com `ledger_id` UUID por evento, RLS habilitado e triggers que bloqueiam `UPDATE` e `DELETE` (`artifact_ledger_prevent_mutation`). |
+| **Dados NÃO armazenados** | Não armazena conteúdo completo de artefato, `zipBase64` ou arquivos brutos; apenas metadados, checksum, validação, status, decisão e rastreabilidade mínima. |
+| **Confirmação fail-silent** | `recordLedgerEvent` é best-effort, com `try/catch` interno, sem lançar erro para o fluxo principal e sem bloquear resposta do endpoint. |
+| **Escopo preservado** | Sem mudanças em Serginho/orquestração, prompts, providers/modelos, UI, ZIP/generation/validation engines e Dependabot. |
+| **Validações executadas** | Baseline pré-alteração: `npm run lint` ✅ (warnings pré-existentes), `npm run build` ✅, `npm test -- --runInBand` ✅. Pós-alteração: `npm run lint` ✅, `npm run build` ✅, `npm test -- --runInBand` ✅. |
+| **Rollback** | `git revert <commit-sha>` |
+
+---
+
 ## 2026-06-03 — docs(f10): registrar encerramento formal da Fase 10
 
 | Item | Detalhe |
