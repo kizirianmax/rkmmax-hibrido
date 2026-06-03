@@ -64,7 +64,6 @@ export function generateManifest({ id, content, metadata = {}, contentType, cont
       specialist: 'hybrid',
       model: modelName,
       promptId: metadata.promptId || DEFAULT_PROMPT_ID,
-      traceId: typeof metadata.traceId === 'string' && metadata.traceId.trim() ? metadata.traceId.trim() : null,
     },
     checksum,
   };
