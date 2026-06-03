@@ -1,3 +1,20 @@
+## 2026-06-03 — docs(ledger): registrar encerramento formal da Fase 11
+
+| Item | Detalhe |
+|------|---------|
+| **Título do PR** | `docs(ledger): registrar encerramento formal da Fase 11` |
+| **Objetivo** | Registrar o encerramento formal da Fase 11 (Artifact Ledger / proveniência observacional), consolidando F11-02 a F11-06 no escopo observacional atual. |
+| **Documento criado** | `docs/audits/f11-encerramento-formal-fase11-2026-06-03.md` |
+| **Confirmação de encerramento formal da Fase 11** | Fase 11 encerrada formalmente no escopo documental/observacional definido. |
+| **F11-02 a F11-06 consolidadas** | Consolidação registrada: ledger observacional com escrita append-only/fail-silent, leitura autenticada com `artifact_id + user_id`, `traceId` opcional, veredito read-only e contrato documental de limites/critérios futuros. |
+| **Confirmação de ausência de alteração funcional** | PR exclusivamente documental; sem alteração em runtime, decisão, geração, ZIP, preview, execução, prompts, providers/modelos, UI, Auth/SaaS/Payments, orquestração, `api/`, `src/`, `supabase/migrations/` ou testes. |
+| **Confirmação de limites sem overclaim** | Mantido: sem conteúdo bruto/`zipBase64`/arquivos brutos/`contentPreview`, sem prova criptográfica completa, sem auditoria externa, sem promessa de SLA/uptime/p95/p99/segurança absoluta/clientes/receita/tração. |
+| **Confirmação de próximos itens fora de escopo** | Certificado exportável, certificado anexável ao ZIP, consulta por `traceId`, execução sandboxed real, reativação de `executeArtifact`, Dependabot, UI, prompts, providers/modelos e Auth/SaaS/Payments permanecem fora de escopo. |
+| **Confirmação de que Dependabot não foi tratado** | Dependabot não foi tratado neste PR. |
+| **Rollback** | `git revert <commit-sha>` |
+
+---
+
 ## 2026-06-03 — docs(ledger): F11-06 formalizar contrato de proveniência e critérios para certificado exportável
 
 | Item | Detalhe |
