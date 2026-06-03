@@ -1,3 +1,20 @@
+## 2026-06-03 — docs(ledger): F11-06 formalizar contrato de proveniência e critérios para certificado exportável
+
+| Item | Detalhe |
+|------|---------|
+| **Título do PR** | `docs(ledger): F11-06 formalizar contrato de proveniência e critérios para certificado exportável` |
+| **Objetivo F11-06** | Formalizar contratualmente a proveniência observacional do Artifact Ledger e os critérios mínimos para eventual certificado exportável futuro, antes de qualquer etapa funcional. |
+| **Documento criado** | `docs/audits/f11-06-contrato-proveniencia-artifact-ledger-2026-06-03.md` |
+| **Confirmação de PR exclusivamente documental** | Alterações restritas a documentação (`CHECKLIST.md` e documento de auditoria); sem implementação funcional. |
+| **Confirmação do contrato de proveniência** | Contrato consolidado para ledger/veredito: append-only, read-only autenticado, filtro obrigatório por `artifact_id + user_id`, `traceId` opcional e veredito derivado do histórico. |
+| **Confirmação dos limites sem overclaim** | Registrado que o veredito é observacional, não é prova criptográfica completa, não substitui auditoria externa, não garante SLA/uptime/p95/p99/segurança absoluta/clientes/receita/tração e não altera runtime. |
+| **Confirmação dos critérios para certificado exportável futuro** | Definidos critérios mínimos read-only, derivados do ledger, com filtro por usuário, sem payload bruto (`zipBase64`/arquivos), com limitações explícitas, opcional, reversível e desacoplado do runtime. |
+| **Confirmação de que nenhuma camada funcional foi alterada** | Sem alterações em `api/`, `src/`, `supabase/migrations/`, testes, prompts, providers/modelos, orquestração, geração, ZIP, preview, execução, UI, Auth/SaaS/Payments, Stripe, Vercel/secrets/workflows ou pacotes. |
+| **Confirmação de que Dependabot não foi tratado** | Dependabot permanece fora de escopo nesta entrega. |
+| **Rollback** | `git revert <commit-sha>` |
+
+---
+
 ## 2026-06-03 — feat(ledger): F11-05 gerar veredito read-only de proveniência
 
 | Item | Detalhe |
