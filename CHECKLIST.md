@@ -1,3 +1,17 @@
+## 2026-06-03 — docs(f10): registrar encerramento formal da Fase 10
+
+| Item | Detalhe |
+|------|---------|
+| **Título do PR** | `docs(f10): registrar encerramento formal da Fase 10` |
+| **Documento criado** | `docs/audits/f10-encerramento-formal-fase10-2026-06-03.md` |
+| **Veredito de encerramento da Fase 10** | ✅ Fase 10 encerrada formalmente no escopo técnico/documental/UX operacional. |
+| **Entregas consolidadas** | F10-01 (#534), F10-03 (#535), F10-04 (#541), F10-06 (#542), F10-07 (#543), F10-09 (#544) e auditoria F10-10 de transição. |
+| **Confirmação de não alteração funcional** | PR exclusivamente documental; sem alteração em `src/`, `api/`, prompts, providers/modelos, orquestração, Auth/SaaS/Payments, Supabase/Stripe/Vercel, workflows, secrets ou Dependabot. |
+| **Pendências opcionais fora de escopo** | Validação visual adicional e PRs Dependabot em janela separada. |
+| **Rollback** | `git revert <commit-sha>` |
+
+---
+
 ## 2026-06-03 — feat(ui): F10-09 adicionar edição local de arquivos no preview do Construtor
 
 | Item | Detalhe |
