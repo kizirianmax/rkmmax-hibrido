@@ -1,8 +1,7 @@
 /** @jest-environment jsdom */
 // src/components/construtor/__tests__/ArtifactPreviewPanel.test.jsx
 // PASSO 4 — testes do fluxo de ajuste com feedback estruturado
-import React from 'react';
-import { render, screen, fireEvent, within } from '@testing-library/react';
+import { render, screen, fireEvent, within, waitFor } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import ArtifactPreviewPanel from '../ArtifactPreviewPanel.jsx';
 
@@ -28,6 +27,18 @@ const buildPreview = (fileNames = []) => ({
 });
 
 describe('ArtifactPreviewPanel — PASSO 4 Feedback Estruturado', () => {
+  let writeTextMock;
+
+  beforeEach(() => {
+    writeTextMock = jest.fn().mockResolvedValue(undefined);
+    Object.defineProperty(global.navigator, 'clipboard', {
+      configurable: true,
+      value: {
+        writeText: writeTextMock,
+      },
+    });
+  });
+
   // 1. Feedback livre simples continua funcionando
   test('feedback livre simples chama onRevision com comment e category null', () => {
     const onRevision = jest.fn();
@@ -141,5 +152,37 @@ describe('ArtifactPreviewPanel — PASSO 4 Feedback Estruturado', () => {
     fireEvent.click(screen.getByText(/confirmar ajuste/i));
 
     expect(onRevision).toHaveBeenCalledWith({ category: null, focusFile: null, comment: null });
+  });
+
+  test('botão "📋 Copiar" copia conteúdo completo do arquivo', async () => {
+    const preview = buildPreview(['script.js']);
+    preview.summary.fileContents = { 'script.js': 'console.log("arquivo completo");'.repeat(40) };
+    render(<ArtifactPreviewPanel preview={preview} onRevision={jest.fn()} onDecision={jest.fn()} />);
+
+    fireEvent.click(screen.getByRole('button', { name: '📋 Copiar' }));
+
+    await waitFor(() => {
+      expect(writeTextMock).toHaveBeenCalledWith(preview.summary.fileContents['script.js']);
+    });
+  });
+
+  test('botão "📋 Copiar tudo" copia todos os arquivos formatados', async () => {
+    const preview = buildPreview(['index.html', 'style.css']);
+    preview.summary.fileContents = {
+      'index.html': '<html>ok</html>',
+      'style.css': 'body{color:#000;}',
+    };
+    render(<ArtifactPreviewPanel preview={preview} onRevision={jest.fn()} onDecision={jest.fn()} />);
+
+    fireEvent.click(screen.getByRole('button', { name: /copiar tudo/i }));
+
+    await waitFor(() => {
+      expect(writeTextMock).toHaveBeenCalledWith(
+        expect.stringContaining('--- index.html ---\n\n<html>ok</html>'),
+      );
+      expect(writeTextMock).toHaveBeenCalledWith(
+        expect.stringContaining('--- style.css ---\n\nbody{color:#000;}'),
+      );
+    });
   });
 });

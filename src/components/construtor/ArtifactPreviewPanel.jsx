@@ -40,6 +40,7 @@ export default function ArtifactPreviewPanel({ preview, onDecision, onRevision, 
   // PASSO 4 — estados do feedback estruturado
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [selectedFile, setSelectedFile] = useState(null);
+  const [copyFeedback, setCopyFeedback] = useState(null);
 
   if (loading) {
     return (
@@ -128,6 +129,56 @@ export default function ArtifactPreviewPanel({ preview, onDecision, onRevision, 
     a.download = `artifact-${summary.id || 'download'}.zip`;
     a.click();
     setTimeout(() => URL.revokeObjectURL(a.href), 100);
+  };
+
+  const showCopyFeedback = (message) => {
+    setCopyFeedback(message);
+    setTimeout(() => setCopyFeedback(null), 1800);
+  };
+
+  const copyText = async (text, successMessage) => {
+    if (typeof text !== 'string') {
+      showCopyFeedback('⚠️ Conteúdo vazio para copiar.');
+      return;
+    }
+
+    try {
+      if (globalThis.navigator?.clipboard?.writeText) {
+        await globalThis.navigator.clipboard.writeText(text);
+      } else {
+        const textArea = document.createElement('textarea');
+        textArea.value = text;
+        textArea.setAttribute('readonly', '');
+        textArea.style.position = 'absolute';
+        textArea.style.left = '-9999px';
+        document.body.appendChild(textArea);
+        textArea.select();
+        document.execCommand?.('copy');
+        document.body.removeChild(textArea);
+      }
+      showCopyFeedback(successMessage);
+    } catch {
+      showCopyFeedback('❌ Não foi possível copiar.');
+    }
+  };
+
+  const handleCopyFile = (path) => {
+    const content = summary.fileContents?.[path];
+    copyText(content, `📋 ${path} copiado.`);
+  };
+
+  const handleCopyAllFiles = () => {
+    const fileNames = summary.files?.map((f) => f.path) || [];
+    if (fileNames.length === 0) {
+      showCopyFeedback('⚠️ Nenhum arquivo para copiar.');
+      return;
+    }
+
+    const combined = fileNames
+      .map((path) => `--- ${path} ---\n\n${summary.fileContents?.[path] || ''}`)
+      .join('\n\n');
+
+    copyText(combined, '📋 Todos os arquivos copiados.');
   };
 
   return (
@@ -253,15 +304,36 @@ export default function ArtifactPreviewPanel({ preview, onDecision, onRevision, 
       {/* Arquivos */}
       {summary.files?.length > 0 && (
         <div className="artifact-preview-files">
-          <span className="artifact-label">Arquivos:</span>
+          <div className="artifact-preview-row">
+            <span className="artifact-label">Arquivos:</span>
+            <button
+              className="artifact-btn artifact-btn-cancel"
+              onClick={handleCopyAllFiles}
+              type="button"
+            >
+              📋 Copiar tudo
+            </button>
+          </div>
           <ul className="artifact-file-list">
             {summary.files.map((f) => (
               <li key={f.path} className="artifact-file-item">
                 <span className="artifact-file-path">{f.path}</span>
                 <span className="artifact-file-size">{formatBytes(f.size)}</span>
+                <button
+                  className="artifact-btn artifact-btn-cancel"
+                  onClick={() => handleCopyFile(f.path)}
+                  type="button"
+                >
+                  📋 Copiar
+                </button>
               </li>
             ))}
           </ul>
+          {copyFeedback && (
+            <div className="artifact-copy-feedback" role="status" aria-live="polite">
+              {copyFeedback}
+            </div>
+          )}
         </div>
       )}
 

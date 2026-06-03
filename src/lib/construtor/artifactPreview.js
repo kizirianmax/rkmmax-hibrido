@@ -45,11 +45,12 @@ function resolveMime(filePath) {
  *
  * @param {Buffer} zipBuffer
  * @param {string} [contentFilename] - nome do arquivo de conteúdo principal
- * @returns {{ files: Array<{path, size, type}>, contentPreview: string }}
+ * @returns {{ files: Array<{path, size, type}>, contentPreview: string, fileContents: Record<string, string> }}
  */
 function extractZipInfo(zipBuffer, contentFilename = 'content.md') {
   let files = [];
   let contentPreview = '';
+  const fileContents = {};
 
   try {
     const zip = new AdmZip(zipBuffer);
@@ -57,11 +58,13 @@ function extractZipInfo(zipBuffer, contentFilename = 'content.md') {
 
     for (const entry of entries) {
       if (entry.isDirectory) continue;
+      const raw = entry.getData().toString('utf-8');
       files.push({
         path: entry.entryName,
         size: entry.header.size,
         type: resolveMime(entry.entryName),
       });
+      fileContents[entry.entryName] = raw;
     }
 
     // Extrair preview do conteúdo principal
@@ -78,14 +81,14 @@ function extractZipInfo(zipBuffer, contentFilename = 'content.md') {
       entries.find((e) => !e.isDirectory && e.entryName.startsWith('content/'));
 
     if (contentEntry) {
-      const raw = contentEntry.getData().toString('utf-8');
+      const raw = fileContents[contentEntry.entryName] || contentEntry.getData().toString('utf-8');
       contentPreview = raw.slice(0, MAX_CONTENT_PREVIEW_LENGTH);
     }
   } catch {
     // ZIP ilegível — retornar listas vazias
   }
 
-  return { files, contentPreview };
+  return { files, contentPreview, fileContents };
 }
 
 // ── Funções públicas ──────────────────────────────────────────────────────────
@@ -131,9 +134,9 @@ export function generatePreview(artifact, validationResult = null, executionResu
 
   const { id, manifest, zipBuffer } = artifact;
 
-  const { files, contentPreview } = zipBuffer
+  const { files, contentPreview, fileContents } = zipBuffer
     ? extractZipInfo(zipBuffer, manifest?.files?.[0]?.path?.split('/').pop())
-    : { files: [], contentPreview: '' };
+    : { files: [], contentPreview: '', fileContents: {} };
 
   // Normalizar resultado de validação
   const validErrors = validationResult ? (validationResult.errors || []) : [];
@@ -213,6 +216,7 @@ export function generatePreview(artifact, validationResult = null, executionResu
       preview: previewMetrics,
     },
     files,
+    fileContents,
     contentPreview,
   };
 

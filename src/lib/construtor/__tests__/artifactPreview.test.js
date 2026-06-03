@@ -194,6 +194,15 @@ describe('generatePreview', () => {
 
       expect(preview.summary.contentPreview.length).toBeLessThanOrEqual(500);
     });
+
+    test('deve preservar conteúdo completo por arquivo para cópia integral', async () => {
+      const longContent = 'B'.repeat(1200);
+      const artifact = await packageArtifact({ content: longContent, metadata: sampleMetadata });
+      const preview = generatePreview(artifact, null, null);
+
+      expect(preview.summary.contentPreview.length).toBeLessThanOrEqual(500);
+      expect(preview.summary.fileContents['content.md']).toHaveLength(1200);
+    });
   });
 
   describe('input inválido', () => {
