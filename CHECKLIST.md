@@ -1,3 +1,21 @@
+## 2026-06-03 — feat(replay): F12-03 criar diff observacional do ciclo de revisão
+
+| Item | Detalhe |
+|------|---------|
+| **Título do PR** | `feat(replay): F12-03 criar diff observacional do ciclo de revisão` |
+| **Objetivo F12-03** | Criar endpoint de diff/veredito observacional/read-only entre eventos do ciclo de revisão, derivado do Artifact Ledger e filtrado por `artifact_id + user_id`. |
+| **Endpoint criado** | `GET /api/artifact-replay-diff?artifactId=<uuid>` |
+| **Arquivos alterados** | `api/artifact-replay-diff.js`; `api/_utils/artifactReplayDiff.js`; `api/__tests__/artifact-replay-diff.test.js`; `CHECKLIST.md` |
+| **Confirmação diff observacional/read-only** | Endpoint realiza somente leitura via `readLedgerEvents` e deriva `diff` determinístico sem alterar runtime/decisão. |
+| **Confirmação de filtro por `artifact_id` + `user_id`** | Consulta obrigatória com `readLedgerEvents({ artifactId, userId: user.id })` após `verifyAuth(req)`. |
+| **Confirmação de payload seguro** | Resposta retorna apenas `diff` derivado (status, transições e metadados seguros), sem eventos brutos. |
+| **Confirmação de dados não expostos** | Não retorna conteúdo bruto, `zipBase64`, `files`, `content`, `contentPreview`, `user_email` nem feedback bruto (somente flag `hasFeedbackOnToEvent`). |
+| **Confirmação de escopo preservado** | Não altera runtime, geração, ZIP, preview, execução, prompts, providers/modelos, UI, orquestração ou Dependabot. |
+| **Validações executadas** | Baseline pré-alteração: `npm run lint` ✅ (warnings pré-existentes), `npm run build` ✅, `npm test -- --runInBand` ✅. Pós-alteração: `npm test -- --runInBand api/__tests__/artifact-replay-diff.test.js` ✅, `npm run lint` ✅ (warnings pré-existentes), `npm run build` ✅, `npm test -- --runInBand` ✅. |
+| **Rollback** | `git revert <commit-sha>` |
+
+---
+
 ## 2026-06-03 — feat(replay): F12-02 criar endpoint replay read-only do ciclo de revisão
 
 | Item | Detalhe |
