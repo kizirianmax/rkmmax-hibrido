@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 /**
  * ArtifactPreviewPanel — Fase 2D (PASSO 6: histórico local de revisão)
@@ -47,6 +47,15 @@ function isTextFile(file) {
   return false;
 }
 
+function isFileLocallyEditable(file, content) {
+  const path = file?.path || '';
+  if (!isTextFile(file)) return false;
+  if (typeof content !== 'string') return false;
+  if (/(^|\/)manifest\.json$/i.test(path)) return false;
+  if (/^\.?\/?logs\//i.test(path)) return false;
+  return true;
+}
+
 export default function ArtifactPreviewPanel({ preview, onDecision, onRevision, loading = false, delivery, lastAdjustment = null, reviewHistory = [], artifactVersion = 1, onClearCycle, reviewCycleMetrics = null }) {
   const [rejectionFeedback, setRejectionFeedback] = useState('');
   const [showRejectionInput, setShowRejectionInput] = useState(false);
@@ -56,6 +65,9 @@ export default function ArtifactPreviewPanel({ preview, onDecision, onRevision, 
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [selectedFile, setSelectedFile] = useState(null);
   const [copyFeedback, setCopyFeedback] = useState(null);
+  const [editedFileContents, setEditedFileContents] = useState({});
+  const [editingFilePath, setEditingFilePath] = useState(null);
+  const [editingDraft, setEditingDraft] = useState('');
 
   if (loading) {
     return (
@@ -74,6 +86,12 @@ export default function ArtifactPreviewPanel({ preview, onDecision, onRevision, 
   }
 
   const { summary, decision, feedback, decisionTimestamp } = preview;
+
+  useEffect(() => {
+    setEditedFileContents({});
+    setEditingFilePath(null);
+    setEditingDraft('');
+  }, [summary?.id, summary?.timestamp]);
 
   const validationBadge = summary.validation?.valid
     ? <span className="artifact-badge artifact-badge-ok">✅ Válido</span>
@@ -178,6 +196,19 @@ export default function ArtifactPreviewPanel({ preview, onDecision, onRevision, 
     }
   };
 
+  const getEffectiveContent = (path) => (
+    Object.prototype.hasOwnProperty.call(editedFileContents, path)
+      ? editedFileContents[path]
+      : summary.fileContents?.[path]
+  );
+
+  const hasLocalEdit = (path) => (
+    Object.prototype.hasOwnProperty.call(editedFileContents, path)
+      && editedFileContents[path] !== summary.fileContents?.[path]
+  );
+
+  const hasAnyLocalEdit = Object.keys(editedFileContents).some((path) => hasLocalEdit(path));
+
   const handleCopyFile = (path) => {
     const file = summary.files?.find((item) => item.path === path);
     if (!isTextFile(file)) {
@@ -185,7 +216,7 @@ export default function ArtifactPreviewPanel({ preview, onDecision, onRevision, 
       return;
     }
 
-    const content = summary.fileContents?.[path];
+    const content = getEffectiveContent(path);
     copyText(content, `📋 ${path} copiado.`);
   };
 
@@ -198,7 +229,7 @@ export default function ArtifactPreviewPanel({ preview, onDecision, onRevision, 
 
     const copyableBlocks = files
       .filter((file) => isTextFile(file))
-      .map((file) => ({ path: file.path, content: summary.fileContents?.[file.path] }))
+      .map((file) => ({ path: file.path, content: getEffectiveContent(file.path) }))
       .filter((file) => typeof file.content === 'string' && file.content.length > 0);
 
     if (copyableBlocks.length === 0) {
@@ -211,6 +242,52 @@ export default function ArtifactPreviewPanel({ preview, onDecision, onRevision, 
       .join('\n\n');
 
     copyText(combined, `📋 ${copyableBlocks.length} arquivo(s) copiado(s).`);
+  };
+
+  const handleOpenLocalEditor = (path) => {
+    const content = getEffectiveContent(path);
+    setEditingFilePath(path);
+    setEditingDraft(typeof content === 'string' ? content : '');
+  };
+
+  const handleApplyLocalEdit = () => {
+    if (!editingFilePath) return;
+    const originalContent = summary.fileContents?.[editingFilePath];
+    setEditedFileContents((prev) => {
+      if (editingDraft === originalContent) {
+        if (!Object.prototype.hasOwnProperty.call(prev, editingFilePath)) return prev;
+        const next = { ...prev };
+        delete next[editingFilePath];
+        return next;
+      }
+      return { ...prev, [editingFilePath]: editingDraft };
+    });
+    setEditingFilePath(null);
+    setEditingDraft('');
+    showCopyFeedback('Edição aplicada');
+  };
+
+  const handleCancelLocalEdit = () => {
+    setEditingFilePath(null);
+    setEditingDraft('');
+    showCopyFeedback('Edição cancelada');
+  };
+
+  const handleRestoreOriginal = () => {
+    if (!editingFilePath) return;
+    const originalContent = summary.fileContents?.[editingFilePath] || '';
+    setEditedFileContents((prev) => {
+      if (!Object.prototype.hasOwnProperty.call(prev, editingFilePath)) return prev;
+      const next = { ...prev };
+      delete next[editingFilePath];
+      return next;
+    });
+    setEditingDraft(originalContent);
+    showCopyFeedback('Original restaurado');
+  };
+
+  const handleCopyEditedContent = () => {
+    copyText(editingDraft, 'Editado copiado');
   };
 
   return (
@@ -349,18 +426,70 @@ export default function ArtifactPreviewPanel({ preview, onDecision, onRevision, 
           <ul className="artifact-file-list">
             {summary.files.map((f) => (
               <li key={f.path} className="artifact-file-item">
-                <span className="artifact-file-path">{f.path}</span>
-                <span className="artifact-file-size">{formatBytes(f.size)}</span>
-                <button
-                  className="artifact-btn artifact-btn-cancel"
-                  onClick={() => handleCopyFile(f.path)}
-                  type="button"
-                >
-                  📋 Copiar
-                </button>
+                <div className="artifact-file-meta">
+                  <span className="artifact-file-path">{f.path}</span>
+                  <span className="artifact-file-size">{formatBytes(f.size)}</span>
+                  {hasLocalEdit(f.path) && (
+                    <span className="artifact-file-local-edit-tag">✏️ Edição local</span>
+                  )}
+                </div>
+                <div className="artifact-file-actions">
+                  <button
+                    className="artifact-btn artifact-btn-cancel"
+                    onClick={() => handleCopyFile(f.path)}
+                    type="button"
+                  >
+                    📋 Copiar
+                  </button>
+                  {isFileLocallyEditable(f, summary.fileContents?.[f.path]) && (
+                    <button
+                      className="artifact-btn artifact-btn-cancel"
+                      onClick={() => handleOpenLocalEditor(f.path)}
+                      type="button"
+                    >
+                      ✏️ Editar
+                    </button>
+                  )}
+                </div>
               </li>
             ))}
           </ul>
+          {hasAnyLocalEdit && (
+            <div className="artifact-local-edit-notice">
+              Edição local: altera apenas a visualização e a cópia. O ZIP/exportação continua com o artefato original.
+            </div>
+          )}
+          {editingFilePath && (
+            <div className="artifact-local-editor">
+              <div className="artifact-local-editor-header">
+                <span className="artifact-local-editor-title">✏️ Editor local: {editingFilePath}</span>
+              </div>
+              <div className="artifact-local-edit-notice">
+                Edição local: altera apenas a visualização e a cópia. O ZIP/exportação continua com o artefato original.
+              </div>
+              <textarea
+                className="artifact-local-editor-textarea"
+                value={editingDraft}
+                onChange={(e) => setEditingDraft(e.target.value)}
+                rows={10}
+                aria-label={`Editor local do arquivo ${editingFilePath}`}
+              />
+              <div className="artifact-local-editor-actions">
+                <button className="artifact-btn artifact-btn-adjust" onClick={handleApplyLocalEdit} type="button">
+                  Aplicar edição local
+                </button>
+                <button className="artifact-btn artifact-btn-cancel" onClick={handleCancelLocalEdit} type="button">
+                  Cancelar
+                </button>
+                <button className="artifact-btn artifact-btn-cancel" onClick={handleRestoreOriginal} type="button">
+                  Restaurar original
+                </button>
+                <button className="artifact-btn artifact-btn-cancel" onClick={handleCopyEditedContent} type="button">
+                  📋 Copiar editado
+                </button>
+              </div>
+            </div>
+          )}
           {copyFeedback && (
             <div className="artifact-copy-feedback" role="status" aria-live="polite">
               {copyFeedback}

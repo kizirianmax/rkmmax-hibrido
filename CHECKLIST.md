@@ -1,3 +1,20 @@
+## 2026-06-03 — feat(ui): F10-09 adicionar edição local de arquivos no preview do Construtor
+
+| Item | Detalhe |
+|------|---------|
+| **Título do PR** | `feat(ui): F10-09 adicionar edição local de arquivos no preview do Construtor` |
+| **Identificação** | Fase 10 — F10-09 (UX local de edição/deleção no preview do Construtor) |
+| **Arquivos alterados** | `src/components/construtor/ArtifactPreviewPanel.jsx`; `src/components/construtor/__tests__/ArtifactPreviewPanel.test.jsx`; `src/styles/HybridAgent.css`; `CHECKLIST.md` |
+| **Escopo local** | Edição somente em estado React no `ArtifactPreviewPanel`; conteúdo original preservado em memória (`summary.fileContents[path]`), sem persistência de artefato. |
+| **Aviso de exportação** | ZIP/exportação permanecem com o artefato original (`handleDownload`/`delivery.zipBase64` inalterados). |
+| **Fluxo do Construtor preservado** | Revisar/Aprovar/Solicitar ajuste/Rejeitar/Baixar ZIP/Copiar/Copiar tudo, histórico de revisão e métricas do ciclo permanecem intactos. |
+| **Limites técnicos preservados** | Sem alterações em API, prompts, providers/modelos, orquestração, `src/config/modelPriority.js`, `src/lib/construtor/artifactPreview.js`, `src/pages/HybridAgentSimple.jsx`, Serginho, Especialistas, ABNT, Auth/SaaS/Payments, Supabase/Stripe/Vercel, secrets, workflows ou Dependabot. |
+| **Sem bypass ao Serginho** | Mantido: Serginho IA segue como gateway/orquestrador único. |
+| **Validações executadas** | Baseline pré-alteração: `npm run lint` ✅ (warnings pré-existentes, 0 errors), `npm run build` ✅, `npm test -- --runInBand` ✅. Pós-alteração: `npm run lint` ✅ (warnings pré-existentes, 0 errors), `npm run build` ✅, `npm test -- --runInBand` ✅. |
+| **Rollback** | `git revert <commit-sha>` |
+
+---
+
 ## 2026-06-03 — feat(ui): F10-07 adicionar copiar arquivo completo no preview do Construtor
 
 | Item | Detalhe |

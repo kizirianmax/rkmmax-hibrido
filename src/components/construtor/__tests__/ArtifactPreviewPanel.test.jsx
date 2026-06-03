@@ -29,8 +29,13 @@ const buildPreview = (fileNames = []) => ({
 describe('ArtifactPreviewPanel — PASSO 4 Feedback Estruturado', () => {
   let writeTextMock;
   const originalClipboard = global.navigator.clipboard;
+  const getFileItem = (path) => {
+    const filePathElement = screen.getAllByText(path).find((el) => el.classList.contains('artifact-file-path'));
+    return filePathElement?.closest('li') || null;
+  };
 
   beforeEach(() => {
+    jest.clearAllMocks();
     writeTextMock = jest.fn().mockResolvedValue(undefined);
     Object.defineProperty(global.navigator, 'clipboard', {
       configurable: true,
@@ -45,6 +50,7 @@ describe('ArtifactPreviewPanel — PASSO 4 Feedback Estruturado', () => {
       configurable: true,
       value: originalClipboard,
     });
+    jest.clearAllMocks();
   });
 
   // 1. Feedback livre simples continua funcionando
@@ -224,5 +230,134 @@ describe('ArtifactPreviewPanel — PASSO 4 Feedback Estruturado', () => {
       expect(writeTextMock).toHaveBeenCalledWith(expect.stringContaining('--- index.html ---'));
       expect(writeTextMock).not.toHaveBeenCalledWith(expect.stringContaining('logo.png'));
     });
+  });
+
+  test('botão "✏️ Editar" abre editor local com conteúdo completo do arquivo textual', () => {
+    const preview = buildPreview(['script.js']);
+    preview.summary.fileContents = { 'script.js': 'linha 1\nlinha 2' };
+    render(<ArtifactPreviewPanel preview={preview} onRevision={jest.fn()} onDecision={jest.fn()} />);
+
+    fireEvent.click(within(getFileItem('script.js')).getByRole('button', { name: '✏️ Editar' }));
+
+    expect(screen.getByLabelText('Editor local do arquivo script.js')).toHaveValue('linha 1\nlinha 2');
+  });
+
+  test('aplicar edição local mostra feedback "Edição aplicada"', () => {
+    const preview = buildPreview(['script.js']);
+    preview.summary.fileContents = { 'script.js': 'console.log("a");' };
+    render(<ArtifactPreviewPanel preview={preview} onRevision={jest.fn()} onDecision={jest.fn()} />);
+
+    fireEvent.click(within(getFileItem('script.js')).getByRole('button', { name: '✏️ Editar' }));
+    fireEvent.change(screen.getByLabelText('Editor local do arquivo script.js'), {
+      target: { value: 'console.log("editado");' },
+    });
+    fireEvent.click(screen.getByRole('button', { name: 'Aplicar edição local' }));
+
+    expect(screen.getByText('Edição aplicada')).toBeInTheDocument();
+  });
+
+  test('botão "📋 Copiar" copia versão editada após aplicar edição local', async () => {
+    const preview = buildPreview(['script.js']);
+    preview.summary.fileContents = { 'script.js': 'console.log("original");' };
+    render(<ArtifactPreviewPanel preview={preview} onRevision={jest.fn()} onDecision={jest.fn()} />);
+
+    fireEvent.click(within(getFileItem('script.js')).getByRole('button', { name: '✏️ Editar' }));
+    fireEvent.change(screen.getByLabelText('Editor local do arquivo script.js'), {
+      target: { value: 'console.log("editado");' },
+    });
+    fireEvent.click(screen.getByRole('button', { name: 'Aplicar edição local' }));
+    fireEvent.click(within(getFileItem('script.js')).getByRole('button', { name: '📋 Copiar' }));
+
+    await waitFor(() => {
+      expect(writeTextMock).toHaveBeenLastCalledWith('console.log("editado");');
+    });
+  });
+
+  test('"📋 Copiar tudo" usa conteúdo editado quando existir e original quando não houver edição', async () => {
+    const preview = buildPreview(['index.html', 'style.css']);
+    preview.summary.fileContents = {
+      'index.html': '<html>original</html>',
+      'style.css': 'body{color:#000;}',
+    };
+    render(<ArtifactPreviewPanel preview={preview} onRevision={jest.fn()} onDecision={jest.fn()} />);
+
+    fireEvent.click(within(getFileItem('index.html')).getByRole('button', { name: '✏️ Editar' }));
+    fireEvent.change(screen.getByLabelText('Editor local do arquivo index.html'), {
+      target: { value: '<html>editado</html>' },
+    });
+    fireEvent.click(screen.getByRole('button', { name: 'Aplicar edição local' }));
+    fireEvent.click(screen.getByRole('button', { name: /copiar tudo/i }));
+
+    await waitFor(() => {
+      const copied = writeTextMock.mock.calls[writeTextMock.mock.calls.length - 1][0];
+      expect(copied).toContain('--- index.html ---\n\n<html>editado</html>');
+      expect(copied).toContain('--- style.css ---\n\nbody{color:#000;}');
+    });
+  });
+
+  test('restaurar original repõe conteúdo inicial e exibe feedback', async () => {
+    const preview = buildPreview(['script.js']);
+    preview.summary.fileContents = { 'script.js': 'console.log("original");' };
+    render(<ArtifactPreviewPanel preview={preview} onRevision={jest.fn()} onDecision={jest.fn()} />);
+
+    fireEvent.click(within(getFileItem('script.js')).getByRole('button', { name: '✏️ Editar' }));
+    fireEvent.change(screen.getByLabelText('Editor local do arquivo script.js'), {
+      target: { value: 'console.log("editado");' },
+    });
+    fireEvent.click(screen.getByRole('button', { name: 'Aplicar edição local' }));
+    fireEvent.click(within(getFileItem('script.js')).getByRole('button', { name: '✏️ Editar' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Restaurar original' }));
+
+    expect(screen.getByLabelText('Editor local do arquivo script.js')).toHaveValue('console.log("original");');
+    expect(screen.getByText('Original restaurado')).toBeInTheDocument();
+
+    fireEvent.click(screen.getByRole('button', { name: 'Aplicar edição local' }));
+    fireEvent.click(within(getFileItem('script.js')).getByRole('button', { name: '📋 Copiar' }));
+    await waitFor(() => {
+      expect(writeTextMock).toHaveBeenLastCalledWith('console.log("original");');
+    });
+  });
+
+  test('cancelar edição fecha editor sem aplicar e mostra feedback', async () => {
+    const preview = buildPreview(['script.js']);
+    preview.summary.fileContents = { 'script.js': 'console.log("original");' };
+    render(<ArtifactPreviewPanel preview={preview} onRevision={jest.fn()} onDecision={jest.fn()} />);
+
+    fireEvent.click(within(getFileItem('script.js')).getByRole('button', { name: '✏️ Editar' }));
+    fireEvent.change(screen.getByLabelText('Editor local do arquivo script.js'), {
+      target: { value: 'console.log("cancelado");' },
+    });
+    fireEvent.click(screen.getByRole('button', { name: 'Cancelar' }));
+
+    expect(screen.queryByLabelText('Editor local do arquivo script.js')).not.toBeInTheDocument();
+    expect(screen.getByText('Edição cancelada')).toBeInTheDocument();
+
+    fireEvent.click(within(getFileItem('script.js')).getByRole('button', { name: '📋 Copiar' }));
+    await waitFor(() => {
+      expect(writeTextMock).toHaveBeenLastCalledWith('console.log("original");');
+    });
+  });
+
+  test('não mostra "✏️ Editar" para binário, sem conteúdo textual, manifest.json e logs/*', () => {
+    const preview = buildPreview(['index.html', 'logo.png', 'manifest.json', 'logs/run.log', 'script.js']);
+    preview.summary.files = [
+      { path: 'index.html', size: 100, type: 'text/html' },
+      { path: 'logo.png', size: 50, type: 'image/png' },
+      { path: 'manifest.json', size: 30, type: 'application/json' },
+      { path: 'logs/run.log', size: 10, type: 'text/plain' },
+      { path: 'script.js', size: 80, type: 'application/javascript' },
+    ];
+    preview.summary.fileContents = {
+      'index.html': '<html>ok</html>',
+      'manifest.json': '{"name":"app"}',
+      'logs/run.log': 'linha',
+    };
+    render(<ArtifactPreviewPanel preview={preview} onRevision={jest.fn()} onDecision={jest.fn()} />);
+
+    expect(within(getFileItem('index.html')).getByRole('button', { name: '✏️ Editar' })).toBeInTheDocument();
+    expect(within(getFileItem('logo.png')).queryByRole('button', { name: '✏️ Editar' })).not.toBeInTheDocument();
+    expect(within(getFileItem('manifest.json')).queryByRole('button', { name: '✏️ Editar' })).not.toBeInTheDocument();
+    expect(within(getFileItem('logs/run.log')).queryByRole('button', { name: '✏️ Editar' })).not.toBeInTheDocument();
+    expect(within(getFileItem('script.js')).queryByRole('button', { name: '✏️ Editar' })).not.toBeInTheDocument();
   });
 });
