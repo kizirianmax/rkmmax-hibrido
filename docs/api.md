@@ -37,7 +37,7 @@ Os endpoints abaixo refletem apenas handlers já existentes. Eles não executam 
 - **Handler:** `api/artifact-ledger.js`.
 - **Método:** `GET` apenas; outros métodos retornam `405`.
 - **Parâmetro exigido:** `artifactId` em query string; ausência retorna `400` com `code: "missing_artifact_id"`.
-- **Autenticação:** exige `Authorization: ****** validado por `verifyAuth(req)`; falhas retornam `401` ou `503`, conforme o erro de autenticação.
+- **Autenticação:** exige cabeçalho `Authorization` com token de autenticação validado por `verifyAuth(req)`; falhas retornam `401` ou `503`, conforme o erro de autenticação.
 - **Filtro aplicado:** leitura por `artifact_id + user_id` via `readLedgerEvents({ artifactId, userId: user.id })`; não há consulta pública/global entre usuários.
 - **Natureza:** observacional/read-only no handler; consulta eventos já registrados no Artifact Ledger e não faz insert/update/delete.
 - **Payload seguro:** `{ success, artifactId, events }`, com eventos sanitizados para campos seguros como `ledger_id`, `artifact_id`, `event_type`, `trace_id`, `artifact_checksum`, origem, timestamps, validação/status/resumo do preview e decisão.
