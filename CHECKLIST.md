@@ -1,3 +1,22 @@
+## 2026-06-04 — docs(observability): F14-02 documentar endpoints observacionais e alinhar README
+
+| Item | Detalhe |
+|------|---------|
+| **Título do PR** | `docs(observability): F14-02 documentar endpoints observacionais e alinhar README` |
+| **Objetivo F14-02** | Documentar canonicamente os endpoints observacionais existentes e alinhar o README para evitar overclaim sobre execução, preview funcional, sandbox real e time-travel funcional. |
+| **Arquivos alterados** | `docs/api.md`; `README.md`; `CHECKLIST.md`; `docs/audits/f14-02-documentacao-canonica-endpoints-observacionais-2026-06-04.md` |
+| **Confirmação de PR exclusivamente documental** | Alterações restritas aos quatro arquivos permitidos; sem implementação funcional. |
+| **Confirmação de documentação canônica dos endpoints observacionais** | Registrados os endpoints reais `GET /api/artifact-ledger?artifactId=<artifact-id>`, `GET /api/artifact-provenance?artifactId=<artifact-id>`, `GET /api/artifact-replay?artifactId=<artifact-id>`, `GET /api/artifact-replay-diff?artifactId=<artifact-id>` e `GET /api/artifact-trace?traceId=<trace-id>`. |
+| **Confirmação de alinhamento do README** | README alinhado para explicitar que `executeArtifact` permanece desativado, sem execução sandboxed real, sem time-travel funcional e com replay/diff/traceId observacionais/read-only. |
+| **Confirmação de ausência de alteração funcional** | Sem alterações em `api/`, `src/`, `supabase/migrations/`, testes, prompts, providers/modelos, orquestração, geração, ZIP, preview funcional, execução, UI funcional, Auth/SaaS/Payments, Stripe/Vercel/secrets/workflows, `package.json` ou `package-lock.json`. |
+| **Confirmação de que não houve UI funcional** | F14-02 não implementa UI funcional; apenas prepara documentação para consumo visual observacional futuro. |
+| **Confirmação de que não houve endpoint novo** | Nenhum endpoint foi criado ou alterado; apenas documentação dos handlers existentes. |
+| **Confirmação de que não houve migration** | Nenhuma migration foi criada ou alterada. |
+| **Confirmação de que Dependabot não foi tratado** | Dependabot permanece fora de escopo neste PR. |
+| **Rollback** | `git revert <commit-sha>` |
+
+---
+
 ## 2026-06-04 — docs(observability): F14-01 abrir fase de consumo visual observacional read-only
 
 | Item | Detalhe |
