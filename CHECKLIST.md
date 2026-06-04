@@ -1,3 +1,23 @@
+## 2026-06-04 — feat(observability): F14-04 consumo visual mínimo observacional read-only
+
+| Item | Detalhe |
+|------|---------|
+| **Título do PR** | `feat(observability): F14-04 consumo visual mínimo observacional read-only` |
+| **Objetivo F14-04** | Implementar consumo visual mínimo observacional/read-only no fluxo do Construtor/Híbrido, sem backend novo e sem alteração de runtime. |
+| **Arquivos alterados** | `src/components/construtor/ArtifactPreviewPanel.jsx`; `src/components/construtor/__tests__/ArtifactPreviewPanel.test.jsx`; `src/styles/HybridAgent.css`; `CHECKLIST.md`; `docs/audits/f14-04-consumo-visual-minimo-observacional-2026-06-04.md` |
+| **Ponto visual mínimo implementado** | Painel discreto de **Rastreabilidade observacional (read-only)** dentro de `ArtifactPreviewPanel`, aproveitando `artifactId` e metadados já disponíveis no preview. |
+| **Confirmação de consumo observacional/read-only** | O novo painel só exibe metadados seguros (`artifactId`, `traceId` quando disponível, status, contagens, timestamp, flag de checksum, `hasFeedback`) e texto de limites observacionais. |
+| **Confirmação de ausência de alteração em api/backend** | Nenhuma alteração em `api/` ou backend funcional. |
+| **Confirmação de ausência de endpoint novo** | Nenhum endpoint criado/alterado. |
+| **Confirmação de ausência de migration** | Nenhuma alteração em `supabase/migrations/`. |
+| **Confirmação de ausência de execução** | A seção é read-only; não aciona geração, ZIP, execução ou alteração de decisão de aprovação/rejeição. |
+| **Confirmação de ausência de payload bruto** | O painel observacional não exibe payload bruto (`zipBase64`, `content`, `contentPreview`, `user_email`, feedback bruto, segredos/tokens, payload de execução). |
+| **Confirmação de que Dependabot não foi tratado** | Dependabot permanece fora de escopo nesta entrega. |
+| **Validações executadas** | Pré: `npm run lint` ✅ (warnings pré-existentes), `npm run build` ✅, `npm test -- --runInBand` ✅. Pós: `npm test -- --runInBand src/components/construtor/__tests__/ArtifactPreviewPanel.test.jsx` ✅, `git diff --check origin/main...HEAD` ✅, `npm run lint` ✅ (warnings pré-existentes), `npm run build` ✅, `npm test -- --runInBand` ✅. |
+| **Rollback** | `git revert <commit-sha>` |
+
+---
+
 ## 2026-06-04 — docs(observability): F14-03 formalizar contrato de UI observacional read-only
 
 | Item | Detalhe |

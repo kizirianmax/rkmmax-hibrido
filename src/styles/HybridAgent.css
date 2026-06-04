@@ -857,6 +857,41 @@ textarea:disabled {
   font-size: 0.72rem;
 }
 
+.artifact-observability-panel {
+  border: 1px solid rgba(148, 163, 184, 0.35);
+  background: rgba(15, 23, 42, 0.55);
+  border-radius: 6px;
+  padding: 0.6rem 0.7rem;
+  margin-bottom: 0.75rem;
+}
+
+.artifact-observability-title {
+  display: block;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #bfdbfe;
+  margin-bottom: 0.35rem;
+}
+
+.artifact-observability-note {
+  margin: 0 0 0.5rem 0;
+  font-size: 0.72rem;
+  color: #cbd5e1;
+  line-height: 1.45;
+}
+
+.artifact-observability-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.artifact-observability-limitations {
+  margin-top: 0.45rem;
+  font-size: 0.7rem;
+  color: #94a3b8;
+}
+
 .artifact-preview-meta {
   display: flex;
   flex-direction: column;

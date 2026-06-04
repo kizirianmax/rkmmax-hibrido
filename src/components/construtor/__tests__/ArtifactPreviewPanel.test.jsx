@@ -360,4 +360,32 @@ describe('ArtifactPreviewPanel — PASSO 4 Feedback Estruturado', () => {
     expect(within(getFileItem('logs/run.log')).queryByRole('button', { name: '✏️ Editar' })).not.toBeInTheDocument();
     expect(within(getFileItem('script.js')).queryByRole('button', { name: '✏️ Editar' })).not.toBeInTheDocument();
   });
+
+  test('renderiza painel de rastreabilidade observacional read-only com fallback conservador', () => {
+    render(<ArtifactPreviewPanel preview={buildPreview()} onRevision={jest.fn()} onDecision={jest.fn()} />);
+
+    expect(screen.getByTestId('artifact-observability-panel')).toBeInTheDocument();
+    expect(screen.getByText(/rastreabilidade observacional \(read-only\)/i)).toBeInTheDocument();
+    expect(screen.getByText(/não executa artefato/i)).toBeInTheDocument();
+    expect(screen.getByText(/traceId:/i)).toBeInTheDocument();
+    expect(screen.getByText(/indisponível no payload seguro atual/i)).toBeInTheDocument();
+    expect(screen.getByText(/flag de checksum:/i)).toBeInTheDocument();
+    expect(screen.getByText(/indisponível neste preview/i)).toBeInTheDocument();
+    expect(screen.getByText(/hasFeedback:/i)).toBeInTheDocument();
+    expect(screen.getByText('false')).toBeInTheDocument();
+  });
+
+  test('painel observacional exibe metadados seguros quando traceId/checksum estão disponíveis', () => {
+    const preview = buildPreview();
+    preview.summary.origin.traceId = 'trace-xyz-001';
+    preview.summary.checksum = 'sha256:abc123';
+    preview.decision = 'approved';
+    preview.feedback = 'Feedback humano detalhado';
+
+    render(<ArtifactPreviewPanel preview={preview} onRevision={jest.fn()} onDecision={jest.fn()} />);
+
+    expect(screen.getByText('trace-xyz-001')).toBeInTheDocument();
+    expect(screen.getByText(/presente/i)).toBeInTheDocument();
+    expect(screen.getByText('true')).toBeInTheDocument();
+  });
 });
