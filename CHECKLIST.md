@@ -1,3 +1,21 @@
+## 2026-06-04 — docs(observability): F14-01 abrir fase de consumo visual observacional read-only
+
+| Item | Detalhe |
+|------|---------|
+| **Título do PR** | `docs(observability): F14-01 abrir fase de consumo visual observacional read-only` |
+| **Objetivo F14-01** | Abrir formalmente a Fase 14 para consumo visual observacional read-only, com foco exclusivo em governança documental. |
+| **Documento criado** | `docs/audits/f14-01-abertura-formal-consumo-visual-observacional-2026-06-04.md` |
+| **Confirmação de abertura formal da Fase 14** | Fase 14 aberta formalmente: **consumo visual observacional read-only**. |
+| **Confirmação de PR exclusivamente documental** | Alterações restritas a `CHECKLIST.md` e ao documento de auditoria F14-01; sem implementação funcional. |
+| **Confirmação de ausência de alteração funcional** | Sem alterações em `api/`, `src/`, `supabase/migrations/`, testes, prompts, providers/modelos, orquestração, geração, ZIP, preview, execução, UI funcional, Auth/SaaS/Payments, Stripe/Vercel/secrets/workflows, `package.json` ou `package-lock.json`. |
+| **Confirmação dos limites read-only/observacionais** | Mantido: consumo visual apenas observacional/read-only, sem escrita, sem payload bruto (`zipBase64`, `files`, `content`, `contentPreview`, `user_email`, eventos brutos e feedback bruto) e sem decisão automática de runtime. |
+| **Confirmação de que não há UI funcional nesta etapa** | Nesta F14-01 não houve implementação de painel/visualização funcional; apenas abertura documental da fase. |
+| **Confirmação de que endpoints, runtime, geração, ZIP, preview, execução, prompts, providers/modelos e orquestração não foram alterados** | Confirmado: nenhum desses itens foi alterado nesta entrega. |
+| **Confirmação de que Dependabot não foi tratado** | Dependabot permanece fora de escopo neste PR. |
+| **Rollback** | `git revert <commit-sha>` |
+
+---
+
 ## 2026-06-04 — docs(trace): F13-04 registrar encerramento formal da Fase 13
 
 | Item | Detalhe |
