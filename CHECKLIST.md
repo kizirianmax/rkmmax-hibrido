@@ -7,7 +7,7 @@
 | **Documento criado** | `docs/audits/f13-03-contrato-consumo-consulta-traceid-2026-06-04.md` |
 | **Confirmação de PR exclusivamente documental** | Alterações restritas a `CHECKLIST.md` e ao documento de auditoria F13-03, sem implementação funcional. |
 | **Confirmação do contrato de consumo da consulta por `traceId`** | Contrato formalizado como camada observacional/read-only, consumida apenas como metadados seguros e sem controle de runtime. |
-| **Confirmação do endpoint contemplado** | `GET /api/artifact-trace?traceId=<commit-sha>`. |
+| **Confirmação do endpoint contemplado** | `GET /api/artifact-trace?traceId=<trace-id>`. |
 | **Confirmação de autenticação e filtro por `user_id`** | Requisito obrigatório mantido: consumo autenticado com filtro `trace_id + user_id`, sem consulta pública/global entre usuários. |
 | **Confirmação de limites sem overclaim** | Mantido: consulta por `traceId` não é prova criptográfica completa, não é sessão global pública, não é rastreamento entre usuários e não altera runtime/decisão/geração/ZIP/preview/execução/prompts/providers/modelos/UI/orquestração. |
 | **Confirmação de payload proibido** | Vedado: eventos brutos, conteúdo bruto, `zipBase64`, `files`, `content`, `contentPreview`, `user_email` e feedback bruto. |

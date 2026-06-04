@@ -17,7 +17,7 @@
 
 - A consulta por `traceId` é estritamente **observacional/read-only**.
 - O consumo deve ocorrer apenas como **metadados de proveniência**.
-- O endpoint contemplado é `GET /api/artifact-trace?traceId=<commit-sha>`.
+- O endpoint contemplado é `GET /api/artifact-trace?traceId=<trace-id>`.
 - O contrato é subordinado à arquitetura: Serginho IA como gateway único e Artifact Ledger como camada observacional.
 - O consumo não pode controlar runtime, decisão, geração, ZIP, preview, execução, prompts, providers/modelos, UI ou orquestração.
 
