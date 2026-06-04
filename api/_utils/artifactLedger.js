@@ -120,3 +120,34 @@ export async function readLedgerEvents({ artifactId, userId } = {}) {
     return { events: [], error: 'read_failed' };
   }
 }
+
+export async function readLedgerEventsByTraceId({ traceId, userId } = {}) {
+  try {
+    if (!traceId || !userId) {
+      return { events: [], error: 'invalid_params' };
+    }
+
+    const supabase = getSupabaseClient();
+    if (!supabase) {
+      return { events: [], error: 'supabase_unavailable' };
+    }
+
+    const { data, error } = await supabase
+      .from('artifact_ledger')
+      .select(SAFE_LEDGER_FIELDS.join(','))
+      .eq('trace_id', traceId)
+      .eq('user_id', userId)
+      .order('created_at', { ascending: true })
+      .order('ledger_id', { ascending: true });
+
+    if (error) {
+      console.error('[artifactLedger] read by trace_id error:', error.message);
+      return { events: [], error: 'read_failed' };
+    }
+
+    return { events: Array.isArray(data) ? data : [], error: null };
+  } catch (error) {
+    console.error('[artifactLedger] readLedgerEventsByTraceId exception:', error.message);
+    return { events: [], error: 'read_failed' };
+  }
+}
