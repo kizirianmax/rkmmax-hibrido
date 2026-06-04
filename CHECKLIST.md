@@ -1,3 +1,23 @@
+## 2026-06-04 — docs(observability): F14-03 formalizar contrato de UI observacional read-only
+
+| Item | Detalhe |
+|------|---------|
+| **Título do PR** | `docs(observability): F14-03 formalizar contrato de UI observacional read-only` |
+| **Objetivo F14-03** | Formalizar contrato documental de UI/consumo visual observacional read-only, preservando limites de segurança, não execução e não acoplamento ao runtime. |
+| **Documento criado** | `docs/audits/f14-03-contrato-ui-consumo-visual-observacional-2026-06-04.md` |
+| **Confirmação de PR exclusivamente documental** | Alterações restritas a `CHECKLIST.md` e ao documento de auditoria F14-03, sem implementação funcional. |
+| **Confirmação do contrato de UI observacional read-only** | Contrato formalizado: consumo futuro apenas observacional/read-only, sem escrita no banco, sem alteração de runtime e sem bypass ao Serginho IA. |
+| **Confirmação dos endpoints contemplados** | Contemplados apenas endpoints reais existentes: `GET /api/artifact-ledger?artifactId=<artifact-id>`, `GET /api/artifact-provenance?artifactId=<artifact-id>`, `GET /api/artifact-replay?artifactId=<artifact-id>`, `GET /api/artifact-replay-diff?artifactId=<artifact-id>` e `GET /api/artifact-trace?traceId=<trace-id>`. |
+| **Confirmação de payload permitido/proibido** | Permitido: metadados seguros (status, contagens, timestamps, `artifactId`, `traceId`, flags de checksum, timeline segura, warnings, limitations, `hasFeedback`). Proibido: payload bruto, `zipBase64`, `files`, `content`, `contentPreview`, `user_email`, feedback bruto, segredos/tokens e payload de execução. |
+| **Confirmação de ausência de alteração funcional** | Sem alterações em `api/`, `src/`, `supabase/migrations/`, testes, prompts, providers/modelos, orquestração, geração, ZIP, preview funcional, execução, UI funcional, Auth/SaaS/Payments, Stripe/Vercel/secrets/workflows, `package.json` ou `package-lock.json`. |
+| **Confirmação de que não houve UI funcional** | Não houve implementação de UI funcional; entrega restrita ao contrato documental. |
+| **Confirmação de que não houve endpoint novo** | Nenhum endpoint foi criado ou alterado nesta entrega. |
+| **Confirmação de que não houve migration** | Nenhuma migration foi criada ou alterada. |
+| **Confirmação de que Dependabot não foi tratado** | Dependabot permanece fora de escopo neste PR. |
+| **Rollback** | `git revert <commit-sha>` |
+
+---
+
 ## 2026-06-04 — docs(observability): F14-02 documentar endpoints observacionais e alinhar README
 
 | Item | Detalhe |
