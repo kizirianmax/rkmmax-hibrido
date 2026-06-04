@@ -81,16 +81,14 @@ gerar → empacotar → validar → preview observacional → revisar → aprova
 |------|----------|-------------|
 | **Gerar** | `POST /api/ai` (`agentType: "hybrid"`) | Serginho routes the request to the Construtor, which generates the content under sovereign orchestration |
 | **Empacotar** | `POST /api/artifact` | Wraps the generated content in a ZIP with a UUID, manifest, and logs |
-| **Validar** | `POST /api/artifact-preview` | Runs structural validation on the packaged artefact (Fase 2B) |
-| **Preview observacional** | `POST /api/artifact-preview` | Produces a preview report with `summary`, `decision`, `feedback` and `summary.execution.reason = "execution-disabled-by-security-policy"`; `executeArtifact` is not invoked and there is no real sandboxed execution in this stage |
+| **Validar + preview observacional** | `POST /api/artifact-preview` | Runs structural validation and returns a preview report with `summary`, `decision`, `feedback` and `summary.execution.reason = "execution-disabled-by-security-policy"`; `executeArtifact` is not invoked and there is no real sandboxed execution in this stage |
 | **Revisar** | *(client)* | The preview result is displayed to the user with a suggested decision |
-| **Aprovar** | `PATCH /api/artifact-preview` | Applies `decision: "approved" | "rejected"` and consolidates the review cycle |
-| **Exportar** | `PATCH /api/artifact-preview` | When `decision: "approved"` and `content` is supplied, the endpoint returns a `zipBase64` ready for download |
+| **Aprovar + exportar** | `PATCH /api/artifact-preview` | Applies `decision: "approved" | "rejected"`; when approved and `content` is supplied, returns `zipBase64` for export |
 
 ### Por que não é apenas um chat
 
 - The Construtor/Híbrido is an **artefact generation and validation layer**, not a chatbot — it produces a structured deliverable with every request.
-- It outputs **packaged artefacts** (ZIP with UUID and manifest) that can be exported and audited; current preview metadata must not be presented as real functional execution logs.
+- It outputs **packaged artefacts** (ZIP with UUID and manifest) that can be exported and audited; current preview metadata is observational only and must not be presented as functional runtime evidence.
 - There is a **review and approval cycle** (`approved | rejected`) with a `decisionTimestamp` field recorded in the preview object for traceability.
 - Generated content passes through **structural validation** before it is delivered to the user.
 - The entire layer operates **under Serginho's sovereign orchestration** — no call to `/api/artifact` or `/api/artifact-preview` bypasses the orchestrator.
@@ -100,7 +98,7 @@ gerar → empacotar → validar → preview observacional → revisar → aprova
 | Arquivo | Responsabilidade |
 |---------|-----------------|
 | [`api/artifact.js`](api/artifact.js) | Endpoint `POST /api/artifact` — empacota conteúdo gerado em ZIP com UUID, manifest e logs |
-| [`api/artifact-preview.js`](api/artifact-preview.js) | Endpoint `POST /api/artifact-preview` (validar/preview sem execução real) e `PATCH` (aprovar/rejeitar/exportar) |
+| [`api/artifact-preview.js`](api/artifact-preview.js) | Endpoint `POST/PATCH /api/artifact-preview` (validar/preview sem execução real; aprovar/rejeitar/exportar) |
 | [`src/lib/construtor/artifactPackager.js`](src/lib/construtor/artifactPackager.js) | Empacotamento — gera ZIP base64 com manifest e UUID |
 | [`src/lib/construtor/artifactNormalizer.js`](src/lib/construtor/artifactNormalizer.js) | Normalização — extrai e limpa o conteúdo visível do artefato |
 | [`src/lib/construtor/artifactValidator.js`](src/lib/construtor/artifactValidator.js) | Validação estrutural do artefato antes da entrega |
@@ -205,8 +203,7 @@ All endpoints are Vercel serverless functions under `/api/`.
 | `/api/github` | GET/POST | GitHub API integration |
 | `/api/admin` | POST | Admin operations |
 | `/api/artifact` | POST | Packages generated content into a ZIP (base64) with manifest and UUID — called after `/api/ai` |
-| `/api/artifact-preview` | POST | Preview pipeline: package → validate → return summary with suggested decision; `executeArtifact` remains disabled |
-| `/api/artifact-preview` | PATCH | Apply review decision (`approved` | `rejected`); if approved and `content` is supplied, returns `zipBase64` for export |
+| `/api/artifact-preview` | POST/PATCH | Observational preview and review/export flow: `POST` validates and returns a summary with suggested decision; `PATCH` applies `approved`/`rejected` and may return `zipBase64` for export; `executeArtifact` remains disabled |
 | `/api/artifact-ledger` | GET | Observational/read-only Artifact Ledger query by `artifactId` |
 | `/api/artifact-provenance` | GET | Observational/read-only provenance by `artifactId` |
 | `/api/artifact-replay` | GET | Observational/read-only replay by `artifactId`; not functional restoration or time-travel |
