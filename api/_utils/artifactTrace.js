@@ -37,12 +37,12 @@ function normalizeEvents(events = []) {
 
 function deriveStatus({ events, artifactIds }) {
   if (!events.length) return 'no_events';
-  if (artifactIds.length > 1) return 'multi_artifact';
-  if (artifactIds.length === 1) return 'single_artifact';
 
   const hasUnknownType = events.some((event) => !KNOWN_EVENT_TYPES.has(event.event_type));
   if (hasUnknownType) return 'unknown';
-  return 'trace_available';
+  if (artifactIds.length > 1) return 'multi_artifact';
+  if (artifactIds.length === 1) return 'single_artifact';
+  return 'incomplete_history';
 }
 
 function buildTimeline(events) {
@@ -82,6 +82,8 @@ export function buildArtifactTrace(events = []) {
     warnings.push('Nenhum evento encontrado para o traceId informado no contexto do usuário autenticado.');
   } else if (status === 'unknown') {
     warnings.push('Eventos encontrados com tipos não reconhecidos para derivação completa.');
+  } else if (status === 'incomplete_history') {
+    warnings.push('Eventos reconhecidos não possuem metadados suficientes para derivação completa.');
   }
 
   return {

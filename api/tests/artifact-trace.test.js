@@ -140,6 +140,24 @@ describe('/api/artifact-trace', () => {
     expect(res._json.trace.artifactCount).toBe(2);
   });
 
+  test('event_type desconhecido retorna status unknown antes de classificar artifactCount', async () => {
+    verifyAuthMock.mockResolvedValueOnce({ user: { id: 'user-1' }, error: null });
+    readLedgerEventsByTraceIdMock.mockResolvedValueOnce({
+      events: [
+        { ledger_id: '1', artifact_id: 'a-1', event_type: 'preview_generated', created_at: '2026-06-03T00:00:00.000Z' },
+        { ledger_id: '2', artifact_id: 'a-1', event_type: 'unexpected_type', created_at: '2026-06-03T00:10:00.000Z' },
+      ],
+      error: null,
+    });
+    const { req, res } = makeReqRes('GET', { traceId: 'trace-unknown' });
+
+    await handler(req, res);
+
+    expect(res._status).toBe(200);
+    expect(res._json.trace.status).toBe('unknown');
+    expect(res._json.trace.warnings).toContain('Eventos encontrados com tipos não reconhecidos para derivação completa.');
+  });
+
   test('ordenação determinística por created_at e ledger_id', () => {
     const events = [
       { ledger_id: '2', artifact_id: 'a-1', event_type: 'decision_applied', decision: 'approved', created_at: '2026-06-03T00:10:00.000Z' },
