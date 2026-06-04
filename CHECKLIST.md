@@ -1,3 +1,20 @@
+## 2026-06-03 — docs(trace): F13-01 abrir fase de consulta observacional por traceId
+
+| Item | Detalhe |
+|------|---------|
+| **Título do PR** | `docs(trace): F13-01 abrir fase de consulta observacional por traceId` |
+| **Objetivo F13-01** | Abrir formalmente a Fase 13 para consulta observacional por `traceId`, derivada do Artifact Ledger e sem alteração de runtime. |
+| **Documento criado** | `docs/audits/f13-01-abertura-formal-consulta-traceid-2026-06-03.md` |
+| **Confirmação de abertura formal da Fase 13** | Fase 13 aberta formalmente: consulta observacional por `traceId`. |
+| **Confirmação de PR exclusivamente documental** | Alterações restritas a `CHECKLIST.md` e documento de auditoria em `docs/audits/`; sem implementação funcional. |
+| **Confirmação de que nenhuma camada funcional foi alterada** | Sem alterações em `api/`, `src/`, `supabase/migrations/`, testes, prompts, providers/modelos, orquestração, geração, ZIP, preview, execução, UI, Auth/SaaS/Payments, Stripe, Vercel/secrets/workflows, `package.json` ou `package-lock.json`. |
+| **Confirmação dos limites read-only/observacionais** | Mantido: consulta por `traceId` apenas observacional/read-only, sem conteúdo bruto, sem `zipBase64`, sem `files`, sem `content`, sem `contentPreview`, sem `user_email`, sem feedback bruto, sem consulta pública/global por `traceId`, sem enumeração entre usuários e sem prova criptográfica completa. |
+| **Confirmação de privacidade/filtro por usuário** | Requisito futuro obrigatório: consulta autenticada, filtrada por `user_id`, com payload seguro e sem rastreamento entre usuários. |
+| **Confirmação de que Dependabot não foi tratado** | Dependabot permanece fora de escopo neste PR. |
+| **Rollback** | `git revert <commit-sha>` |
+
+---
+
 ## 2026-06-03 — docs(replay): F12-05 registrar encerramento formal da Fase 12
 
 | Item | Detalhe |
