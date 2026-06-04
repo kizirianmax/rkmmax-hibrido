@@ -1,3 +1,22 @@
+## 2026-06-04 — feat(trace): F13-02 criar endpoint read-only de consulta por traceId
+
+| Item | Detalhe |
+|------|---------|
+| **Título do PR** | `feat(trace): F13-02 criar endpoint read-only de consulta por traceId` |
+| **Objetivo F13-02** | Criar endpoint observacional/read-only autenticado para consulta por `traceId`, derivado do Artifact Ledger, sem alteração funcional de runtime. |
+| **Endpoint criado** | `GET /api/artifact-trace?traceId=<trace-id>` |
+| **Arquivos alterados** | `api/artifact-trace.js`; `api/_utils/artifactTrace.js`; `api/_utils/artifactLedger.js`; `api/tests/artifact-trace.test.js`; `CHECKLIST.md` |
+| **Confirmação de consulta read-only por `traceId`** | Endpoint realiza somente leitura via `readLedgerEventsByTraceId` (`select`), sem insert/update/delete e sem alteração de decisão/runtime. |
+| **Confirmação de filtro `trace_id + user_id`** | Consulta obrigatória com `readLedgerEventsByTraceId({ traceId, userId: user.id })` após `verifyAuth(req)`, sem consulta pública/global. |
+| **Confirmação de payload seguro** | Resposta retorna somente `trace` derivado (status, timeline segura e metadados observacionais), sem eventos brutos. |
+| **Confirmação de ausência de conteúdo bruto e feedback bruto** | Não retorna conteúdo bruto, `zipBase64`, `files`, `content`, `contentPreview`, `user_email` nem feedback bruto (apenas `hasFeedback`). |
+| **Confirmação de ausência de alteração funcional indevida** | Não altera runtime, geração, ZIP, preview, execução, prompts, providers/modelos, UI, orquestração, replay/diff/proveniência ou Dependabot. |
+| **Validações executadas** | Baseline pré-alteração: `npm run lint` ✅ (warnings pré-existentes), `npm run build` ✅, `npm test -- --runInBand` ✅. Pós-alteração: `npm run lint` ✅, `npm run build` ✅, `npm test -- --runInBand` ✅, `npm test -- --runInBand api/tests/artifact-trace.test.js` ✅. |
+| **Dependabot fora de escopo** | Dependabot não foi tratado nesta entrega. |
+| **Rollback** | `git revert <commit-sha>` |
+
+---
+
 ## 2026-06-03 — docs(trace): F13-01 abrir fase de consulta observacional por traceId
 
 | Item | Detalhe |
