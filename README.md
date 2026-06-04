@@ -74,7 +74,7 @@ The Híbrido / Construtor layer is **not a chatbot**. It is a generation, valida
 ### Pipeline
 
 ```
-gerar → empacotar → validar → executar/preview → revisar → aprovar → exportar
+gerar → empacotar → validar → preview observacional → revisar → aprovar → exportar
 ```
 
 | Step | Endpoint | Description |
@@ -82,7 +82,7 @@ gerar → empacotar → validar → executar/preview → revisar → aprovar →
 | **Gerar** | `POST /api/ai` (`agentType: "hybrid"`) | Serginho routes the request to the Construtor, which generates the content under sovereign orchestration |
 | **Empacotar** | `POST /api/artifact` | Wraps the generated content in a ZIP with a UUID, manifest, and logs |
 | **Validar** | `POST /api/artifact-preview` | Runs structural validation on the packaged artefact (Fase 2B) |
-| **Executar/Preview** | `POST /api/artifact-preview` | Optionally executes the artefact (if JS) and produces a preview report with `summary`, `decision`, and `feedback` (Fase 2C–2D) |
+| **Preview observacional** | `POST /api/artifact-preview` | Produces a preview report with `summary`, `decision`, `feedback` and `summary.execution.reason = "execution-disabled-by-security-policy"`; `executeArtifact` is not invoked and there is no real sandboxed execution in this stage |
 | **Revisar** | *(client)* | The preview result is displayed to the user with a suggested decision |
 | **Aprovar** | `PATCH /api/artifact-preview` | Applies `decision: "approved" | "rejected"` and consolidates the review cycle |
 | **Exportar** | `PATCH /api/artifact-preview` | When `decision: "approved"` and `content` is supplied, the endpoint returns a `zipBase64` ready for download |
@@ -90,7 +90,7 @@ gerar → empacotar → validar → executar/preview → revisar → aprovar →
 ### Por que não é apenas um chat
 
 - The Construtor/Híbrido is an **artefact generation and validation layer**, not a chatbot — it produces a structured deliverable with every request.
-- It outputs **packaged artefacts** (ZIP with UUID, manifest, content, and execution logs) that can be exported and audited.
+- It outputs **packaged artefacts** (ZIP with UUID and manifest) that can be exported and audited; current preview metadata must not be presented as real functional execution logs.
 - There is a **review and approval cycle** (`approved | rejected`) with a `decisionTimestamp` field recorded in the preview object for traceability.
 - Generated content passes through **structural validation** before it is delivered to the user.
 - The entire layer operates **under Serginho's sovereign orchestration** — no call to `/api/artifact` or `/api/artifact-preview` bypasses the orchestrator.
@@ -100,12 +100,12 @@ gerar → empacotar → validar → executar/preview → revisar → aprovar →
 | Arquivo | Responsabilidade |
 |---------|-----------------|
 | [`api/artifact.js`](api/artifact.js) | Endpoint `POST /api/artifact` — empacota conteúdo gerado em ZIP com UUID, manifest e logs |
-| [`api/artifact-preview.js`](api/artifact-preview.js) | Endpoint `POST /api/artifact-preview` (validar/executar/preview) e `PATCH` (aprovar/rejeitar/exportar) |
+| [`api/artifact-preview.js`](api/artifact-preview.js) | Endpoint `POST /api/artifact-preview` (validar/preview sem execução real) e `PATCH` (aprovar/rejeitar/exportar) |
 | [`src/lib/construtor/artifactPackager.js`](src/lib/construtor/artifactPackager.js) | Empacotamento — gera ZIP base64 com manifest e UUID |
 | [`src/lib/construtor/artifactNormalizer.js`](src/lib/construtor/artifactNormalizer.js) | Normalização — extrai e limpa o conteúdo visível do artefato |
 | [`src/lib/construtor/artifactValidator.js`](src/lib/construtor/artifactValidator.js) | Validação estrutural do artefato antes da entrega |
-| [`src/lib/construtor/artifactRunner.js`](src/lib/construtor/artifactRunner.js) | Execução controlada de artefatos JS no ciclo de preview |
-| [`src/lib/construtor/artifactPreview.js`](src/lib/construtor/artifactPreview.js) | Orquestração do ciclo completo de preview (validar → executar → sumarizar) |
+| [`src/lib/construtor/artifactRunner.js`](src/lib/construtor/artifactRunner.js) | Módulo de execução existente, mas não invocado pelo handler atual; `executeArtifact` permanece desativado |
+| [`src/lib/construtor/artifactPreview.js`](src/lib/construtor/artifactPreview.js) | Orquestração do ciclo de preview (validar → sumarizar), preservando marcador explícito de execução desativada |
 | [`src/pages/HybridAgentSimple.jsx`](src/pages/HybridAgentSimple.jsx) | Interface React do Construtor — gerencia ciclo de geração, revisão e exportação |
 | [`src/components/construtor/ArtifactPreviewPanel.jsx`](src/components/construtor/ArtifactPreviewPanel.jsx) | Painel de revisão — exibe preview, decisão (aprovar/rejeitar) e download do ZIP |
 
@@ -205,8 +205,13 @@ All endpoints are Vercel serverless functions under `/api/`.
 | `/api/github` | GET/POST | GitHub API integration |
 | `/api/admin` | POST | Admin operations |
 | `/api/artifact` | POST | Packages generated content into a ZIP (base64) with manifest and UUID — called after `/api/ai` |
-| `/api/artifact-preview` | POST | Full preview pipeline: package → validate → execute → return summary with suggested decision |
+| `/api/artifact-preview` | POST | Preview pipeline: package → validate → return summary with suggested decision; `executeArtifact` remains disabled |
 | `/api/artifact-preview` | PATCH | Apply review decision (`approved` | `rejected`); if approved and `content` is supplied, returns `zipBase64` for export |
+| `/api/artifact-ledger` | GET | Observational/read-only Artifact Ledger query by `artifactId` |
+| `/api/artifact-provenance` | GET | Observational/read-only provenance by `artifactId` |
+| `/api/artifact-replay` | GET | Observational/read-only replay by `artifactId`; not functional restoration or time-travel |
+| `/api/artifact-replay-diff` | GET | Observational/read-only diff/verdict by `artifactId`; not Git history or full versioning |
+| `/api/artifact-trace` | GET | Observational/read-only query by `traceId`; not global user tracking |
 
 See [docs/api.md](docs/api.md) for complete request/response documentation.
 
@@ -301,13 +306,14 @@ Esta seção separa, sem inflação, o que já é verificável hoje do que ainda
 ### ✅ Pronto / verificável
 
 - Orquestrador soberano **Serginho** ativo — ponto de entrada arquitetural para as chamadas de IA, sem bypass intencional do orquestrador.
-- Pipeline do **Construtor/Híbrido** end-to-end: `gerar → empacotar → validar → preview → revisar → aprovar → exportar` (endpoints `POST /api/ai`, `POST /api/artifact`, `POST /api/artifact-preview`, `PATCH /api/artifact-preview`).
+- Pipeline do **Construtor/Híbrido**: `gerar → empacotar → validar → preview observacional → revisar → aprovar → exportar` (endpoints `POST /api/ai`, `POST /api/artifact`, `POST /api/artifact-preview`, `PATCH /api/artifact-preview`), com `executeArtifact` desativado e sem execução sandboxed real nesta etapa.
 - Catálogo de **47 especialistas** com fonte única de verdade em `src/config/specialists.js`.
 - Camada **ABNT** (validação/conformidade) como camada separada e auditável.
 - Baseline reproduzível: `npm run lint`, `npm run build`, `npm test -- --runInBand` documentado e executável localmente.
 - **Demo pública estática** (rotas `/demo`, `/demo-autoplay`, `/startup`, `/showcase`) — sem autenticação e sem geração ao vivo durante a apresentação.
 - **Circuit breaker**, **cache inteligente** e **validação de segurança** ativos no caminho serverless (ver `api/lib/`).
 - Endpoint de saúde público: `GET /api/health`.
+- Endpoints observacionais já existentes para Artifact Ledger, proveniência, replay, diff e consulta por `traceId`, todos documentados em [docs/api.md](docs/api.md) como leitura observacional sem decisão de runtime.
 
 ### 🟡 Em estabilização
 
@@ -318,10 +324,12 @@ Esta seção separa, sem inflação, o que já é verificável hoje do que ainda
 ### ⛔ Futuro / não prometido nesta versão
 
 - **Não há IA em tempo real nas rotas de demo pública** — a demo opera sobre fixtures estáticas (`src/data/demoArtifacts.js`); ver [docs/DEMO.md](docs/DEMO.md).
-- **`executeArtifact` está desativado por decisão de segurança** — execução de artefatos JS gerados não está habilitada no runtime atual.
+- **`executeArtifact` está desativado por decisão de segurança** — execução de artefatos JS gerados não está habilitada no runtime atual; não há sandbox real nesta etapa e preview não deve ser apresentado como execução funcional real.
 - **Sem dashboard de métricas externo**, sem analytics próprio fora de Sentry/PostHog, sem persistência adicional além do Supabase já documentado.
 - **Branch protection** não está ativa neste repositório privado (limitação do plano GitHub); a regra de "CI verde" é enforced por convenção.
 - Itens **F5-04 (governança de sandbox)** e **F5-05 (métricas não voláteis)** são explicitamente futuros e não bloqueantes para a banca.
+- F14 prepara consumo visual observacional futuro de Ledger/proveniência/replay/diff/traceId, mas não implementa UI funcional nesta etapa.
+- Não há garantia documental de SLA, segurança absoluta, clientes, receita ou tração.
 
 ---
 
@@ -365,10 +373,11 @@ Saúde do runtime em produção: `curl https://kizirianmax.site/api/health`.
 ### Limites conhecidos
 
 - Demo pública é **estática** (fixtures) — não exercita providers ao vivo durante a apresentação.
-- `executeArtifact` está **desativado** por decisão arquitetural de segurança.
+- `executeArtifact` está **desativado** por decisão arquitetural de segurança; não há execução sandboxed real e preview não equivale a execução funcional.
 - **Latência Groq variável** — rastreada desde a Fase 4; mitigada por circuit breaker e cascata de modelos.
 - **Warnings de lint pré-existentes** (dívida documentada em F5-01) — não bloqueantes.
 - **Multi-provider em estabilização** — consolidação fina do uso entre camadas ainda é observação aberta.
+- Replay/diff/consulta por `traceId` são camadas observacionais/read-only; não restauram artefatos, não fazem time-travel funcional e não tomam decisão de runtime.
 - **Repositório `formatador-abnt` paralelo** segue ativo para a camada ABNT em deploy separado; ver [Architecture Principles](#architecture-principles) abaixo.
 
 ---
