@@ -1,3 +1,22 @@
+## 2026-06-04 — docs(trace): F13-03 formalizar contrato de consumo da consulta por traceId
+
+| Item | Detalhe |
+|------|---------|
+| **Título do PR** | `docs(trace): F13-03 formalizar contrato de consumo da consulta por traceId` |
+| **Objetivo F13-03** | Formalizar contrato documental de consumo da consulta observacional por `traceId`, incluindo limites de privacidade, payload permitido e vedações de uso. |
+| **Documento criado** | `docs/audits/f13-03-contrato-consumo-consulta-traceid-2026-06-04.md` |
+| **Confirmação de PR exclusivamente documental** | Alterações restritas a `CHECKLIST.md` e ao documento de auditoria F13-03, sem implementação funcional. |
+| **Confirmação do contrato de consumo da consulta por `traceId`** | Contrato formalizado como camada observacional/read-only, consumida apenas como metadados seguros e sem controle de runtime. |
+| **Confirmação do endpoint contemplado** | `GET /api/artifact-trace?traceId=<commit-sha>`. |
+| **Confirmação de autenticação e filtro por `user_id`** | Requisito obrigatório mantido: consumo autenticado com filtro `trace_id + user_id`, sem consulta pública/global entre usuários. |
+| **Confirmação de limites sem overclaim** | Mantido: consulta por `traceId` não é prova criptográfica completa, não é sessão global pública, não é rastreamento entre usuários e não altera runtime/decisão/geração/ZIP/preview/execução/prompts/providers/modelos/UI/orquestração. |
+| **Confirmação de payload proibido** | Vedado: eventos brutos, conteúdo bruto, `zipBase64`, `files`, `content`, `contentPreview`, `user_email` e feedback bruto. |
+| **Confirmação de ausência de alteração funcional** | Sem alterações em `api/`, `src/`, `supabase/migrations/`, testes, prompts, providers/modelos, orquestração, geração, ZIP, preview, execução, UI, Auth/SaaS/Payments, Stripe/Vercel/secrets/workflows, `package.json` ou `package-lock.json`. |
+| **Confirmação de que Dependabot não foi tratado** | Dependabot permanece fora de escopo nesta entrega. |
+| **Rollback** | `git revert <commit-sha>` |
+
+---
+
 ## 2026-06-04 — feat(trace): F13-02 criar endpoint read-only de consulta por traceId
 
 | Item | Detalhe |
