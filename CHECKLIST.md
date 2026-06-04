@@ -1,3 +1,23 @@
+## 2026-06-04 — docs(trace): F13-04 registrar encerramento formal da Fase 13
+
+| Item | Detalhe |
+|------|---------|
+| **Título do PR** | `docs(trace): F13-04 registrar encerramento formal da Fase 13` |
+| **Objetivo** | Registrar o encerramento formal da Fase 13 (consulta observacional por `traceId`), consolidando F13-01 a F13-03 no escopo observacional/read-only atual. |
+| **Documento criado** | `docs/audits/f13-04-encerramento-formal-fase13-consulta-traceid-2026-06-04.md` |
+| **Confirmação de encerramento formal da Fase 13** | Fase 13 encerrada formalmente no escopo documental/observacional definido. |
+| **F13-01 a F13-03 consolidadas** | Consolidação registrada: abertura formal da fase, endpoint read-only de consulta observacional por `traceId` e contrato de consumo da consulta por `traceId`. |
+| **Confirmação de PR exclusivamente documental** | Alterações restritas a `CHECKLIST.md` e ao documento de auditoria F13-04. |
+| **Confirmação de ausência de alteração funcional** | Sem alterações em `api/`, `src/`, `supabase/migrations/`, testes, prompts, providers/modelos, orquestração, geração, ZIP, preview, execução, UI, Auth/SaaS/Payments, Stripe/Vercel/secrets/workflows, `package.json` ou `package-lock.json`. |
+| **Confirmação de autenticação e filtro `trace_id` + `user_id`** | Mantido: consulta autenticada com filtro obrigatório por `trace_id + user_id`, sem consulta pública/global e sem enumeração entre usuários. |
+| **Confirmação de payload seguro** | Mantido: retorno apenas de metadados observacionais seguros, sem eventos brutos, sem conteúdo bruto e sem feedback bruto. |
+| **Confirmação de limites sem overclaim** | Mantido: `traceId` é metadado observacional; não é garantia, prova criptográfica completa, sessão global pública, commit Git ou rastreamento global entre usuários; a consulta não revalida conteúdo atual, não substitui auditoria externa, não garante SLA/uptime/p95/p99/segurança absoluta/clientes/receita/tração e não altera runtime. |
+| **Confirmação de próximos itens fora de escopo** | Permanecem fora de escopo: UI, certificado exportável, consulta pública/global por `traceId`, enumeração entre usuários, execução sandboxed real, reativar `executeArtifact`, geração/ZIP/preview/execução, prompts, providers/modelos, Auth/SaaS/Payments, Especialistas e ABNT. |
+| **Confirmação de que Dependabot não foi tratado** | Dependabot não foi tratado neste PR e permanece em janela técnica separada. |
+| **Rollback** | `git revert <commit-sha>` |
+
+---
+
 ## 2026-06-04 — docs(trace): F13-03 formalizar contrato de consumo da consulta por traceId
 
 | Item | Detalhe |
