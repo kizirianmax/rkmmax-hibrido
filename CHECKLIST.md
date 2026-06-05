@@ -1,3 +1,24 @@
+## 2026-06-05 — docs(observability): F15-02 matriz de risco de segurança e privacidade observacional
+
+| Item | Detalhe |
+|------|---------|
+| **Título do PR** | `docs(observability): F15-02 matriz de risco de segurança e privacidade observacional` |
+| **Objetivo F15-02** | Criar matriz documental de risco de segurança e privacidade observacional para governar exposição de dados, payload bruto, limites de camada e anti-overclaim, sem alteração funcional. |
+| **Documento criado** | `docs/audits/f15-02-matriz-risco-seguranca-privacidade-observacional-2026-06-05.md` |
+| **Confirmação de PR exclusivamente documental** | Alterações restritas a `CHECKLIST.md` e ao documento de auditoria F15-02. |
+| **Confirmação de matriz de risco criada** | Matriz criada cobrindo Artifact Ledger, proveniência, replay/diff, consulta por `traceId` e consumo visual observacional read-only. |
+| **Confirmação de ausência de alteração funcional** | Sem alterações em código, runtime, geração, ZIP, preview funcional, execução, prompts, providers/modelos, orquestração, Auth/SaaS/Payments, Especialistas ou ABNT. |
+| **Confirmação de ausência de backend/API/migration** | Sem backend novo, sem endpoint novo, sem alteração em `api/` e sem migration em `supabase/migrations/`. |
+| **Confirmação de ausência de UI funcional nova** | Não houve nova UI funcional; entrega restrita à matriz documental de risco. |
+| **Confirmação de payload proibido** | Proibidos: eventos brutos quando vedados pelo contrato, conteúdo bruto, `zipBase64`, `files`, `content`, `contentPreview`, `user_email`, feedback bruto, segredos/tokens, payload de execução e logs como execução funcional real. |
+| **Confirmação de payload permitido** | Permitido apenas como metadados seguros: status, contagens, timestamps, `artifactId`, `traceId`, flags de checksum, timeline segura, warnings, limitations e `hasFeedback` booleano sem feedback bruto. |
+| **Confirmação de limites sem overclaim** | Observabilidade pode ser apresentada como rastreabilidade/metadados/read-only de apoio à revisão humana, sem promessa de prova criptográfica completa, auditoria externa, execução, restauração, time-travel funcional, SLA, segurança absoluta, clientes, receita ou tração. |
+| **Confirmação de que Dependabot não foi tratado** | Dependabot permanece fora de escopo nesta matriz documental. |
+| **Recomendação para F15-03** | Executar F15-03 como política documental de payload permitido/proibido para evidência e banca, se a matriz F15-02 for aprovada. |
+| **Rollback** | `git revert <commit-sha>` |
+
+---
+
 ## 2026-06-05 — docs(observability): F15-01 abrir fase de governança de segurança e privacidade observacional
 
 | Item | Detalhe |
