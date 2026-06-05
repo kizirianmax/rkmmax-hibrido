@@ -1,3 +1,24 @@
+## 2026-06-05 — docs(observability): F14-06 registrar encerramento formal da Fase 14
+
+| Item | Detalhe |
+|------|---------|
+| **Título do PR** | `docs(observability): F14-06 registrar encerramento formal da Fase 14` |
+| **Objetivo F14-06** | Registrar formalmente o encerramento da Fase 14, consolidando F14-01 a F14-05 no escopo de consumo visual observacional read-only. |
+| **Documento criado** | `docs/audits/f14-06-encerramento-formal-fase14-consumo-visual-observacional-2026-06-05.md` |
+| **Confirmação de encerramento formal da Fase 14** | Fase 14 encerrada formalmente no escopo documental/observacional definido para consumo visual read-only. |
+| **Consolidação F14-01 a F14-05** | Consolidado: abertura formal, documentação canônica, contrato de UI observacional, consumo visual mínimo no `ArtifactPreviewPanel` e validação documental pós-merge com ressalva não bloqueante. |
+| **Confirmação de PR exclusivamente documental** | Alterações restritas a `CHECKLIST.md` e ao documento de auditoria F14-06, sem implementação funcional. |
+| **Confirmação de ausência de alteração funcional** | Sem alterações em `api/`, `src/`, `supabase/migrations/`, testes, prompts, providers/modelos, orquestração, geração, ZIP, preview funcional, execução, UI funcional, Auth/SaaS/Payments, Stripe/Vercel/secrets/workflows, `package.json` ou `package-lock.json`. |
+| **Confirmação de limites read-only/observacionais** | Mantido: consumo visual estritamente observacional/read-only, sem escrita, sem decisão de runtime e sem mistura de camadas. |
+| **Confirmação de ausência de backend/API/migration** | Sem backend novo, sem endpoint novo, sem alteração em `api/` e sem migration em `supabase/migrations/`. |
+| **Confirmação de ausência de UI funcional nova** | Não houve nova UI funcional nesta entrega; apenas registro documental de encerramento da fase. |
+| **Confirmação de ausência de payload bruto** | Proibidos e não tratados: eventos brutos, conteúdo bruto, feedback bruto, `zipBase64`, `files`, `content`, `contentPreview`, `user_email`, segredos/tokens e payload de execução. |
+| **Confirmação de limites sem overclaim** | Mantido: consumo visual observacional não é prova criptográfica completa, auditoria externa, garantia absoluta, histórico Git/versionamento completo, time-travel funcional, restauração/execução de artefatos ou garantia de SLA/uptime/p95/p99/segurança absoluta/clientes/receita/tração. |
+| **Confirmação de que Dependabot não foi tratado** | Dependabot permanece fora de escopo neste encerramento formal. |
+| **Rollback** | `git revert <commit-sha>` |
+
+---
+
 ## 2026-06-05 — docs(observability): F14-05 registrar validação do consumo visual observacional
 
 | Item | Detalhe |
