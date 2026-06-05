@@ -1,3 +1,23 @@
+## 2026-06-05 — docs(observability): F14-05 registrar validação do consumo visual observacional
+
+| Item | Detalhe |
+|------|---------|
+| **Título do PR** | `docs(observability): F14-05 registrar validação do consumo visual observacional` |
+| **Objetivo F14-05** | Registrar formalmente a validação/auditoria documental pós-merge da F14-04, confirmando o consumo visual mínimo observacional/read-only e seus limites. |
+| **Documento criado** | `docs/audits/f14-05-validacao-consumo-visual-minimo-observacional-2026-06-05.md` |
+| **PR validado** | #565 / F14-04 — `feat(observability): F14-04 consumo visual mínimo observacional read-only (#565)` |
+| **HEAD validado** | `25854787d1898dc958678f0467ba6c0a7c17c5cc` em `origin/main`. |
+| **Arquivos validados** | `src/components/construtor/ArtifactPreviewPanel.jsx`; `src/components/construtor/__tests__/ArtifactPreviewPanel.test.jsx`; `src/styles/HybridAgent.css`; `CHECKLIST.md`; `docs/audits/f14-04-consumo-visual-minimo-observacional-2026-06-04.md` |
+| **Confirmação de consumo visual read-only** | Painel apenas visual/observacional, sem `fetch` novo, escrita, alteração de decisão, geração, ZIP, execução, providers/modelos, prompts ou bypass ao Serginho. |
+| **Confirmação da ressalva documental não bloqueante** | A auditoria citou `src/components/construtor/tests/ArtifactPreviewPanel.test.jsx`, mas o caminho real incorporado foi `src/components/construtor/__tests__/ArtifactPreviewPanel.test.jsx`; isso não é falha funcional nem regressão. |
+| **Confirmação de ausência de alteração funcional** | F14-05 é exclusivamente documental e não altera UI, código, testes, prompts, providers/modelos, orquestração, geração, ZIP, preview funcional, execução, Auth/SaaS/Payments, Especialistas ou ABNT. |
+| **Confirmação de ausência de backend/API/migration** | Sem alterações em `api/`, sem backend novo, sem endpoint novo e sem migration em `supabase/migrations/`. |
+| **Confirmação de ausência de payload bruto** | Payload permitido restrito a metadados seguros (`artifactId`, `traceId` quando disponível, status, contagens, timestamp, flag de checksum, `hasFeedback` booleano e limitações); proibidos eventos brutos, conteúdo bruto, `zipBase64`, `files`, `content`, `contentPreview`, `user_email`, feedback bruto, segredos/tokens, payload de execução e logs como execução funcional real. |
+| **Confirmação de que Dependabot não foi tratado** | Dependabot permanece fora de escopo nesta validação documental. |
+| **Rollback** | `git revert <commit-sha>` |
+
+---
+
 ## 2026-06-04 — feat(observability): F14-04 consumo visual mínimo observacional read-only
 
 | Item | Detalhe |
