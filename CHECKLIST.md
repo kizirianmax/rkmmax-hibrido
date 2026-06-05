@@ -1,3 +1,26 @@
+## 2026-06-05 — docs(observability): F15-03 política de payload permitido e proibido para evidência e banca
+
+| Item | Detalhe |
+|------|---------|
+| **Título do PR** | `docs(observability): F15-03 política de payload permitido e proibido para evidência e banca` |
+| **Objetivo F15-03** | Criar política documental de payload permitido/proibido para evidência segura em documentação, demonstração, banca/incubadora e revisão humana, sem alteração funcional. |
+| **Documento criado** | `docs/audits/f15-03-politica-payload-permitido-proibido-evidencia-banca-2026-06-05.md` |
+| **Confirmação de PR exclusivamente documental** | Alterações restritas a `CHECKLIST.md` e ao documento de auditoria F15-03. |
+| **Confirmação de política de payload permitido/proibido criada** | Política F15-03 criada com regras de payload, evidência, frases permitidas/proibidas e limites de apresentação para banca/incubadora. |
+| **Confirmação de payload permitido** | Permitidos apenas metadados seguros: status, contagens, timestamps, `artifactId`, `traceId`, flags de checksum, timeline segura, warnings, limitations, `hasFeedback` booleano, resumo estrutural seguro e indicadores observacionais sem dados sensíveis. |
+| **Confirmação de payload proibido** | Proibidos: eventos brutos quando vedados pelo contrato, conteúdo bruto, `zipBase64`, `files`, `content`, `contentPreview`, `user_email`, feedback bruto, segredos/tokens, payload de execução, logs como execução funcional real e dados sensíveis/identificáveis indevidos. |
+| **Confirmação de evidência segura para banca/incubadora** | Evidência restrita a rastreabilidade observacional, metadados de proveniência, consulta read-only por artefato/`traceId`, painel observacional, matriz de risco, política de payload, documentação de limites e revisão humana apoiada por metadados. |
+| **Confirmação de frases permitidas/proibidas** | Frases seguras e frases proibidas formalizadas para prevenir overclaim técnico, institucional e comercial. |
+| **Confirmação de ausência de alteração funcional** | Sem alterações em código, runtime, geração, ZIP, preview funcional, execução, prompts, providers/modelos, orquestração, Auth/SaaS/Payments, Especialistas ou ABNT. |
+| **Confirmação de ausência de backend/API/migration** | Sem backend novo, sem endpoint novo, sem alteração em `api/` e sem migration em `supabase/migrations/`. |
+| **Confirmação de ausência de UI funcional nova** | Não houve nova UI funcional; entrega restrita à política documental F15-03. |
+| **Confirmação de limites sem overclaim** | Observabilidade permanece read-only e não representa prova criptográfica completa, auditoria externa, execução real, sandbox real, restauração funcional, segurança absoluta, SLA, clientes, receita ou tração. |
+| **Confirmação de que Dependabot não foi tratado** | Dependabot permanece fora de escopo nesta política documental. |
+| **Recomendação para F15-04** | Se F15-03 for aprovada, executar F15-04 para revisar a narrativa de banca/incubadora sem overclaim com base nesta política. |
+| **Rollback** | `git revert <commit-sha>` |
+
+---
+
 ## 2026-06-05 — docs(observability): F15-02 matriz de risco de segurança e privacidade observacional
 
 | Item | Detalhe |
