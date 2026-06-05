@@ -146,12 +146,22 @@ export default function ArtifactPreviewPanel({ preview, onDecision, onRevision, 
 
   const isPending = decision === 'pending';
   const validationErrorCount = summary.validation?.errorCount ?? summary.validation?.errors?.length ?? 0;
+  const validationWarningCount = summary.validation?.warningCount ?? summary.validation?.warnings?.length ?? 0;
   const hasValidationIssues = summary.validation?.valid === false || validationErrorCount > 0;
   const filesCount = summary.filesSummary?.totalFiles ?? summary.files?.length ?? 0;
   const artifactExportState = !hasValidationIssues && filesCount > 0 ? 'ready' : 'review';
   const artifactExportLabel = artifactExportState === 'ready'
     ? '✅ Válido e pronto para exportar ZIP após aprovação.'
     : '⚠️ Artefato/ZIP com pendências — revise antes de aprovar/exportar.';
+  const traceId = typeof summary.origin?.traceId === 'string' && summary.origin.traceId.trim().length > 0
+    ? summary.origin.traceId
+    : null;
+  const checksumRef = (
+    (typeof summary.checksum === 'string' && summary.checksum.trim().length > 0 && summary.checksum)
+    || (typeof summary.origin?.checksum === 'string' && summary.origin.checksum.trim().length > 0 && summary.origin.checksum)
+    || null
+  );
+  const hasFeedback = typeof feedback === 'string' && feedback.trim().length > 0;
 
   const handleDownload = () => {
     if (!delivery?.zipBase64) return;
@@ -344,6 +354,50 @@ export default function ArtifactPreviewPanel({ preview, onDecision, onRevision, 
           <span className="artifact-status-description">{summary.status.description}</span>
         </div>
       )}
+
+      <div className="artifact-observability-panel" data-testid="artifact-observability-panel">
+        <span className="artifact-observability-title">🧭 Rastreabilidade observacional (read-only)</span>
+        <p className="artifact-observability-note">
+          Exibição somente observacional. Não executa artefato, não restaura versão funcional, não faz time-travel funcional e não substitui auditoria humana.
+        </p>
+        <div className="artifact-observability-grid">
+          <div className="artifact-preview-row">
+            <span className="artifact-label">artifactId:</span>
+            <span className="artifact-value artifact-id">{summary.id || '—'}</span>
+          </div>
+          <div className="artifact-preview-row">
+            <span className="artifact-label">traceId:</span>
+            <span className="artifact-value artifact-id">{traceId || 'indisponível no payload seguro atual'}</span>
+          </div>
+          <div className="artifact-preview-row">
+            <span className="artifact-label">Status:</span>
+            <span className="artifact-value">{summary.status?.label || '—'}</span>
+          </div>
+          <div className="artifact-preview-row">
+            <span className="artifact-label">Contagens:</span>
+            <span className="artifact-value">
+              arquivos {filesCount} · erros {validationErrorCount} · avisos {validationWarningCount}
+            </span>
+          </div>
+          <div className="artifact-preview-row">
+            <span className="artifact-label">Timestamp:</span>
+            <span className="artifact-value">
+              {summary.timestamp ? new Date(summary.timestamp).toLocaleString('pt-BR') : '—'}
+            </span>
+          </div>
+          <div className="artifact-preview-row">
+            <span className="artifact-label">Flag de checksum:</span>
+            <span className="artifact-value">{checksumRef ? 'presente' : 'indisponível neste preview'}</span>
+          </div>
+          <div className="artifact-preview-row">
+            <span className="artifact-label">hasFeedback:</span>
+            <span className="artifact-value">{hasFeedback ? 'true' : 'false'}</span>
+          </div>
+        </div>
+        <div className="artifact-observability-limitations">
+          Limites: camada observacional/read-only; sem escrita, sem acionar geração/ZIP/execução, sem decisão automática.
+        </div>
+      </div>
 
       {/* Resumo Estrutural */}
       {summary.filesSummary && (
