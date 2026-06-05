@@ -1,3 +1,23 @@
+## 2026-06-05 — docs(observability): F15-01 abrir fase de governança de segurança e privacidade observacional
+
+| Item | Detalhe |
+|------|---------|
+| **Título do PR** | `docs(observability): F15-01 abrir fase de governança de segurança e privacidade observacional` |
+| **Objetivo F15-01** | Abrir formalmente a Fase 15 para consolidar a governança de segurança e privacidade da camada observacional, sem alteração funcional. |
+| **Documento criado** | `docs/audits/f15-01-abertura-formal-governanca-seguranca-privacidade-observacional-2026-06-05.md` |
+| **Confirmação de abertura formal da Fase 15** | Fase 15 aberta formalmente: governança de segurança e privacidade observacional. |
+| **Confirmação de PR exclusivamente documental** | Alterações restritas a `CHECKLIST.md` e ao documento de auditoria F15-01. |
+| **Confirmação de ausência de alteração funcional** | Sem alterações em código, runtime, geração, ZIP, preview funcional, execução, prompts, providers/modelos, orquestração, Auth/SaaS/Payments, Especialistas ou ABNT. |
+| **Confirmação de ausência de backend/API/migration** | Sem backend novo, sem endpoint novo, sem alteração em `api/` e sem migration em `supabase/migrations/`. |
+| **Confirmação de ausência de UI funcional nova** | Não houve nova UI funcional; entrega restrita à abertura documental da fase. |
+| **Confirmação de ausência de payload bruto** | Proibidos e não expostos: eventos brutos quando proibidos pelo contrato, conteúdo bruto, `zipBase64`, `files`, `content`, `contentPreview`, `user_email`, feedback bruto, segredos/tokens, payload de execução e logs como execução funcional real. |
+| **Confirmação de limites sem overclaim** | Observabilidade não é prova criptográfica completa, auditoria externa, garantia de integridade absoluta, histórico Git, versionamento completo, time-travel funcional, restauração/execução de artefatos ou garantia de SLA/uptime/p95/p99/segurança absoluta/clientes/receita/tração. |
+| **Confirmação de que Dependabot não foi tratado** | Dependabot permanece fora de escopo nesta abertura formal. |
+| **Recomendação para F15-02** | Executar F15-02 como matriz documental de risco de segurança/privacidade observacional antes de iniciar qualquer funcionalidade nova. |
+| **Rollback** | `git revert <commit-sha>` |
+
+---
+
 ## 2026-06-05 — docs(observability): F14-06 registrar encerramento formal da Fase 14
 
 | Item | Detalhe |
