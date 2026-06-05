@@ -1,3 +1,25 @@
+## 2026-06-05 — docs(observability): F15-04 revisar narrativa de banca e incubadora sem overclaim
+
+| Item | Detalhe |
+|------|---------|
+| **Título do PR** | `docs(observability): F15-04 revisar narrativa de banca e incubadora sem overclaim` |
+| **Objetivo F15-04** | Revisar e alinhar a narrativa documental de banca/incubadora, demo e apresentação institucional para evitar overclaim técnico, comercial e institucional, preservando observabilidade como camada read-only. |
+| **Documento criado** | `docs/audits/f15-04-revisao-narrativa-banca-incubadora-sem-overclaim-2026-06-05.md` |
+| **Arquivos revisados** | `README.md`, `docs/DEMO.md`, `docs/api.md`, `docs/audits/f15-01-abertura-formal-governanca-seguranca-privacidade-observacional-2026-06-05.md`, `docs/audits/f15-02-matriz-risco-seguranca-privacidade-observacional-2026-06-05.md`, `docs/audits/f15-03-politica-payload-permitido-proibido-evidencia-banca-2026-06-05.md`, `docs/audits/f14-06-encerramento-formal-fase14-consumo-visual-observacional-2026-06-05.md`, `CHECKLIST.md`. |
+| **Arquivos alterados** | `CHECKLIST.md`; `docs/audits/f15-04-revisao-narrativa-banca-incubadora-sem-overclaim-2026-06-05.md`. |
+| **Confirmação de revisão narrativa** | Revisão narrativa F15-04 concluída para banca/incubadora, demo e comunicação institucional, sem introdução de promessas funcionais indevidas. |
+| **Confirmação de narrativa permitida/proibida** | Formalizadas narrativas permitidas (rastreabilidade observacional read-only, metadados de apoio à revisão humana, proveniência observacional, `traceId` como correlação observacional) e narrativas proibidas (execução/sandbox real, restauração/time-travel funcional, prova criptográfica completa, auditoria externa, garantias comerciais/institucionais). |
+| **Confirmação de ausência de alteração funcional** | Sem alteração funcional; entrega exclusivamente documental. |
+| **Confirmação de ausência de backend/API/migration** | Sem backend novo, sem endpoint novo, sem alteração em `api/`, sem migration em `supabase/migrations/`. |
+| **Confirmação de ausência de UI funcional nova** | Não houve UI funcional nova; revisão restrita à narrativa documental. |
+| **Confirmação de ausência de payload bruto** | Mantida política de não exposição de payload bruto (`content`, `contentPreview`, `files`, `zipBase64`, `user_email`, feedback bruto, segredos/tokens e payload de execução). |
+| **Confirmação de limites sem overclaim** | Mantido: observabilidade como metadados/read-only sem promessa de execução real, sandbox real, restauração funcional, time-travel funcional, prova criptográfica completa, auditoria externa, SLA, segurança absoluta, clientes, receita ou tração. |
+| **Confirmação de que Dependabot não foi tratado** | Dependabot permanece fora de escopo na F15-04. |
+| **Recomendação para F15-05** | Se F15-04 for aprovada, executar F15-05 como validação documental da governança observacional da Fase 15. |
+| **Rollback** | `git revert <commit-sha>` |
+
+---
+
 ## 2026-06-05 — docs(observability): F15-03 política de payload permitido e proibido para evidência e banca
 
 | Item | Detalhe |
