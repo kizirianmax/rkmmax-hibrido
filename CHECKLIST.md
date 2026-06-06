@@ -4,12 +4,13 @@
 |------|---------|
 | **Título do PR** | `feat(construtor): spike WebContainers para demo viva client-side` |
 | **Objetivo do PR** | Validar, com spike funcional mínimo e reversível, a viabilidade de boot client-side de WebContainers no RKMMAX sem execução server-side. |
-| **Arquivos alterados** | `CHECKLIST.md`; `package.json`; `package-lock.json`; `src/App.jsx`; `src/lib/construtor/webcontainerSpikeRunner.js`; `src/lib/construtor/__tests__/webcontainerSpikeRunner.test.js`; `src/pages/WebContainerSpike.jsx`; `src/pages/WebContainerSpike.css`; `src/pages/__tests__/WebContainerSpike.test.jsx`; `vercel.json`. |
+| **Arquivos alterados** | `CHECKLIST.md`; `package.json`; `package-lock.json`; `src/App.jsx`; `src/auth/AuthGate.jsx`; `src/lib/construtor/webcontainerSpikeRunner.js`; `src/lib/construtor/__tests__/webcontainerSpikeRunner.test.js`; `src/pages/WebContainerSpike.jsx`; `src/pages/WebContainerSpike.css`; `src/pages/__tests__/WebContainerSpike.test.jsx`; `vercel.json`. |
 | **Confirmação de escopo** | Entrega é spike funcional técnico mínimo; não é a demo final de produção. |
 | **Confirmação sobre `executeArtifact` e `api/`** | `executeArtifact` server-side permanece desativado e nenhum arquivo em `api/` foi alterado. |
 | **Confirmação de backend/API/endpoint/migration** | Nenhum backend novo, nenhum endpoint novo e nenhuma migration criada. |
 | **Confirmação de payload e dados de usuário** | Sem payload bruto, sem envio para backend e sem uso de conteúdo real de usuário. |
 | **Confirmação de acionamento manual** | WebContainers roda apenas por clique explícito do usuário, com import dinâmico (`await import('@webcontainer/api')`) no helper. |
+| **Correção de rota pública no Preview** | `AuthGate` passou a incluir `/webcontainer-spike` em `PUBLIC_ROUTES`, evitando redirecionamento para `/login` e permitindo hard-load direto da página experimental sem autenticação. |
 | **COOP/COEP isolado no spike** | COOP/COEP aplicado apenas em `/webcontainer-spike` com `Cross-Origin-Opener-Policy: same-origin` e `Cross-Origin-Embedder-Policy: credentialless`; regra global `/(.*)` mantida intacta. `credentialless` foi escolhido para reduzir risco de quebra de recursos externos em relação a `require-corp`. |
 | **Nota SPA + isolamento** | Como a app usa rewrite SPA catch-all para `index.html`, o isolamento por rota pode depender de navegação direta/hard-load; o spike detecta e reporta isso de forma explícita sem fingir sucesso. |
 | **Licenciamento WebContainers** | Uso aqui é POC/spike técnico, não uso comercial em produção; eventual exigência de licença comercial StackBlitz fica como pendência humana antes de produção. |

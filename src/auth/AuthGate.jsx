@@ -22,6 +22,7 @@ const PUBLIC_ROUTES = [
   "/demo",           // construtor showcase
   "/demo-autoplay",  // construtor showcase autoplay
   "/showcase",       // alias to /demo
+  "/webcontainer-spike", // rota experimental pública do spike
   "/privacy",        // privacy policy
   "/terms",          // terms of service
   "/refund",         // refund policy

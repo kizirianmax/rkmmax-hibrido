@@ -1,5 +1,7 @@
 /** @jest-environment jsdom */
 import React from "react";
+import fs from "fs";
+import path from "path";
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 
 jest.mock("../WebContainerSpike.css", () => ({}), { virtual: true });
@@ -15,6 +17,8 @@ jest.mock("../../lib/construtor/webcontainerSpikeRunner.js", () => ({
 
 import { runWebContainerSpike } from "../../lib/construtor/webcontainerSpikeRunner.js";
 import WebContainerSpike from "../WebContainerSpike.jsx";
+
+const repoRoot = path.resolve(process.cwd());
 
 describe("WebContainerSpike page", () => {
   const originalFetch = globalThis.fetch;
@@ -61,5 +65,13 @@ describe("WebContainerSpike page", () => {
 
     apiCalls = globalThis.fetch.mock.calls.filter(([url]) => String(url).includes("/api/"));
     expect(apiCalls).toHaveLength(0);
+  });
+
+  test("rota do spike é pública no AuthGate e não aparece no Header/menu", () => {
+    const authGateSource = fs.readFileSync(path.join(repoRoot, "src/auth/AuthGate.jsx"), "utf8");
+    const headerSource = fs.readFileSync(path.join(repoRoot, "src/components/Header.jsx"), "utf8");
+
+    expect(authGateSource).toContain('"/webcontainer-spike"');
+    expect(headerSource).not.toContain('to="/webcontainer-spike"');
   });
 });
