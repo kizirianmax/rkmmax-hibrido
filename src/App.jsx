@@ -1,5 +1,5 @@
 // src/App.jsx
-import React, { useEffect } from "react";
+import React, { Suspense, lazy, useEffect } from "react";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { initSentry } from "./lib/sentry.js";
 import { initAnalytics } from "./lib/analytics.js";
@@ -54,6 +54,8 @@ import Chat from "./pages/Chat.jsx";
 import Demo from "./pages/Demo.jsx";
 import DemoAutoplay from "./pages/DemoAutoplay.jsx";
 
+const WebContainerSpike = lazy(() => import("./pages/WebContainerSpike.jsx"));
+
 export default function App() {
   const [showOnboarding, setShowOnboarding] = React.useState(false);
 
@@ -100,6 +102,15 @@ export default function App() {
                   <Route path="/demo" element={<Demo />} />
                   <Route path="/demo-autoplay" element={<DemoAutoplay />} />
                   <Route path="/showcase" element={<Navigate to="/demo" replace />} />
+                  {/* Spike experimental — não listada no menu */}
+                  <Route
+                    path="/webcontainer-spike"
+                    element={
+                      <Suspense fallback={<div style={{ opacity: 0.7 }}>Carregando…</div>}>
+                        <WebContainerSpike />
+                      </Suspense>
+                    }
+                  />
 
                   {/* Área Premium */}
                   <Route

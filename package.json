@@ -27,6 +27,7 @@
     "@stripe/stripe-js": "^9.6.0",
     "@supabase/supabase-js": "^2.105.4",
     "@vitejs/plugin-react": "^6.0.2",
+    "@webcontainer/api": "^1.6.4",
     "adm-zip": "^0.5.17",
     "archiver": "^8.0.0",
     "busboy": "^1.6.0",
