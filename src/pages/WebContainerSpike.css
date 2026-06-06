@@ -40,6 +40,18 @@
   cursor: default;
 }
 
+.webcontainer-spike__list,
+.webcontainer-spike__files {
+  margin: 8px 0;
+  padding-left: 20px;
+}
+
+.webcontainer-spike__warning {
+  margin: 8px 0 0;
+  color: #fbbf24;
+  font-weight: 600;
+}
+
 .webcontainer-spike pre {
   margin: 8px 0 0;
   padding: 10px;

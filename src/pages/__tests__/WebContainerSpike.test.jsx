@@ -5,6 +5,19 @@ import path from "path";
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 
 jest.mock("../WebContainerSpike.css", () => ({}), { virtual: true });
+jest.mock("../../lib/construtor/webcontainerSpikeEvidence.js", () => ({
+  getWebContainerSpikeEvidence: jest.fn(() => ({
+    ok: true,
+    source: "controlled-constructor-artifact",
+    adapter: "passed",
+    sanitization: "passed",
+    entrypoint: "index.js",
+    allowedFiles: ["package.json", "artifact-manifest.json", "index.js", "lib/sum.js"],
+    mountTreeFiles: ["package.json", "artifact-manifest.json", "index.js", "lib/sum.js"],
+    blockedPayloadPolicy: ["content", "contentPreview", "zipBase64", "user_email", "secrets", "network", "shell"],
+    warning: "Fixture controlado; não usa dados reais de usuário.",
+  })),
+}));
 jest.mock("../../lib/construtor/webcontainerSpikeRunner.js", () => ({
   runWebContainerSpike: jest.fn(async () => ({
     ok: true,
