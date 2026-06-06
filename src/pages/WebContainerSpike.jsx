@@ -63,7 +63,7 @@ export default function WebContainerSpike() {
   return (
     <section className="webcontainer-spike" aria-label="WebContainer Spike">
       <div className="webcontainer-spike__alert">
-        Spike experimental client-side. Não executa no servidor. Não representa ainda a demo final.
+        Spike experimental client-side executando artefato controlado. Não executa no servidor. Não representa ainda a demo final.
       </div>
 
       <div className="webcontainer-spike__card">
@@ -74,7 +74,7 @@ export default function WebContainerSpike() {
       </div>
 
       <button type="button" className="webcontainer-spike__button" onClick={handleRunSpike} disabled={isRunning}>
-        Rodar spike WebContainers
+        Rodar artefato controlado no WebContainer
       </button>
 
       <div className="webcontainer-spike__card">

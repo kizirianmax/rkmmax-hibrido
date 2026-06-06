@@ -1,3 +1,24 @@
+## 2026-06-06 — feat(construtor): executar artefato controlado via WebContainer client-side
+
+| Item | Detalhe |
+|------|---------|
+| **Título do PR** | `feat(construtor): executar artefato controlado via WebContainer client-side` |
+| **Objetivo do PR** | Evoluir o spike pós-PR #574 para executar, no navegador, um artefato mínimo controlado multi-arquivo do Construtor/Híbrido via WebContainer, mantendo escopo experimental e reversível. |
+| **Arquivos alterados** | `CHECKLIST.md`; `src/lib/construtor/webcontainerArtifactFixture.js`; `src/lib/construtor/webcontainerSpikeRunner.js`; `src/lib/construtor/__tests__/webcontainerSpikeRunner.test.js`; `src/pages/WebContainerSpike.jsx`; `src/pages/__tests__/WebContainerSpike.test.jsx`. |
+| **Confirmação de escopo** | Entrega permanece spike experimental, não demo final de produção. Execução 100% client-side no WebContainer do navegador. |
+| **Confirmação sobre `executeArtifact` e `api/`** | `executeArtifact` server-side permanece desativado e nenhum arquivo em `api/` foi alterado. |
+| **Confirmação de backend/API/endpoint/migration** | Nenhum backend novo, nenhum endpoint novo e nenhuma migration criada. |
+| **Confirmação de artefato controlado** | Fixture fixo multi-arquivo com `package.json`, `index.js`, `artifact-manifest.json` e `lib/sum.js`; sem dependências externas, sem rede, sem secrets e sem payload real de usuário. |
+| **Confirmação de payload e dados de usuário** | Sem payload bruto, sem `user_email`, sem arquivos reais, sem `content`, sem `contentPreview`, sem `zipBase64` e sem dados reais de usuário. |
+| **Confirmação de acionamento manual/lazy** | WebContainer roda apenas após clique explícito na rota `/webcontainer-spike`; import de `@webcontainer/api` permanece dinâmico/lazy via `await import(...)`. |
+| **Confirmação de teardown** | `teardown()` permanece chamado no bloco `finally` do runner. |
+| **Confirmação de ausência de `/api/`** | O fixture e a página não chamam `/api/...`; testes verificam ausência de chamadas a `/api/` no fluxo da página. |
+| **Confirmação de COOP/COEP** | Sem COOP/COEP global novo; permanece a configuração isolada do spike herdada do PR #574. |
+| **Validações executadas** | Baseline: `npm test -- --runInBand` (ok), `npm run build` (ok). Targeted: `npm test -- --runInBand src/lib/construtor/__tests__/webcontainerSpikeRunner.test.js src/pages/__tests__/WebContainerSpike.test.jsx` (ok). Final: `npm test`, `npm run build`, `git diff --check origin/main...HEAD` e `git diff --name-only origin/main...HEAD`. |
+| **Rollback** | `git revert <commit-sha>` |
+
+---
+
 ## 2026-06-06 — feat(construtor): spike WebContainers para demo viva client-side
 
 | Item | Detalhe |
