@@ -1,3 +1,20 @@
+## 2026-06-06 — feat(construtor): conectar candidate controlado ao contrato sanitizado WebContainer
+
+| Item | Detalhe |
+|------|---------|
+| **Título do PR** | `feat(construtor): conectar candidate controlado ao contrato sanitizado WebContainer` |
+| **Objetivo do PR** | Criar ponte incremental, controlada e testável entre um artifact candidate do Construtor e o contrato sanitizado do WebContainer, sem backend/API/dados reais. |
+| **Arquivos alterados** | `CHECKLIST.md`; `src/lib/construtor/webcontainerConstructorArtifactAdapter.js`; `src/lib/construtor/webcontainerArtifactFixture.js`; `src/lib/construtor/__tests__/webcontainerConstructorArtifactAdapter.test.js`; `src/lib/construtor/__tests__/webcontainerArtifactContract.test.js`; `src/lib/construtor/__tests__/webcontainerSpikeRunner.test.js`. |
+| **Adapter criado** | Novo adapter puro `buildWebContainerCandidateFromConstructorArtifact(artifact)` valida shape controlado, exige `entrypoint: index.js`, rejeita campos sensíveis/proibidos e produz candidate plano allowlistado antes da sanitização. |
+| **Confirmação de escopo client-side** | Runner continua manual/lazy/client-side e monta apenas `CONTROLLED_ARTIFACT_SANITIZED.mountTree` para execução no navegador. |
+| **Confirmação de backend/API/migration** | Nenhuma alteração em `api/`, sem endpoint novo, sem backend novo e sem migration. |
+| **Confirmação de `executeArtifact`** | `executeArtifact` server-side permanece desativado. |
+| **Confirmação de candidate controlado** | Fixture usa artifact candidate controlado, sem geração real e sem integração com payload de usuário. |
+| **Confirmação de payload sensível** | Sem uso de payload real; sem `content`, `contentPreview`, `zipBase64`, `user_email`, secrets ou tokens. |
+| **Rollback** | `git revert <commit-sha>` |
+
+---
+
 ## 2026-06-06 — feat(construtor): adicionar contrato sanitizado para artefato WebContainer
 
 | Item | Detalhe |

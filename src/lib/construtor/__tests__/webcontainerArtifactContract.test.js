@@ -3,7 +3,7 @@ import {
   sanitizeWebContainerArtifact,
   validateWebContainerArtifact,
 } from "../webcontainerArtifactContract.js";
-import { CONTROLLED_ARTIFACT_CANDIDATE } from "../webcontainerArtifactFixture.js";
+import { CONTROLLED_ARTIFACT_CANDIDATE, CONTROLLED_ARTIFACT_SANITIZED } from "../webcontainerArtifactFixture.js";
 
 function candidateWith(overrides) {
   return {
@@ -179,5 +179,10 @@ describe("webcontainerArtifactContract", () => {
     expect(sanitized.mountTree).toHaveProperty(["package.json", "file", "contents"]);
     expect(sanitized.mountTree).toHaveProperty(["index.js", "file", "contents"]);
     expect(sanitized.mountTree).toHaveProperty(["lib", "directory", "sum.js", "file", "contents"]);
+  });
+
+  test("fixture controlado já chega sanitizado para mount", () => {
+    expect(CONTROLLED_ARTIFACT_SANITIZED.ok).toBe(true);
+    expect(CONTROLLED_ARTIFACT_SANITIZED.mountTree).toEqual(normalizeWebContainerArtifact(CONTROLLED_ARTIFACT_CANDIDATE));
   });
 });
