@@ -17,12 +17,19 @@ import { runWebContainerSpike } from "../../lib/construtor/webcontainerSpikeRunn
 import WebContainerSpike from "../WebContainerSpike.jsx";
 
 describe("WebContainerSpike page", () => {
+  const originalFetch = globalThis.fetch;
+
   beforeEach(() => {
     jest.clearAllMocks();
+    globalThis.fetch = jest.fn();
     Object.defineProperty(globalThis, "crossOriginIsolated", {
       configurable: true,
       value: true,
     });
+  });
+
+  afterEach(() => {
+    globalThis.fetch = originalFetch;
   });
 
   test("renderiza aviso experimental e botão de execução", () => {
@@ -40,7 +47,7 @@ describe("WebContainerSpike page", () => {
     render(<WebContainerSpike />);
 
     expect(runWebContainerSpike).not.toHaveBeenCalled();
-    let apiCalls = (globalThis.fetch?.mock?.calls || []).filter(([url]) => String(url).includes("/api/"));
+    let apiCalls = globalThis.fetch.mock.calls.filter(([url]) => String(url).includes("/api/"));
     expect(apiCalls).toHaveLength(0);
 
     fireEvent.click(screen.getByRole("button", { name: "Rodar spike WebContainers" }));
@@ -52,7 +59,7 @@ describe("WebContainerSpike page", () => {
       expect(screen.getByText(/Status:/i).closest("p")).toHaveTextContent("sucesso");
     });
 
-    apiCalls = (globalThis.fetch?.mock?.calls || []).filter(([url]) => String(url).includes("/api/"));
+    apiCalls = globalThis.fetch.mock.calls.filter(([url]) => String(url).includes("/api/"));
     expect(apiCalls).toHaveLength(0);
   });
 });
