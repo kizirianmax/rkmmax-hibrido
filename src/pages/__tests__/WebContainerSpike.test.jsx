@@ -21,7 +21,8 @@ jest.mock("../../lib/construtor/webcontainerSpikeEvidence.js", () => ({
 jest.mock("../../lib/construtor/webcontainerSpikeRunner.js", () => ({
   runWebContainerSpike: jest.fn(async () => ({
     ok: true,
-    stdout: "Resultado controlado: 42\nRKMMAX artifact run OK",
+    stdout:
+      "Artifact: controlled-webcontainer-artifact@0.0.0-spike\nResultado controlado: 42\nRKMMAX artifact run OK\n",
     stderr: "",
     exitCode: 0,
     durationMs: 10,
@@ -60,6 +61,29 @@ describe("WebContainerSpike page", () => {
     expect(screen.getByRole("button", { name: "Rodar artefato controlado no WebContainer" })).toBeInTheDocument();
   });
 
+  test("renderiza card de evidência segura sem payload bruto", () => {
+    render(<WebContainerSpike />);
+
+    expect(screen.getByText("Candidate controlado do Construtor")).toBeInTheDocument();
+    expect(screen.getByText("Adapter: aprovado")).toBeInTheDocument();
+    expect(screen.getByText("Contrato sanitizado: aprovado")).toBeInTheDocument();
+    expect(screen.getByText("Execução: client-side / WebContainer")).toBeInTheDocument();
+    expect(screen.getByText("Payload bruto: não exibido")).toBeInTheDocument();
+    expect(screen.getByText("Backend/API: não usado")).toBeInTheDocument();
+    expect(screen.getByText("executeArtifact server-side: desativado")).toBeInTheDocument();
+    expect(screen.getByText("Ainda é spike experimental; não é demo final de produção.")).toBeInTheDocument();
+
+    expect(screen.getByText("package.json")).toBeInTheDocument();
+    expect(screen.getByText("artifact-manifest.json")).toBeInTheDocument();
+    expect(screen.getByText("index.js")).toBeInTheDocument();
+    expect(screen.getByText("lib/sum.js")).toBeInTheDocument();
+
+    expect(screen.queryByText(/zipBase64/i)).not.toBeInTheDocument();
+    expect(screen.queryByText(/contentPreview/i)).not.toBeInTheDocument();
+    expect(screen.queryByText(/user_email/i)).not.toBeInTheDocument();
+    expect(screen.queryByText(/const manifest = require/i)).not.toBeInTheDocument();
+  });
+
   test("não chama /api na renderização nem no fluxo do spike", async () => {
     render(<WebContainerSpike />);
 
@@ -75,6 +99,9 @@ describe("WebContainerSpike page", () => {
     await waitFor(() => {
       expect(screen.getByText(/Status:/i).closest("p")).toHaveTextContent("sucesso");
     });
+    expect(screen.getByText(/Artifact: controlled-webcontainer-artifact@0.0.0-spike/)).toBeInTheDocument();
+    expect(screen.getByText(/Resultado controlado: 42/)).toBeInTheDocument();
+    expect(screen.getByText(/RKMMAX artifact run OK/)).toBeInTheDocument();
 
     apiCalls = globalThis.fetch.mock.calls.filter(([url]) => String(url).includes("/api/"));
     expect(apiCalls).toHaveLength(0);
