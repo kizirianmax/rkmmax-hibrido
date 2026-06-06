@@ -137,6 +137,28 @@ describe("webcontainerArtifactContract", () => {
     });
   });
 
+  test("rejeita acesso dinâmico que poderia burlar rede", () => {
+    const result = validateWebContainerArtifact(
+      candidateWith({ "index.js": "globalThis['fe' + 'tch']('/api/anything');\n" })
+    );
+
+    expect(result).toMatchObject({
+      ok: false,
+      reason: "conteudo-com-acesso-dinamico",
+      path: "index.js",
+    });
+  });
+
+  test("rejeita import externo ou dinâmico", () => {
+    const result = validateWebContainerArtifact(candidateWith({ "index.js": "const moduleName = 'node:https';\nrequire(moduleName);\n" }));
+
+    expect(result).toMatchObject({
+      ok: false,
+      reason: "conteudo-com-import-externo",
+      path: "index.js",
+    });
+  });
+
   test("rejeita wrapper files para não aceitar payload bruto", () => {
     const result = validateWebContainerArtifact({ files: CONTROLLED_ARTIFACT_CANDIDATE });
 

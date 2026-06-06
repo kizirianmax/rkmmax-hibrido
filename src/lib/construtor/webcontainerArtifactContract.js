@@ -25,7 +25,14 @@ const FORBIDDEN_CONTENT_PATTERNS = [
     reason: "conteudo-com-api-de-rede",
     pattern:
       /\b(?:fetch|XMLHttpRequest|WebSocket|EventSource)\b|(?:require|import)\s*\(\s*["'](?:node:)?(?:https?|http2|net|tls|dns|dgram|undici)["']\s*\)|\bfrom\s*["'](?:node:)?(?:https?|http2|net|tls|dns|dgram|undici)["']/i,
+    jsOnly: true,
   },
+  {
+    reason: "conteudo-com-acesso-dinamico",
+    pattern: /\b(?:globalThis|window|self|document|navigator|location)\b|\[\s*["'`]|\[[^\]]*\+|\beval\s*\(|\bFunction\s*\(/,
+    jsOnly: true,
+  },
+  { reason: "conteudo-com-import-externo", pattern: /(?:require|import)\s*\(\s*(?!["']\.)/i, jsOnly: true },
   { reason: "conteudo-com-secret", pattern: /\b(?:token|secret|api[_-]?key|password|authorization|bearer)\b/i },
   { reason: "conteudo-com-user-email", pattern: /\buser_email\b/i },
   { reason: "conteudo-com-zipbase64", pattern: /\bzipBase64\b/ },
@@ -73,7 +80,10 @@ export function validateArtifactContent(path, contents) {
     return fail("conteudo-invalido", path);
   }
 
-  for (const { reason, pattern } of FORBIDDEN_CONTENT_PATTERNS) {
+  for (const { reason, pattern, jsOnly } of FORBIDDEN_CONTENT_PATTERNS) {
+    if (jsOnly && !path.endsWith(".js")) {
+      continue;
+    }
     if (pattern.test(contents)) {
       return fail(reason, path);
     }
