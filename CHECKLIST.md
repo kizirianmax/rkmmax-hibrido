@@ -1,3 +1,20 @@
+## 2026-06-06 — feat(construtor): adicionar contrato sanitizado para artefato WebContainer
+
+| Item | Detalhe |
+|------|---------|
+| **Título do PR** | `feat(construtor): adicionar contrato sanitizado para artefato WebContainer` |
+| **Objetivo do PR** | Criar camada incremental, pequena e reversível de contrato sanitizado entre artefatos do Construtor/Híbrido e WebContainer client-side, ainda usando fixture fixo/controlado. |
+| **Arquivos alterados** | `CHECKLIST.md`; `src/lib/construtor/webcontainerArtifactContract.js`; `src/lib/construtor/webcontainerArtifactFixture.js`; `src/lib/construtor/webcontainerSpikeRunner.js`; `src/lib/construtor/__tests__/webcontainerArtifactContract.test.js`; `src/lib/construtor/__tests__/webcontainerSpikeRunner.test.js`. |
+| **Contrato sanitizado criado** | Novo módulo puro valida candidato, aplica allowlist, rejeita caminhos/conteúdos proibidos e normaliza para a árvore aceita por `webcontainer.mount`. |
+| **Allowlist aplicada** | Permitidos apenas `package.json`, `artifact-manifest.json`, `index.js` e arquivos `lib/*.js`. |
+| **Payload proibido** | Rejeita traversal/absoluto/backslash, dotfiles, lockfiles, scripts de instalação, dependências externas, URLs/rede, tokens/secrets, `user_email`, `zipBase64`, `contentPreview`, payload bruto e comandos de shell. |
+| **Confirmação de backend/API/endpoint/migration** | Nenhum arquivo em `api/` alterado; nenhum backend novo, endpoint novo ou migration criada. |
+| **Confirmação de execução server-side** | Sem execução server-side; `executeArtifact` permanece desativado e o runner continua 100% client-side via WebContainer no navegador. |
+| **Confirmação de payload real** | Fixture permanece fixo/controlado, sem dados reais de usuário e sem integração com geração real do Híbrido neste PR. |
+| **Rollback** | `git revert <commit-sha>` |
+
+---
+
 ## 2026-06-06 — feat(construtor): executar artefato controlado via WebContainer client-side
 
 | Item | Detalhe |
