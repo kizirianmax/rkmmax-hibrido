@@ -5,6 +5,10 @@ import {
 } from "./webcontainerArtifactFixture.js";
 
 const BLOCKED_PAYLOAD_POLICY = ["content", "contentPreview", "zipBase64", "user_email", "secrets", "network", "shell"];
+export const ARTIFACT_SOURCE = {
+  fixture: "controlled-fixture",
+  approved: "approved-constructor",
+};
 
 function flattenMountTreeFiles(mountTree, prefix = "") {
   const files = [];
@@ -39,5 +43,18 @@ export function getWebContainerSpikeEvidence() {
     mountTreeFiles,
     blockedPayloadPolicy: BLOCKED_PAYLOAD_POLICY,
     warning: "Fixture controlado; não usa dados reais de usuário.",
+  };
+}
+
+export function getApprovedConstructorArtifactBridgeStatus() {
+  return {
+    status: "approved-constructor-artifact: unavailable",
+    available: false,
+    activeSource: ARTIFACT_SOURCE.fixture,
+    reason: "no-safe-client-side-approved-source",
+    rawPayloadAccessed: false,
+    apiUsed: false,
+    executeArtifactServerSide: "disabled",
+    note: "Bridge preparada estruturalmente; ainda não executa artefato real aprovado.",
   };
 }
