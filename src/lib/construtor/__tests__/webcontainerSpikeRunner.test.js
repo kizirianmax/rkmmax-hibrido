@@ -3,6 +3,11 @@ import { jest } from "@jest/globals";
 
 const mockMount = jest.fn();
 const mockTeardown = jest.fn();
+const mockWebContainerModuleFactory = jest.fn(() => ({
+  WebContainer: {
+    boot: mockBoot,
+  },
+}));
 const mockOutputChunks = [
   "Artifact: controlled-webcontainer-artifact@0.0.0-spike\n",
   "Resultado controlado: 42\n",
@@ -30,18 +35,43 @@ const mockBoot = jest.fn(async () => ({
   teardown: mockTeardown,
 }));
 
-jest.unstable_mockModule("@webcontainer/api", () => ({
-  WebContainer: {
-    boot: mockBoot,
-  },
-}));
+jest.unstable_mockModule("@webcontainer/api", mockWebContainerModuleFactory);
 
 const { CONTROLLED_ARTIFACT_ENTRYPOINT } = await import("../webcontainerArtifactFixture.js");
 const { runWebContainerSpike } = await import("../webcontainerSpikeRunner.js");
 
 describe("runWebContainerSpike", () => {
+  const originalFetch = globalThis.fetch;
+
   beforeEach(() => {
     jest.clearAllMocks();
+    mockMount.mockResolvedValue(undefined);
+    mockSpawn.mockImplementation(async () => ({
+      output: {
+        getReader() {
+          let index = 0;
+          return {
+            async read() {
+              if (index >= mockOutputChunks.length) {
+                return { done: true };
+              }
+              return { done: false, value: mockOutputChunks[index++] };
+            },
+          };
+        },
+      },
+      exit: Promise.resolve(0),
+    }));
+    globalThis.fetch = jest.fn();
+  });
+
+  afterEach(() => {
+    globalThis.fetch = originalFetch;
+  });
+
+  test("não faz boot automático ao importar o runner", () => {
+    expect(mockBoot).not.toHaveBeenCalled();
+    expect(mockWebContainerModuleFactory).not.toHaveBeenCalled();
   });
 
   test("retorna cedo sem importar/bootar quando cross-origin isolation está indisponível", async () => {
@@ -55,6 +85,7 @@ describe("runWebContainerSpike", () => {
 
     expect(result.ok).toBe(false);
     expect(result.reason).toBe("cross-origin-isolation-indisponivel");
+    expect(mockWebContainerModuleFactory).not.toHaveBeenCalled();
     expect(mockBoot).not.toHaveBeenCalled();
   });
 
@@ -71,11 +102,28 @@ describe("runWebContainerSpike", () => {
     expect(mountedFixture).toHaveProperty(["package.json", "file", "contents"]);
     expect(mountedFixture).toHaveProperty([CONTROLLED_ARTIFACT_ENTRYPOINT, "file", "contents"]);
     expect(mountedFixture).toHaveProperty(["lib", "directory", "sum.js", "file", "contents"]);
+    expect(mountedFixture).not.toHaveProperty(["lib/sum.js"]);
     expect(mockSpawn).toHaveBeenCalledWith("node", [CONTROLLED_ARTIFACT_ENTRYPOINT]);
     expect(mockTeardown).toHaveBeenCalledTimes(1);
     expect(result.ok).toBe(true);
     expect(result.stdout).toContain("Resultado controlado: 42");
     expect(result.stdout).toContain("RKMMAX artifact run OK");
     expect(result.stderr).toBe("");
+    const apiCalls = globalThis.fetch.mock.calls.filter(([url]) => String(url).includes("/api/"));
+    expect(apiCalls).toHaveLength(0);
+  });
+
+  test("chama teardown em finally quando a execução falha após o boot", async () => {
+    Object.defineProperty(globalThis, "crossOriginIsolated", {
+      configurable: true,
+      value: true,
+    });
+    mockSpawn.mockRejectedValueOnce(new Error("falha controlada"));
+
+    const result = await runWebContainerSpike();
+
+    expect(result.ok).toBe(false);
+    expect(mockBoot).toHaveBeenCalledTimes(1);
+    expect(mockTeardown).toHaveBeenCalledTimes(1);
   });
 });

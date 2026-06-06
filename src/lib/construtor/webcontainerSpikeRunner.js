@@ -3,7 +3,7 @@
  * Não representa uso comercial em produção.
  */
 
-import { CONTROLLED_ARTIFACT_ENTRYPOINT, CONTROLLED_ARTIFACT_FILES } from "./webcontainerArtifactFixture.js";
+import { CONTROLLED_ARTIFACT_ENTRYPOINT, CONTROLLED_ARTIFACT_SANITIZED } from "./webcontainerArtifactFixture.js";
 
 function normalizeErrorMessage(error) {
   const raw = error?.message || String(error || "erro-desconhecido");
@@ -45,7 +45,7 @@ export async function runWebContainerSpike(options = {}) {
 
     onStatusChange("bootando");
     webcontainer = await WebContainer.boot();
-    await webcontainer.mount(CONTROLLED_ARTIFACT_FILES);
+    await webcontainer.mount(CONTROLLED_ARTIFACT_SANITIZED.mountTree);
 
     onStatusChange("executando");
     const process = await webcontainer.spawn("node", [CONTROLLED_ARTIFACT_ENTRYPOINT]);
