@@ -1,3 +1,25 @@
+## 2026-06-05 — docs(observability): F15-05 validar governança observacional da Fase 15
+
+| Item | Detalhe |
+|------|---------|
+| **Título do PR** | `docs(observability): F15-05 validar governança observacional da Fase 15` |
+| **Objetivo F15-05** | Registrar formalmente a validação documental da governança observacional da Fase 15, confirmando coerência de F15-01 a F15-04 sem alteração funcional, sem backend/API/migration, sem UI funcional nova, sem payload bruto, sem overclaim e sem bypass ao Serginho. |
+| **Documento criado** | `docs/audits/f15-05-validacao-documental-governanca-observacional-2026-06-05.md` |
+| **Confirmação de validação documental da governança observacional** | Governança observacional da Fase 15 validada documentalmente como camada de segurança/privacidade observacional, sem runtime. |
+| **Confirmação de coerência F15-01 a F15-04** | F15-01 abriu a fase, F15-02 criou a matriz de risco, F15-03 criou a política de payload permitido/proibido e F15-04 revisou a narrativa de banca/incubadora sem overclaim, com coerência entre segurança, privacidade, separação de camadas, runtime intacto e Serginho como orquestrador soberano. |
+| **Confirmação de payload permitido** | Payload permitido permanece restrito a metadados seguros: status, contagens, timestamps, `artifactId`, `traceId`, flags de checksum, timeline segura, warnings, limitations, `hasFeedback` booleano sem feedback bruto, resumo estrutural seguro sem conteúdo bruto e indicadores observacionais sem dados sensíveis. |
+| **Confirmação de payload proibido** | Permanecem proibidos: eventos brutos quando proibidos pelo contrato, conteúdo bruto, `zipBase64`, `files`, `content`, `contentPreview`, `user_email`, feedback bruto, segredos/tokens, payload de execução, logs como execução funcional real e dados sensíveis/identificáveis indevidos. |
+| **Confirmação anti-overclaim** | F15 não promete execução real, sandbox real, restauração funcional, time-travel funcional, prova criptográfica completa, auditoria externa, SLA, segurança absoluta, clientes, receita ou tração. |
+| **Confirmação arquitetural** | Serginho IA permanece orquestrador soberano/gateway único; observabilidade permanece read-only, sem decisão automática de runtime, sem bypass ao Serginho e sem mistura com geração, execução, ZIP, preview funcional, Especialistas ou ABNT. |
+| **Confirmação de ausência de alteração funcional** | Sem alteração funcional; entrega exclusivamente documental. |
+| **Confirmação de ausência de backend/API/migration** | Sem backend novo, sem endpoint novo, sem alteração em `api/` e sem migration em `supabase/migrations/`. |
+| **Confirmação de ausência de UI funcional nova** | Não houve UI funcional nova; validação restrita à documentação. |
+| **Confirmação de que Dependabot não foi tratado** | Dependabot permanece fora de escopo na F15-05. |
+| **Recomendação para F15-06** | Se F15-05 for aprovada, executar F15-06 como encerramento formal da Fase 15. |
+| **Rollback** | `git revert <commit-sha>` |
+
+---
+
 ## 2026-06-05 — docs(observability): F15-04 revisar narrativa de banca e incubadora sem overclaim
 
 | Item | Detalhe |
