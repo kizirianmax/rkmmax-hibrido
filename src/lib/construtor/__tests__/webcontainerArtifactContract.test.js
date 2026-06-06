@@ -119,6 +119,24 @@ describe("webcontainerArtifactContract", () => {
     expect(result).toMatchObject({ ok: false, reason: "conteudo-com-contentpreview", path: "artifact-manifest.json" });
   });
 
+  test("rejeita APIs de rede nativas sem URL literal", () => {
+    const nodeNetworkResult = validateWebContainerArtifact(
+      candidateWith({ "index.js": 'require("node:https").request({ hostname: "example.test" }).end();\n' })
+    );
+    const fetchResult = validateWebContainerArtifact(candidateWith({ "index.js": "fetch('/api/anything');\n" }));
+
+    expect(nodeNetworkResult).toMatchObject({
+      ok: false,
+      reason: "conteudo-com-api-de-rede",
+      path: "index.js",
+    });
+    expect(fetchResult).toMatchObject({
+      ok: false,
+      reason: "conteudo-com-api-de-rede",
+      path: "index.js",
+    });
+  });
+
   test("rejeita wrapper files para não aceitar payload bruto", () => {
     const result = validateWebContainerArtifact({ files: CONTROLLED_ARTIFACT_CANDIDATE });
 

@@ -21,6 +21,11 @@ const DEPENDENCY_FIELDS = [
 ];
 const FORBIDDEN_CONTENT_PATTERNS = [
   { reason: "conteudo-com-url-ou-rede", pattern: /\b(?:https?|ftp|wss?):\/\//i },
+  {
+    reason: "conteudo-com-api-de-rede",
+    pattern:
+      /\b(?:fetch|XMLHttpRequest|WebSocket|EventSource)\b|(?:require|import)\s*\(\s*["'](?:node:)?(?:https?|http2|net|tls|dns|dgram|undici)["']\s*\)|\bfrom\s*["'](?:node:)?(?:https?|http2|net|tls|dns|dgram|undici)["']/i,
+  },
   { reason: "conteudo-com-secret", pattern: /\b(?:token|secret|api[_-]?key|password|authorization|bearer)\b/i },
   { reason: "conteudo-com-user-email", pattern: /\buser_email\b/i },
   { reason: "conteudo-com-zipbase64", pattern: /\bzipBase64\b/ },
