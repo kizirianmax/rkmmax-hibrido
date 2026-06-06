@@ -1,0 +1,47 @@
+.webcontainer-spike {
+  max-width: 860px;
+  margin: 0 auto;
+  padding: 24px 16px 32px;
+  display: grid;
+  gap: 16px;
+}
+
+.webcontainer-spike__alert {
+  border: 1px solid #f59e0b;
+  background: #fffbeb;
+  color: #92400e;
+  border-radius: 8px;
+  padding: 12px;
+  font-weight: 600;
+}
+
+.webcontainer-spike__card {
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  padding: 12px;
+  background: #fff;
+}
+
+.webcontainer-spike__button {
+  width: fit-content;
+  padding: 10px 14px;
+  border: 0;
+  border-radius: 6px;
+  background: #111827;
+  color: #fff;
+  cursor: pointer;
+}
+
+.webcontainer-spike__button:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+
+.webcontainer-spike pre {
+  margin: 8px 0 0;
+  padding: 10px;
+  border-radius: 6px;
+  background: #0f172a;
+  color: #e2e8f0;
+  overflow-x: auto;
+}
