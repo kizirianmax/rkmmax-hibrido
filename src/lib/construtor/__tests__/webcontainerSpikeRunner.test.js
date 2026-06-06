@@ -3,13 +3,25 @@ import { jest } from "@jest/globals";
 
 const mockMount = jest.fn();
 const mockTeardown = jest.fn();
+const mockOutputChunks = [
+  "Artifact: controlled-webcontainer-artifact@0.0.0-spike\n",
+  "Resultado controlado: 42\n",
+  "RKMMAX artifact run OK\n",
+];
 const mockSpawn = jest.fn(async () => ({
-  output: new ReadableStream({
-    start(controller) {
-      controller.enqueue("RKMMAX WebContainer spike OK\n");
-      controller.close();
+  output: {
+    getReader() {
+      let index = 0;
+      return {
+        async read() {
+          if (index >= mockOutputChunks.length) {
+            return { done: true };
+          }
+          return { done: false, value: mockOutputChunks[index++] };
+        },
+      };
     },
-  }),
+  },
   exit: Promise.resolve(0),
 }));
 const mockBoot = jest.fn(async () => ({
@@ -24,6 +36,7 @@ jest.unstable_mockModule("@webcontainer/api", () => ({
   },
 }));
 
+const { CONTROLLED_ARTIFACT_ENTRYPOINT } = await import("../webcontainerArtifactFixture.js");
 const { runWebContainerSpike } = await import("../webcontainerSpikeRunner.js");
 
 describe("runWebContainerSpike", () => {
@@ -45,7 +58,7 @@ describe("runWebContainerSpike", () => {
     expect(mockBoot).not.toHaveBeenCalled();
   });
 
-  test("faz boot e executa o script mínimo quando houver isolamento", async () => {
+  test("faz boot e executa o artefato controlado multi-arquivo quando houver isolamento", async () => {
     Object.defineProperty(globalThis, "crossOriginIsolated", {
       configurable: true,
       value: true,
@@ -54,14 +67,15 @@ describe("runWebContainerSpike", () => {
     const result = await runWebContainerSpike();
     expect(mockBoot).toHaveBeenCalledTimes(1);
     expect(mockMount).toHaveBeenCalledTimes(1);
-    expect(mockSpawn).toHaveBeenCalledWith("node", ["index.js"]);
+    const mountedFixture = mockMount.mock.calls[0][0];
+    expect(mountedFixture).toHaveProperty(["package.json", "file", "contents"]);
+    expect(mountedFixture).toHaveProperty([CONTROLLED_ARTIFACT_ENTRYPOINT, "file", "contents"]);
+    expect(mountedFixture).toHaveProperty(["lib", "directory", "sum.js", "file", "contents"]);
+    expect(mockSpawn).toHaveBeenCalledWith("node", [CONTROLLED_ARTIFACT_ENTRYPOINT]);
     expect(mockTeardown).toHaveBeenCalledTimes(1);
-    expect(typeof result.ok).toBe("boolean");
-    if (result.ok) {
-      expect(result.stdout).toContain("RKMMAX WebContainer spike OK");
-    } else {
-      expect(result.reason).toBeTruthy();
-      expect(typeof result.error).toBe("string");
-    }
+    expect(result.ok).toBe(true);
+    expect(result.stdout).toContain("Resultado controlado: 42");
+    expect(result.stdout).toContain("RKMMAX artifact run OK");
+    expect(result.stderr).toBe("");
   });
 });

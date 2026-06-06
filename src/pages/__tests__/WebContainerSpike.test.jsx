@@ -8,7 +8,7 @@ jest.mock("../WebContainerSpike.css", () => ({}), { virtual: true });
 jest.mock("../../lib/construtor/webcontainerSpikeRunner.js", () => ({
   runWebContainerSpike: jest.fn(async () => ({
     ok: true,
-    stdout: "RKMMAX WebContainer spike OK",
+    stdout: "Resultado controlado: 42\nRKMMAX artifact run OK",
     stderr: "",
     exitCode: 0,
     durationMs: 10,
@@ -41,10 +41,10 @@ describe("WebContainerSpike page", () => {
 
     expect(
       screen.getByText(
-        "Spike experimental client-side. Não executa no servidor. Não representa ainda a demo final."
+        "Spike experimental client-side executando artefato controlado. Não executa no servidor. Não representa ainda a demo final."
       )
     ).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: "Rodar spike WebContainers" })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Rodar artefato controlado no WebContainer" })).toBeInTheDocument();
   });
 
   test("não chama /api na renderização nem no fluxo do spike", async () => {
@@ -54,7 +54,7 @@ describe("WebContainerSpike page", () => {
     let apiCalls = globalThis.fetch.mock.calls.filter(([url]) => String(url).includes("/api/"));
     expect(apiCalls).toHaveLength(0);
 
-    fireEvent.click(screen.getByRole("button", { name: "Rodar spike WebContainers" }));
+    fireEvent.click(screen.getByRole("button", { name: "Rodar artefato controlado no WebContainer" }));
 
     await waitFor(() => {
       expect(runWebContainerSpike).toHaveBeenCalledTimes(1);

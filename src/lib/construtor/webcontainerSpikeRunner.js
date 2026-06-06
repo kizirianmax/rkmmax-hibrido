@@ -3,8 +3,7 @@
  * Não representa uso comercial em produção.
  */
 
-const SPIKE_FILE_NAME = "index.js";
-const SPIKE_FILE_CONTENT = "console.log('RKMMAX WebContainer spike OK');\n";
+import { CONTROLLED_ARTIFACT_ENTRYPOINT, CONTROLLED_ARTIFACT_FILES } from "./webcontainerArtifactFixture.js";
 
 function normalizeErrorMessage(error) {
   const raw = error?.message || String(error || "erro-desconhecido");
@@ -46,33 +45,42 @@ export async function runWebContainerSpike(options = {}) {
 
     onStatusChange("bootando");
     webcontainer = await WebContainer.boot();
-    await webcontainer.mount({
-      [SPIKE_FILE_NAME]: {
-        file: {
-          contents: SPIKE_FILE_CONTENT,
-        },
-      },
-    });
+    await webcontainer.mount(CONTROLLED_ARTIFACT_FILES);
 
     onStatusChange("executando");
-    const process = await webcontainer.spawn("node", [SPIKE_FILE_NAME]);
+    const process = await webcontainer.spawn("node", [CONTROLLED_ARTIFACT_ENTRYPOINT]);
     let stdout = "";
 
+    // A API usada neste spike expõe `process.output` como stream combinado; stderr dedicado fica vazio.
+    let decoder = null;
     const reader = process.output.getReader();
     while (true) {
       const { done, value } = await reader.read();
       if (done) break;
-      stdout += value || "";
+      if (typeof value === "string") {
+        stdout += value;
+      } else {
+        decoder ||= new TextDecoder();
+        stdout += decoder.decode(value, { stream: true });
+      }
     }
+    stdout += decoder ? decoder.decode() : "";
 
     const exitCode = await process.exit;
+    const ok = exitCode === 0;
     return {
-      ok: true,
+      ok,
       stdout: stdout.trim(),
       stderr: "",
       exitCode,
       durationMs: Date.now() - startedAt,
       crossOriginIsolated: true,
+      ...(ok
+        ? {}
+        : {
+            reason: "artifact-exit-code-nao-zero",
+            error: `Artefato controlado terminou com código ${exitCode}.`,
+          }),
     };
   } catch (error) {
     const normalized = normalizeErrorMessage(error);
