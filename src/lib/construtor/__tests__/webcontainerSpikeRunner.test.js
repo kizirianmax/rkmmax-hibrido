@@ -37,7 +37,7 @@ const mockBoot = jest.fn(async () => ({
 
 jest.unstable_mockModule("@webcontainer/api", mockWebContainerModuleFactory);
 
-const { CONTROLLED_ARTIFACT_ENTRYPOINT } = await import("../webcontainerArtifactFixture.js");
+const { CONTROLLED_ARTIFACT_ENTRYPOINT, CONTROLLED_ARTIFACT_SANITIZED } = await import("../webcontainerArtifactFixture.js");
 const { runWebContainerSpike } = await import("../webcontainerSpikeRunner.js");
 
 describe("runWebContainerSpike", () => {
@@ -99,6 +99,7 @@ describe("runWebContainerSpike", () => {
     expect(mockBoot).toHaveBeenCalledTimes(1);
     expect(mockMount).toHaveBeenCalledTimes(1);
     const mountedFixture = mockMount.mock.calls[0][0];
+    expect(mountedFixture).toEqual(CONTROLLED_ARTIFACT_SANITIZED.mountTree);
     expect(mountedFixture).toHaveProperty(["package.json", "file", "contents"]);
     expect(mountedFixture).toHaveProperty([CONTROLLED_ARTIFACT_ENTRYPOINT, "file", "contents"]);
     expect(mountedFixture).toHaveProperty(["lib", "directory", "sum.js", "file", "contents"]);
@@ -106,6 +107,7 @@ describe("runWebContainerSpike", () => {
     expect(mockSpawn).toHaveBeenCalledWith("node", [CONTROLLED_ARTIFACT_ENTRYPOINT]);
     expect(mockTeardown).toHaveBeenCalledTimes(1);
     expect(result.ok).toBe(true);
+    expect(result.stdout).toContain("Artifact: controlled-webcontainer-artifact@0.0.0-spike");
     expect(result.stdout).toContain("Resultado controlado: 42");
     expect(result.stdout).toContain("RKMMAX artifact run OK");
     expect(result.stderr).toBe("");
