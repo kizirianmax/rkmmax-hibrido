@@ -54,6 +54,38 @@ describe("webcontainerArtifactContract", () => {
     expect(result).toMatchObject({ ok: false, reason: "dependencias-externas-nao-permitidas", path: "package.json" });
   });
 
+  test("rejeita optionalDependencies e bundledDependencies em package.json", () => {
+    const optionalResult = validateWebContainerArtifact(
+      candidateWith({
+        "package.json": `${JSON.stringify({
+          name: "fixture",
+          version: "0.0.0",
+          optionalDependencies: { leftpad: "1.3.0" },
+        })}\n`,
+      })
+    );
+    const bundledResult = validateWebContainerArtifact(
+      candidateWith({
+        "package.json": `${JSON.stringify({
+          name: "fixture",
+          version: "0.0.0",
+          bundledDependencies: ["leftpad"],
+        })}\n`,
+      })
+    );
+
+    expect(optionalResult).toMatchObject({
+      ok: false,
+      reason: "dependencias-externas-nao-permitidas",
+      path: "package.json",
+    });
+    expect(bundledResult).toMatchObject({
+      ok: false,
+      reason: "dependencias-externas-nao-permitidas",
+      path: "package.json",
+    });
+  });
+
   test("rejeita scripts perigosos em package.json", () => {
     const result = validateWebContainerArtifact(
       candidateWith({

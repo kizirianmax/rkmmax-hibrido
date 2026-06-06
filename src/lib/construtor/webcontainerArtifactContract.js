@@ -10,7 +10,15 @@ const DANGEROUS_PACKAGE_SCRIPT_NAMES = new Set([
   "prepublish",
   "prepublishOnly",
 ]);
-const DEPENDENCY_FIELDS = ["dependencies", "devDependencies", "devependencies", "peerDependencies"];
+const DEPENDENCY_FIELDS = [
+  "dependencies",
+  "devDependencies",
+  "devependencies",
+  "peerDependencies",
+  "optionalDependencies",
+  "bundledDependencies",
+  "bundleDependencies",
+];
 const FORBIDDEN_CONTENT_PATTERNS = [
   { reason: "conteudo-com-url-ou-rede", pattern: /\b(?:https?|ftp|wss?):\/\//i },
   { reason: "conteudo-com-secret", pattern: /\b(?:token|secret|api[_-]?key|password|authorization|bearer)\b/i },
@@ -83,6 +91,9 @@ export function validateArtifactContent(path, contents) {
 
   for (const field of DEPENDENCY_FIELDS) {
     if (isPlainObject(packageJson[field]) && Object.keys(packageJson[field]).length > 0) {
+      return fail("dependencias-externas-nao-permitidas", path);
+    }
+    if (Array.isArray(packageJson[field]) && packageJson[field].length > 0) {
       return fail("dependencias-externas-nao-permitidas", path);
     }
   }
