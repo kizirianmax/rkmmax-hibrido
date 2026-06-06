@@ -1,3 +1,25 @@
+## 2026-06-05 — docs(observability): F15-06 encerrar formalmente a Fase 15
+
+| Item | Detalhe |
+|------|---------|
+| **Título do PR** | `docs(observability): F15-06 encerrar formalmente a Fase 15` |
+| **Objetivo F15-06** | Registrar formalmente o encerramento da Fase 15, consolidando F15-01 a F15-05 como trilha documental completa de governança de segurança e privacidade observacional, sem alteração funcional. |
+| **Documento criado** | `docs/audits/f15-06-encerramento-formal-fase15-governanca-observacional-2026-06-05.md` |
+| **Confirmação de encerramento formal da Fase 15** | Fase 15 encerrada formalmente no escopo documental de governança de segurança e privacidade observacional. |
+| **Consolidação F15-01 a F15-05** | Consolidado: abertura formal, matriz documental de risco, política de payload permitido/proibido, revisão narrativa sem overclaim e validação documental da governança observacional. |
+| **Confirmação de PR exclusivamente documental** | Alterações restritas a `CHECKLIST.md` e ao documento de auditoria F15-06, sem implementação funcional. |
+| **Confirmação de ausência de alteração funcional** | Sem alteração funcional; sem runtime novo, sem execução, sem sandbox real e sem decisão funcional automática. |
+| **Confirmação de ausência de backend/API/migration** | Sem backend novo, sem endpoint novo, sem alteração em `api/` e sem migration em `supabase/migrations/`. |
+| **Confirmação de ausência de UI funcional nova** | Não houve UI funcional nova; entrega restrita ao encerramento documental F15-06. |
+| **Confirmação de payload permitido/proibido preservado** | Permitidos apenas metadados seguros (`status`, contagens, timestamps, `artifactId`, `traceId`, checksum flags, timeline segura, warnings, limitations, `hasFeedback` booleano e resumo estrutural seguro); proibidos payload bruto, `zipBase64`, `files`, `content`, `contentPreview`, `user_email`, feedback bruto, segredos/tokens e payload de execução. |
+| **Confirmação de limites sem overclaim** | Sem promessa de execução real, sandbox real, restauração funcional, time-travel funcional, prova criptográfica completa, auditoria externa, SLA, segurança absoluta, clientes, receita ou tração. |
+| **Confirmação de camadas preservadas** | Serginho IA permanece orquestrador soberano/gateway único; Híbrido/Construtor permanece na camada de geração/preview/revisão/aprovação/ajuste/artefatos; Artifact Ledger, replay/diff e consulta por `traceId` permanecem observacionais/read-only; consumo visual observacional permanece leitura/visualização sem decisão de runtime; sem mistura de camadas. |
+| **Confirmação de que Dependabot não foi tratado** | Dependabot permanece fora de escopo neste encerramento formal F15-06. |
+| **Recomendação de auditoria de transição pós-Fase 15** | Realizar auditoria de transição pós-Fase 15 antes de qualquer nova fase para decidir entre evidência/demonstração para banca/incubadora, certificado/exportação observacional em fase própria, segurança técnica futura, janela técnica de dependências/Dependabot ou outra frente apontada na auditoria. |
+| **Rollback** | `git revert <commit-sha>` |
+
+---
+
 ## 2026-06-05 — docs(observability): F15-05 validar governança observacional da Fase 15
 
 | Item | Detalhe |
