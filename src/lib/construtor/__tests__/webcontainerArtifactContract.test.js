@@ -87,6 +87,12 @@ describe("webcontainerArtifactContract", () => {
     expect(result).toMatchObject({ ok: false, reason: "conteudo-com-contentpreview", path: "artifact-manifest.json" });
   });
 
+  test("rejeita wrapper files para não aceitar payload bruto", () => {
+    const result = validateWebContainerArtifact({ files: CONTROLLED_ARTIFACT_CANDIDATE });
+
+    expect(result).toMatchObject({ ok: false, reason: "arquivo-fora-da-allowlist", path: "files" });
+  });
+
   test("rejeita arquivo fora da allowlist", () => {
     const result = validateWebContainerArtifact(candidateWith({ "src/app.js": "console.log('nope');\n" }));
 

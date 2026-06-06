@@ -29,18 +29,6 @@ function fail(reason, path) {
   };
 }
 
-function getCandidateFiles(candidate) {
-  if (!candidate || typeof candidate !== "object" || Array.isArray(candidate)) {
-    return null;
-  }
-
-  if (candidate.files && typeof candidate.files === "object" && !Array.isArray(candidate.files)) {
-    return candidate.files;
-  }
-
-  return candidate;
-}
-
 function isPlainObject(value) {
   return value && typeof value === "object" && !Array.isArray(value);
 }
@@ -111,12 +99,11 @@ export function validateArtifactContent(path, contents) {
 }
 
 export function validateWebContainerArtifact(candidate) {
-  const files = getCandidateFiles(candidate);
-  if (!files) {
+  if (!isPlainObject(candidate)) {
     return fail("artefato-invalido");
   }
 
-  const entries = Object.entries(files);
+  const entries = Object.entries(candidate);
   if (entries.length === 0) {
     return fail("artefato-sem-arquivos");
   }
