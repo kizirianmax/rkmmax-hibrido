@@ -1,6 +1,7 @@
 import React, { useMemo, useState } from "react";
 import "./WebContainerSpike.css";
 import { runWebContainerSpike } from "../lib/construtor/webcontainerSpikeRunner.js";
+import { getWebContainerSpikeEvidence } from "../lib/construtor/webcontainerSpikeEvidence.js";
 
 const STATUS = {
   idle: "idle",
@@ -26,6 +27,8 @@ export default function WebContainerSpike() {
     }),
     []
   );
+
+  const evidence = useMemo(() => getWebContainerSpikeEvidence(), []);
 
   async function handleRunSpike() {
     setIsRunning(true);
@@ -71,6 +74,30 @@ export default function WebContainerSpike() {
         <p>crossOriginIsolated: {String(diagnostics.crossOriginIsolated)}</p>
         <p>SharedArrayBuffer disponível: {String(diagnostics.hasSharedArrayBuffer)}</p>
         <p>WebContainers requer COOP/COEP ativos para boot.</p>
+      </div>
+
+      <div className="webcontainer-spike__card" aria-label="Evidência segura do fluxo">
+        <strong>Evidência segura do fluxo</strong>
+        <ul className="webcontainer-spike__list">
+          <li>Candidate controlado do Construtor</li>
+          <li>Adapter: {evidence.adapter === "passed" ? "aprovado" : "falhou"}</li>
+          <li>Contrato sanitizado: {evidence.sanitization === "passed" ? "aprovado" : "falhou"}</li>
+          <li>Execução: client-side / WebContainer</li>
+          <li>Payload bruto: não exibido</li>
+          <li>Backend/API: não usado</li>
+          <li>executeArtifact server-side: desativado</li>
+        </ul>
+        <p>
+          <strong>Arquivos permitidos</strong>
+        </p>
+        <ul className="webcontainer-spike__files" aria-label="Arquivos permitidos">
+          {evidence.allowedFiles.map((filePath) => (
+            <li key={filePath}>
+              <code>{filePath}</code>
+            </li>
+          ))}
+        </ul>
+        <p className="webcontainer-spike__warning">Ainda é spike experimental; não é demo final de produção.</p>
       </div>
 
       <button type="button" className="webcontainer-spike__button" onClick={handleRunSpike} disabled={isRunning}>

@@ -1788,3 +1788,17 @@
 | **Arquivos alterados** | `CHECKLIST.md`, `docs/audits/P4-artifactRunner-audit.md` |
 | **Validação executada** | Baseline local: `npm run build` e `npm test -- --runInBand` verdes; `npm run lint` falha por configuração do projeto (ESLint v10 sem `eslint.config.*`), sem relação com este PR documental. |
 | **Rollback** | `git revert <commit-sha>` |
+
+## 2026-06-06 — feat(construtor): evidência segura do fluxo candidate → sanitize em `/webcontainer-spike`
+
+| Item | Detalhe |
+|------|---------|
+| **Título do PR** | `feat(construtor): evidenciar fluxo seguro candidate -> adapter -> sanitize na rota experimental /webcontainer-spike` |
+| **Base confirmada** | `origin/main` reconfirmada em `7f03b125e0b240675abbd9658f9f668c3d7b2a0b` (`feat(construtor): conectar artifact candidate controlado ao contrato sanitizado WebContainer (#578)`). |
+| **Arquivos alterados** | `CHECKLIST.md`; `src/pages/WebContainerSpike.jsx`; `src/pages/WebContainerSpike.css`; `src/pages/tests/WebContainerSpike.test.jsx`; `src/lib/construtor/webcontainerSpikeEvidence.js`; `src/lib/construtor/tests/webcontainerSpikeEvidence.test.js`. |
+| **Escopo** | Somente client-side na rota experimental `/webcontainer-spike`, sem integração com geração real, sem backend, sem `/api/`. |
+| **Evidência segura exibida na UI** | Card com: candidate controlado, adapter aprovado, contrato sanitizado aprovado, execução client-side/WebContainer, arquivos permitidos, payload bruto não exibido, backend/API não usado, `executeArtifact` server-side desativado e aviso de spike experimental. |
+| **Privacidade e segurança** | Nenhum conteúdo bruto de arquivo, `zipBase64`, `content`, `contentPreview`, `user_email`, secrets ou tokens é exibido. |
+| **Execução preservada** | Runner continua manual/lazy via clique; import de `@webcontainer/api` permanece no runner existente. |
+| **Validação local** | `npm test`; `npm run build`; `git diff --check origin/main...HEAD`; `git diff --name-only origin/main...HEAD`. |
+| **Arquitetura preservada** | `api/` intocado; sem endpoint, sem migration, sem backend; App/AuthGate/Header não alterados; contrato sanitizado e adapter não enfraquecidos. |
