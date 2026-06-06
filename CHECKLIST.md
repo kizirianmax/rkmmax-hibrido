@@ -1,3 +1,19 @@
+## 2026-06-06 — feat(spike): preparar bridge segura (CAMINHO B) para artefato aprovado em `/webcontainer-spike`
+
+| Item | Detalhe |
+|------|---------|
+| **Título do PR** | `feat(spike): preparar bridge segura (CAMINHO B) para artefato aprovado em /webcontainer-spike` |
+| **Objetivo do PR** | Preparar estrutura honesta e reversível de bridge para artefato aprovado do Construtor sem integração insegura, mantendo execução atual por fixture controlado. |
+| **Arquivos alterados** | `CHECKLIST.md`; `src/lib/construtor/webcontainerSpikeEvidence.js`; `src/lib/construtor/__tests__/webcontainerSpikeEvidence.test.js`; `src/lib/construtor/__tests__/webcontainerConstructorArtifactAdapter.test.js`; `src/pages/WebContainerSpike.jsx`; `src/pages/__tests__/WebContainerSpike.test.jsx`. |
+| **Confirmação de escopo client-side** | `/webcontainer-spike` continua client-side, sem boot automático e com execução apenas por clique explícito. |
+| **Confirmação de ausência de api/backend/migration** | Nenhuma alteração em `api/`; nenhum endpoint novo; nenhuma migration; nenhum backend alterado. |
+| **Confirmação de `executeArtifact`** | `executeArtifact` server-side permanece desativado. |
+| **Caminho escolhido** | **CAMINHO B**: `approved-constructor-artifact: unavailable` por ausência de fonte client-side aprovada segura sem API/payload bruto. |
+| **Confirmação de payload real/sensível** | UI e helper exibem apenas metadados seguros; sem `content`, `contentPreview`, `zipBase64`, `user_email`, secrets ou tokens. |
+| **Rollback** | `git revert <commit-sha>` |
+
+---
+
 ## 2026-06-06 — feat(construtor): conectar candidate controlado ao contrato sanitizado WebContainer
 
 | Item | Detalhe |

@@ -78,6 +78,16 @@ describe("webcontainerConstructorArtifactAdapter", () => {
     }
   );
 
+  test("rejeita campo sensível aninhado (token)", () => {
+    const result = buildWebContainerCandidateFromConstructorArtifact(
+      createControlledArtifact({ metadata: { token: "segredo" } })
+    );
+
+    expect(result.ok).toBe(false);
+    expect(result.reason).toBe("campo-sensivel-nao-permitido");
+    expect(result.path).toBe("metadata.token");
+  });
+
   test("não chama fetch nem /api durante adaptação", () => {
     const result = buildWebContainerCandidateFromConstructorArtifact(createControlledArtifact());
 

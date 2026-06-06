@@ -1,4 +1,4 @@
-import { getWebContainerSpikeEvidence } from "../webcontainerSpikeEvidence.js";
+import { getApprovedConstructorArtifactBridgeStatus, getWebContainerSpikeEvidence } from "../webcontainerSpikeEvidence.js";
 
 describe("webcontainerSpikeEvidence", () => {
   test("retorna apenas metadados seguros da cadeia candidate -> sanitize", () => {
@@ -22,5 +22,28 @@ describe("webcontainerSpikeEvidence", () => {
 
     expect(serialized).not.toContain("const manifest = require");
     expect(serialized).not.toContain("module.exports = { sum }");
+  });
+
+  test("expõe status de bridge com metadados seguros e sem payload bruto", () => {
+    const bridgeStatus = getApprovedConstructorArtifactBridgeStatus();
+
+    expect(bridgeStatus).toEqual({
+      status: "approved-constructor-artifact: unavailable",
+      available: false,
+      activeSource: "controlled-fixture",
+      reason: "no-safe-client-side-approved-source",
+      rawPayloadAccessed: false,
+      apiUsed: false,
+      executeArtifactServerSide: "disabled",
+      note: "Bridge preparada estruturalmente; ainda não executa artefato real aprovado.",
+    });
+
+    const serialized = JSON.stringify(bridgeStatus);
+    expect(serialized).not.toContain("content");
+    expect(serialized).not.toContain("contentPreview");
+    expect(serialized).not.toContain("zipBase64");
+    expect(serialized).not.toContain("user_email");
+    expect(serialized).not.toContain("token");
+    expect(serialized).not.toContain("secret");
   });
 });

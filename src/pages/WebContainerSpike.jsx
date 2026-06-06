@@ -1,7 +1,11 @@
 import React, { useMemo, useState } from "react";
 import "./WebContainerSpike.css";
 import { runWebContainerSpike } from "../lib/construtor/webcontainerSpikeRunner.js";
-import { getWebContainerSpikeEvidence } from "../lib/construtor/webcontainerSpikeEvidence.js";
+import {
+  ARTIFACT_SOURCE,
+  getApprovedConstructorArtifactBridgeStatus,
+  getWebContainerSpikeEvidence,
+} from "../lib/construtor/webcontainerSpikeEvidence.js";
 
 const STATUS = {
   idle: "idle",
@@ -29,6 +33,7 @@ export default function WebContainerSpike() {
   );
 
   const evidence = useMemo(() => getWebContainerSpikeEvidence(), []);
+  const bridgeStatus = useMemo(() => getApprovedConstructorArtifactBridgeStatus(), []);
 
   async function handleRunSpike() {
     setIsRunning(true);
@@ -66,7 +71,7 @@ export default function WebContainerSpike() {
   return (
     <section className="webcontainer-spike" aria-label="WebContainer Spike">
       <div className="webcontainer-spike__alert">
-        Spike experimental client-side executando artefato controlado. Não executa no servidor. Não representa ainda a demo final.
+        Spike experimental client-side com bridge segura em preparação. Execução atual usa fixture controlado, não artefato real aprovado.
       </div>
 
       <div className="webcontainer-spike__card">
@@ -79,14 +84,25 @@ export default function WebContainerSpike() {
       <div className="webcontainer-spike__card" aria-label="Evidência segura do fluxo">
         <strong>Evidência segura do fluxo</strong>
         <ul className="webcontainer-spike__list">
-          <li>Candidate controlado do Construtor</li>
+          <li>
+            Origem ativa do artefato:{" "}
+            {bridgeStatus.activeSource === ARTIFACT_SOURCE.fixture ? "fixture controlado" : "artefato aprovado"}
+          </li>
+          <li>Status bridge approved-constructor: {bridgeStatus.status}</li>
+          <li>Bridge disponível no client: {bridgeStatus.available ? "sim" : "não"}</li>
+          <li>Motivo bridge indisponível: {bridgeStatus.reason}</li>
           <li>Adapter: {evidence.adapter === "passed" ? "aprovado" : "falhou"}</li>
           <li>Contrato sanitizado: {evidence.sanitization === "passed" ? "aprovado" : "falhou"}</li>
           <li>Execução: client-side / WebContainer</li>
+          <li>Leitura de payload bruto: {bridgeStatus.rawPayloadAccessed ? "sim" : "não"}</li>
           <li>Payload bruto: não exibido</li>
-          <li>Backend/API: não usado</li>
-          <li>executeArtifact server-side: desativado</li>
+          <li>Backend/API: {bridgeStatus.apiUsed ? "usado" : "não usado"}</li>
+          <li>
+            executeArtifact server-side:{" "}
+            {bridgeStatus.executeArtifactServerSide === "disabled" ? "desativado" : bridgeStatus.executeArtifactServerSide}
+          </li>
         </ul>
+        <p className="webcontainer-spike__warning">{bridgeStatus.note}</p>
         <p>
           <strong>Arquivos permitidos</strong>
         </p>
