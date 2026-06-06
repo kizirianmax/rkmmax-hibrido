@@ -1,3 +1,19 @@
+## 2026-06-06 — feat(construtor): conectar candidate controlado ao contrato sanitizado WebContainer
+
+| Item | Detalhe |
+|------|---------|
+| **Título do PR** | `feat(construtor): conectar candidate controlado ao contrato sanitizado WebContainer` |
+| **Objetivo do PR** | Criar ponte mínima e testável entre um candidate controlado do Construtor e o contrato sanitizado WebContainer, mantendo execução 100% client-side, manual e lazy. |
+| **Arquivos alterados** | `CHECKLIST.md`; `src/lib/construtor/webcontainerConstructorArtifactAdapter.js`; `src/lib/construtor/webcontainerArtifactFixture.js`; `src/lib/construtor/__tests__/webcontainerConstructorArtifactAdapter.test.js`; `src/lib/construtor/__tests__/webcontainerArtifactContract.test.js`; `src/lib/construtor/__tests__/webcontainerSpikeRunner.test.js`. |
+| **Confirmação de escopo client-side** | Runner permanece client-side com import dinâmico/lazy de `@webcontainer/api`, sem boot automático e com execução manual. |
+| **Confirmação de ausência de api/backend/migration** | Nenhuma alteração em `api/`; nenhum endpoint novo; nenhuma migration; nenhum backend alterado. |
+| **Confirmação de `executeArtifact`** | `executeArtifact` server-side permanece desativado e fora deste fluxo. |
+| **Confirmação de candidate controlado** | Adapter puro converte objeto controlado (`id`, `version`, `entrypoint`, `manifest`, `files`) para candidate plano allowlistado antes da sanitização. |
+| **Confirmação de payload real/sensível** | Sem payload real de usuário e com rejeição conservadora para `content`, `contentPreview`, `zipBase64`, `user_email` e campos sensíveis (`token/secret/...`). |
+| **Rollback** | `git revert <commit-sha>` |
+
+---
+
 ## 2026-06-06 — feat(construtor): adicionar contrato sanitizado para artefato WebContainer
 
 | Item | Detalhe |

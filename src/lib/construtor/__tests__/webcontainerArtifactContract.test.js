@@ -3,7 +3,7 @@ import {
   sanitizeWebContainerArtifact,
   validateWebContainerArtifact,
 } from "../webcontainerArtifactContract.js";
-import { CONTROLLED_ARTIFACT_CANDIDATE } from "../webcontainerArtifactFixture.js";
+import { CONTROLLED_ARTIFACT_CANDIDATE, CONTROLLED_ARTIFACT_SANITIZED } from "../webcontainerArtifactFixture.js";
 
 function candidateWith(overrides) {
   return {
@@ -20,6 +20,14 @@ describe("webcontainerArtifactContract", () => {
     expect(result.files).toHaveProperty(["package.json"]);
     expect(result.files).toHaveProperty(["index.js"]);
     expect(result.files).toHaveProperty(["lib/sum.js"]);
+  });
+
+  test("fixture controlado passa por adapter + sanitize", () => {
+    expect(CONTROLLED_ARTIFACT_CANDIDATE).toHaveProperty(["package.json"]);
+    expect(CONTROLLED_ARTIFACT_CANDIDATE).toHaveProperty(["artifact-manifest.json"]);
+    expect(CONTROLLED_ARTIFACT_SANITIZED).toMatchObject({ ok: true });
+    expect(CONTROLLED_ARTIFACT_SANITIZED.mountTree).toHaveProperty(["index.js", "file", "contents"]);
+    expect(CONTROLLED_ARTIFACT_SANITIZED.mountTree).toHaveProperty(["lib", "directory", "sum.js", "file", "contents"]);
   });
 
   test("rejeita path traversal", () => {
