@@ -1,3 +1,20 @@
+## 2026-06-07 — feat(construtor): mapear fonte oficial client-safe de approved artifact
+
+| Item | Detalhe |
+|------|---------|
+| **Título do PR** | `feat(construtor): mapear fonte oficial client-safe de approved artifact` |
+| **Objetivo do PR** | Criar helper puro/testável para inspecionar fonte de `Approved Constructor Artifact` no Construtor/Híbrido e marcar elegibilidade client-safe sem execução real. |
+| **Arquivos alterados** | `CHECKLIST.md`; `src/lib/construtor/approvedConstructorArtifactSource.js`; `src/lib/construtor/__tests__/approvedConstructorArtifactSource.test.js`. |
+| **Investigação client-safe oficial (8.5)** | No fluxo atual, a única trilha de preview real no Construtor usa `sessionStorage`, `agentMessage.content` e entrega com `zipBase64` em `HybridAgentSimple.jsx`; portanto **não elegível** como fonte oficial client-safe de approved artifact neste PR. |
+| **Regras de elegibilidade aplicadas** | Exige objeto plain com `id`, `version`, `approval.status === approved`, `entrypoint === index.js`, `files` plain e allowlist oficial via contrato #581/#576; rejeita campos sensíveis e dependências de storage/API/backend/`executeArtifact`. |
+| **Confirmação de contrato #581** | Helper reutiliza `validateApprovedConstructorArtifact` como verdade final e retorna artifact apenas quando `validateApprovedConstructorArtifact(...).ok === true`. |
+| **Confirmação de ausência de execução real** | Não chama handoff, não gera `mountTree`, não chama `WebContainer.boot`, não chama `executeArtifact` e não altera runner/UI. |
+| **Confirmação de `api/` e backend** | Nenhum arquivo em `api/` alterado; sem endpoint, migration ou backend novo. |
+| **Validações executadas** | `npm test -- --watch=false src/lib/construtor/__tests__/approvedConstructorArtifactSource.test.js` (ok); `npm test -- --watch=false` (ok); `npm run build` (ok); `git diff --check origin/main...HEAD` (ok); `git diff --name-only origin/main...HEAD` (ok). |
+| **Rollback** | `git revert <commit-sha>` |
+
+---
+
 ## 2026-06-07 — feat(construtor): preparar handoff client-safe de approved artifact para WebContainer
 
 | Item | Detalhe |
