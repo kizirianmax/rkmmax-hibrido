@@ -1,3 +1,23 @@
+## 2026-06-07 — feat(construtor): criar elo inicial de snapshot client-safe em memória
+
+| Item | Detalhe |
+|------|---------|
+| **Título do PR** | `feat(construtor): criar elo inicial de snapshot client-safe em memória` |
+| **Objetivo do PR** | Criar helper puro/testável que recebe dados explícitos do Construtor, monta snapshot client-safe em memória e delega elegibilidade ao mapper #584 (gate #583 + contrato #581), sem execução real. |
+| **Base confirmada** | `origin/main = 640cee1fe2cda1c4f3a6011a6e0688a276236f81` (`Map constructor in-memory snapshot to client-safe approved artifact source via #583 gate (#584)`). |
+| **Arquivos alterados** | `CHECKLIST.md`; `src/lib/construtor/constructorApprovedArtifactMemorySnapshot.js`; `src/lib/construtor/__tests__/constructorApprovedArtifactMemorySnapshot.test.js`. |
+| **Confirmação de execução real** | Não há execução real; helper apenas valida/transforma em memória e delega ao mapper #584. |
+| **Confirmação de handoff #582** | Não importa nem chama `approvedConstructorArtifactHandoff`. |
+| **Confirmação de `mountTree`** | Não gera `mountTree` e não chama `mountTree`. |
+| **Confirmação de `api/`** | Nenhum arquivo em `api/` foi alterado e não há chamada `/api/`. |
+| **Confirmação de backend/migration/endpoint** | Sem alteração de backend; nenhum endpoint novo; nenhuma migration. |
+| **Confirmação de `executeArtifact`** | `executeArtifact` server-side permanece desativado (`executeArtifactServerSide: "disabled"`). |
+| **Integração com Construtor real** | `src/pages/HybridAgentSimple.jsx` **não foi alterado**; o fluxo real atual ainda depende de `sessionStorage`/`localStorage`/`/api/artifact-preview`/`agentMessage.content`/`zipBase64`, portanto permanece **NÃO ELEGÍVEL** (status efetivo: `unavailable`). |
+| **Validações executadas** | `npm test -- --watch=false src/lib/construtor/__tests__/constructorApprovedArtifactMemorySnapshot.test.js` (ok); `npm test -- --watch=false` (ok); `npm run build` (ok); `git diff --check origin/main...HEAD` (ok); `git diff --name-only origin/main...HEAD` (ok). |
+| **Rollback** | `git revert <commit-sha>` |
+
+---
+
 ## 2026-06-07 — feat(construtor): mapear snapshot em memória para source client-safe elegível
 
 | Item | Detalhe |
