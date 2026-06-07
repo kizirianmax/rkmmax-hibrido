@@ -1,3 +1,20 @@
+## 2026-06-07 — feat(construtor): preparar handoff client-safe de approved artifact para WebContainer
+
+| Item | Detalhe |
+|------|---------|
+| **Título do PR** | `feat(construtor): preparar handoff client-safe de approved artifact para WebContainer` |
+| **Objetivo do PR** | Criar camada pura e testável de handoff client-safe (`contrato -> adapter -> sanitize -> mountTree`) para `Approved Constructor Artifact`, sem execução real neste PR. |
+| **Arquivos alterados** | `CHECKLIST.md`; `src/lib/construtor/approvedConstructorArtifactHandoff.js`; `src/lib/construtor/__tests__/approvedConstructorArtifactHandoff.test.js`. |
+| **Confirmação de handoff client-safe** | Fluxo implementado apenas com contrato #581 + adapter existente + sanitização existente, retornando status seguro e `mountTree` sanitizado. |
+| **Confirmação de ausência de execução real** | Não há execução automática de artefato real, não há leitura de fonte real no client e não há boot de WebContainer neste handoff. |
+| **Confirmação de `api/`** | Nenhum arquivo em `api/` foi alterado. |
+| **Confirmação de `executeArtifact`** | `executeArtifact` server-side permanece desativado. |
+| **Confirmação de storage/API/backend** | Sem `sessionStorage`, sem `localStorage`, sem chamada `/api/`, sem endpoint, sem migration e sem alteração de backend. |
+| **Validações executadas** | `npm test -- --watch=false src/lib/construtor/__tests__/approvedConstructorArtifactHandoff.test.js` (ok); `npm test -- --watch=false` (ok); `npm run build` (ok); `git diff --check origin/main...HEAD` (ok); `git diff --name-only origin/main...HEAD` (ok). |
+| **Rollback** | `git revert <commit-sha>` |
+
+---
+
 ## 2026-06-07 — feat(construtor): definir contrato client-safe de approved artifact
 
 | Item | Detalhe |
