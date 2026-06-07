@@ -1,3 +1,20 @@
+## 2026-06-07 — feat(construtor): definir contrato client-safe de approved artifact
+
+| Item | Detalhe |
+|------|---------|
+| **Título do PR** | `feat(construtor): definir contrato client-safe de approved artifact` |
+| **Objetivo do PR** | Definir contrato intermediário puro e testável para `Approved Constructor Artifact` client-safe, sem conectar execução real neste PR. |
+| **Arquivos alterados** | `CHECKLIST.md`; `src/lib/construtor/approvedConstructorArtifactContract.js`; `src/lib/construtor/__tests__/approvedConstructorArtifactContract.test.js`. |
+| **Confirmação de escopo client-side** | Mudança restrita à camada de contrato client-safe no Construtor/Híbrido; sem backend, sem endpoint e sem migration. |
+| **Confirmação de ausência de execução real** | Contrato definido, mas fonte real de artifact aprovado continua indisponível no client e não é executada neste PR. |
+| **Confirmação de `api/`** | Nenhum arquivo em `api/` foi alterado. |
+| **Confirmação de `executeArtifact`** | `executeArtifact` server-side permanece desativado. |
+| **Confirmação da preparação contratual** | PR prepara validação/normalização/status seguros para futuro approved artifact antes de adapter/sanitize/WebContainer. |
+| **Validações executadas** | `npm test -- --watch=false src/lib/construtor/__tests__/approvedConstructorArtifactContract.test.js` (ok); `npm test -- --watch=false` (ok); `npm run build` (ok); `git diff --check origin/main...HEAD` (ok); `git diff --name-only origin/main...HEAD` (ok). |
+| **Rollback** | `git revert <commit-sha>` |
+
+---
+
 ## 2026-06-06 — feat(spike): preparar bridge segura (CAMINHO B) para artefato aprovado em `/webcontainer-spike`
 
 | Item | Detalhe |
