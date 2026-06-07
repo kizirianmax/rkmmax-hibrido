@@ -1,3 +1,20 @@
+## 2026-06-07 — feat(construtor): mapear snapshot em memória para source client-safe elegível
+
+| Item | Detalhe |
+|------|---------|
+| **Título do PR** | `feat(construtor): mapear snapshot em memória para source client-safe elegível` |
+| **Objetivo do PR** | Criar mapper puro/testável que recebe snapshot explícito em memória do Construtor, delega elegibilidade ao gate oficial #583 e retorna status público seguro sem execução real. |
+| **Arquivos alterados** | `CHECKLIST.md`; `src/lib/construtor/constructorApprovedArtifactSourceMapper.js`; `src/lib/construtor/__tests__/constructorApprovedArtifactSourceMapper.test.js`. |
+| **Investigação do estado real do Construtor** | Em `src/pages/HybridAgentSimple.jsx`, o fluxo atual ainda depende de `sessionStorage`, `localStorage`, `/api/artifact-preview`, `agentMessage.content` e `zipBase64`; portanto permanece **NÃO ELEGÍVEL** como fonte client-safe real neste momento. |
+| **Conclusão honesta** | Este PR entrega somente a camada pura de mapeamento para um snapshot client-safe futuro/seguro; **não há execução real** neste PR. |
+| **Reuso obrigatório do #583** | Mapper delega decisão final para `buildApprovedConstructorArtifactFromSource` (`approvedConstructorArtifactSource.js`), preservando #583 como gate oficial e #581 como contrato final. |
+| **Regras de elegibilidade cobertas** | Exige contrato aprovado (`id`, `version`, `approval.status=approved`, `entrypoint=index.js`, `files` plain object e paths allowlistados); rejeita payload bruto/sensível, storage/API/backend/`executeArtifact` e `agentMessage.content`. |
+| **Confirmações de segurança e escopo** | Sem leitura de storage, sem `/api/`, sem handoff #582, sem `mountTree`, sem `WebContainer.boot`, sem `executeArtifact`; `executeArtifact` server-side permanece desativado; sem backend/endpoint/migration. |
+| **Validações executadas** | `npm test -- --runInBand src/lib/construtor/__tests__/constructorApprovedArtifactSourceMapper.test.js` (ok); `npm test -- --runInBand` (ok); `npm run build` (ok); `git diff --check origin/main...HEAD` (ok); `git diff --name-only origin/main...HEAD` (ok). |
+| **Rollback** | `git revert <commit-sha>` |
+
+---
+
 ## 2026-06-07 — feat(construtor): mapear fonte oficial client-safe de approved artifact
 
 | Item | Detalhe |
