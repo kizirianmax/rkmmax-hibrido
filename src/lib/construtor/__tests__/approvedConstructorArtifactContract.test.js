@@ -34,20 +34,24 @@ describe("approvedConstructorArtifactContract", () => {
   const originalFetch = globalThis.fetch;
   const originalSessionStorage = globalThis.sessionStorage;
   const originalLocalStorage = globalThis.localStorage;
+  let sessionStorageGetter;
+  let localStorageGetter;
 
   beforeEach(() => {
     globalThis.fetch = jest.fn();
+    sessionStorageGetter = jest.fn(() => {
+      throw new Error("sessionStorage should not be accessed");
+    });
+    localStorageGetter = jest.fn(() => {
+      throw new Error("localStorage should not be accessed");
+    });
     Object.defineProperty(globalThis, "sessionStorage", {
       configurable: true,
-      get: jest.fn(() => {
-        throw new Error("sessionStorage should not be accessed");
-      }),
+      get: sessionStorageGetter,
     });
     Object.defineProperty(globalThis, "localStorage", {
       configurable: true,
-      get: jest.fn(() => {
-        throw new Error("localStorage should not be accessed");
-      }),
+      get: localStorageGetter,
     });
   });
 
@@ -114,6 +118,17 @@ describe("approvedConstructorArtifactContract", () => {
     expect(result).toMatchObject({ ok: false, reason: "campo-sensivel-nao-permitido", path: "manifest.metadata.token" });
   });
 
+  test("rejeita token/secret aninhado em array", () => {
+    const result = validateApprovedConstructorArtifact(
+      createApprovedArtifact({ manifest: { origin: { specialist: "hybrid" }, metadata: [{ token: "secret" }] } })
+    );
+    expect(result).toMatchObject({
+      ok: false,
+      reason: "campo-sensivel-nao-permitido",
+      path: "manifest.metadata[0].token",
+    });
+  });
+
   test("rejeita files inválido", () => {
     expect(validateApprovedConstructorArtifact(createApprovedArtifact({ files: null }))).toMatchObject({
       ok: false,
@@ -151,6 +166,22 @@ describe("approvedConstructorArtifactContract", () => {
     });
   });
 
+  test("rejeita dependência externa aninhada em array metadata package-like", () => {
+    const result = validateApprovedConstructorArtifact(
+      createApprovedArtifact({
+        manifest: {
+          origin: { specialist: "hybrid" },
+          metadata: [{ dependencies: { react: "^19.0.0" } }],
+        },
+      })
+    );
+    expect(result).toMatchObject({
+      ok: false,
+      reason: "dependencias-externas-nao-permitidas",
+      path: "manifest.metadata[0].dependencies",
+    });
+  });
+
   test("rejeita referência a /api/ no conteúdo", () => {
     const result = validateApprovedConstructorArtifact(
       createApprovedArtifact({
@@ -181,10 +212,14 @@ describe("approvedConstructorArtifactContract", () => {
   });
 
   test("não chama fetch, /api/ nem storage", () => {
-    const status = buildApprovedConstructorArtifactStatus(createApprovedArtifact());
+    const run = () => buildApprovedConstructorArtifactStatus(createApprovedArtifact());
+    expect(run).not.toThrow();
+    const status = run();
     expect(status.ok).toBe(true);
     expect(globalThis.fetch).not.toHaveBeenCalled();
     expect(globalThis.fetch).not.toHaveBeenCalledWith(expect.stringMatching(/\/api\//i));
+    expect(sessionStorageGetter).not.toHaveBeenCalled();
+    expect(localStorageGetter).not.toHaveBeenCalled();
   });
 
   test("retorna status seguro sem expor conteúdo bruto", () => {

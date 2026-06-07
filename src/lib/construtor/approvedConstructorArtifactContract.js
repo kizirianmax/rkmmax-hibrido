@@ -69,6 +69,16 @@ function forbiddenReasonForKey(key) {
 }
 
 function hasForbiddenFields(value, path = "") {
+  if (Array.isArray(value)) {
+    for (let index = 0; index < value.length; index += 1) {
+      const nestedViolation = hasForbiddenFields(value[index], `${path}[${index}]`);
+      if (nestedViolation) {
+        return nestedViolation;
+      }
+    }
+    return null;
+  }
+
   if (!isPlainObject(value)) {
     return null;
   }
@@ -90,6 +100,16 @@ function hasForbiddenFields(value, path = "") {
 }
 
 function hasExternalDependencies(value, path = "") {
+  if (Array.isArray(value)) {
+    for (let index = 0; index < value.length; index += 1) {
+      const nestedViolation = hasExternalDependencies(value[index], `${path}[${index}]`);
+      if (nestedViolation) {
+        return nestedViolation;
+      }
+    }
+    return null;
+  }
+
   if (!isPlainObject(value)) {
     return null;
   }
