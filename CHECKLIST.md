@@ -1,3 +1,25 @@
+## 2026-06-08 — feat(construtor): extrair parser puro de conteúdo multi-file para files estruturados
+
+| Item | Detalhe |
+|------|---------|
+| **Título do PR** | `feat(construtor): extrair parser puro de conteúdo multi-file para files estruturados` |
+| **Base confirmada pós-#589** | `origin/main = 119748836bf02bde90380317fe401ed67a1e19ad` (`feat(construtor): add pure structured-files → previewSummary builder gated by selector #586 (#589)`). |
+| **Objetivo do PR** | Extrair parser puro/testável de texto multi-file do Construtor para `files: [{ name, body }]`, sem wiring no fluxo real. |
+| **Arquivos alterados** | `CHECKLIST.md`; `src/lib/construtor/constructorMultiFileContentParser.js`; `src/lib/construtor/__tests__/constructorMultiFileContentParser.test.js`. |
+| **Confirmação de `HybridAgentSimple.jsx`** | `src/pages/HybridAgentSimple.jsx` **não foi alterado**. |
+| **Confirmação de `api/`** | Nenhum arquivo em `api/` foi tocado. |
+| **Confirmação de execução real** | Sem execução real nova; `executeArtifact` server-side permanece desativado (`executeArtifactServerSide: "disabled"`). |
+| **Builder/selector/handoff em runtime** | Parser não chama builder #589, selector #586 nem handoff #582 em runtime; downstream é provado apenas em testes. |
+| **Rótulo/status do parser** | `status` permanece `constructor-multifile-parser: parsed` (somente parse estrutural) e `sourceType` foi ajustado para `constructor-multifile-structured-content-source`, sem sugerir aprovação/elegibilidade final. |
+| **Confirmação de `mountTree`** | Parser não gera `mountTree` e não chama `mountTree`. |
+| **Shape documental downstream** | `content.md`/`index.html` continuam `unavailable` downstream no builder (reason: `arquivo-fora-da-allowlist`). |
+| **Shape allowlistado downstream** | Shape futuro `index.js` + `lib/sum.js` parseado pode chegar a `eligible` downstream no builder #589. |
+| **Decisão de diretório de testes** | Teste criado em `src/lib/construtor/__tests__/` (convenção real descoberta pelo Jest), sem criar pasta `tests/`. |
+| **Validações executadas** | `npm test` (ok); `npm run build` (ok); `git diff --check origin/main...HEAD` (ok); `git diff --name-only origin/main...HEAD` (ok — exatamente 3 arquivos permitidos). |
+| **Rollback** | `git revert <commit-sha>` |
+
+---
+
 ## 2026-06-08 — feat(construtor): builder puro de arquivos estruturados para previewSummary client-safe
 
 | Item | Detalhe |
