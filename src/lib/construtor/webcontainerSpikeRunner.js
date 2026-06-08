@@ -4,6 +4,7 @@
  */
 
 import { CONTROLLED_ARTIFACT_ENTRYPOINT, CONTROLLED_ARTIFACT_SANITIZED } from "./webcontainerArtifactFixture.js";
+import { isControlledApprovedWebContainerRuntimeInput } from "./constructorApprovedArtifactWebContainerFixture.js";
 
 function normalizeErrorMessage(error) {
   const raw = error?.message || String(error || "erro-desconhecido");
@@ -28,6 +29,14 @@ function normalizeErrorMessage(error) {
 export async function runWebContainerSpike(options = {}) {
   const startedAt = Date.now();
   const onStatusChange = typeof options?.onStatusChange === "function" ? options.onStatusChange : () => {};
+  const trustedRuntimeInput = isControlledApprovedWebContainerRuntimeInput(options?.approvedRuntimeInput)
+    ? options.approvedRuntimeInput
+    : null;
+  const mountTree = trustedRuntimeInput?.mountTree || CONTROLLED_ARTIFACT_SANITIZED.mountTree;
+  const entrypoint =
+    typeof trustedRuntimeInput?.entrypoint === "string" && trustedRuntimeInput.entrypoint.trim().length > 0
+      ? trustedRuntimeInput.entrypoint.trim()
+      : CONTROLLED_ARTIFACT_ENTRYPOINT;
   let webcontainer = null;
 
   if (!globalThis.crossOriginIsolated) {
@@ -45,10 +54,10 @@ export async function runWebContainerSpike(options = {}) {
 
     onStatusChange("bootando");
     webcontainer = await WebContainer.boot();
-    await webcontainer.mount(CONTROLLED_ARTIFACT_SANITIZED.mountTree);
+    await webcontainer.mount(mountTree);
 
     onStatusChange("executando");
-    const process = await webcontainer.spawn("node", [CONTROLLED_ARTIFACT_ENTRYPOINT]);
+    const process = await webcontainer.spawn("node", [entrypoint]);
     let stdout = "";
 
     // A API usada neste spike expõe `process.output` como stream combinado; stderr dedicado fica vazio.

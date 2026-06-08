@@ -38,6 +38,9 @@ const mockBoot = jest.fn(async () => ({
 jest.unstable_mockModule("@webcontainer/api", mockWebContainerModuleFactory);
 
 const { CONTROLLED_ARTIFACT_ENTRYPOINT, CONTROLLED_ARTIFACT_SANITIZED } = await import("../webcontainerArtifactFixture.js");
+const { getControlledApprovedWebContainerRuntimeInput } = await import(
+  "../constructorApprovedArtifactWebContainerFixture.js"
+);
 const { runWebContainerSpike } = await import("../webcontainerSpikeRunner.js");
 
 describe("runWebContainerSpike", () => {
@@ -113,6 +116,51 @@ describe("runWebContainerSpike", () => {
     expect(result.stderr).toBe("");
     const apiCalls = globalThis.fetch.mock.calls.filter(([url]) => String(url).includes("/api/"));
     expect(apiCalls).toHaveLength(0);
+  });
+
+  test("aceita runtime input controlado da bridge e mantém execução client-side", async () => {
+    Object.defineProperty(globalThis, "crossOriginIsolated", {
+      configurable: true,
+      value: true,
+    });
+    const approvedRuntimeInput = getControlledApprovedWebContainerRuntimeInput();
+
+    const result = await runWebContainerSpike({
+      approvedRuntimeInput,
+    });
+
+    expect(result.ok).toBe(true);
+    expect(mockMount).toHaveBeenCalledWith(approvedRuntimeInput.mountTree);
+    expect(mockSpawn).toHaveBeenCalledWith("node", ["index.js"]);
+  });
+
+  test("preserva fallback para fixture quando runtime input confiável não é fornecido", async () => {
+    Object.defineProperty(globalThis, "crossOriginIsolated", {
+      configurable: true,
+      value: true,
+    });
+
+    await runWebContainerSpike();
+
+    expect(mockMount).toHaveBeenCalledWith(CONTROLLED_ARTIFACT_SANITIZED.mountTree);
+    expect(mockSpawn).toHaveBeenCalledWith("node", [CONTROLLED_ARTIFACT_ENTRYPOINT]);
+  });
+
+  test("ignora mountTree/entrypoint arbitrários fora do runtime input confiável", async () => {
+    Object.defineProperty(globalThis, "crossOriginIsolated", {
+      configurable: true,
+      value: true,
+    });
+
+    await runWebContainerSpike({
+      mountTree: {
+        "index.js": { file: { contents: "console.log('arbitrary')" } },
+      },
+      entrypoint: "index.js",
+    });
+
+    expect(mockMount).toHaveBeenCalledWith(CONTROLLED_ARTIFACT_SANITIZED.mountTree);
+    expect(mockSpawn).toHaveBeenCalledWith("node", [CONTROLLED_ARTIFACT_ENTRYPOINT]);
   });
 
   test("chama teardown em finally quando a execução falha após o boot", async () => {

@@ -9,27 +9,35 @@ jest.mock("../../lib/construtor/webcontainerSpikeEvidence.js", () => ({
   ARTIFACT_SOURCE: {
     fixture: "controlled-fixture",
     approved: "approved-constructor",
+    controlledApprovedFixture: "controlled-approved-fixture",
   },
   getWebContainerSpikeEvidence: jest.fn(() => ({
     ok: true,
-    source: "controlled-constructor-artifact",
+    source: "controlled-approved-constructor-artifact",
     adapter: "passed",
     sanitization: "passed",
     entrypoint: "index.js",
     allowedFiles: ["package.json", "artifact-manifest.json", "index.js", "lib/sum.js"],
     mountTreeFiles: ["package.json", "artifact-manifest.json", "index.js", "lib/sum.js"],
     blockedPayloadPolicy: ["content", "contentPreview", "zipBase64", "user_email", "secrets", "network", "shell"],
-    warning: "Fixture controlado; não usa dados reais de usuário.",
+    warning: "Fonte aprovada controlada por fixture allowlistado; ainda não representa artefato real aprovado do Construtor.",
   })),
   getApprovedConstructorArtifactBridgeStatus: jest.fn(() => ({
-    status: "approved-constructor-artifact: unavailable",
-    available: false,
-    activeSource: "controlled-fixture",
-    reason: "no-safe-client-side-approved-source",
+    status: "approved-constructor-artifact: controlled-fixture-ready",
+    available: true,
+    activeSource: "controlled-approved-fixture",
+    sourceType: "controlled-client-safe-approved-source",
     rawPayloadAccessed: false,
     apiUsed: false,
+    storageUsed: false,
     executeArtifactServerSide: "disabled",
-    note: "Bridge preparada estruturalmente; ainda não executa artefato real aprovado.",
+    note: "Fonte aprovada controlada via fixture client-safe; ainda não é artefato real aprovado do Construtor.",
+  })),
+  getApprovedConstructorArtifactBridgeRuntimeInput: jest.fn(() => ({
+    entrypoint: "index.js",
+    mountTree: {
+      "index.js": { file: { contents: "console.log('ok')" } },
+    },
   })),
 }));
 jest.mock("../../lib/construtor/webcontainerSpikeRunner.js", () => ({
@@ -69,7 +77,7 @@ describe("WebContainerSpike page", () => {
 
     expect(
       screen.getByText(
-        "Spike experimental client-side com bridge segura em preparação. Execução atual usa fixture controlado, não artefato real aprovado."
+        "Spike experimental client-side com fonte aprovada controlada via fixture. Ainda não executa artefato real aprovado do Construtor."
       )
     ).toBeInTheDocument();
     expect(screen.getByRole("button", { name: "Rodar artefato controlado no WebContainer" })).toBeInTheDocument();
@@ -78,20 +86,21 @@ describe("WebContainerSpike page", () => {
   test("renderiza card de evidência segura sem payload bruto", () => {
     render(<WebContainerSpike />);
 
-    expect(screen.getByText("Origem ativa do artefato: fixture controlado")).toBeInTheDocument();
-    expect(screen.getByText("Status bridge approved-constructor: approved-constructor-artifact: unavailable")).toBeInTheDocument();
-    expect(screen.getByText("Bridge disponível no client: não")).toBeInTheDocument();
-    expect(screen.getByText("Motivo bridge indisponível: no-safe-client-side-approved-source")).toBeInTheDocument();
+    expect(screen.getByText("Origem ativa do artefato: fonte aprovada controlada (fixture)")).toBeInTheDocument();
+    expect(
+      screen.getByText("Status bridge approved-constructor: approved-constructor-artifact: controlled-fixture-ready")
+    ).toBeInTheDocument();
+    expect(screen.getByText("Bridge disponível no client: sim")).toBeInTheDocument();
+    expect(screen.getByText("Tipo da fonte aprovada: controlled-client-safe-approved-source")).toBeInTheDocument();
     expect(screen.getByText("Adapter: aprovado")).toBeInTheDocument();
     expect(screen.getByText("Contrato sanitizado: aprovado")).toBeInTheDocument();
     expect(screen.getByText("Execução: client-side / WebContainer")).toBeInTheDocument();
     expect(screen.getByText("Leitura de payload bruto: não")).toBeInTheDocument();
     expect(screen.getByText("Payload bruto: não exibido")).toBeInTheDocument();
     expect(screen.getByText("Backend/API: não usado")).toBeInTheDocument();
+    expect(screen.getByText("Storage local: não usado")).toBeInTheDocument();
     expect(screen.getByText("executeArtifact server-side: desativado")).toBeInTheDocument();
-    expect(
-      screen.getByText("Bridge preparada estruturalmente; ainda não executa artefato real aprovado.")
-    ).toBeInTheDocument();
+    expect(screen.getByText("Fonte aprovada controlada via fixture client-safe; ainda não é artefato real aprovado do Construtor.")).toBeInTheDocument();
     expect(screen.getByText("Ainda é spike experimental; não é demo final de produção.")).toBeInTheDocument();
 
     expect(screen.getByText("package.json")).toBeInTheDocument();
@@ -117,6 +126,16 @@ describe("WebContainerSpike page", () => {
     await waitFor(() => {
       expect(runWebContainerSpike).toHaveBeenCalledTimes(1);
     });
+    expect(runWebContainerSpike).toHaveBeenCalledWith(
+      expect.objectContaining({
+        approvedRuntimeInput: {
+          entrypoint: "index.js",
+          mountTree: {
+            "index.js": { file: { contents: "console.log('ok')" } },
+          },
+        },
+      })
+    );
     await waitFor(() => {
       expect(screen.getByText(/Status:/i).closest("p")).toHaveTextContent("sucesso");
     });

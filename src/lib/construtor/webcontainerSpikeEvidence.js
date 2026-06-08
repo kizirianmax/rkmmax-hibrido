@@ -1,13 +1,14 @@
 import {
-  CONTROLLED_ARTIFACT_CANDIDATE,
-  CONTROLLED_ARTIFACT_ENTRYPOINT,
-  CONTROLLED_ARTIFACT_SANITIZED,
-} from "./webcontainerArtifactFixture.js";
+  CONTROLLED_APPROVED_WEBCONTAINER_FIXTURE,
+  getControlledApprovedWebContainerFixturePublicStatus,
+  getControlledApprovedWebContainerRuntimeInput,
+} from "./constructorApprovedArtifactWebContainerFixture.js";
 
 const BLOCKED_PAYLOAD_POLICY = ["content", "contentPreview", "zipBase64", "user_email", "secrets", "network", "shell"];
 export const ARTIFACT_SOURCE = {
   fixture: "controlled-fixture",
   approved: "approved-constructor",
+  controlledApprovedFixture: "controlled-approved-fixture",
 };
 
 function flattenMountTreeFiles(mountTree, prefix = "") {
@@ -30,31 +31,26 @@ function flattenMountTreeFiles(mountTree, prefix = "") {
 }
 
 export function getWebContainerSpikeEvidence() {
-  const allowedFiles = Object.keys(CONTROLLED_ARTIFACT_CANDIDATE);
-  const mountTreeFiles = flattenMountTreeFiles(CONTROLLED_ARTIFACT_SANITIZED.mountTree);
+  const mountTreeFiles = flattenMountTreeFiles(CONTROLLED_APPROVED_WEBCONTAINER_FIXTURE.mountTree);
 
   return {
     ok: true,
-    source: "controlled-constructor-artifact",
+    source: "controlled-approved-constructor-artifact",
     adapter: "passed",
-    sanitization: CONTROLLED_ARTIFACT_SANITIZED.ok ? "passed" : "failed",
-    entrypoint: CONTROLLED_ARTIFACT_ENTRYPOINT,
-    allowedFiles,
+    sanitization: "passed",
+    entrypoint: CONTROLLED_APPROVED_WEBCONTAINER_FIXTURE.entrypoint,
+    allowedFiles: [...CONTROLLED_APPROVED_WEBCONTAINER_FIXTURE.safeFiles],
     mountTreeFiles,
     blockedPayloadPolicy: BLOCKED_PAYLOAD_POLICY,
-    warning: "Fixture controlado; não usa dados reais de usuário.",
+    warning:
+      "Fonte aprovada controlada por fixture allowlistado; ainda não representa artefato real aprovado do Construtor.",
   };
 }
 
 export function getApprovedConstructorArtifactBridgeStatus() {
-  return {
-    status: "approved-constructor-artifact: unavailable",
-    available: false,
-    activeSource: ARTIFACT_SOURCE.fixture,
-    reason: "no-safe-client-side-approved-source",
-    rawPayloadAccessed: false,
-    apiUsed: false,
-    executeArtifactServerSide: "disabled",
-    note: "Bridge preparada estruturalmente; ainda não executa artefato real aprovado.",
-  };
+  return getControlledApprovedWebContainerFixturePublicStatus();
+}
+
+export function getApprovedConstructorArtifactBridgeRuntimeInput() {
+  return getControlledApprovedWebContainerRuntimeInput();
 }
