@@ -1,4 +1,4 @@
-[![CI](https://github.com/kizirianmax/rkmmax-hibrido/workflows/Test/badge.svg)](https://github.com/kizirianmax/rkmmax-hibrido/actions)
+[![Test & Coverage](https://github.com/kizirianmax/rkmmax-hibrido/actions/workflows/test.yml/badge.svg)](https://github.com/kizirianmax/rkmmax-hibrido/actions/workflows/test.yml)
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 [![Node](https://img.shields.io/badge/node-22.x-green.svg)](.nvmrc)
 [![CodeRabbit](https://img.shields.io/endpoint?v=2&style=flat&color=brightgreen&label=CodeRabbit&suffix=Enabled)](https://coderabbit.ai/gh/kizirianmax/rkmmax-hibrido)
