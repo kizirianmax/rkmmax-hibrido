@@ -47,8 +47,7 @@ export default function WebContainerSpike() {
 
     const result = await runWebContainerSpike({
       onStatusChange: (nextStatus) => setStatus(nextStatus),
-      mountTree: bridgeRuntimeInput.mountTree,
-      entrypoint: bridgeRuntimeInput.entrypoint,
+      approvedRuntimeInput: bridgeRuntimeInput,
     });
 
     setStdout(result.stdout || "");

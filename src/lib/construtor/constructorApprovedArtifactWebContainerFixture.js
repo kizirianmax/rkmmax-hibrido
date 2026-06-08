@@ -4,6 +4,7 @@ import { selectConstructorApprovedArtifactSnapshotInput } from "./constructorApp
 const FIXTURE_ENTRYPOINT = "index.js";
 const FIXTURE_NOTE =
   "Fonte aprovada controlada via fixture client-safe; ainda não é artefato real aprovado do Construtor.";
+const TRUSTED_RUNTIME_MARKER = Symbol("controlled-approved-runtime-input");
 
 export const CONTROLLED_APPROVED_PREVIEW_SUMMARY = {
   id: "controlled-webcontainer-artifact",
@@ -98,8 +99,17 @@ export function getControlledApprovedWebContainerFixturePublicStatus() {
 }
 
 export function getControlledApprovedWebContainerRuntimeInput() {
-  return {
+  const runtimeInput = {
     mountTree: CONTROLLED_APPROVED_WEBCONTAINER_FIXTURE.mountTree,
     entrypoint: CONTROLLED_APPROVED_WEBCONTAINER_FIXTURE.entrypoint,
   };
+  Object.defineProperty(runtimeInput, TRUSTED_RUNTIME_MARKER, {
+    value: true,
+    enumerable: false,
+  });
+  return runtimeInput;
+}
+
+export function isControlledApprovedWebContainerRuntimeInput(runtimeInput) {
+  return Boolean(runtimeInput?.[TRUSTED_RUNTIME_MARKER]);
 }

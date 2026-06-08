@@ -38,6 +38,9 @@ const mockBoot = jest.fn(async () => ({
 jest.unstable_mockModule("@webcontainer/api", mockWebContainerModuleFactory);
 
 const { CONTROLLED_ARTIFACT_ENTRYPOINT, CONTROLLED_ARTIFACT_SANITIZED } = await import("../webcontainerArtifactFixture.js");
+const { getControlledApprovedWebContainerRuntimeInput } = await import(
+  "../constructorApprovedArtifactWebContainerFixture.js"
+);
 const { runWebContainerSpike } = await import("../webcontainerSpikeRunner.js");
 
 describe("runWebContainerSpike", () => {
@@ -115,33 +118,45 @@ describe("runWebContainerSpike", () => {
     expect(apiCalls).toHaveLength(0);
   });
 
-  test("aceita mountTree/entrypoint por argumento e mantém execução client-side", async () => {
+  test("aceita runtime input controlado da bridge e mantém execução client-side", async () => {
     Object.defineProperty(globalThis, "crossOriginIsolated", {
       configurable: true,
       value: true,
     });
-    const customMountTree = {
-      "index.js": { file: { contents: "console.log('custom')" } },
-    };
+    const approvedRuntimeInput = getControlledApprovedWebContainerRuntimeInput();
 
     const result = await runWebContainerSpike({
-      mountTree: customMountTree,
-      entrypoint: "index.js",
+      approvedRuntimeInput,
     });
 
     expect(result.ok).toBe(true);
-    expect(mockMount).toHaveBeenCalledWith(customMountTree);
+    expect(mockMount).toHaveBeenCalledWith(approvedRuntimeInput.mountTree);
     expect(mockSpawn).toHaveBeenCalledWith("node", ["index.js"]);
   });
 
-  test("preserva fallback para fixture quando mountTree/entrypoint não são fornecidos", async () => {
+  test("preserva fallback para fixture quando runtime input confiável não é fornecido", async () => {
+    Object.defineProperty(globalThis, "crossOriginIsolated", {
+      configurable: true,
+      value: true,
+    });
+
+    await runWebContainerSpike();
+
+    expect(mockMount).toHaveBeenCalledWith(CONTROLLED_ARTIFACT_SANITIZED.mountTree);
+    expect(mockSpawn).toHaveBeenCalledWith("node", [CONTROLLED_ARTIFACT_ENTRYPOINT]);
+  });
+
+  test("ignora mountTree/entrypoint arbitrários fora do runtime input confiável", async () => {
     Object.defineProperty(globalThis, "crossOriginIsolated", {
       configurable: true,
       value: true,
     });
 
     await runWebContainerSpike({
-      entrypoint: "   ",
+      mountTree: {
+        "index.js": { file: { contents: "console.log('arbitrary')" } },
+      },
+      entrypoint: "index.js",
     });
 
     expect(mockMount).toHaveBeenCalledWith(CONTROLLED_ARTIFACT_SANITIZED.mountTree);

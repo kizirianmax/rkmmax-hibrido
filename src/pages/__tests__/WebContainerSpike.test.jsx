@@ -128,9 +128,11 @@ describe("WebContainerSpike page", () => {
     });
     expect(runWebContainerSpike).toHaveBeenCalledWith(
       expect.objectContaining({
-        entrypoint: "index.js",
-        mountTree: {
-          "index.js": { file: { contents: "console.log('ok')" } },
+        approvedRuntimeInput: {
+          entrypoint: "index.js",
+          mountTree: {
+            "index.js": { file: { contents: "console.log('ok')" } },
+          },
         },
       })
     );
