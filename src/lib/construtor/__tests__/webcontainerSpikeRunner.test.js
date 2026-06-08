@@ -115,6 +115,39 @@ describe("runWebContainerSpike", () => {
     expect(apiCalls).toHaveLength(0);
   });
 
+  test("aceita mountTree/entrypoint por argumento e mantém execução client-side", async () => {
+    Object.defineProperty(globalThis, "crossOriginIsolated", {
+      configurable: true,
+      value: true,
+    });
+    const customMountTree = {
+      "index.js": { file: { contents: "console.log('custom')" } },
+    };
+
+    const result = await runWebContainerSpike({
+      mountTree: customMountTree,
+      entrypoint: "index.js",
+    });
+
+    expect(result.ok).toBe(true);
+    expect(mockMount).toHaveBeenCalledWith(customMountTree);
+    expect(mockSpawn).toHaveBeenCalledWith("node", ["index.js"]);
+  });
+
+  test("preserva fallback para fixture quando mountTree/entrypoint não são fornecidos", async () => {
+    Object.defineProperty(globalThis, "crossOriginIsolated", {
+      configurable: true,
+      value: true,
+    });
+
+    await runWebContainerSpike({
+      entrypoint: "   ",
+    });
+
+    expect(mockMount).toHaveBeenCalledWith(CONTROLLED_ARTIFACT_SANITIZED.mountTree);
+    expect(mockSpawn).toHaveBeenCalledWith("node", [CONTROLLED_ARTIFACT_ENTRYPOINT]);
+  });
+
   test("chama teardown em finally quando a execução falha após o boot", async () => {
     Object.defineProperty(globalThis, "crossOriginIsolated", {
       configurable: true,

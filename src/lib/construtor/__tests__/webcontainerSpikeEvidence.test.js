@@ -1,19 +1,23 @@
-import { getApprovedConstructorArtifactBridgeStatus, getWebContainerSpikeEvidence } from "../webcontainerSpikeEvidence.js";
+import {
+  getApprovedConstructorArtifactBridgeRuntimeInput,
+  getApprovedConstructorArtifactBridgeStatus,
+  getWebContainerSpikeEvidence,
+} from "../webcontainerSpikeEvidence.js";
 
 describe("webcontainerSpikeEvidence", () => {
-  test("retorna apenas metadados seguros da cadeia candidate -> sanitize", () => {
+  test("retorna apenas metadados seguros da cadeia aprovada controlada", () => {
     const evidence = getWebContainerSpikeEvidence();
 
     expect(evidence).toEqual({
       ok: true,
-      source: "controlled-constructor-artifact",
+      source: "controlled-approved-constructor-artifact",
       adapter: "passed",
       sanitization: "passed",
       entrypoint: "index.js",
       allowedFiles: ["package.json", "artifact-manifest.json", "index.js", "lib/sum.js"],
       mountTreeFiles: ["package.json", "artifact-manifest.json", "index.js", "lib/sum.js"],
       blockedPayloadPolicy: ["content", "contentPreview", "zipBase64", "user_email", "secrets", "network", "shell"],
-      warning: "Fixture controlado; não usa dados reais de usuário.",
+      warning: "Fonte aprovada controlada por fixture allowlistado; ainda não representa artefato real aprovado do Construtor.",
     });
   });
 
@@ -28,14 +32,19 @@ describe("webcontainerSpikeEvidence", () => {
     const bridgeStatus = getApprovedConstructorArtifactBridgeStatus();
 
     expect(bridgeStatus).toEqual({
-      status: "approved-constructor-artifact: unavailable",
-      available: false,
-      activeSource: "controlled-fixture",
-      reason: "no-safe-client-side-approved-source",
+      ok: true,
+      status: "approved-constructor-artifact: controlled-fixture-ready",
+      activeSource: "controlled-approved-fixture",
+      sourceType: "controlled-client-safe-approved-source",
+      available: true,
+      entrypoint: "index.js",
+      safeFiles: ["package.json", "artifact-manifest.json", "index.js", "lib/sum.js"],
+      fileCount: 4,
       rawPayloadAccessed: false,
       apiUsed: false,
+      storageUsed: false,
       executeArtifactServerSide: "disabled",
-      note: "Bridge preparada estruturalmente; ainda não executa artefato real aprovado.",
+      note: "Fonte aprovada controlada via fixture client-safe; ainda não é artefato real aprovado do Construtor.",
     });
 
     const serialized = JSON.stringify(bridgeStatus);
@@ -45,5 +54,13 @@ describe("webcontainerSpikeEvidence", () => {
     expect(serialized).not.toContain("user_email");
     expect(serialized).not.toContain("token");
     expect(serialized).not.toContain("secret");
+    expect(serialized).not.toContain("mountTree");
+  });
+
+  test("expõe runtime interno apenas para execução client-side", () => {
+    const runtime = getApprovedConstructorArtifactBridgeRuntimeInput();
+
+    expect(runtime.entrypoint).toBe("index.js");
+    expect(runtime.mountTree).toBeDefined();
   });
 });

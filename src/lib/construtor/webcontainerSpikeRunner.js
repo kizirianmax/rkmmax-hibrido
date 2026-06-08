@@ -28,6 +28,11 @@ function normalizeErrorMessage(error) {
 export async function runWebContainerSpike(options = {}) {
   const startedAt = Date.now();
   const onStatusChange = typeof options?.onStatusChange === "function" ? options.onStatusChange : () => {};
+  const mountTree = options?.mountTree || CONTROLLED_ARTIFACT_SANITIZED.mountTree;
+  const entrypoint =
+    typeof options?.entrypoint === "string" && options.entrypoint.trim().length > 0
+      ? options.entrypoint.trim()
+      : CONTROLLED_ARTIFACT_ENTRYPOINT;
   let webcontainer = null;
 
   if (!globalThis.crossOriginIsolated) {
@@ -45,10 +50,10 @@ export async function runWebContainerSpike(options = {}) {
 
     onStatusChange("bootando");
     webcontainer = await WebContainer.boot();
-    await webcontainer.mount(CONTROLLED_ARTIFACT_SANITIZED.mountTree);
+    await webcontainer.mount(mountTree);
 
     onStatusChange("executando");
-    const process = await webcontainer.spawn("node", [CONTROLLED_ARTIFACT_ENTRYPOINT]);
+    const process = await webcontainer.spawn("node", [entrypoint]);
     let stdout = "";
 
     // A API usada neste spike expõe `process.output` como stream combinado; stderr dedicado fica vazio.

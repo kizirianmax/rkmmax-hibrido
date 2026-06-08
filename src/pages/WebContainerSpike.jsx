@@ -3,6 +3,7 @@ import "./WebContainerSpike.css";
 import { runWebContainerSpike } from "../lib/construtor/webcontainerSpikeRunner.js";
 import {
   ARTIFACT_SOURCE,
+  getApprovedConstructorArtifactBridgeRuntimeInput,
   getApprovedConstructorArtifactBridgeStatus,
   getWebContainerSpikeEvidence,
 } from "../lib/construtor/webcontainerSpikeEvidence.js";
@@ -34,6 +35,7 @@ export default function WebContainerSpike() {
 
   const evidence = useMemo(() => getWebContainerSpikeEvidence(), []);
   const bridgeStatus = useMemo(() => getApprovedConstructorArtifactBridgeStatus(), []);
+  const bridgeRuntimeInput = useMemo(() => getApprovedConstructorArtifactBridgeRuntimeInput(), []);
 
   async function handleRunSpike() {
     setIsRunning(true);
@@ -45,6 +47,8 @@ export default function WebContainerSpike() {
 
     const result = await runWebContainerSpike({
       onStatusChange: (nextStatus) => setStatus(nextStatus),
+      mountTree: bridgeRuntimeInput.mountTree,
+      entrypoint: bridgeRuntimeInput.entrypoint,
     });
 
     setStdout(result.stdout || "");
@@ -71,7 +75,7 @@ export default function WebContainerSpike() {
   return (
     <section className="webcontainer-spike" aria-label="WebContainer Spike">
       <div className="webcontainer-spike__alert">
-        Spike experimental client-side com bridge segura em preparação. Execução atual usa fixture controlado, não artefato real aprovado.
+        Spike experimental client-side com fonte aprovada controlada via fixture. Ainda não executa artefato real aprovado do Construtor.
       </div>
 
       <div className="webcontainer-spike__card">
@@ -86,17 +90,21 @@ export default function WebContainerSpike() {
         <ul className="webcontainer-spike__list">
           <li>
             Origem ativa do artefato:{" "}
-            {bridgeStatus.activeSource === ARTIFACT_SOURCE.fixture ? "fixture controlado" : "artefato aprovado"}
+            {bridgeStatus.activeSource === ARTIFACT_SOURCE.controlledApprovedFixture
+              ? "fonte aprovada controlada (fixture)"
+              : "fixture controlado"}
           </li>
           <li>Status bridge approved-constructor: {bridgeStatus.status}</li>
           <li>Bridge disponível no client: {bridgeStatus.available ? "sim" : "não"}</li>
-          <li>Motivo bridge indisponível: {bridgeStatus.reason}</li>
+          {!bridgeStatus.available ? <li>Motivo bridge indisponível: {bridgeStatus.reason}</li> : null}
+          <li>Tipo da fonte aprovada: {bridgeStatus.sourceType}</li>
           <li>Adapter: {evidence.adapter === "passed" ? "aprovado" : "falhou"}</li>
           <li>Contrato sanitizado: {evidence.sanitization === "passed" ? "aprovado" : "falhou"}</li>
           <li>Execução: client-side / WebContainer</li>
           <li>Leitura de payload bruto: {bridgeStatus.rawPayloadAccessed ? "sim" : "não"}</li>
           <li>Payload bruto: não exibido</li>
           <li>Backend/API: {bridgeStatus.apiUsed ? "usado" : "não usado"}</li>
+          <li>Storage local: {bridgeStatus.storageUsed ? "usado" : "não usado"}</li>
           <li>
             executeArtifact server-side:{" "}
             {bridgeStatus.executeArtifactServerSide === "disabled" ? "desativado" : bridgeStatus.executeArtifactServerSide}
