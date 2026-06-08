@@ -1,3 +1,24 @@
+## 2026-06-08 — feat(construtor): adicionar selector puro de preview aprovado para snapshot client-safe
+
+| Item | Detalhe |
+|------|---------|
+| **Título do PR** | `feat(construtor): adicionar selector puro de preview aprovado para snapshot client-safe` |
+| **Objetivo do PR** | Adicionar selector puro/testável que recebe `previewSummary + decision`, monta input mínimo seguro e delega elegibilidade final ao helper #585, sem execução real. |
+| **Base confirmada** | `origin/main = f8a60ec3c9747d28513a91c9e986202f23d859e3` (`feat(construtor): add client-safe in-memory approved artifact snapshot helper (#585)`). |
+| **Arquivos alterados** | `CHECKLIST.md`; `src/lib/construtor/constructorApprovedArtifactPreviewSelector.js`; `src/lib/construtor/__tests__/constructorApprovedArtifactPreviewSelector.test.js`. |
+| **Confirmação de escopo** | Selector recebe argumentos explícitos (`previewSummary`, `decision`), não lê storage/global state e não chama API/backend/UI/runner. |
+| **Confirmação de execução real** | Não há execução real; selector só valida estrutura mínima e delega para `buildConstructorApprovedArtifactMemorySnapshot` (#585). |
+| **Confirmação de handoff #582 e mountTree** | Não importa/chama `approvedConstructorArtifactHandoff` e não gera `mountTree`. |
+| **Confirmação de `api/` e backend** | Nenhum arquivo em `api/` alterado; sem endpoint, migration ou alteração de backend. |
+| **Confirmação de `executeArtifact`** | `executeArtifact` server-side permanece desativado (`executeArtifactServerSide: "disabled"`). |
+| **Confirmação de arquivos proibidos** | Sem alteração em `HybridAgentSimple.jsx`, `package.json`, `package-lock.json`, `vercel.json` e demais arquivos fora do escopo permitido. |
+| **Estado do shape real atual** | Preview documental atual continua `unavailable` (ex.: `content.md`/`index.html` fora da allowlist). |
+| **Estado do shape futuro** | Preview futuro allowlistado (`index.js` + `lib/*.js`) pode retornar `eligible` após delegação ao #585. |
+| **Validações executadas** | `npm test` (ok); `npm run build` (ok); `git diff --check origin/main...HEAD` (ok); `git diff --name-only origin/main...HEAD` (ok). |
+| **Rollback** | `git revert <commit-sha>` |
+
+---
+
 ## 2026-06-07 — feat(construtor): criar elo inicial de snapshot client-safe em memória
 
 | Item | Detalhe |
