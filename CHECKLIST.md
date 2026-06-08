@@ -1,3 +1,26 @@
+## 2026-06-08 — docs(spike): registrar incorporação do CAMINHO B controlado no WebContainer spike (#587)
+
+| Item | Detalhe |
+|------|---------|
+| **Título do PR** | `CAMINHO B: bridge de fixture aprovado controlado com runtime confiável para execução client-side auditável no WebContainer spike` |
+| **PR relacionado** | #587 |
+| **Base confirmada** | `origin/main = 93937a41dcafeaed7255a8e8c4a8d7399ff440e0` (`CAMINHO B: bridge de fixture aprovado controlado com runtime confiável para execução client-side auditável no WebContainer spike (#587)`). |
+| **Objetivo do PR #587** | Demonstrar execução client-side auditável no WebContainer spike usando fonte aprovada controlada por fixture, passando pela cadeia `#586 → #585 → #584 → #583 → #581 → #582`. |
+| **Natureza** | Avanço funcional real dentro do spike, ainda com fixture controlado (não é apenas preparação estrutural). |
+| **Confirmação de fonte controlada** | Execução usa `controlled-approved-fixture`; **não** é artefato real aprovado do Construtor. |
+| **Confirmação de `HybridAgentSimple.jsx`** | `src/pages/HybridAgentSimple.jsx` **não foi alterado** no #587. |
+| **Confirmação de `api/`** | Nenhum arquivo em `api/` foi tocado e não há chamada `/api/` no novo caminho. |
+| **Confirmação de backend/endpoint/migration** | Sem endpoint novo, sem migration e sem alteração de backend. |
+| **Confirmação de `executeArtifact`** | `executeArtifact` server-side permanece desativado (`executeArtifactServerSide: "disabled"`). |
+| **Confirmação de hardening do runner** | `webcontainerSpikeRunner.js` foi endurecido para aceitar apenas `approvedRuntimeInput` confiável (marcado por Symbol interno da bridge controlada); entradas arbitrárias de `mountTree`/`entrypoint` são ignoradas, com fallback preservado para `CONTROLLED_ARTIFACT_SANITIZED`. |
+| **Confirmação de status público seguro** | Status público não expõe `mountTree`, source code bruto nem payload sensível (`content`, `contentPreview`, `zipBase64`, `user_email`, secrets, tokens). |
+| **Cadeia preservada** | `previewSummary controlado → selector #586 → snapshot #585 → mapper #584 → source gate #583 → contrato #581 → handoff #582 → mountTree sanitizado → WebContainer client-side`. |
+| **Validações pós-merge observadas** | Test &amp; Coverage `success`; Coverage/`test` `success`; Vercel `success`; status combinado do commit `success`. |
+| **Ressalva corrigida por este PR** | `CHECKLIST.md` não havia sido incorporado no merge do #587; este PR documental registra oficialmente o #587 para rastreabilidade. |
+| **Rollback** | `git revert <commit-sha>` |
+
+---
+
 ## 2026-06-08 — feat(construtor): adicionar selector puro de preview aprovado para snapshot client-safe
 
 | Item | Detalhe |
