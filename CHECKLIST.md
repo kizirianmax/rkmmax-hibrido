@@ -1,3 +1,24 @@
+## 2026-06-08 — feat(construtor): builder puro de arquivos estruturados para previewSummary client-safe
+
+| Item | Detalhe |
+|------|---------|
+| **Título do PR** | `feat(construtor): builder puro de arquivos estruturados para previewSummary client-safe` |
+| **Objetivo do PR** | Criar builder puro/testável `files[] -> previewSummary` e delegar elegibilidade final ao selector #586, sem execução real. |
+| **Base confirmada pós-#588** | `origin/main = 933987bbebc029134534c2704a59ed77a9df96b8` (`docs(spike): registrar no CHECKLIST a incorporação do CAMINHO B controlado do PR #587 (#588)`). |
+| **Arquivos alterados** | `CHECKLIST.md`; `src/lib/construtor/constructorApprovedPreviewSummaryBuilder.js`; `src/lib/construtor/__tests__/constructorApprovedPreviewSummaryBuilder.test.js`. |
+| **Confirmação de builder puro** | Função recebe input explícito, transforma `files[]` em `fileContents` e delega gate ao selector #586. |
+| **Confirmação de `HybridAgentSimple.jsx`** | `src/pages/HybridAgentSimple.jsx` **não foi alterado**. |
+| **Confirmação de `api/`/backend** | Nenhum arquivo em `api/` alterado; sem endpoint, migration ou alteração de backend. |
+| **Confirmação de storage/API/WebContainer/handoff** | Não chama `fetch`/`/api/`; não acessa `sessionStorage`/`localStorage`; não chama `WebContainer.boot`; não chama `approvedConstructorArtifactHandoff` nem `prepareApprovedConstructorArtifactForWebContainer`. |
+| **Confirmação de execução real** | Não chama `executeArtifact`; `executeArtifact` server-side permanece desativado (`executeArtifactServerSide: "disabled"`). |
+| **Confirmação de `mountTree`** | Não gera `mountTree` no retorno e não executa `mountTree`. |
+| **Estado do shape documental atual** | Continua `unavailable` (`content.md`/`index.html` fora da allowlist oficial). |
+| **Estado do shape futuro allowlistado** | Pode retornar `eligible` para shape client-safe allowlistado (`index.js` + `lib/*.js`) após gate do selector #586. |
+| **Validações executadas** | `npm test` (ok); `npm run build` (ok); `git diff --check origin/main...HEAD` (ok); `git diff --name-only origin/main...HEAD` (ok). |
+| **Rollback** | `git revert <commit-sha>` |
+
+---
+
 ## 2026-06-08 — docs(spike): registrar incorporação do CAMINHO B controlado no WebContainer spike (#587)
 
 | Item | Detalhe |
