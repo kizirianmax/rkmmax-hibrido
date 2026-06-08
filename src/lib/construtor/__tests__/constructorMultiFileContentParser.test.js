@@ -68,7 +68,7 @@ describe("constructorMultiFileContentParser", () => {
     expect(result).toMatchObject({
       ok: true,
       status: "constructor-multifile-parser: parsed",
-      sourceType: "constructor-multifile-content-client-safe-source",
+      sourceType: "constructor-multifile-structured-content-source",
       fileCount: 1,
       rawPayloadAccessed: false,
       apiUsed: false,
@@ -175,6 +175,36 @@ describe("constructorMultiFileContentParser", () => {
     expect(downstreamResult).toMatchObject({
       ok: true,
       status: "constructor-approved-preview-summary-builder: eligible",
+    });
+  });
+
+  test("downstream: parser pode estruturar body com /api|storage, mas builder rejeita", () => {
+    const parserResult = parseConstructorMultiFileContentToStructuredFiles(
+      [
+        "--- FILE: index.js ---",
+        "fetch('/api/preview');",
+        "sessionStorage.getItem('k');",
+        "localStorage.getItem('k');",
+      ].join("\n")
+    );
+
+    const downstreamResult = buildConstructorApprovedPreviewSummaryFromStructuredFiles({
+      id: "preview-artifact-001",
+      version: "1.0.0",
+      entrypoint: "index.js",
+      files: parserResult.files,
+      origin: {
+        specialist: "hybrid",
+        model: "safe-model",
+        promptId: "safe-prompt",
+      },
+    });
+
+    expect(parserResult.ok).toBe(true);
+    expect(downstreamResult).toMatchObject({
+      ok: false,
+      reason: "api-ou-rede-nao-permitida",
+      path: "files[0].body",
     });
   });
 

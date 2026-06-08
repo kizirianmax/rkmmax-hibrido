@@ -1,6 +1,6 @@
 const UNAVAILABLE_STATUS = "constructor-multifile-parser: unavailable";
 const PARSED_STATUS = "constructor-multifile-parser: parsed";
-const SOURCE_TYPE = "constructor-multifile-content-client-safe-source";
+const SOURCE_TYPE = "constructor-multifile-structured-content-source";
 
 function unavailable(reason, path) {
   return {

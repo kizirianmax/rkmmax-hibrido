@@ -10,6 +10,7 @@
 | **Confirmação de `api/`** | Nenhum arquivo em `api/` foi tocado. |
 | **Confirmação de execução real** | Sem execução real nova; `executeArtifact` server-side permanece desativado (`executeArtifactServerSide: "disabled"`). |
 | **Builder/selector/handoff em runtime** | Parser não chama builder #589, selector #586 nem handoff #582 em runtime; downstream é provado apenas em testes. |
+| **Rótulo/status do parser** | `status` permanece `constructor-multifile-parser: parsed` (somente parse estrutural) e `sourceType` foi ajustado para `constructor-multifile-structured-content-source`, sem sugerir aprovação/elegibilidade final. |
 | **Confirmação de `mountTree`** | Parser não gera `mountTree` e não chama `mountTree`. |
 | **Shape documental downstream** | `content.md`/`index.html` continuam `unavailable` downstream no builder (reason: `arquivo-fora-da-allowlist`). |
 | **Shape allowlistado downstream** | Shape futuro `index.js` + `lib/sum.js` parseado pode chegar a `eligible` downstream no builder #589. |
