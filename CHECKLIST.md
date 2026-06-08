@@ -1,3 +1,18 @@
+## 2026-06-08 — feat(construtor): derivador puro de diagnóstico parser→builder
+
+| Item | Detalhe |
+|------|---------|
+| **Título do PR** | `feat(construtor): derivador puro de diagnóstico parser→builder` |
+| **Base confirmada pós-#591** | `origin/main = 0ec292e784afd70db88c34f435f813f5521449a4` (`docs(apresentação): corrigir badge de CI do README para workflow real test.yml (#591)`). |
+| **Objetivo** | Compor `#590 → #589` em um derivador puro de diagnóstico `eligible/unavailable`, sem UI e sem execução. |
+| **Por que é preparação estrutural** | Fecha a lacuna de composição parser→builder sem avanço funcional visível; com fonte real atual, diagnósticos seguem majoritariamente `unavailable`. |
+| **Arquivos alterados** | `CHECKLIST.md`; `src/lib/construtor/constructorMultiFileApprovedPreviewDerivation.js`; `src/lib/construtor/__tests__/constructorMultiFileApprovedPreviewDerivation.test.js`. |
+| **Confirmações** | Sem UI; sem `api/`; sem `HybridAgentSimple.jsx`; sem alterar contratos #581–#590; sem handoff #582; sem WebContainer; sem `mountTree`; sem `fetch`/`/api/`/`sessionStorage`/`localStorage`/`zipBase64`/`contentPreview`; `executeArtifact` server-side permanece `disabled`; sem bypass ao Serginho; Dependabot fora de escopo. |
+| **Validações executadas** | `npm test` (ok); `npm run build` (ok); `git diff --check origin/main...HEAD` (ok); `git diff --name-only origin/main...HEAD` (ok — exatamente 3 arquivos). |
+| **Rollback** | `git revert <commit-sha>` |
+
+---
+
 ## 2026-06-08 — feat(construtor): extrair parser puro de conteúdo multi-file para files estruturados
 
 | Item | Detalhe |
