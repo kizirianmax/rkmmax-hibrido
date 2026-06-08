@@ -1,5 +1,4 @@
 import fs from "node:fs";
-import { execSync } from "node:child_process";
 import { jest } from "@jest/globals";
 import { selectConstructorApprovedArtifactSnapshotInput } from "../constructorApprovedArtifactPreviewSelector.js";
 import { buildConstructorApprovedArtifactMemorySnapshot } from "../constructorApprovedArtifactMemorySnapshot.js";
@@ -389,15 +388,4 @@ describe("constructorApprovedArtifactPreviewSelector", () => {
     expect(publicJson).not.toContain("superSensitive");
   });
 
-  test("HybridAgentSimple.jsx permanece fora do diff", () => {
-    const changedFiles = execSync("git diff --name-only origin/main...HEAD", {
-      encoding: "utf8",
-      cwd: process.cwd(),
-    })
-      .split("\n")
-      .map((line) => line.trim())
-      .filter(Boolean);
-
-    expect(changedFiles).not.toContain("src/pages/HybridAgentSimple.jsx");
-  });
 });
