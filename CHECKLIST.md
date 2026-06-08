@@ -14,7 +14,7 @@
 | **Shape documental downstream** | `content.md`/`index.html` continuam `unavailable` downstream no builder (reason: `arquivo-fora-da-allowlist`). |
 | **Shape allowlistado downstream** | Shape futuro `index.js` + `lib/sum.js` parseado pode chegar a `eligible` downstream no builder #589. |
 | **Decisão de diretório de testes** | Teste criado em `src/lib/construtor/__tests__/` (convenção real descoberta pelo Jest), sem criar pasta `tests/`. |
-| **Validações executadas** | `npm test` (ok); `npm run build` (ok); `git diff --check origin/main...HEAD` (a executar); `git diff --name-only origin/main...HEAD` (a executar). |
+| **Validações executadas** | `npm test` (ok); `npm run build` (ok); `git diff --check origin/main...HEAD` (ok); `git diff --name-only origin/main...HEAD` (ok — exatamente 3 arquivos permitidos). |
 | **Rollback** | `git revert <commit-sha>` |
 
 ---
