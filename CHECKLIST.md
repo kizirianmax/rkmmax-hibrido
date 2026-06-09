@@ -1,3 +1,19 @@
+## 2026-06-09 — feat(construtor): telemetria interna verdict-only da taxa eligible/unavailable do diagnóstico real
+
+| Item | Detalhe |
+|------|---------|
+| **Título do PR** | `feat(construtor): telemetria interna verdict-only da taxa eligible/unavailable do diagnóstico real` |
+| **Base confirmada pós-#595** | `origin/main = 2b3a1ef0d3daf39ae837cb47103f919c6c8a2b69`. |
+| **Objetivo** | Agregar, em memória e sem alterar comportamento visível, os verdicts reais (`eligible`/`unavailable`) já produzidos no fluxo observacional do Construtor para medir total, distribuição por verdict, por `reason` e por `status`. |
+| **Telemetria interna (in-memory)** | Novo agregador puro com `record(verdictResult)` e `snapshot()` contando somente `verdict`, `reason` e `status` permitidos, sem retenção de payload bruto. |
+| **Wiring mínimo em runtime** | `src/pages/HybridAgentSimple.jsx`: no `try/catch` existente do sucesso de `handleGeneratePreview`, após observar e armazenar em `realPreviewDiagnosticsRef`, registra o resultado na telemetria (`realPreviewDiagnosticsTelemetryRef.current.record(...)`) sem renderização adicional. |
+| **Confirmações** | Sem UI nova; sem API nova; sem storage novo; sem execução real; sem WebContainer/handoff/`mountTree`; sem uso de payload bruto (`rawContent`, `fileContents`, `contentPreview`, `zipBase64`, `agentMessage`, `artifact`, `files`) no agregado; contratos #581–#595 preservados; `executeArtifact` server-side permanece `disabled`; sem bypass ao Serginho. |
+| **Arquivos alterados** | `CHECKLIST.md`; `src/lib/construtor/constructorRealPreviewDiagnosticTelemetry.js`; `src/lib/construtor/__tests__/constructorRealPreviewDiagnosticTelemetry.test.js`; `src/pages/HybridAgentSimple.jsx`. |
+| **Validações executadas** | `npm test` (ok); `npm run build` (ok); `git diff --check origin/main...HEAD` (ok); `git diff --name-only origin/main...HEAD` (ok — exatamente os 4 arquivos permitidos). |
+| **Rollback** | `git revert <commit-sha>` |
+
+---
+
 ## 2026-06-09 — feat(construtor): wiring observacional read-only do diagnóstico real no fluxo do Construtor
 
 | Item | Detalhe |
