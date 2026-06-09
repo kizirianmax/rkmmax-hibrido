@@ -1,3 +1,19 @@
+## 2026-06-09 — feat(construtor): expor telemetria verdict-only do diagnóstico real apenas em desenvolvimento
+
+| Item | Detalhe |
+|------|---------|
+| **Título do PR** | `feat(construtor): expor telemetria verdict-only do diagnóstico real apenas em desenvolvimento` |
+| **Base confirmada pós-#596** | `origin/main = 841c4179c9e36190472bd789c2bb7557cffda85a`. |
+| **Objetivo** | Expor, somente em modo desenvolvimento, o snapshot da telemetria verdict-only do diagnóstico real via `console.debug`, sem alterar comportamento público. |
+| **Relatório técnico (somente DEV)** | Em `import.meta.env.DEV`, após registrar o diagnóstico real no fluxo de preview, gera linha técnica segura com totais e agregados (`total`, `eligible`, `unavailable`, `byReason`, `byStatus`). |
+| **Fonte de dados permitida** | Apenas `snapshot()` da telemetria interna em memória (#596), mantendo formato verdict-only. |
+| **Confirmações de segurança/escopo** | Sem UI pública; sem API nova; sem storage; sem execução; sem WebContainer; sem handoff; sem `mountTree`; sem payload bruto; `executeArtifact` server-side permanece desativado; contratos #581–#596 preservados. |
+| **Arquivos alterados** | `CHECKLIST.md`; `src/lib/construtor/constructorRealPreviewDiagnosticTelemetryDevReport.js`; `src/lib/construtor/__tests__/constructorRealPreviewDiagnosticTelemetryDevReport.test.js`; `src/pages/HybridAgentSimple.jsx`. |
+| **Validações executadas** | `npm test` (ok); `npm run build` (ok); `git diff --check origin/main...HEAD` (ok); `git diff --name-only origin/main...HEAD` (ok — exatamente os 4 arquivos permitidos). |
+| **Rollback** | `git revert <commit-sha>` |
+
+---
+
 ## 2026-06-09 — feat(construtor): telemetria interna verdict-only da taxa eligible/unavailable do diagnóstico real
 
 | Item | Detalhe |
