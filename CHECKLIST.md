@@ -1,3 +1,19 @@
+## 2026-06-09 — docs(construtor): runbook de coleta orientada da telemetria verdict-only em DEV
+
+| Item | Detalhe |
+|------|---------|
+| **Título do PR** | `docs(construtor): runbook de coleta orientada da telemetria verdict-only em DEV` |
+| **Base confirmada pós-#597** | `origin/main = 6f6f74ba24a44f09c4e03aee90c2f3ba7c1de2c2`. |
+| **Objetivo** | Definir runbook para coletar amostras reais da telemetria DEV verdict-only do Construtor e orientar decisão do #599 com evidência. |
+| **Natureza da entrega** | Medição/documentação apenas. |
+| **Confirmações de escopo** | Não altera código de produção; não cria UI; não cria API; não cria storage; não executa WebContainer; não cria handoff; não gera `mountTree`; não mexe em geração/prompt; Dependabot fora de escopo. |
+| **Coleta real neste ambiente** | Não executada; documento preparado para execução manual/assistida. |
+| **Arquivos alterados** | `docs/telemetria-construtor-amostragem-dev.md`; `CHECKLIST.md`. |
+| **Validações executadas** | `git diff --check origin/main...HEAD` (ok); `git diff --name-only origin/main...HEAD` (ok — exatamente os 2 arquivos permitidos); `npm test` (ok); `npm run build` (ok). |
+| **Rollback** | `git revert <commit-sha>` |
+
+---
+
 ## 2026-06-09 — feat(construtor): expor telemetria verdict-only do diagnóstico real apenas em desenvolvimento
 
 | Item | Detalhe |
