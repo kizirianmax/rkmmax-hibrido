@@ -15,6 +15,7 @@ import {
 import { buildReviewCycleMetrics } from "../lib/construtor/reviewCycleMetrics";
 import { observeConstructorRealPreviewDiagnostic } from "../lib/construtor/constructorRealPreviewDiagnosticObservation";
 import { createRealPreviewDiagnosticTelemetry } from "../lib/construtor/constructorRealPreviewDiagnosticTelemetry";
+import { formatRealPreviewDiagnosticTelemetrySnapshotForDev } from "../lib/construtor/constructorRealPreviewDiagnosticTelemetryDevReport";
 import { MANUAL_MODEL_OPTIONS } from "../config/modelPriority.js";
 import { supabase } from "../lib/supabaseClient";
 
@@ -409,6 +410,13 @@ export default function HybridAgentSimple() {
         try {
           realPreviewDiagnosticsRef.current[msgId] = observeConstructorRealPreviewDiagnostic(data.preview);
           realPreviewDiagnosticsTelemetryRef.current.record(realPreviewDiagnosticsRef.current[msgId]);
+          if (import.meta.env?.DEV) {
+            console.debug(
+              formatRealPreviewDiagnosticTelemetrySnapshotForDev(
+                realPreviewDiagnosticsTelemetryRef.current.snapshot()
+              )
+            );
+          }
         } catch (diagnosticError) {
           console.warn("⚠️ Diagnóstico observacional indisponível para preview real:", diagnosticError);
         }
