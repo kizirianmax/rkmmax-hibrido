@@ -404,7 +404,11 @@ export default function HybridAgentSimple() {
       }
       const data = await response.json();
       if (data.success && data.preview) {
-        realPreviewDiagnosticsRef.current[msgId] = observeConstructorRealPreviewDiagnostic(data.preview);
+        try {
+          realPreviewDiagnosticsRef.current[msgId] = observeConstructorRealPreviewDiagnostic(data.preview);
+        } catch (diagnosticError) {
+          console.warn("⚠️ Diagnóstico observacional indisponível para preview real:", diagnosticError);
+        }
         setPreviews((prev) => ({ ...prev, [msgId]: data.preview }));
       }
     } catch (err) {

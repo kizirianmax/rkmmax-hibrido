@@ -31,26 +31,19 @@ function isNonEmptyString(value) {
   return typeof value === "string" && value.trim().length > 0;
 }
 
-function inferEntrypoint(summary, fileContents) {
-  const preferred = ["index.js", "src/index.js", "main.js", "app.js", "index.html"];
-  const fromFiles = Array.isArray(summary.files)
-    ? summary.files
-        .map((file) => (isPlainObject(file) ? file.path : undefined))
-        .filter(isNonEmptyString)
-    : [];
-  const fromFileContents = Object.keys(fileContents).filter(isNonEmptyString);
-  const candidates = [summary.entrypoint, ...fromFiles, ...fromFileContents]
+export function inferEntrypointFromFileContents(fileContents) {
+  const filePaths = Object.keys(fileContents)
     .filter(isNonEmptyString)
     .map((value) => value.trim());
-  const uniqueCandidates = [...new Set(candidates)];
+  const preferred = ["index.js", "index.mjs", "index.html", "content.md"];
 
   for (const path of preferred) {
-    if (uniqueCandidates.includes(path)) {
+    if (filePaths.includes(path)) {
       return path;
     }
   }
 
-  return uniqueCandidates[0] || "";
+  return filePaths[0] || "";
 }
 
 export function observeConstructorRealPreviewDiagnostic(preview) {
@@ -66,10 +59,15 @@ export function observeConstructorRealPreviewDiagnostic(preview) {
     return unavailable("real-preview-filecontents-invalido", "summary.fileContents");
   }
 
+  const entrypoint = inferEntrypointFromFileContents(preview.summary.fileContents);
+  if (!isNonEmptyString(entrypoint)) {
+    return unavailable("real-preview-filecontents-vazio", "summary.fileContents");
+  }
+
   return readApprovedPreviewDiagnosticFromInMemoryPreview({
     fileContents: preview.summary.fileContents,
     id: preview.summary.id,
     version: preview.summary.version,
-    entrypoint: inferEntrypoint(preview.summary, preview.summary.fileContents),
+    entrypoint,
   });
 }
