@@ -1,3 +1,18 @@
+## 2026-06-09 — feat(construtor): visualização diagnóstica controlada da telemetria verdict-only via URL
+
+| Item | Detalhe |
+|------|---------|
+| **Título do PR** | `feat(construtor): visualização diagnóstica controlada da telemetria verdict-only via URL` |
+| **Base confirmada pós-#598** | `origin/main = 713d4d55249ebea693c9c254485db32bff9c58cf`. |
+| **Objetivo** | Exibir diagnóstico técnico verdict-only da telemetria real do Construtor (`total`, `eligible`, `unavailable`, `byReason`, `byStatus`) somente para coleta assistida quando habilitado explicitamente por URL. |
+| **Gate obrigatório por URL** | Visualização habilitada apenas com `?constructorTelemetry=1` (ou `&constructorTelemetry=1`); sem o parâmetro a UI permanece inalterada. |
+| **Confirmações de escopo** | Oculto por padrão; mostra apenas telemetria verdict-only; não expõe payload bruto; não cria API; não usa storage; não reativa execução; não usa WebContainer; não cria handoff; não gera `mountTree`; não altera geração/prompt; contratos #581–#598 preservados. |
+| **Arquivos alterados** | `CHECKLIST.md`; `src/lib/construtor/constructorTelemetryDiagnosticGate.js`; `src/lib/construtor/__tests__/constructorTelemetryDiagnosticGate.test.js`; `src/pages/HybridAgentSimple.jsx`. |
+| **Validações executadas** | `npm test` (ok); `npm run build` (ok); `git diff --check origin/main...HEAD` (ok); `git diff --name-only origin/main...HEAD` (ok — exatamente os 4 arquivos permitidos). |
+| **Rollback** | `git revert <commit-sha>` |
+
+---
+
 ## 2026-06-09 — docs(construtor): runbook de coleta orientada da telemetria verdict-only em DEV
 
 | Item | Detalhe |

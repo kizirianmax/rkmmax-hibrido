@@ -16,6 +16,10 @@ import { buildReviewCycleMetrics } from "../lib/construtor/reviewCycleMetrics";
 import { observeConstructorRealPreviewDiagnostic } from "../lib/construtor/constructorRealPreviewDiagnosticObservation";
 import { createRealPreviewDiagnosticTelemetry } from "../lib/construtor/constructorRealPreviewDiagnosticTelemetry";
 import { formatRealPreviewDiagnosticTelemetrySnapshotForDev } from "../lib/construtor/constructorRealPreviewDiagnosticTelemetryDevReport";
+import {
+  shouldShowConstructorTelemetryDiagnostics,
+  sanitizeConstructorTelemetrySnapshotForDiagnostics,
+} from "../lib/construtor/constructorTelemetryDiagnosticGate";
 import { MANUAL_MODEL_OPTIONS } from "../config/modelPriority.js";
 import { supabase } from "../lib/supabaseClient";
 
@@ -238,6 +242,7 @@ export default function HybridAgentSimple() {
   });
   const [previewLoading, setPreviewLoading] = useState({});
   const [previewErrors, setPreviewErrors] = useState({});
+  const [constructorTelemetryDiagnostics, setConstructorTelemetryDiagnostics] = useState(null);
   const [deliveryData, setDeliveryData] = useState(() => {
     if (restoredMsgId && savedArtifactPreview?.delivery) {
       return { [restoredMsgId]: savedArtifactPreview.delivery };
@@ -262,6 +267,9 @@ export default function HybridAgentSimple() {
   const realPreviewDiagnosticsRef = useRef({});
   const realPreviewDiagnosticsTelemetryRef = useRef(createRealPreviewDiagnosticTelemetry());
   const messagesEndRef = useRef(null);
+  const shouldShowConstructorTelemetryDiagnosticsInView = shouldShowConstructorTelemetryDiagnostics(
+    typeof window !== "undefined" ? window.location.search : ""
+  );
 
   // F4-03 — métricas mínimas do ciclo de revisão (derivado local, sem envio externo)
   const reviewCycleMetrics = useMemo(
@@ -410,6 +418,12 @@ export default function HybridAgentSimple() {
         try {
           realPreviewDiagnosticsRef.current[msgId] = observeConstructorRealPreviewDiagnostic(data.preview);
           realPreviewDiagnosticsTelemetryRef.current.record(realPreviewDiagnosticsRef.current[msgId]);
+          const __telemetrySnapshot = realPreviewDiagnosticsTelemetryRef.current.snapshot();
+          if (shouldShowConstructorTelemetryDiagnosticsInView) {
+            setConstructorTelemetryDiagnostics(
+              sanitizeConstructorTelemetrySnapshotForDiagnostics(__telemetrySnapshot)
+            );
+          }
           if (import.meta.env?.DEV) {
             console.debug(
               formatRealPreviewDiagnosticTelemetrySnapshotForDev(
@@ -719,6 +733,30 @@ export default function HybridAgentSimple() {
           </div>
         </div>
       </div>
+
+      {constructorTelemetryDiagnostics && shouldShowConstructorTelemetryDiagnosticsInView && (
+        <div
+          style={{
+            margin: "0 16px 12px",
+            padding: "10px 12px",
+            border: "1px solid #4d4d4d",
+            borderRadius: "8px",
+            background: "#101010",
+            color: "#d4d4d4",
+            fontSize: "12px",
+          }}
+        >
+          <strong>Diagnóstico técnico do Construtor — somente coleta assistida</strong>
+          <p style={{ margin: "8px 0 6px" }}>
+            Não é execução. Não é WebContainer. Não contém payload bruto.
+          </p>
+          <div>total: {constructorTelemetryDiagnostics.total}</div>
+          <div>eligible: {constructorTelemetryDiagnostics.eligible}</div>
+          <div>unavailable: {constructorTelemetryDiagnostics.unavailable}</div>
+          <div>byReason: {JSON.stringify(constructorTelemetryDiagnostics.byReason)}</div>
+          <div>byStatus: {JSON.stringify(constructorTelemetryDiagnostics.byStatus)}</div>
+        </div>
+      )}
 
       {/* Chat Area */}
       <div className="chat-container">
