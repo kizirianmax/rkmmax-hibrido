@@ -13,6 +13,7 @@ import {
   clearReviewCycleState,
 } from "../lib/construtor/reviewCycleStorage";
 import { buildReviewCycleMetrics } from "../lib/construtor/reviewCycleMetrics";
+import { observeConstructorRealPreviewDiagnostic } from "../lib/construtor/constructorRealPreviewDiagnosticObservation";
 import { MANUAL_MODEL_OPTIONS } from "../config/modelPriority.js";
 import { supabase } from "../lib/supabaseClient";
 
@@ -256,6 +257,7 @@ export default function HybridAgentSimple() {
   const [cycleStartedAt, setCycleStartedAt] = useState(null);
   // PASSO 6 — sinaliza que o próximo preview é continuação de uma revisão (preservar histórico)
   const revisionPendingRef = useRef(false);
+  const realPreviewDiagnosticsRef = useRef({});
   const messagesEndRef = useRef(null);
 
   // F4-03 — métricas mínimas do ciclo de revisão (derivado local, sem envio externo)
@@ -402,6 +404,11 @@ export default function HybridAgentSimple() {
       }
       const data = await response.json();
       if (data.success && data.preview) {
+        try {
+          realPreviewDiagnosticsRef.current[msgId] = observeConstructorRealPreviewDiagnostic(data.preview);
+        } catch (diagnosticError) {
+          console.warn("⚠️ Diagnóstico observacional indisponível para preview real:", diagnosticError);
+        }
         setPreviews((prev) => ({ ...prev, [msgId]: data.preview }));
       }
     } catch (err) {

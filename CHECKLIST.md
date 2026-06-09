@@ -1,3 +1,19 @@
+## 2026-06-09 — feat(construtor): wiring observacional read-only do diagnóstico real no fluxo do Construtor
+
+| Item | Detalhe |
+|------|---------|
+| **Título do PR** | `feat(construtor): wiring observacional read-only do diagnóstico real no fluxo do Construtor` |
+| **Base confirmada pós-#594** | `origin/main = 2a1c0ad97002ae41b6041e9b6cc16f390e969d1b`. |
+| **Objetivo** | Conectar o diagnóstico verdict-only ao fluxo real de preview (`POST /api/artifact-preview`) usando somente `preview.summary.fileContents`, `preview.summary.id`, `preview.summary.version` e `entrypoint` inferido apenas por `fileContents`, sem UI e sem execução. |
+| **Ponto de wiring em runtime** | `src/pages/HybridAgentSimple.jsx`: no sucesso de `handleGeneratePreview` (`data.success && data.preview`), a observação roda dentro de `try/catch` (falha observacional não quebra preview), chama `observeConstructorRealPreviewDiagnostic(data.preview)` e armazena o resultado em `realPreviewDiagnosticsRef` (somente observacional local, sem renderização). |
+| **Retorno do diagnóstico** | Permanece verdict-only via adaptador #594 (`eligible/unavailable`), sem expor payload bruto. |
+| **Confirmações** | Sem UI nova; sem execução real; sem API nova; sem storage novo; sem uso de `preview.summary.files`, `preview.summary.entrypoint`, `contentPreview`, `zipBase64`, `agentMessage.content`, `delivery` ou payload bruto para o diagnóstico; contratos #581–#594 intactos; `executeArtifact` server-side permanece `disabled`; sem bypass ao Serginho; Dependabot fora de escopo. |
+| **Arquivos alterados** | `CHECKLIST.md`; `src/lib/construtor/constructorRealPreviewDiagnosticObservation.js`; `src/lib/construtor/__tests__/constructorRealPreviewDiagnosticObservation.test.js`; `src/pages/HybridAgentSimple.jsx`. |
+| **Validações executadas** | `npm test` (ok); `npm run build` (ok); `git diff --check origin/main...HEAD` (ok); `git diff --name-only origin/main...HEAD` (ok). |
+| **Rollback** | `git revert <commit-sha>` |
+
+---
+
 ## 2026-06-09 — feat(construtor): adaptador puro de preview em memória para snapshot read-only
 
 | Item | Detalhe |
