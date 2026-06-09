@@ -1,3 +1,23 @@
+## 2026-06-09 — docs(construtor): registrar coleta real da telemetria verdict-only via ?constructorTelemetry=1
+
+| Item | Detalhe |
+|------|---------|
+| **Título do PR** | `docs(construtor): registrar coleta real da telemetria verdict-only via ?constructorTelemetry=1` |
+| **Base confirmada pós-#599** | `origin/main = 029013449d9d9f652d2f1c3806c7a3404f8766e5`. |
+| **Objetivo** | Registrar números reais da telemetria verdict-only do Construtor coletados manualmente via #599. |
+| **Número de amostras reais** | 10. |
+| **Resultado final** | 0 `eligible` / 10 `unavailable` (0% / 100%). |
+| **byReason final** | `{"entrypoint-nao-permitido":6,"dependencias-externas-nao-permitidas":1,"multifile-body-vazio":1,"arquivo-fora-da-allowlist":2}` |
+| **byStatus final** | `{"constructor-approved-preview-diagnostic-reader:unavailable":10}` |
+| **Conclusão** | Coleta real confirmou 0% `eligible` e 100% `unavailable`; motivo dominante `entrypoint-nao-permitido`; o Construtor gera artefatos completos e ZIP válido, mas o diagnóstico ainda classifica tudo como não executável; isso bloqueia WebContainer real por enquanto. |
+| **Próximo passo recomendado** | Auditoria/correção mínima do contrato/reader/allowlist de entrypoint (provável #601 deve investigar por que artefatos com `index.html`, `index.js` e `lib/helpers.js` continuam `unavailable`). Não seguir para WebContainer, UI pública ou handoff ainda. |
+| **Confirmações de escopo** | PR exclusivamente documental; não altera `src/`; não altera `api/`; não cria API/storage/execução/UI; não toca WebContainer/handoff/`mountTree`; não altera prompt/geração; contratos #581–#599 preservados; sem payload bruto registrado; Dependabot fora de escopo; `executeArtifact` server-side permanece desativado. |
+| **Arquivos alterados** | `docs/telemetria-construtor-amostragem-dev.md`; `CHECKLIST.md`. |
+| **Validações** | `git diff --name-only origin/main...HEAD` (deve listar exatamente os 2 arquivos); `git diff --check origin/main...HEAD` (ok); `npm test` (verde); `npm run build` (verde). |
+| **Rollback** | `git revert <commit-sha>` (não executar agora; apenas registrar). |
+
+---
+
 ## 2026-06-09 — feat(construtor): visualização diagnóstica controlada da telemetria verdict-only via URL
 
 | Item | Detalhe |
