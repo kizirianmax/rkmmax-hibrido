@@ -1,3 +1,19 @@
+## 2026-06-09 — feat(construtor): leitor puro read-only de diagnóstico de preview aprovado
+
+| Item | Detalhe |
+|------|---------|
+| **Título do PR** | `feat(construtor): leitor puro read-only de diagnóstico de preview aprovado` |
+| **Base confirmada pós-#592** | `origin/main = 07e8d3493f88f0c32dc96e39d7caa38e8a4d1d6a` (`feat(construtor): derivador puro de diagnóstico parser→builder (#592)`). |
+| **Objetivo** | Criar leitor puro read-only que consome o derivador #592 e retorna diagnóstico verdict-only (`eligible`/`unavailable`) a partir de snapshot explícito. |
+| **Por que é preparação estrutural** | Define a fronteira segura de consumo antes de qualquer UI/wiring; com a fonte real atual, diagnósticos seguem majoritariamente `unavailable`. |
+| **Retorno** | Verdict-only, sem expor payload bruto (`rawContent`/`artifact`/`files`). |
+| **Arquivos alterados** | `CHECKLIST.md`; `src/lib/construtor/constructorApprovedPreviewDiagnosticReader.js`; `src/lib/construtor/__tests__/constructorApprovedPreviewDiagnosticReader.test.js`. |
+| **Confirmações** | Sem UI; sem `api/`; sem `HybridAgentSimple.jsx`; sem alterar contratos #581–#592; sem handoff #582; sem WebContainer; sem `mountTree`; sem `fetch`/`/api/`/`sessionStorage`/`localStorage`/`zipBase64`/`contentPreview`; `executeArtifact` server-side permanece `disabled`; sem bypass ao Serginho; Dependabot fora de escopo. |
+| **Validações executadas** | `npm test` (ok); `npm run build` (ok); `git diff --check origin/main...HEAD` (ok); `git diff --name-only origin/main...HEAD` (ok — exatamente 3 arquivos). |
+| **Rollback** | `git revert <commit-sha>` |
+
+---
+
 ## 2026-06-08 — feat(construtor): derivador puro de diagnóstico parser→builder
 
 | Item | Detalhe |
