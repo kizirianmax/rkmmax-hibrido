@@ -41,16 +41,6 @@ Registrar **uma linha por amostra** na tabela abaixo.
 | 8 | delimitador explícito com index.js + lib/helpers.js | Prompt com delimitador explícito e estrutura mínima | `constructor-approved-preview-diagnostic-reader:unavailable` | 8 | 0 | 8 | `arquivo-fora-da-allowlist` | `constructor-approved-preview-diagnostic-reader:unavailable` | Gerou `index.js` e `lib/helpers.js` corretamente, sem `package.json` e sem dependências externas, mas ainda ficou não executável. |
 | 9 | dashboard simples HTML/CSS/JS | Dashboard simples em HTML/CSS/JS | `constructor-approved-preview-diagnostic-reader:unavailable` | 9 | 0 | 9 | `entrypoint-nao-permitido` | `constructor-approved-preview-diagnostic-reader:unavailable` | Gerou `index.html`, `styles.css` e `script.js`; ZIP válido, artefato completo, mas não executável. |
 | 10 | formulário HTML/CSS/JS | Formulário HTML/CSS/JS com validações simples | `constructor-approved-preview-diagnostic-reader:unavailable` | 10 | 0 | 10 | `entrypoint-nao-permitido` | `constructor-approved-preview-diagnostic-reader:unavailable` | Gerou `index.html`, `styles.css` e `script.js`; ZIP válido, artefato completo, mas não executável. |
-| 11 |  |  |  |  |  |  |  |  |  |
-| 12 |  |  |  |  |  |  |  |  |  |
-| 13 |  |  |  |  |  |  |  |  |  |
-| 14 |  |  |  |  |  |  |  |  |  |
-| 15 |  |  |  |  |  |  |  |  |  |
-| 16 |  |  |  |  |  |  |  |  |  |
-| 17 |  |  |  |  |  |  |  |  |  |
-| 18 |  |  |  |  |  |  |  |  |  |
-| 19 |  |  |  |  |  |  |  |  |  |
-| 20 |  |  |  |  |  |  |  |  |  |
 
 ## 6) Tabela de consolidação
 
@@ -83,7 +73,7 @@ Registrar **uma linha por amostra** na tabela abaixo.
 - Registrar apenas contadores e `reason`/`status`.
 
 ## 9) Critério de sucesso
-Este runbook deve permitir decidir o #599 com evidência.
+Este runbook registra a coleta real manual assistida com evidência consolidada.
 
 ## Status da execução neste ambiente
 > Coleta real executada manualmente em ambiente autenticado (gated por `?constructorTelemetry=1`), com 10 amostras reais.
