@@ -1,3 +1,19 @@
+## 2026-06-09 — feat(construtor): adaptador puro de preview em memória para snapshot read-only
+
+| Item | Detalhe |
+|------|---------|
+| **Título do PR** | `feat(construtor): adaptador puro de preview em memória para snapshot read-only` |
+| **Base confirmada pós-#593** | `origin/main = 147e2fc7887b2a457babc0cf7463fcf1589036ed`. |
+| **Objetivo** | Adaptador puro que reserializa `fileContents` em memória → `rawContent` multi-file e delega ao leitor #593, retornando diagnóstico verdict-only. |
+| **Por que é preparação estrutural** | Fecha a ponte entre preview real em memória e o leitor verdict-only sem wiring/UI; com a fonte real atual, diagnósticos seguem majoritariamente `unavailable`. |
+| **Retorno** | Verdict-only, sem expor payload bruto (`rawContent`/`fileContents`/`artifact`/`files`/`contentPreview`/`zipBase64`/`agentMessage`). |
+| **Confirmações** | Não usa `agentMessage.content`, `contentPreview`, `zipBase64`; sem UI; sem `api/`; sem `HybridAgentSimple.jsx`; sem alterar contratos #581–#593; sem handoff #582; sem WebContainer; sem `mountTree`; sem `fetch`/`/api/`/`sessionStorage`/`localStorage`; `executeArtifact` server-side permanece `disabled`; sem bypass ao Serginho; Dependabot fora de escopo. |
+| **Arquivos alterados** | `CHECKLIST.md`; `src/lib/construtor/constructorInMemoryPreviewSnapshotAdapter.js`; `src/lib/construtor/__tests__/constructorInMemoryPreviewSnapshotAdapter.test.js`. |
+| **Validações executadas** | `npm test` (ok); `npm run build` (ok); `git diff --check origin/main...HEAD` (ok); `git diff --name-only origin/main...HEAD` (ok — exatamente 3 arquivos). |
+| **Rollback** | `git revert <commit-sha>` |
+
+---
+
 ## 2026-06-09 — feat(construtor): leitor puro read-only de diagnóstico de preview aprovado
 
 | Item | Detalhe |
