@@ -17,14 +17,11 @@ function shouldRemoveInternalMetadataPath(path) {
     return false;
   }
 
-  const lowerCasePath = normalizedPath.toLowerCase();
-  if (lowerCasePath.startsWith("logs/")) {
+  if (normalizedPath.startsWith("logs/")) {
     return true;
   }
 
-  const segments = lowerCasePath.split("/");
-  const basename = segments[segments.length - 1];
-  return basename === "readme.md" || basename === "manifest.json";
+  return normalizedPath === "README.md" || normalizedPath === "manifest.json";
 }
 
 export function filterConstructorInternalMetadataFiles(fileContents) {

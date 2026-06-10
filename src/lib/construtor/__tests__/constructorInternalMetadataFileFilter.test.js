@@ -1,25 +1,33 @@
 import { filterConstructorInternalMetadataFiles } from "../constructorInternalMetadataFileFilter.js";
 
 describe("constructorInternalMetadataFileFilter", () => {
-  test("remove README.md, manifest.json e logs/* sem mutar input", () => {
+  test("remove somente metadados internos observacionais em escopo fixo sem mutar input", () => {
     const input = {
       "README.md": "# docs",
-      "docs/ReadMe.MD": "# docs nested",
       "manifest.json": '{"name":"x"}',
-      "ManiFest.JsOn": '{"name":"x"}',
       "logs/generation.log": "ok",
       "logs/structure.log": "ok",
-      "LOGS/other.log": "ok",
+      "logs/other.log": "ok",
+      "docs/ReadMe.MD": "# docs nested",
+      "docs/README.md": "# docs nested 2",
+      "assets/manifest.json": '{"name":"nested"}',
       "index.html": "<html></html>",
+      "script.js": "console.log('ok')",
       "artifact-manifest.json": '{"entrypoint":"index.html"}',
+      "content.md": "--- FILE: index.html ---\n<html></html>",
     };
     const originalSnapshot = { ...input };
 
     const filtered = filterConstructorInternalMetadataFiles(input);
 
     expect(filtered).toEqual({
+      "docs/ReadMe.MD": "# docs nested",
+      "docs/README.md": "# docs nested 2",
+      "assets/manifest.json": '{"name":"nested"}',
       "index.html": "<html></html>",
+      "script.js": "console.log('ok')",
       "artifact-manifest.json": '{"entrypoint":"index.html"}',
+      "content.md": "--- FILE: index.html ---\n<html></html>",
     });
     expect(input).toEqual(originalSnapshot);
     expect(filtered).not.toBe(input);
