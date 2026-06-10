@@ -83,6 +83,52 @@ describe("constructorRealPreviewDiagnosticObservation", () => {
     expectVerdictOnlyWithoutPayloadLeak(result);
   });
 
+  test("filtra metadados internos no caminho verdict-only antes do reader", () => {
+    const fileContents = {
+      "index.html": "<html><body>ok</body></html>",
+      "styles.css": "body{margin:0;}",
+      "script.js": "console.log('ok')",
+      "README.md": "# metadata",
+      "manifest.json": '{"generated":true}',
+      "logs/generation.log": "generated",
+      "logs/structure.log": "structure",
+    };
+
+    const result = observeConstructorRealPreviewDiagnostic(createPreview({ fileContents }));
+
+    expect(result).toMatchObject({
+      ok: true,
+      status: "constructor-approved-preview-diagnostic-reader: eligible",
+      verdict: "eligible",
+      stage: "static-contract",
+      rawPayloadAccessed: false,
+      apiUsed: false,
+      storageUsed: false,
+      executeArtifactServerSide: "disabled",
+    });
+    expectVerdictOnlyWithoutPayloadLeak(result);
+  });
+
+  test("content.md com marcador textual de FILE permanece unavailable", () => {
+    const fileContents = {
+      "content.md":
+        "--- FILE: index.html ---\n<html><body>fake file marker</body></html>\n--- FILE: script.js ---\nconsole.log('x')",
+    };
+
+    const result = observeConstructorRealPreviewDiagnostic(createPreview({ fileContents }));
+
+    expect(result).toMatchObject({
+      ok: false,
+      status: "constructor-approved-preview-diagnostic-reader: unavailable",
+      verdict: "unavailable",
+      rawPayloadAccessed: false,
+      apiUsed: false,
+      storageUsed: false,
+      executeArtifactServerSide: "disabled",
+    });
+    expectVerdictOnlyWithoutPayloadLeak(result);
+  });
+
   test("ordem de inferência segue index.js, index.mjs, index.html, content.md e fallback para primeira chave", () => {
     expect(
       inferEntrypointFromFileContents({
