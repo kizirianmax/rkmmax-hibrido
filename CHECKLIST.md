@@ -1,3 +1,26 @@
+## 2026-06-10 — docs(construtor): auditoria pós-#602 (coleta diagnóstica verdict-only sem runtime real no CI)
+
+| Item | Detalhe |
+|------|---------|
+| **Título do PR** | `docs(construtor): registrar auditoria verdict-only pós-#602 com lacuna explícita de telemetria runtime real` |
+| **Base pós-#602 (referência fixa)** | `origin/main = efedd5a1a4180dac28551881a78798a63d5ab3bb` (`feat(construtor): contrato dedicado de elegibilidade diagnóstica para artefatos estáticos client-side`, PR #602). |
+| **Objetivo da etapa** | Confirmar, com evidência disponível no ambiente atual, se a trilha estática dedicada (`stage: "static-contract"`) melhora a elegibilidade no diagnóstico verdict-only do Construtor. |
+| **Natureza da entrega** | Auditoria/medição + documentação. Sem implementação funcional, sem ativar WebContainer, sem reativar `executeArtifact` server-side, sem payload bruto. |
+| **Inspeção de caminhos reais** | Reader: `src/lib/construtor/constructorApprovedPreviewDiagnosticReader.js`; contrato estático: `src/lib/construtor/constructorStaticClientArtifactContract.js`; gate de telemetria: `src/lib/construtor/constructorTelemetryDiagnosticGate.js`; wiring/UI gated: `src/pages/HybridAgentSimple.jsx`. |
+| **Evidência possível neste ambiente (caracterização determinística)** | Testes existentes executados: `src/lib/construtor/__tests__/constructorApprovedPreviewDiagnosticReader.test.js` e `src/lib/construtor/__tests__/constructorStaticClientArtifactContract.test.js` (32/32 verde). Casos mínimos verificados (verdict-only): (1) `index.html + styles.css/style.css + script.js` ⇒ `eligible`, `stage: "static-contract"`; (2) `content.md` (incluindo marcador textual de arquivo) ⇒ `unavailable` (`arquivo-fora-da-allowlist`); (3) Express/dependência externa ⇒ `unavailable` (`dependencias-externas-nao-permitidas`); (4) `index.js` puro ⇒ `eligible`; (5) `index.js + lib/helpers.js` ⇒ `eligible`. |
+| **Telemetria runtime real via `?constructorTelemetry=1`** | **Não coletada neste CI/sandbox headless**. Motivo: esta coleta depende de fluxo DEV real no navegador, sessão assistida/autenticada e geração real via Serginho/providers; isso não foi reproduzível de forma confiável neste ambiente sem fabricar dados. |
+| **Consolidação (apenas do que foi de fato verificado)** | **Caracterização determinística (5 casos):** `total=5`, `eligible=3`, `unavailable=2`; `byReason={"arquivo-fora-da-allowlist":1,"dependencias-externas-nao-permitidas":1}`; `byStatus={"constructor-approved-preview-diagnostic-reader: eligible":3,"constructor-approved-preview-diagnostic-reader: unavailable":2}`; `byStage={"static-contract":1,"builder":4}`. |
+| **Flags de segurança/invariantes (verdict-only)** | Mantidas nos resultados observados/testados: `rawPayloadAccessed: false`, `apiUsed: false`, `storageUsed: false`, `executeArtifactServerSide: "disabled"`. |
+| **Comparação explícita com a baseline do PR #600** | **#600 (runtime real manual histórico):** `0 eligible / 10 unavailable`, `byReason={"entrypoint-nao-permitido":6,"dependencias-externas-nao-permitidas":1,"multifile-body-vazio":1,"arquivo-fora-da-allowlist":2}`. **Pós-#602 nesta PR/CI:** evidência determinística positiva para estáticos (`stage: "static-contract"`), mas **sem qualquer nova amostragem runtime real via \`?constructorTelemetry=1\` (incluindo lote de 10 casos)**. |
+| **Conclusão objetiva** | Há sinal técnico consistente de melhoria na elegibilidade de estáticos na caracterização determinística; porém isso **não equivale** à coleta runtime real do #600. Portanto, ainda **falta evidência runtime real assistida** antes de concluir suficiência para avançar com expansão controlada de allowlist. |
+| **Próximo passo recomendado** | Executar coleta manual assistida em DEV real com `?constructorTelemetry=1` (10+ amostras reais), registrar somente verdict-only e então reavaliar expansão controlada de allowlist com base em evidência runtime. |
+| **Confirmações de escopo** | Não altera `api/`; não ativa WebContainer; não reativa `executeArtifact`; não relaxa `webcontainerArtifactContract.js`; não expande allowlist; não altera lógica funcional do reader; sem bypass ao Serginho; sem payload bruto em doc/telemetria. |
+| **Arquivos alterados** | `CHECKLIST.md`. |
+| **Validações executadas** | Baseline: `npm test -- --runInBand` (96 suites / 2913 testes, verde) e `npm run build` (verde). Evidência direcionada: `npm test -- --runInBand src/lib/construtor/__tests__/constructorApprovedPreviewDiagnosticReader.test.js src/lib/construtor/__tests__/constructorStaticClientArtifactContract.test.js` (verde). |
+| **Rollback** | `git revert <commit-sha>` |
+
+---
+
 ## 2026-06-10 — feat(construtor): contrato dedicado de elegibilidade diagnóstica para artefatos estáticos client-side (PR #602)
 
 | Item | Detalhe |
