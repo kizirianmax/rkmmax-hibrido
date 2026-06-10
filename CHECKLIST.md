@@ -1,3 +1,22 @@
+## 2026-06-10 — test(construtor): caracterizar contrato/reader/allowlist de entrypoint no diagnóstico do PR #601
+
+| Item | Detalhe |
+|------|---------|
+| **Título do PR** | `test(construtor): caracterizar contrato/reader/allowlist de entrypoint no diagnóstico do PR #601` |
+| **Base confirmada pós-#600** | `origin/main = ea4f47e2fd68fd2192b3461a91a3f7c0b2c4ad32` (`docs(construtor): registrar coleta real da telemetria verdict-only via ?constructorTelemetry=1 (#600)`). |
+| **Objetivo** | Auditar o reader/cadeia de contrato e ajustar minimamente com testes de caracterização dos casos reais A–E sem criar execução real. |
+| **Causa técnica identificada** | `entrypoint-nao-permitido` vem de `approvedConstructorArtifactContract.js` (entrypoint fixo `index.js`); `arquivo-fora-da-allowlist` e `dependencias-externas-nao-permitidas` vêm de `webcontainerArtifactContract.js`; `multifile-body-vazio` vem de `constructorMultiFileContentParser.js`. |
+| **Decisão de escopo** | Sem correção especulativa de allowlist/entrypoint compartilhados com WebContainer neste PR; mantida somente caracterização no reader (`verdict-only`). |
+| **Arquivos alterados** | `src/lib/construtor/__tests__/constructorApprovedPreviewDiagnosticReader.test.js`; `CHECKLIST.md`. |
+| **Testes adicionados/ajustados** | Novos testes de caracterização PR #601 no reader para casos A–E: HTML/CSS/JS (`entrypoint-nao-permitido`), JS puro (`eligible`), JS+`lib/helpers.js` (`eligible`), Express com dependência externa (`dependencias-externas-nao-permitidas`), conteúdo preso em `content.md` (`arquivo-fora-da-allowlist`). |
+| **Comportamento antes/depois** | Antes: cadeia já retornava `unavailable` para HTML/CSS/JS e `eligible` para shape `index.js` allowlistado. Depois: comportamento permanece igual, agora com cobertura explícita A–E e diagnóstico documentado. |
+| **Validações executadas** | `git diff --name-only origin/main...HEAD`; `git diff --check origin/main...HEAD`; `npm test`; `npm run build`. |
+| **Riscos** | Baixo: alteração somente em testes/documentação. Risco residual é arquitetural (suporte formal a artefato estático HTML/CSS/JS exige decisão separada do contrato compartilhado). |
+| **Rollback** | `git revert <commit-sha>` |
+| **Próximo passo recomendado** | Definir arquiteturalmente um contrato dedicado para artefatos estáticos client-side (sem relaxar globalmente o contrato compartilhado do WebContainer) e depois implementar em PR próprio. |
+
+---
+
 ## 2026-06-09 — docs(construtor): registrar coleta real da telemetria verdict-only via ?constructorTelemetry=1
 
 | Item | Detalhe |

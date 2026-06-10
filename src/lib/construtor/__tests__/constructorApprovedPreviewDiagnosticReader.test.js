@@ -19,6 +19,127 @@ function expectVerdictOnlyWithoutPayloadLeak(result) {
 }
 
 describe("constructorApprovedPreviewDiagnosticReader", () => {
+  describe("caracterização PR #601 (reader/allowlist/entrypoint)", () => {
+    test("Caso A — HTML/CSS/JS simples permanece unavailable por entrypoint não permitido no contrato atual", () => {
+      const result = readApprovedPreviewDiagnosticFromExplicitSnapshot({
+        rawContent: [
+          "--- FILE: index.html ---",
+          "<html><head><link rel='stylesheet' href='styles.css'></head><body><script src='script.js'></script></body></html>",
+          "--- FILE: styles.css ---",
+          "body{font-family:sans-serif;}",
+          "--- FILE: script.js ---",
+          "console.log('ok');",
+        ].join("\n"),
+        id: "preview-artifact-601-a",
+        version: "1.0.0",
+        entrypoint: "index.html",
+      });
+
+      expect(result).toMatchObject({
+        ok: false,
+        status: "constructor-approved-preview-diagnostic-reader: unavailable",
+        verdict: "unavailable",
+        stage: "builder",
+        reason: "entrypoint-nao-permitido",
+      });
+      expectVerdictOnlyWithoutPayloadLeak(result);
+    });
+
+    test("Caso B — JS puro (index.js) é elegível sem package.json obrigatório", () => {
+      const result = readApprovedPreviewDiagnosticFromExplicitSnapshot({
+        rawContent: ["--- FILE: index.js ---", "console.log('ok');"].join("\n"),
+        id: "preview-artifact-601-b",
+        version: "1.0.0",
+        entrypoint: "index.js",
+      });
+
+      expect(result).toMatchObject({
+        ok: true,
+        status: "constructor-approved-preview-diagnostic-reader: eligible",
+        verdict: "eligible",
+        stage: "builder",
+      });
+      expectVerdictOnlyWithoutPayloadLeak(result);
+    });
+
+    test("Caso C — JS com auxiliar (index.js + lib/helpers.js) é elegível", () => {
+      const result = readApprovedPreviewDiagnosticFromExplicitSnapshot({
+        rawContent: [
+          "--- FILE: index.js ---",
+          "const { sum } = require('./lib/helpers.js');",
+          "console.log(sum(1,2));",
+          "--- FILE: lib/helpers.js ---",
+          "function sum(a,b){return a+b;}module.exports={sum};",
+        ].join("\n"),
+        id: "preview-artifact-601-c",
+        version: "1.0.0",
+        entrypoint: "index.js",
+      });
+
+      expect(result).toMatchObject({
+        ok: true,
+        status: "constructor-approved-preview-diagnostic-reader: eligible",
+        verdict: "eligible",
+        stage: "builder",
+      });
+      expectVerdictOnlyWithoutPayloadLeak(result);
+    });
+
+    test("Caso D — package.json com dependência externa continua unavailable", () => {
+      const result = readApprovedPreviewDiagnosticFromExplicitSnapshot({
+        rawContent: [
+          "--- FILE: package.json ---",
+          JSON.stringify({
+            name: "express-app",
+            version: "1.0.0",
+            dependencies: { express: "^4.19.2" },
+          }),
+          "--- FILE: index.js ---",
+          "const express = require('express');",
+          "--- FILE: lib/utils.js ---",
+          "module.exports={ok:true};",
+        ].join("\n"),
+        id: "preview-artifact-601-d",
+        version: "1.0.0",
+        entrypoint: "index.js",
+      });
+
+      expect(result).toMatchObject({
+        ok: false,
+        status: "constructor-approved-preview-diagnostic-reader: unavailable",
+        verdict: "unavailable",
+        stage: "builder",
+        reason: "dependencias-externas-nao-permitidas",
+      });
+      expectVerdictOnlyWithoutPayloadLeak(result);
+    });
+
+    test("Caso E — conteúdo preso em content.md com marcador textual não mascara eligible", () => {
+      const result = readApprovedPreviewDiagnosticFromExplicitSnapshot({
+        rawContent: [
+          "--- FILE: content.md ---",
+          "# Exemplo",
+          "```txt",
+          " --- FILE: index.js ---",
+          " console.log('x');",
+          "```",
+        ].join("\n"),
+        id: "preview-artifact-601-e",
+        version: "1.0.0",
+        entrypoint: "index.js",
+      });
+
+      expect(result).toMatchObject({
+        ok: false,
+        status: "constructor-approved-preview-diagnostic-reader: unavailable",
+        verdict: "unavailable",
+        stage: "builder",
+        reason: "arquivo-fora-da-allowlist",
+      });
+      expectVerdictOnlyWithoutPayloadLeak(result);
+    });
+  });
+
   test("snapshot documental realista retorna unavailable sem expor payload bruto", () => {
     const result = readApprovedPreviewDiagnosticFromExplicitSnapshot({
       rawContent: ["--- FILE: content.md ---", "# Documento", "", "--- FILE: index.html ---", "<html><body>doc</body></html>"].join(
