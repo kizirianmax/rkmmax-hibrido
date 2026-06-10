@@ -1,3 +1,22 @@
+## 2026-06-10 — docs(construtor): registrar coleta runtime real pós-#602 (verdict-only, 10 amostras, 0 eligible / 10 unavailable)
+
+| Item | Detalhe |
+|------|---------|
+| **Título do PR** | `docs(construtor): registrar coleta runtime real pós-#602` |
+| **Base** | `origin/main` pós-#602/#603 (contrato estático dedicado do #602 já em vigor; lacuna de telemetria runtime real registrada no #603). |
+| **Objetivo** | Registrar documentalmente a coleta runtime real **manual** pós-#602 via `?constructorTelemetry=1`, com 10 amostras **verdict-only**. |
+| **Natureza da entrega** | Documentação/auditoria apenas. Sem implementação de código. Sem ativar WebContainer. Sem reativar `executeArtifact` server-side. Sem payload bruto. Sem expandir allowlist. |
+| **Resultado consolidado (verdict-only)** | `total=10`, `eligible=0`, `unavailable=10`; `byReason={"entrypoint-nao-permitido":1,"conteudo-com-acesso-dinamico":2,"arquivo-fora-da-allowlist":4,"multifile-body-vazio":3}`; `byStatus={"constructor-approved-preview-diagnostic-reader: unavailable":10}`. |
+| **Amostras (resumo verdict-only, sem conteúdo bruto)** | (1) unavailable / `entrypoint-nao-permitido` — artefato virou `content.md` com "Sem resposta"; (2) unavailable / `conteudo-com-acesso-dinamico` — HTML/CSS/JS, JS com `document`/`getElementById`/`addEventListener`; (3) unavailable / `arquivo-fora-da-allowlist` — HTML/CSS/JS simples + `README.md`/`manifest.json`/logs extras; (4) unavailable / `multifile-body-vazio` — `index.html` preso em `content.md` com marcador textual; (5) unavailable / `multifile-body-vazio` — `index.js` puro preso em `content.md`; (6) unavailable / `multifile-body-vazio` — `index.js` puro repetido preso em `content.md`; (7) unavailable / `conteudo-com-acesso-dinamico` — HTML/CSS/JS com acesso dinâmico ao DOM; (8) unavailable / `arquivo-fora-da-allowlist` — HTML/CSS puro (sem JS) + `README.md`/`manifest.json`/logs extras; (9) unavailable / `arquivo-fora-da-allowlist` — `index.js` + `lib/helpers.js` corretos + `README.md`/`manifest.json`/logs extras; (10) unavailable / `arquivo-fora-da-allowlist` — `index.html` + `assets/main.css` + `assets/main.js` corretos + `README.md`/`manifest.json`/logs extras. |
+| **Comparação com baseline #600** | **#600 (antes do #602, runtime real manual):** `0 eligible / 10 unavailable`, `byReason={"entrypoint-nao-permitido":6,"dependencias-externas-nao-permitidas":1,"multifile-body-vazio":1,"arquivo-fora-da-allowlist":2}`. **Pós-#602 (runtime real):** `0 eligible / 10 unavailable`, **mesmo total, distribuição de razões diferente**: `entrypoint-nao-permitido` 6→1; `arquivo-fora-da-allowlist` 2→4; `multifile-body-vazio` 1→3; surgimento de `conteudo-com-acesso-dinamico` 0→2; `dependencias-externas-nao-permitidas` 1→0. |
+| **Conclusão honesta** | O #602 melhorou a caracterização determinística, mas a coleta runtime real pós-#602 **ainda não produziu nenhum `eligible`**. Hipótese principal: o empacotamento real do Construtor adiciona metadados internos seguros (`README.md`, `manifest.json`, logs) ou prende arquivos em `content.md`, causando bloqueios por `arquivo-fora-da-allowlist`, `multifile-body-vazio`, `conteudo-com-acesso-dinamico` e `entrypoint-nao-permitido`. |
+| **Próximo passo recomendado** | Auditoria técnica específica para decidir como tratar arquivos internos seguros do Construtor (ex.: `README.md`/`manifest.json`/logs) e o aprisionamento em `content.md`, **sem relaxar o contrato de execução** e **sem expandir allowlist** neste PR. |
+| **Confirmações de escopo** | Não altera `src/`; não altera `api/`; não ativa WebContainer; não reativa `executeArtifact`; não expande allowlist; não altera reader/contratos/parser/empacotamento; não mexe em dependências; não registra payload bruto; não inclui código completo dos artefatos; sem refactor. |
+| **Arquivos alterados** | `CHECKLIST.md`. |
+| **Rollback** | `git revert <commit-sha>` |
+
+---
+
 ## 2026-06-10 — docs(construtor): auditoria pós-#602 (coleta diagnóstica verdict-only sem runtime real no CI)
 
 | Item | Detalhe |
