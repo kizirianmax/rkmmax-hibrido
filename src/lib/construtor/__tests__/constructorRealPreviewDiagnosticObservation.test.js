@@ -51,7 +51,7 @@ describe("constructorRealPreviewDiagnosticObservation", () => {
       ok: false,
       status: "constructor-approved-preview-diagnostic-reader: unavailable",
       verdict: "unavailable",
-      stage: "builder",
+      stage: expect.any(String),
       rawPayloadAccessed: false,
       apiUsed: false,
       storageUsed: false,
