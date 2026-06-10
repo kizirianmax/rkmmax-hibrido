@@ -2,8 +2,8 @@
 
 | Item | Detalhe |
 |------|---------|
-| **Título do PR** | `docs(construtor): registrar coleta runtime real pós-#602` |
-| **Base** | `origin/main` pós-#602/#603 (contrato estático dedicado do #602 já em vigor; lacuna de telemetria runtime real registrada no #603). |
+| **Título do PR** | `docs(construtor): registrar coleta runtime real pós-#602 (verdict-only)` |
+| **Base** | `origin/main = 30b7c2dea67e6e0087341d49585f10938fad8399` (`docs(construtor): registrar auditoria verdict-only pós-#602 com lacuna explícita de telemetria runtime real`, PR #603). |
 | **Objetivo** | Registrar documentalmente a coleta runtime real **manual** pós-#602 via `?constructorTelemetry=1`, com 10 amostras **verdict-only**. |
 | **Natureza da entrega** | Documentação/auditoria apenas. Sem implementação de código. Sem ativar WebContainer. Sem reativar `executeArtifact` server-side. Sem payload bruto. Sem expandir allowlist. |
 | **Resultado consolidado (verdict-only)** | `total=10`, `eligible=0`, `unavailable=10`; `byReason={"entrypoint-nao-permitido":1,"conteudo-com-acesso-dinamico":2,"arquivo-fora-da-allowlist":4,"multifile-body-vazio":3}`; `byStatus={"constructor-approved-preview-diagnostic-reader: unavailable":10}`. |
