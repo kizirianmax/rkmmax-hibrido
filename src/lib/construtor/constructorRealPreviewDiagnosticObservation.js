@@ -1,4 +1,5 @@
 import { readApprovedPreviewDiagnosticFromInMemoryPreview } from "./constructorInMemoryPreviewSnapshotAdapter.js";
+import { filterConstructorInternalMetadataFiles } from "./constructorInternalMetadataFileFilter.js";
 
 const UNAVAILABLE_STATUS = "constructor-real-preview-diagnostic-observation: unavailable";
 const EXECUTION_FLAG_KEY = "execute" + "ArtifactServerSide";
@@ -59,13 +60,16 @@ export function observeConstructorRealPreviewDiagnostic(preview) {
     return unavailable("real-preview-filecontents-invalido", "summary.fileContents");
   }
 
-  const entrypoint = inferEntrypointFromFileContents(preview.summary.fileContents);
+  const diagnosticFileContents = filterConstructorInternalMetadataFiles(
+    preview.summary.fileContents,
+  );
+  const entrypoint = inferEntrypointFromFileContents(diagnosticFileContents);
   if (!isNonEmptyString(entrypoint)) {
     return unavailable("real-preview-filecontents-vazio", "summary.fileContents");
   }
 
   return readApprovedPreviewDiagnosticFromInMemoryPreview({
-    fileContents: preview.summary.fileContents,
+    fileContents: diagnosticFileContents,
     id: preview.summary.id,
     version: preview.summary.version,
     entrypoint,

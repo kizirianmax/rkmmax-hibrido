@@ -1,3 +1,18 @@
+## 2026-06-10 — fix(construtor): filtrar metadados internos no snapshot diagnóstico verdict-only (Causa A)
+
+| Item | Detalhe |
+|------|---------|
+| **Título do PR** | `fix(construtor): filtrar metadados internos no snapshot diagnóstico verdict-only (Causa A)` |
+| **Base** | `origin/main = 321a1f1677721b95455e014aba3cc4d3d21f4c62` (main pós-#604). |
+| **Objetivo** | Remover apenas metadados internos observacionais (`README.md`, `manifest.json`, `logs/*`) no caminho diagnóstico verdict-only, antes da inferência de entrypoint e antes da leitura do snapshot in-memory. |
+| **Arquivos alterados** | `src/lib/construtor/constructorInternalMetadataFileFilter.js`; `src/lib/construtor/__tests__/constructorInternalMetadataFileFilter.test.js`; `src/lib/construtor/constructorRealPreviewDiagnosticObservation.js`; `src/lib/construtor/__tests__/constructorRealPreviewDiagnosticObservation.test.js`; `CHECKLIST.md`. |
+| **Comportamento antes/depois** | Antes: `summary.fileContents` com metadados internos contaminava o snapshot do reader e podia reprovar por `arquivo-fora-da-allowlist`. Depois: esses metadados são filtrados somente no fluxo verdict-only observacional; ZIP/preview público continuam contendo metadados. `content.md` com marcador textual continua `unavailable`. |
+| **Riscos** | Baixo: filtro fixo e conservador, aplicado somente no observador verdict-only. Sem relaxar contrato/allowlist, sem tocar parser de `content.md` (`MIN_MULTI_FILE_COUNT` fora de escopo), sem mudanças em `api/`, WebContainer ou `executeArtifact`. |
+| **Rollback** | `git revert <commit-sha>` |
+| **Próximo passo recomendado** | Tratar a Causa B em PR separado: ajuste seguro para o aprisionamento em `content.md` ligado a `MIN_MULTI_FILE_COUNT`, sem heurística frágil e sem relaxar contratos. |
+
+---
+
 ## 2026-06-10 — docs(construtor): registrar coleta runtime real pós-#602 (verdict-only, 10 amostras, 0 eligible / 10 unavailable)
 
 | Item | Detalhe |
