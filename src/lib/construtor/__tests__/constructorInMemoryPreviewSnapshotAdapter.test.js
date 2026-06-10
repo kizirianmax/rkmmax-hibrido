@@ -39,7 +39,7 @@ describe("constructorInMemoryPreviewSnapshotAdapter", () => {
       ok: false,
       status: "constructor-approved-preview-diagnostic-reader: unavailable",
       verdict: "unavailable",
-      stage: "builder",
+      stage: expect.any(String),
       reason: expect.any(String),
     });
     expectVerdictOnlyWithoutPayloadLeak(result);

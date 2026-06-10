@@ -19,8 +19,8 @@ function expectVerdictOnlyWithoutPayloadLeak(result) {
 }
 
 describe("constructorApprovedPreviewDiagnosticReader", () => {
-  describe("caracterização PR #601 (reader/allowlist/entrypoint)", () => {
-    test("Caso A — HTML/CSS/JS simples permanece unavailable por entrypoint não permitido no contrato atual", () => {
+  describe("caracterização PR #602 (reader + contrato estático dedicado)", () => {
+    test("Caso A — HTML/CSS/JS estático (index.html + styles.css + script.js) é elegível", () => {
       const result = readApprovedPreviewDiagnosticFromExplicitSnapshot({
         rawContent: [
           "--- FILE: index.html ---",
@@ -36,19 +36,59 @@ describe("constructorApprovedPreviewDiagnosticReader", () => {
       });
 
       expect(result).toMatchObject({
-        ok: false,
-        status: "constructor-approved-preview-diagnostic-reader: unavailable",
-        verdict: "unavailable",
-        stage: "builder",
-        reason: "entrypoint-nao-permitido",
+        ok: true,
+        status: "constructor-approved-preview-diagnostic-reader: eligible",
+        verdict: "eligible",
+        stage: "static-contract",
       });
       expectVerdictOnlyWithoutPayloadLeak(result);
     });
 
-    test("Caso B — JS puro (index.js) é elegível sem package.json obrigatório", () => {
+    test("Caso B — HTML com style.css singular (index.html + style.css + script.js) é elegível", () => {
+      const result = readApprovedPreviewDiagnosticFromExplicitSnapshot({
+        rawContent: [
+          "--- FILE: index.html ---",
+          "<html><head><link rel='stylesheet' href='style.css'></head><body><script src='script.js'></script></body></html>",
+          "--- FILE: style.css ---",
+          "body{font-family:sans-serif;}",
+          "--- FILE: script.js ---",
+          "console.log('ok');",
+        ].join("\n"),
+        id: "preview-artifact-602-b",
+        version: "1.0.0",
+        entrypoint: "index.html",
+      });
+
+      expect(result).toMatchObject({
+        ok: true,
+        status: "constructor-approved-preview-diagnostic-reader: eligible",
+        verdict: "eligible",
+        stage: "static-contract",
+      });
+      expectVerdictOnlyWithoutPayloadLeak(result);
+    });
+
+    test("Caso C — HTML isolado (index.html) é elegível", () => {
+      const result = readApprovedPreviewDiagnosticFromExplicitSnapshot({
+        rawContent: ["--- FILE: index.html ---", "<html><body><main>ok</main></body></html>"].join("\n"),
+        id: "preview-artifact-602-c",
+        version: "1.0.0",
+        entrypoint: "index.html",
+      });
+
+      expect(result).toMatchObject({
+        ok: true,
+        status: "constructor-approved-preview-diagnostic-reader: eligible",
+        verdict: "eligible",
+        stage: "static-contract",
+      });
+      expectVerdictOnlyWithoutPayloadLeak(result);
+    });
+
+    test("Caso D — JS puro (index.js) continua elegível", () => {
       const result = readApprovedPreviewDiagnosticFromExplicitSnapshot({
         rawContent: ["--- FILE: index.js ---", "console.log('ok');"].join("\n"),
-        id: "preview-artifact-601-b",
+        id: "preview-artifact-602-d",
         version: "1.0.0",
         entrypoint: "index.js",
       });
@@ -62,7 +102,7 @@ describe("constructorApprovedPreviewDiagnosticReader", () => {
       expectVerdictOnlyWithoutPayloadLeak(result);
     });
 
-    test("Caso C — JS com auxiliar (index.js + lib/helpers.js) é elegível", () => {
+    test("Caso E — JS com auxiliar (index.js + lib/helpers.js) continua elegível", () => {
       const result = readApprovedPreviewDiagnosticFromExplicitSnapshot({
         rawContent: [
           "--- FILE: index.js ---",
@@ -71,7 +111,7 @@ describe("constructorApprovedPreviewDiagnosticReader", () => {
           "--- FILE: lib/helpers.js ---",
           "function sum(a,b){return a+b;}module.exports={sum};",
         ].join("\n"),
-        id: "preview-artifact-601-c",
+        id: "preview-artifact-602-e",
         version: "1.0.0",
         entrypoint: "index.js",
       });
@@ -85,7 +125,7 @@ describe("constructorApprovedPreviewDiagnosticReader", () => {
       expectVerdictOnlyWithoutPayloadLeak(result);
     });
 
-    test("Caso D — package.json com dependência externa continua unavailable", () => {
+    test("Caso F — package.json com dependência externa continua unavailable", () => {
       const result = readApprovedPreviewDiagnosticFromExplicitSnapshot({
         rawContent: [
           "--- FILE: package.json ---",
@@ -99,7 +139,7 @@ describe("constructorApprovedPreviewDiagnosticReader", () => {
           "--- FILE: lib/utils.js ---",
           "module.exports={ok:true};",
         ].join("\n"),
-        id: "preview-artifact-601-d",
+        id: "preview-artifact-602-f",
         version: "1.0.0",
         entrypoint: "index.js",
       });
@@ -114,7 +154,49 @@ describe("constructorApprovedPreviewDiagnosticReader", () => {
       expectVerdictOnlyWithoutPayloadLeak(result);
     });
 
-    test("Caso E — conteúdo preso em content.md com marcador textual não mascara eligible", () => {
+    test("Caso G — caminho perigoso (../index.html) continua unavailable", () => {
+      const result = readApprovedPreviewDiagnosticFromExplicitSnapshot({
+        rawContent: ["--- FILE: ../index.html ---", "<html><body>bad</body></html>"].join("\n"),
+        id: "preview-artifact-602-g",
+        version: "1.0.0",
+        entrypoint: "index.html",
+      });
+
+      expect(result).toMatchObject({
+        ok: false,
+        status: "constructor-approved-preview-diagnostic-reader: unavailable",
+        verdict: "unavailable",
+        stage: "parser",
+        reason: "caminho-perigoso",
+      });
+      expectVerdictOnlyWithoutPayloadLeak(result);
+    });
+
+    test("Caso H — arquivo sensível (.env) continua unavailable", () => {
+      const result = readApprovedPreviewDiagnosticFromExplicitSnapshot({
+        rawContent: [
+          "--- FILE: index.html ---",
+          "<html><body>ok</body></html>",
+          "--- FILE: .env ---",
+          "SECRET=value",
+        ].join("\n"),
+        id: "preview-artifact-602-h",
+        version: "1.0.0",
+        entrypoint: "index.html",
+      });
+
+      expect(result).toMatchObject({
+        ok: false,
+        status: "constructor-approved-preview-diagnostic-reader: unavailable",
+        verdict: "unavailable",
+        stage: "static-contract",
+        reason: "caminho-oculto-ou-invalido",
+        path: ".env",
+      });
+      expectVerdictOnlyWithoutPayloadLeak(result);
+    });
+
+    test("Caso I — conteúdo preso em content.md com marcador textual não mascara eligible", () => {
       const result = readApprovedPreviewDiagnosticFromExplicitSnapshot({
         rawContent: [
           "--- FILE: content.md ---",
@@ -124,7 +206,7 @@ describe("constructorApprovedPreviewDiagnosticReader", () => {
           " console.log('x');",
           "```",
         ].join("\n"),
-        id: "preview-artifact-601-e",
+        id: "preview-artifact-602-i",
         version: "1.0.0",
         entrypoint: "index.js",
       });
@@ -154,7 +236,7 @@ describe("constructorApprovedPreviewDiagnosticReader", () => {
       ok: false,
       status: "constructor-approved-preview-diagnostic-reader: unavailable",
       verdict: "unavailable",
-      stage: "builder",
+      stage: expect.any(String),
       reason: expect.any(String),
     });
     expectVerdictOnlyWithoutPayloadLeak(result);
