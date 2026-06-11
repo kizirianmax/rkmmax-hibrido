@@ -1,12 +1,15 @@
 import { filterConstructorInternalMetadataFiles } from "./constructorInternalMetadataFileFilter.js";
 
 const PATH_UNSAFE_REGEX = /(^\/)|(^\/tmp\/)|\\/;
+const WINDOWS_ABSOLUTE_PATH_REGEX = /^[A-Za-z]:[\\/]/;
 const DOM_ACCESS_REGEX =
   /\b(?:document|window|navigator|location)\b|\b(?:addEventListener|querySelector|getElementById)\b/;
 const EXTERNAL_NETWORK_REGEX = /\bfetch\s*\(\s*["'`]\s*(?:https?:)?\/\/|\bhttps?:\/\//i;
 const EXTERNAL_IMPORT_REGEX =
   /\bimport\s*\(\s*["'`]\s*(?:https?:)?\/\/|\bimport\s+[\s\S]*?\bfrom\s*["'`]\s*(?:https?:)?\/\/|\brequire\s*\(\s*["'`]\s*(?:https?:)?\/\//i;
 const UNSAFE_CODE_REGEX = /\beval\s*\(|\bFunction\s*\(/;
+const DYNAMIC_ACCESS_EVASIVE_REGEX = /\b(?:globalThis|self)\b|\[\s*["'`]|\[[^\]]*\+/;
+const INLINE_SCRIPT_REGEX = /<script\b[^>]*>([\s\S]*?)<\/script>/gi;
 
 function isPlainObject(value) {
   if (!value || typeof value !== "object" || Array.isArray(value)) {
@@ -46,8 +49,10 @@ function buildFlags(entries) {
   let hasCss = false;
   let hasJs = false;
   let hasDomAccess = false;
+  let hasDynamicAccess = false;
   let hasExternalNetwork = false;
   let hasExternalImport = false;
+  let hasInlineScript = false;
   let hasUnsafePath = false;
 
   for (const [path, content] of entries) {
@@ -56,12 +61,23 @@ function buildFlags(entries) {
       continue;
     }
 
-    if (PATH_UNSAFE_REGEX.test(path) || path.split("/").includes("..")) {
+    if (PATH_UNSAFE_REGEX.test(path) || WINDOWS_ABSOLUTE_PATH_REGEX.test(path) || path.split("/").includes("..")) {
       hasUnsafePath = true;
     }
 
     if (path.endsWith(".html")) {
       hasHtml = true;
+      if (typeof content === "string") {
+        let inlineScriptMatch = INLINE_SCRIPT_REGEX.exec(content);
+        while (inlineScriptMatch) {
+          if ((inlineScriptMatch[1] || "").trim().length > 0) {
+            hasInlineScript = true;
+            break;
+          }
+          inlineScriptMatch = INLINE_SCRIPT_REGEX.exec(content);
+        }
+        INLINE_SCRIPT_REGEX.lastIndex = 0;
+      }
     }
 
     if (path.endsWith(".css")) {
@@ -82,6 +98,10 @@ function buildFlags(entries) {
       hasDomAccess = true;
     }
 
+    if (DYNAMIC_ACCESS_EVASIVE_REGEX.test(content)) {
+      hasDynamicAccess = true;
+    }
+
     if (EXTERNAL_IMPORT_REGEX.test(content)) {
       hasExternalImport = true;
     }
@@ -92,8 +112,10 @@ function buildFlags(entries) {
     hasCss,
     hasJs,
     hasDomAccess,
+    hasDynamicAccess,
     hasExternalNetwork,
     hasExternalImport,
+    hasInlineScript,
     hasUnsafePath,
   };
 }
@@ -127,12 +149,20 @@ export function classifyConstructorArtifactCapability(input) {
     return blockedVerdict(flags, ["unsafe-code-detected"]);
   }
 
+  if (flags.hasDynamicAccess) {
+    return blockedVerdict(flags, ["conteudo-com-acesso-dinamico"]);
+  }
+
   if (flags.hasExternalNetwork) {
     return blockedVerdict(flags, ["external-network-detected"]);
   }
 
   if (flags.hasExternalImport) {
     return blockedVerdict(flags, ["external-import-detected"]);
+  }
+
+  if (flags.hasInlineScript) {
+    return blockedVerdict(flags, ["inline-script-detected"]);
   }
 
   if (flags.hasDomAccess && normalizedInput.entrypoint !== "content.md") {

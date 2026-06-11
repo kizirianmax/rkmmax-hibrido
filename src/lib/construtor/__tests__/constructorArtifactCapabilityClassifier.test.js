@@ -62,6 +62,39 @@ describe("constructorArtifactCapabilityClassifier", () => {
   });
 
   test.each([
+    "globalThis.fetch('https://example.com')",
+    "globalThis['fetch']('https://example.com')",
+    "globalThis['fe' + 'tch']('https://example.com')",
+    "self['location']",
+    "obj['key']",
+  ])("bloqueia acesso dinâmico/evasivo (%s)", (code) => {
+    const result = classifyConstructorArtifactCapability({
+      fileContents: {
+        "index.js": code,
+      },
+    });
+
+    expect(result.capability).toBe("blocked");
+    expect(result.reasons).toContain("conteudo-com-acesso-dinamico");
+  });
+
+  test.each([
+    "window.addEventListener('load', () => {})",
+    "document.querySelector('#app')",
+    "navigator.userAgent",
+    "location.href",
+  ])("não classifica acesso DOM sem HTML como exportable (%s)", (code) => {
+    const result = classifyConstructorArtifactCapability({
+      fileContents: {
+        "index.js": code,
+      },
+    });
+
+    expect(result.capability).toBe("blocked");
+    expect(result.reasons).not.toContain("javascript-without-dom-access");
+  });
+
+  test.each([
     "eval('2+2')",
     "const make = new Function('return 1');",
   ])("bloqueia JS com sinal perigoso (%s)", (code) => {
@@ -93,6 +126,11 @@ describe("constructorArtifactCapabilityClassifier", () => {
   test.each([
     { "../escape.js": "console.log('x')" },
     { "/tmp/evil.js": "console.log('x')" },
+    { "/evil.js": "console.log('x')" },
+    { "C:/evil.js": "console.log('x')" },
+    { "C:\\evil.js": "console.log('x')" },
+    { "safe/../evil.js": "console.log('x')" },
+    { "nested\\path\\file.js": "console.log('x')" },
   ])("bloqueia path perigoso (%j)", (fileContents) => {
     const result = classifyConstructorArtifactCapability({ fileContents });
 
@@ -137,6 +175,20 @@ describe("constructorArtifactCapabilityClassifier", () => {
 
     expect(result.capability).toBe("previewable-static");
     expect(result.flags.hasJs).toBe(false);
+  });
+
+  test("bloqueia index.html com script inline (não silenciosamente previewable-static)", () => {
+    const result = classifyConstructorArtifactCapability({
+      fileContents: {
+        "index.html":
+          "<html><head><link rel='stylesheet' href='styles.css'></head><body><script>window.addEventListener('load', () => {})</script></body></html>",
+        "styles.css": "body { margin: 0; }",
+      },
+    });
+
+    expect(result.capability).toBe("blocked");
+    expect(result.reasons).toContain("inline-script-detected");
+    expect(result.capability).not.toBe("previewable-static");
   });
 
   test("retorno é serializável e não expõe payload bruto", () => {
