@@ -445,9 +445,20 @@ console.log('ok');`;
     expect(result[2].content).toContain("console.log");
   });
 
-  test('conteúdo com apenas 1 delimitador → retorna null', () => {
+  test('conteúdo com 1 delimitador explícito no início (index.html) → retorna 1 arquivo', () => {
     const single = '--- FILE: index.html ---\n<!DOCTYPE html><html></html>';
-    expect(parseMultiFileContent(single)).toBeNull();
+    const result = parseMultiFileContent(single);
+    expect(result).not.toBeNull();
+    expect(result).toHaveLength(1);
+    expect(result[0].name).toBe('index.html');
+  });
+
+  test('conteúdo com 1 delimitador explícito no início (index.js) → retorna 1 arquivo', () => {
+    const single = '--- FILE: index.js ---\nconsole.log("ok");';
+    const result = parseMultiFileContent(single);
+    expect(result).not.toBeNull();
+    expect(result).toHaveLength(1);
+    expect(result[0].name).toBe('index.js');
   });
 
   test('conteúdo sem delimitadores → retorna null', () => {
@@ -464,6 +475,16 @@ console.log('ok');`;
 --- FILE: script.js ---
 console.log('ok');`;
     expect(parseMultiFileContent(withEmpty)).toBeNull();
+  });
+
+  test('arquivo único explícito com body vazio continua inválido', () => {
+    const emptySingle = '--- FILE: index.js ---\n   \n';
+    expect(parseMultiFileContent(emptySingle)).toBeNull();
+  });
+
+  test('marcador FILE no meio de texto livre não é promovido', () => {
+    const inMiddle = 'Texto introdutório.\n\n--- FILE: index.js ---\nconsole.log("ok");';
+    expect(parseMultiFileContent(inMiddle)).toBeNull();
   });
 
   test('inclui README.md quando presente', () => {
@@ -666,6 +687,28 @@ document.addEventListener('DOMContentLoaded', () => { console.log('ready'); });`
     expect(names).toContain('logs/structure.log');
   });
 
+  test('arquivo único explícito index.js vira arquivo real (não content.md)', async () => {
+    const single = '--- FILE: index.js ---\nconsole.log("ok");';
+    const { manifest, zipBuffer } = await packageArtifact({ content: single });
+    const AdmZip = (await import('adm-zip')).default;
+    const zip = new AdmZip(zipBuffer);
+    const names = zip.getEntries().map((e) => e.entryName);
+    expect(names).toContain('index.js');
+    expect(names).not.toContain('content.md');
+    expect(manifest.contentType).toBe('multi-file');
+  });
+
+  test('arquivo único explícito index.html vira arquivo real (não content.md)', async () => {
+    const single = '--- FILE: index.html ---\n<!DOCTYPE html><html><body>ok</body></html>';
+    const { manifest, zipBuffer } = await packageArtifact({ content: single });
+    const AdmZip = (await import('adm-zip')).default;
+    const zip = new AdmZip(zipBuffer);
+    const names = zip.getEntries().map((e) => e.entryName);
+    expect(names).toContain('index.html');
+    expect(names).not.toContain('content.md');
+    expect(manifest.contentType).toBe('multi-file');
+  });
+
   test('conteúdo normal (não multiarquivo) continua com comportamento atual', async () => {
     const normalContent = '# Documento\n\nConteúdo normal sem delimitadores multiarquivo.';
     const { manifest, zipBuffer } = await packageArtifact({ content: normalContent });
@@ -673,6 +716,17 @@ document.addEventListener('DOMContentLoaded', () => { console.log('ready'); });`
     const zip = new AdmZip(zipBuffer);
     const names = zip.getEntries().map((e) => e.entryName);
     expect(names).toContain('content.md');
+    expect(manifest.contentType).not.toBe('multi-file');
+  });
+
+  test('texto com marcador FILE no meio continua como content.md', async () => {
+    const inMiddle = 'Introdução livre\n\n--- FILE: index.js ---\nconsole.log("ok");';
+    const { manifest, zipBuffer } = await packageArtifact({ content: inMiddle });
+    const AdmZip = (await import('adm-zip')).default;
+    const zip = new AdmZip(zipBuffer);
+    const names = zip.getEntries().map((e) => e.entryName);
+    expect(names).toContain('content.md');
+    expect(names).not.toContain('index.js');
     expect(manifest.contentType).not.toBe('multi-file');
   });
 
@@ -786,6 +840,14 @@ Instruções`;
     expect(result).not.toBeNull();
     expect(result[0].name).toBe('script.js');
     expect(result[1].name).toBe('README.md');
+  });
+
+  test('header alternativo único (###/####) continua sem promoção', () => {
+    const singleAlt = `#### index.js
+\`\`\`javascript
+console.log('hello');
+\`\`\``;
+    expect(parseMultiFileContent(singleAlt)).toBeNull();
   });
 });
 
@@ -1148,6 +1210,16 @@ describe('parseMultiFileContent — rejeição de nomes inseguros (Barreira 1)',
 
   test('rejeita conteúdo multi-file com caminho absoluto /tmp/evil.js', () => {
     const content = makeMultiFile(['/tmp/evil.js', 'alert(1)'], ['index.html', '<html></html>']);
+    expect(() => parseMultiFileContent(content)).toThrow(/inválido|absoluto/i);
+  });
+
+  test('rejeita arquivo único explícito com traversal ../evil.js', () => {
+    const content = makeMultiFile(['../evil.js', 'alert(1)']);
+    expect(() => parseMultiFileContent(content)).toThrow(/traversal|inseguros|inválido/i);
+  });
+
+  test('rejeita arquivo único explícito com caminho absoluto /tmp/evil.js', () => {
+    const content = makeMultiFile(['/tmp/evil.js', 'alert(1)']);
     expect(() => parseMultiFileContent(content)).toThrow(/inválido|absoluto/i);
   });
 

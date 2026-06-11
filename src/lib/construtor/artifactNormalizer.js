@@ -243,11 +243,20 @@ export function parseMultiFileContent(content) {
   const FILE_DELIMITER = /^---\s*FILE:\s*(.+?)\s*---\s*$/gm;
   const matches = [...content.matchAll(FILE_DELIMITER)];
 
-  if (matches.length < MIN_MULTI_FILE_COUNT) {
+  if (matches.length === 0) {
     const normalized = tryNormalizeAlternativeFormat(content);
     if (normalized) {
       return parseMultiFileContent(normalized);
     }
+    return null;
+  }
+
+  const trimmedStart = content.trimStart();
+  const startsWithExplicitDelimiter = /^---\s*FILE:\s*.+?\s*---/.test(trimmedStart);
+
+  // Hardening: promoção de arquivo único só é permitida quando o bloco explícito
+  // aparece no início efetivo do conteúdo (ignora apenas whitespace inicial).
+  if (matches.length === 1 && !startsWithExplicitDelimiter) {
     return null;
   }
 
@@ -272,7 +281,7 @@ export function parseMultiFileContent(content) {
     files.push({ name, content: fileContent, type: resolveMime(name) });
   }
 
-  return files.length >= MIN_MULTI_FILE_COUNT ? files : null;
+  return files.length > 0 ? files : null;
 }
 
 /**

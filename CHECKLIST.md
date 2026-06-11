@@ -1,3 +1,21 @@
+## 2026-06-11 — fix(construtor): aceitar bloco FILE único explícito no empacotamento
+
+| Item | Detalhe |
+|------|---------|
+| **Título do PR** | `fix(construtor): aceitar bloco FILE único explícito no empacotamento` |
+| **Base** | `origin/main` pós-#606 (estado atual local: `ca79368f6c3f7dd7de61277919fbe5f3445c6e4b`). |
+| **Objetivo** | Corrigir a Causa B no empacotamento para que bloco único explícito `--- FILE: <name> ---` válido (no início efetivo) seja tratado como arquivo real, sem promover `content.md` genérico. |
+| **Resumo da Causa B** | Antes, `parseMultiFileContent` exigia `MIN_MULTI_FILE_COUNT = 2` para o formato explícito. Assim, payload com único `--- FILE: index.js ---` ou `--- FILE: index.html ---` podia cair no fallback e virar `content.md`, gerando `multifile-body-vazio` no diagnóstico. |
+| **Arquivos alterados** | `src/lib/construtor/artifactNormalizer.js`; `src/lib/construtor/__tests__/artifactPackager.test.js`; `CHECKLIST.md`. |
+| **Comportamento antes/depois** | **Antes:** bloco explícito único podia cair em `content.md` por causa de `MIN_MULTI_FILE_COUNT = 2`. **Depois:** bloco explícito único no início efetivo + nome válido + body não vazio vira arquivo real no empacotamento (`index.js`/`index.html` etc). Texto livre continua `content.md`; marcador no meio de texto livre não promove; heurística única `###/####` continua bloqueada. |
+| **Confirmações de invariantes** | Causa A (#605) não reaberta; metadados internos continuam tratados como antes. WebContainer permanece desativado. `executeArtifact` server-side permanece `disabled`. Sem mudanças em `api/`, reader diagnóstico, contratos/allowlist globais, dependências ou lockfiles. |
+| **Testes executados** | Baseline pré-mudança: `npm run lint`, `npm test -- --runInBand`, `npm run build`. Pós-mudança direcionado: `npm test -- --runInBand src/lib/construtor/__tests__/artifactPackager.test.js src/lib/construtor/__tests__/constructorInternalMetadataFileFilter.test.js src/lib/construtor/__tests__/constructorApprovedPreviewDiagnosticReader.test.js src/lib/construtor/__tests__/webcontainerSpikeEvidence.test.js`. Pós-mudança completo: `npm test -- --runInBand`; `npm run build`. |
+| **Riscos** | Baixo: mudança cirúrgica no parser explícito `--- FILE: ---`, com hardening de início efetivo para evitar falso positivo em texto livre e sem relaxar heurística alternativa `###/####`. |
+| **Rollback** | `git revert <commit-sha>` |
+| **Próximo passo recomendado** | Monitorar telemetria verdict-only para confirmar queda de `multifile-body-vazio` em casos de arquivo explícito único e manter bloqueios atuais para `content.md` genérico e heurística `###/####` de arquivo único. |
+
+---
+
 ## 2026-06-11 — docs(construtor): registrar coleta runtime real pós-#605 (verdict-only)
 
 | Item | Detalhe |
