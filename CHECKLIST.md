@@ -1,3 +1,20 @@
+## 2026-06-11 — feat(construtor): adicionar classificador verdict-only de capacidade de artefatos
+
+| Item | Detalhe |
+|------|---------|
+| **Título do PR** | `feat(construtor): adicionar classificador verdict-only de capacidade de artefatos` |
+| **Base** | `origin/main` pós-#609. |
+| **Objetivo** | Criar camada pura, read-only e verdict-only para classificar capacidade de artefatos (`exportable`, `previewable-static`, `executable-client`, `blocked`), sem alterar comportamento runtime atual. |
+| **Relação com ADR #609** | Implementa o próximo passo recomendado pela ADR: classificação informativa separada da execução, sem relaxar contratos/allowlists e sem ativar WebContainer. |
+| **Arquivos alterados** | `src/lib/construtor/constructorArtifactCapabilityClassifier.js`; `src/lib/construtor/__tests__/constructorArtifactCapabilityClassifier.test.js`; `CHECKLIST.md`. |
+| **Comportamento** | Novo classificador puro recebe mapa seguro `path -> content` (com `entrypoint`/`validation` opcionais), ignora metadados internos (`README.md`, `manifest.json`, `logs/*`) como sinal primário, aplica regras conservadoras de bloqueio (path perigoso incluindo `C:/...`, rede/import externo, `eval`/`Function`, acesso dinâmico evasivo e `script` inline em HTML) e retorna apenas veredito serializável (`capability`, `reasons`, `flags`) sem payload bruto. |
+| **Invariantes preservadas** | Sem alterações em `api/`, UI, readers, contratos, parser/normalizer/packager, allowlists, `conteudo-com-acesso-dinamico`, WebContainer e `executeArtifact` (continua `disabled`). A classificação não permite execução. |
+| **Testes** | Direcionado: `npm test -- --runInBand src/lib/construtor/__tests__/constructorArtifactCapabilityClassifier.test.js`; completo: `npm test -- --runInBand`; build: `npm run build`. |
+| **Rollback** | `git revert <commit-sha>` |
+| **Próximo passo recomendado** | Fazer auditoria/revisão para eventual exibição futura da classificação na UI em PR pequeno e separado, sem ativar execução. |
+
+---
+
 ## 2026-06-11 — docs(arquitetura): ADR sobre conteudo-com-acesso-dinamico e taxonomia de artefatos
 
 | Item | Detalhe |
