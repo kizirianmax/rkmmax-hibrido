@@ -1,8 +1,8 @@
-## 2026-06-11 — docs(construtor): registrar coleta runtime real pós-#605 (verdict-only, 10 amostras, 7 eligible / 3 unavailable)
+## 2026-06-11 — docs(construtor): registrar coleta runtime real pós-#605 (verdict-only)
 
 | Item | Detalhe |
 |------|---------|
-| **Título do PR** | `docs(construtor): registrar coleta runtime real pós-#605` |
+| **Título do PR** | `docs(construtor): registrar coleta runtime real pós-#605 (verdict-only)` |
 | **Base** | `origin/main` pós-#605 (`04d92e0809251d5a734a2c6b01b7c7c1d28886b9`, merge do PR #605 `fix(construtor): filtrar metadados internos no snapshot diagnóstico verdict-only`). |
 | **Objetivo** | Registrar documentalmente a coleta runtime real **manual** pós-#605 via `?constructorTelemetry=1`, em navegador real autenticado, com 10 amostras **verdict-only**, para verificar se a Causa A foi corrigida. |
 | **Natureza da entrega** | Documentação/auditoria apenas. Sem implementação de código. Sem ativar WebContainer. Sem reativar `executeArtifact` server-side. Sem payload bruto. Sem expandir allowlist. |
