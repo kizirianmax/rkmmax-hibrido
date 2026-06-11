@@ -9,7 +9,7 @@ const EXTERNAL_IMPORT_REGEX =
   /\bimport\s*\(\s*["'`]\s*(?:https?:)?\/\/|\bimport\s+[\s\S]*?\bfrom\s*["'`]\s*(?:https?:)?\/\/|\brequire\s*\(\s*["'`]\s*(?:https?:)?\/\//i;
 const UNSAFE_CODE_REGEX = /\beval\s*\(|\bFunction\s*\(/;
 const DYNAMIC_ACCESS_EVASIVE_REGEX = /\b(?:globalThis|self)\b|\[\s*["'`]|\[[^\]]*\+/;
-const INLINE_SCRIPT_REGEX = /<script\b[^>]*>([\s\S]*?)<\/script\s*>/gi;
+const INLINE_SCRIPT_REGEX = /<script\b[^>]*>([\s\S]*?)<\/script\b[^>]*>/gi;
 
 function isPlainObject(value) {
   if (!value || typeof value !== "object" || Array.isArray(value)) {
