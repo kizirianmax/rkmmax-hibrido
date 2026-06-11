@@ -1,3 +1,25 @@
+## 2026-06-11 — docs(construtor): registrar coleta runtime real pós-#607 (verdict-only)
+
+| Item | Detalhe |
+|------|---------|
+| **Título do PR** | `docs(construtor): registrar coleta runtime real pós-#607 (verdict-only)` |
+| **Base** | `origin/main` pós-#607 (`4ae33cb9e856c68992c4c6f6188cc32ba537b3ee`, merge do PR #607 `fix(construtor): aceitar bloco FILE único explícito no empacotamento`). |
+| **Objetivo** | Registrar documentalmente a coleta runtime real **manual** pós-#607 via `?constructorTelemetry=1`, em navegador real autenticado, com 10 amostras **verdict-only**, para confirmar se o #607 corrigiu a Causa B (single-file explícito `index.js`/`index.html` preso em `content.md` e reason `multifile-body-vazio`). |
+| **Natureza da entrega** | Documentação/auditoria apenas. Sem implementação de código. Sem ativar WebContainer. Sem reativar `executeArtifact` server-side. Sem payload bruto. Sem expandir allowlist. Sem alterar reader/contratos/parser/empacotador. |
+| **URL de coleta** | `https://kizirianmax.site/hybrid?constructorTelemetry=1` |
+| **Ambiente de coleta** | Navegador real autenticado; modo verdict-only; payload bruto não registrado; execução não executada; WebContainer desativado; `executeArtifact` server-side `disabled`. |
+| **Resultado consolidado (verdict-only)** | `total=10`, `eligible=7`, `unavailable=3`; `byReason={"entrypoint-nao-permitido":3}`; `byStatus={"constructor-approved-preview-diagnostic-reader: eligible":7,"constructor-approved-preview-diagnostic-reader: unavailable":3}`. |
+| **Amostras válidas (resumo verdict-only, sem conteúdo bruto)** | (1) eligible — `index.js` único explícito virou arquivo real (não `content.md`, sem `multifile-body-vazio`); GPT-OSS 120B (Complex)/Groq 120B. (2) eligible — `index.html` único explícito virou arquivo real; GPT-OSS 120B. (3) eligible — `index.js` + `lib/helpers.js`, multi-file JS sem regressão; GPT-OSS 120B. (4) eligible — `index.html` + `styles.css`, sem regressão; GPT-OSS 120B. (5) eligible — `index.html` + `style.css`; GPT-OSS 120B. (6) eligible — `index.html` + `assets/main.css` + `assets/main.js` (JS só com `console.log`); GPT-OSS 120B. (7) eligible — `index.html` + `styles.css` + `script.js` (JS sem DOM); GPT-OSS 120B. (8) unavailable/`entrypoint-nao-permitido` — texto comum sem marcador FILE; `content.md` genérico não promovido; Llama 3.3 70B/fallback. (9) unavailable/`entrypoint-nao-permitido` — texto livre mencionando marcador FILE de forma descritiva; não virou arquivo real; Llama 3.3 70B/fallback. (10) unavailable/`entrypoint-nao-permitido` — heurística markdown `### index.js` única não promovida; Llama 3.3 70B/fallback. Metadados internos (`README.md`/`manifest.json`/`logs/*`) seguem visíveis no preview/ZIP, mas filtrados do diagnóstico verdict-only (Causa A/#605 intacta). |
+| **Tentativa descartada (não entra no total oficial)** | Amostra 9 — tentativa 1: modelo Llama 3.3 70B/fallback desobedeceu ao prompt e transformou exemplo textual em `index.js` real; efeito visual no painel elevou `eligible` indevidamente para 8; decisão: descartada da consolidação oficial. A coleta da Amostra 9 foi repetida e a versão válida retornou `unavailable`/`entrypoint-nao-permitido`. |
+| **Comparação com #606 (pós-#605)** | **#606:** `total=10`, `eligible=7`, `unavailable=3`, `byReason={"multifile-body-vazio":2,"conteudo-com-acesso-dinamico":1}`. **Pós-#607:** `total=10`, `eligible=7`, `unavailable=3`, `byReason={"entrypoint-nao-permitido":3}`. Mudança principal: `multifile-body-vazio` caiu de **2 para 0**; `arquivo-fora-da-allowlist` permaneceu **0**; `content.md` genérico continuou não promovido; heurística `###/####` única continuou não promovida; single-file explícito `index.js` e `index.html` passaram a virar arquivo real. |
+| **Conclusão (Causa B corrigida)** | O #607 **corrigiu a Causa B** em navegador real: `index.js` único explícito e `index.html` único explícito passaram a virar arquivo real; `multifile-body-vazio` caiu de 2 para 0; `arquivo-fora-da-allowlist` permaneceu 0 (Causa A/#605 mantida); `content.md` genérico continuou não promovido; heurística markdown `###/####` única continuou não promovida. Os 3 `unavailable` restantes são **esperados e por contrato** (`entrypoint-nao-permitido`), referentes a entradas que não deveriam virar artefato executável (texto puro, marcador descritivo em texto livre e heurística markdown única). |
+| **Invariantes preservadas** | WebContainer permanece desativado; `executeArtifact` server-side permanece `disabled`; sem payload bruto; sem bypass ao Serginho; sem alteração em `src/`, `api/`, contratos, reader, parser, empacotador, allowlist ou dependências. |
+| **Arquivos alterados** | `CHECKLIST.md`. |
+| **Próximo passo recomendado** | Abrir auditoria/decisão arquitetural **separada** sobre `conteudo-com-acesso-dinamico` e o futuro **preview executável client-side** (WebContainer), mantendo `executeArtifact` server-side `disabled` e sem relaxar contratos/allowlists sem evidência. |
+| **Rollback** | `git revert <commit-sha>` |
+
+---
+
 ## 2026-06-11 — fix(construtor): aceitar bloco FILE único explícito no empacotamento
 
 | Item | Detalhe |
