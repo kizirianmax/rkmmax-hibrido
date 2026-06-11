@@ -1,3 +1,21 @@
+## 2026-06-11 — docs(arquitetura): ADR sobre conteudo-com-acesso-dinamico e taxonomia de artefatos
+
+| Item | Detalhe |
+|------|---------|
+| **Título do PR** | `docs(arquitetura): ADR sobre conteudo-com-acesso-dinamico e taxonomia de artefatos` |
+| **Base** | `origin/main` pós-#608 (`205f239e507941d8d528482b155fe5168d0dc3e9`). |
+| **Natureza da entrega** | PR estritamente documental. Sem implementação de código. Sem alteração de contratos. Sem relaxar bloqueios. Sem ativar execução. |
+| **Diagnóstico** | `conteudo-com-acesso-dinamico` nasce em `src/lib/construtor/webcontainerArtifactContract.js` (`FORBIDDEN_CONTENT_PATTERNS`, `jsOnly: true`, aplicado via `validateArtifactContent` em `.js`), bloqueando `globalThis`, `window`, `self`, `document`, `navigator`, `location`, acesso dinâmico por colchetes, `eval(` e `Function(`. O contrato estático client-side (`src/lib/construtor/constructorStaticClientArtifactContract.js`) reutiliza a mesma validação; o reader (`src/lib/construtor/constructorApprovedPreviewDiagnosticReader.js`) roteia HTML/CSS/JS para `stage: "static-contract"`, então casos com DOM ficam `unavailable`. |
+| **Decisão** | Não relaxar contrato nem bloqueio. Registrar decisão arquitetural futura de separar classificação de artefatos antes de qualquer execução. |
+| **Taxonomia adotada** | `exportable`, `previewable-static`, `executable-client`, `blocked` (documental; sem implementação neste PR). |
+| **Invariantes preservadas** | Serginho segue gateway soberano; Híbrido/Construtor segue geração de artefatos; ZIP exportável não implica executável; preview estrutural não implica execução; diagnóstico verdict-only não executa; WebContainer permanece desativado; `executeArtifact` server-side permanece `disabled`; sem bypass; sem relaxar contratos/allowlists. |
+| **Escopo** | Restrito a documentação: criação da ADR em `docs/adr/` e atualização do `CHECKLIST.md`. Nenhuma alteração em `src/`, `api/`, parser, reader, empacotador, contratos, allowlist, dependências ou lockfiles. |
+| **Arquivos alterados** | `docs/adr/ADR-conteudo-com-acesso-dinamico-e-taxonomia-artefatos.md`; `CHECKLIST.md`. |
+| **Próximo passo recomendado** | Abrir PR separado para desenhar camada pura de classificação verdict-only (`exportable`, `previewable-static`, `executable-client`, `blocked`), sem execução, sem WebContainer, sem relaxar contratos. |
+| **Rollback** | `git revert <commit-sha>` |
+
+---
+
 ## 2026-06-11 — docs(construtor): registrar coleta runtime real pós-#607 (verdict-only)
 
 | Item | Detalhe |
