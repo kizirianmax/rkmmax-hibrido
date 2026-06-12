@@ -3,4 +3,32 @@ Allow: /
 Disallow: /api/
 Disallow: /node_modules/
 
+# Opt-out de uso de conteúdo público por crawlers/treino de IA.
+# Observação: robots.txt é uma sinalização voluntária para crawlers que respeitam o padrão.
+# Isso NÃO protege dados privados nem prompts enviados a provedores de IA via API.
+
+User-agent: Google-Extended
+Disallow: /
+
+User-agent: GPTBot
+Disallow: /
+
+User-agent: ClaudeBot
+Disallow: /
+
+User-agent: anthropic-ai
+Disallow: /
+
+User-agent: CCBot
+Disallow: /
+
+User-agent: PerplexityBot
+Disallow: /
+
+User-agent: Applebot-Extended
+Disallow: /
+
+User-agent: Bytespider
+Disallow: /
+
 Sitemap: https://kizirianmax.site/sitemap.xml
