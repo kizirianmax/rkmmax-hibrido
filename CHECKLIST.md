@@ -1,3 +1,20 @@
+## 2026-06-12 — ops(supabase): validação produção → artifact_ledger
+
+| Item | Detalhe |
+|------|---------|
+| **Ambiente validado** | Produção: `https://kizirianmax.site/hybrid`. |
+| **Supabase real** | Projeto-Unificado. |
+| **Artefato testado** | `a84b7989-1e25-451d-8a30-fa9dcdf1ff86`. |
+| **Evidência de gravação (read-only)** | Queries read-only confirmaram `preview_generated = 1` e `decision_applied = 1` no `artifact_ledger` para o artefato testado. |
+| **Campos observados** | `user_id` presente (`tem_user_id = true`) e `created_at` recente. |
+| **Observação sobre `trace_id`** | `trace_id` ausente neste teste (`tem_trace_id = false`), sem bloqueio para esta validação, pois o preview já indicava `traceId: indisponível no payload seguro atual`; registrar para auditoria futura de propagação de `trace_id`. |
+| **Segurança operacional** | Nenhum segredo registrado. |
+| **Escopo do PR** | PR 100% documental/operacional; nenhuma alteração funcional realizada. |
+| **Invariantes preservadas** | WebContainer continua desativado; `executeArtifact` continua desativado; nenhum conteúdo real durável foi persistido além do ledger observacional; prompts continuam não persistidos por padrão; providers Gemini/Groq/Serginho não foram alterados. |
+| **Rollback** | `git revert <commit-sha>`. |
+
+---
+
 ## 2026-06-12 — ops(supabase): aplicação manual do artifact_ledger no Projeto-Unificado
 
 | Item | Detalhe |
