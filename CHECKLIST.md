@@ -1,3 +1,19 @@
+## 2026-06-12 — docs(ops): runbook de aplicação e verificação de migrations Supabase
+
+| Item | Detalhe |
+|------|---------|
+| **Escopo** | Criação do runbook operacional `docs/ops/runbook-migrations-supabase.md` para verificação/aplicação manual de migrations Supabase. |
+| **Confirmação documental** | Registrado que **não há pipeline automático** de migrations Supabase neste projeto (GitHub/Vercel não aplicam migrations de banco). |
+| **Execução SQL** | Nenhum SQL foi executado nesta entrega. |
+| **Supabase/Banco/RLS real** | Nenhum Supabase/banco/RLS real foi alterado. |
+| **Migrations** | Nenhuma migration nova foi criada. |
+| **Invariantes de runtime/escopo** | Nenhum runtime alterado; sem alterações em `api/`, frontend, providers, Serginho, Dependabot, `package.json` ou lockfile. |
+| **Invariantes de segurança operacional** | WebContainer e `executeArtifact` continuam desativados; conteúdo real e prompts continuam não persistidos. |
+| **Validação** | `npm run lint`; `npm run build`; `npm test -- --runInBand`. |
+| **Rollback** | `git revert <commit-sha>`. |
+
+---
+
 ## 2026-06-12 — fix(security): adicionar policy RLS SELECT por dono no artifact_ledger
 
 | Item | Detalhe |

@@ -39,6 +39,11 @@ Próxima fase: operação / infra / smoke test / descontinuação controlada do 
 - **Serginho GitHub Intent Detection (N3)**: adicionada detecção de intenção GitHub read-only no Serginho Orchestrator — `api/lib/serginho/intent/githubIntent.js` com `detectGitHubIntent(message)` usando keyword/regex matching (sem LLM) para reconhecer pedidos de listar repos/branches e ler arquivos em PT-BR e EN; early-return mínimo no início de `_handleStructured` (antes da análise de complexidade) que chama a tool correspondente via `getToolByName(tool).execute(params)` e retorna resposta formatada; helper `formatGitHubResult()` para texto legível; 38 testes cobrindo todos os cenários. Zero dependências novas. Zero breaking changes. Rollback com `git revert`. (PR anterior)
 - **Serginho GitHub Tools (N2)**: criada camada de orquestração de tools GitHub para uso interno do Serginho — `api/lib/serginho/tools/githubTools.js` com três tools estruturadas (`runGitHubListReposTool`, `runGitHubListBranchesTool`, `runGitHubGetFileTool`) que validam parâmetros e verificam a feature flag antes de chamar o gateway, e `api/lib/serginho/tools/index.js` com registry (`GITHUB_TOOLS`, `getToolByName`, `getAllTools`, `isGitHubToolsAvailable`). 54 testes cobrindo todos os cenários (flag off, stub, oauth, validação, sanitização, registry, garantia). Zero dependências novas. Zero breaking changes. (este PR)
 
+### 📝 Documentação / Operações
+- Criado runbook operacional para aplicação e verificação manual de migrations Supabase (`docs/ops/runbook-migrations-supabase.md`).
+- Documentado que GitHub/Vercel não aplicam migrations de banco automaticamente.
+- Incluído procedimento seguro para verificar/aplicar a policy RLS `artifact_ledger_select_owner` do `artifact_ledger`.
+
 ### 📝 Documentação
 - **Persistência durável de artefatos (FASE 1.5, documental):** adicionados `docs/adr/ADR-persistencia-duravel-artefatos.md` e `docs/legal/politica-retencao-artefatos.md`, registrando modelo mínimo futuro, política de retenção/LGPD e decisão de policy de dono RLS como pré-requisito antes de persistir conteúdo real.
 - **Docs:** adicionado índice de documentação (`docs/README.md`, `docs/INDEX.md`) com todos os 40+ arquivos Markdown organizados por categoria (PR #168)
