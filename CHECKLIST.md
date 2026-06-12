@@ -1,3 +1,18 @@
+## 2026-06-12 — feat(construtor): exportar ZIP com edições locais no ArtifactPreviewPanel
+
+| Item | Detalhe |
+|------|---------|
+| **Base** | `origin/main` pós-#614 e pós-#616. |
+| **Objetivo** | Fazer o download de ZIP refletir edições locais do painel de revisão, sem execução de artefato, sem alterar pipeline de IA e com comportamento fail-closed para artefatos não totalmente reproduzíveis em texto. |
+| **Arquivos alterados** | `src/components/construtor/ArtifactPreviewPanel.jsx`; `src/components/construtor/__tests__/ArtifactPreviewPanel.test.jsx`; `src/lib/construtor/clientZipBuilder.jsx`; `src/lib/construtor/__tests__/clientZipBuilder.test.js`; `CHECKLIST.md`. |
+| **Escopo aplicado** | Novo builder client-side puro (ZIP STORE + CRC-32, determinístico, sem dependências) para arquivos textuais; `handleDownload` preserva fluxo original sem edição local e, com edição local reproduzível, gera ZIP local com conteúdo efetivo por arquivo; em caso de arquivo sem conteúdo textual completo, mantém download original com aviso explícito; em erro de empacotamento, exibe aviso e não baixa ZIP potencialmente incorreto. |
+| **Invariantes preservadas** | WebContainer continua desativado; `executeArtifact` segue disabled; nenhuma alteração em `api/`; Serginho/Groq/Gemini inalterados; sem alteração em providers, Dependabot, `package.json` ou lockfile; sem execução/interpretação de HTML/JS do artefato. |
+| **Validação** | Baseline pré-mudança: `npm run lint`, `npm run build`, `npm test -- --runInBand`; direcionados: `npm test -- --runInBand src/lib/construtor/__tests__/clientZipBuilder.test.js src/components/construtor/__tests__/ArtifactPreviewPanel.test.jsx`; pós-mudança: `npm run lint`, `npm run build`, `npm test -- --runInBand`. |
+| **Limitações conhecidas** | Quando houver qualquer arquivo sem conteúdo textual completo no `summary.fileContents`, a exportação com edições locais não é gerada (fail-closed) e o painel mantém o download do ZIP original; `manifest.json`/checksum continuam refletindo a geração original. |
+| **Rollback** | `git revert <commit-sha>` |
+
+---
+
 ## 2026-06-12 — docs(legal): corrigir duplicidade e referências oficiais no PR #616
 
 | Item | Detalhe |
