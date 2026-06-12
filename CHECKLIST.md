@@ -1,3 +1,18 @@
+## 2026-06-12 — docs(persistencia): base documental da FASE 1.5 para artefatos duráveis
+
+| Item | Detalhe |
+|------|---------|
+| **Base** | `origin/main` pós-auditoria de persistência durável do Construtor/Híbrido. |
+| **Objetivo** | Formalizar, sem implementação runtime, o contrato documental da FASE 1.5 para persistência durável de artefatos (ADR + política de retenção/LGPD). |
+| **Arquivos alterados** | `docs/adr/ADR-persistencia-duravel-artefatos.md`; `docs/legal/politica-retencao-artefatos.md`; `CHECKLIST.md`; `CHANGELOG.md`. |
+| **Escopo aplicado** | Entrega exclusivamente documental/contratual: modelo mínimo futuro (`artifact_project`/`artifact_version`), regras de minimização/privacidade, decisão de RLS como pré-requisito da FASE 2 e critérios de aceite futuros. |
+| **Invariantes preservadas** | Sem criação de tabela/migration; sem alteração de Supabase/RLS efetiva; sem alteração em `api/`; sem alteração funcional de frontend; sem alteração de providers (Gemini/Groq) ou Serginho; sem alteração em Dependabot, `package.json` ou lockfile. |
+| **Restrições mantidas** | WebContainer permanece desativado; `executeArtifact` permanece desativado; prompts não são persistidos por padrão; nenhum conteúdo real de artefato foi persistido nesta fase. |
+| **Validação** | `npm run lint`; `npm run build`; `npm test -- --runInBand`. |
+| **Rollback** | `git revert <commit-sha>` |
+
+---
+
 ## 2026-06-12 — feat(construtor): exportar ZIP com edições locais no ArtifactPreviewPanel
 
 | Item | Detalhe |
