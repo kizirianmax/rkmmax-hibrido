@@ -1,3 +1,20 @@
+## 2026-06-12 — feat(construtor): exibir capacidade do artefato em modo diagnóstico
+
+| Item | Detalhe |
+|------|---------|
+| **Base** | `origin/main` pós-#612. |
+| **Objetivo** | Exibir na UI do Construtor/Híbrido a capacidade do artefato apenas em modo diagnóstico gated, de forma informativa/read-only/verdict-only. |
+| **Relação com #609/#610/#611/#612** | #609 definiu ADR/taxonomia; #610 criou o classificador puro; #611/#612 cobriram robots/privacy/terms e não foram tocados neste PR. |
+| **Arquivos alterados** | `src/lib/construtor/constructorArtifactCapabilityLabels.js`; `src/lib/construtor/__tests__/constructorArtifactCapabilityLabels.test.js`; `src/components/construtor/ArtifactPreviewPanel.jsx`; `src/styles/HybridAgent.css`; `CHECKLIST.md`. |
+| **Comportamento** | Com gate ativo, `ArtifactPreviewPanel` mostra seção “Capacidade do artefato” com label, caption e disclaimer; sem gate, UI permanece igual. Exibição não mostra reasons/flags/payload/conteúdo sensível. |
+| **Flag diagnóstica** | Reuso do gate já existente por querystring: `?constructorTelemetry=1`. |
+| **Invariantes preservadas** | Sem alterações em `api/`, contratos, readers, parser/normalizer/empacotador, allowlist, WebContainer, `executeArtifact`, iframe/preview visual/execução JS, fluxo ZIP, fluxo de aprovação/ajuste/rejeição, `robots.txt`, `Privacy.jsx`, `Terms.jsx`. `conteudo-com-acesso-dinamico` não foi relaxado. |
+| **Testes** | `npm test -- --runInBand src/lib/construtor/__tests__/constructorArtifactCapabilityLabels.test.js`; `npm test -- --runInBand`; `npm run build`. |
+| **Rollback** | `git revert <commit-sha>` |
+| **Próximo passo recomendado** | Coleta visual/manual em mobile e desktop com a flag ativa, sem ativar execução, antes de decidir eventual exposição fora do modo diagnóstico. |
+
+---
+
 ## 2026-06-12 — docs(privacidade): revisão final de consistência para saída de Draft (#612)
 
 | Item | Detalhe |

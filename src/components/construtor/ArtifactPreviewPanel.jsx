@@ -37,6 +37,12 @@ const COPYABLE_MIME_TYPES = new Set([
   'application/xml',
   'image/svg+xml',
 ]);
+const FALLBACK_CAPABILITY_LABEL = {
+  label: 'ℹ️ Capacidade não classificada',
+  caption: 'Classificação informativa indisponível.',
+};
+const FALLBACK_CAPABILITY_DISCLAIMER =
+  'Classificação informativa. Não habilita execução. WebContainer desativado. executeArtifact server-side disabled. Exportável ≠ executável.';
 
 function isTextFile(file) {
   const type = file?.type || '';
@@ -68,12 +74,65 @@ export default function ArtifactPreviewPanel({ preview, onDecision, onRevision, 
   const [editedFileContents, setEditedFileContents] = useState({});
   const [editingFilePath, setEditingFilePath] = useState(null);
   const [editingDraft, setEditingDraft] = useState('');
+  const [artifactCapabilityLabel, setArtifactCapabilityLabel] = useState(FALLBACK_CAPABILITY_LABEL);
+  const [artifactCapabilityDisclaimer, setArtifactCapabilityDisclaimer] = useState(FALLBACK_CAPABILITY_DISCLAIMER);
+  const summary = preview?.summary;
+  const shouldShowCapabilityDiagnostics = (() => {
+    try {
+      const rawSearch = globalThis?.location?.search;
+      if (typeof rawSearch !== 'string') return false;
+      const params = new URLSearchParams(rawSearch.replace(/^[?&]+/, ''));
+      return params.get('constructorTelemetry') === '1';
+    } catch {
+      return false;
+    }
+  })();
 
   useEffect(() => {
     setEditedFileContents({});
     setEditingFilePath(null);
     setEditingDraft('');
   }, [preview?.summary?.id, preview?.summary?.timestamp]);
+
+  useEffect(() => {
+    let isActive = true;
+
+    async function resolveCapability() {
+      if (!shouldShowCapabilityDiagnostics || !summary) {
+        setArtifactCapabilityLabel(FALLBACK_CAPABILITY_LABEL);
+        setArtifactCapabilityDisclaimer(FALLBACK_CAPABILITY_DISCLAIMER);
+        return;
+      }
+
+      try {
+        const [{ classifyConstructorArtifactCapability }, labelsModule] = await Promise.all([
+          import('../../lib/construtor/constructorArtifactCapabilityClassifier.js'),
+          import('../../lib/construtor/constructorArtifactCapabilityLabels.js'),
+        ]);
+        if (!isActive) return;
+        const capabilityVerdict = classifyConstructorArtifactCapability({
+          fileContents: summary.fileContents,
+          entrypoint: summary.entrypoint,
+          validation: summary.validation,
+        });
+        setArtifactCapabilityLabel(
+          labelsModule.getConstructorArtifactCapabilityLabel(capabilityVerdict?.capability),
+        );
+        setArtifactCapabilityDisclaimer(labelsModule.CONSTRUCTOR_ARTIFACT_CAPABILITY_DISCLAIMER);
+      } catch {
+        if (isActive) {
+          setArtifactCapabilityLabel(FALLBACK_CAPABILITY_LABEL);
+          setArtifactCapabilityDisclaimer(FALLBACK_CAPABILITY_DISCLAIMER);
+        }
+      }
+    }
+
+    resolveCapability();
+
+    return () => {
+      isActive = false;
+    };
+  }, [shouldShowCapabilityDiagnostics, summary?.fileContents, summary?.entrypoint, summary?.validation]);
 
   if (loading) {
     return (
@@ -91,7 +150,7 @@ export default function ArtifactPreviewPanel({ preview, onDecision, onRevision, 
     );
   }
 
-  const { summary, decision, feedback, decisionTimestamp } = preview;
+  const { decision, feedback, decisionTimestamp } = preview;
 
   const validationBadge = summary.validation?.valid
     ? <span className="artifact-badge artifact-badge-ok">✅ Válido</span>
@@ -398,6 +457,18 @@ export default function ArtifactPreviewPanel({ preview, onDecision, onRevision, 
           Limites: camada observacional/read-only; sem escrita, sem acionar geração/ZIP/execução, sem decisão automática.
         </div>
       </div>
+
+      {shouldShowCapabilityDiagnostics && (
+        <div className="artifact-capability-panel" data-testid="artifact-capability-panel">
+          <span className="artifact-observability-title">🧪 Capacidade do artefato</span>
+          <div className="artifact-preview-row artifact-capability-row">
+            <span className="artifact-label">Veredito:</span>
+            <span className="artifact-badge artifact-badge-info artifact-capability-badge">{artifactCapabilityLabel.label}</span>
+          </div>
+          <p className="artifact-capability-caption">{artifactCapabilityLabel.caption}</p>
+          <p className="artifact-capability-disclaimer">{artifactCapabilityDisclaimer}</p>
+        </div>
+      )}
 
       {/* Resumo Estrutural */}
       {summary.filesSummary && (
