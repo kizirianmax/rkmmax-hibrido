@@ -1,3 +1,19 @@
+## 2026-06-12 — docs(privacidade): declarar uso de provedores de IA terceiros e limites de retenção
+
+| Item | Detalhe |
+|------|---------|
+| **Base** | `origin/main` pós-#611 (merge `f373d5a`). |
+| **Objetivo** | Atualizar exclusivamente a documentação de privacidade/termos para transparência sobre provedores de IA terceiros, processamento de prompts/histórico/conteúdo e limites de não-treino/retenção. |
+| **Arquivos alterados** | `src/pages/Privacy.jsx`; `src/pages/Terms.jsx`; `CHECKLIST.md`. |
+| **Contexto da auditoria** | Providers reais identificados no fluxo: Google Gemini e Groq; risco principal em prompts, histórico e conteúdo/artefatos enviados via API; `ModelArmor` existe no frontend (`src/security/ModelArmor.js`), mas está fora do fluxo real backend antes do provider. |
+| **O que foi declarado** | Uso de provedores terceiros (Google Gemini e Groq); prompts/mensagens/histórico necessário e conteúdo do Construtor/Híbrido/Especialistas podem ser processados para inferência; RKMMAX não treina modelos próprios com dados do usuário; uso/retenção por terceiros depende dos termos oficiais deles; recomendação para não inserir dados sensíveis desnecessários; reforço de direitos LGPD/GDPR com canal `suporte@kizirianmax.site`. |
+| **O que NÃO foi prometido** | Não foi prometida garantia absoluta de não-treinamento por terceiros; não foi prometida retenção zero; não foi prometida proteção técnica inexistente; `robots.txt` não foi tratado como proteção de prompts privados. |
+| **Invariantes preservadas** | Sem alterações em `api/`, orquestrador (`serginho-orchestrator.js`), `providers-config.js`, `ModelArmor`, `robots.txt`, WebContainer, `executeArtifact`, `package.json`, lockfiles ou dependências; Serginho permanece gateway soberano. |
+| **Rollback** | `git revert <commit-sha>` restaura atomicamente os textos anteriores e esta entrada. |
+| **Próximo passo recomendado** | Após este PR, executar auditoria manual dos termos oficiais vigentes dos providers (Google Gemini AI Studio / Gemini API e Groq) e, depois, abrir PR técnico separado para: sanitização antes do envio ao provider; redução de logs sensíveis; avaliação de religar ModelArmor no fluxo real; avaliação futura de Vertex AI ou tier com compromisso de não-treinamento, se necessário. |
+
+---
+
 ## 2026-06-11 — feat(construtor): adicionar classificador verdict-only de capacidade de artefatos
 
 | Item | Detalhe |

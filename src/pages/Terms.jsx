@@ -53,13 +53,34 @@ export default function Terms() {
         <li>Interrupções de serviço</li>
       </ul>
 
-      <h2>6. Contato</h2>
+      <h2>6. Provedores de IA e Conteúdo do Usuário</h2>
+      <ul>
+        <li>
+          Você entende que suas solicitações podem ser processadas por provedores terceiros de IA,
+          incluindo Google Gemini e Groq.
+        </li>
+        <li>
+          Você é responsável por não inserir informações altamente sensíveis, sigilosas ou de
+          terceiros sem autorização.
+        </li>
+        <li>A RKMMAX não treina modelos próprios com conteúdo do usuário.</li>
+        <li>
+          O uso de dados por provedores terceiros segue os termos e políticas oficiais desses
+          provedores.
+        </li>
+        <li>
+          As respostas são probabilísticas e devem ser revisadas antes de uso profissional,
+          jurídico, financeiro, médico ou sensível.
+        </li>
+      </ul>
+
+      <h2>7. Contato</h2>
       <p>
         Para dúvidas sobre termos, entre em contato: <strong>suporte@kizirianmax.site</strong>
       </p>
 
       <p style={{ marginTop: "40px", fontSize: "12px", color: "#999" }}>
-        Última atualização: 2 de novembro de 2025
+        Última atualização: 12 de junho de 2026
       </p>
     </div>
   );
