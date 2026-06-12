@@ -10,6 +10,10 @@ export default function Privacy() {
         A RKMMAX respeita sua privacidade. Esta Política de Privacidade explica como coletamos,
         usamos e protegemos seus dados pessoais.
       </p>
+      <p>
+        A RKMMAX é um serviço SaaS pago por assinatura/recorrência. Atualmente, não há plano
+        gratuito previsto para usuários finais.
+      </p>
 
       <h2>2. Conformidade Legal</h2>
       <p>Este site está em conformidade com:</p>
@@ -49,13 +53,22 @@ export default function Privacy() {
 
       <h2>5. Processamento por Provedores de IA Terceiros</h2>
       <p>
-        A RKMMAX utiliza provedores terceiros de IA para gerar respostas e processar solicitações.
-        Atualmente, o fluxo pode usar Google Gemini e Groq.
+        A RKMMAX utiliza provedores terceiros de IA para gerar respostas e processar solicitações,
+        conforme a configuração técnica do ambiente. Atualmente, o fluxo pode usar Google Gemini e
+        Groq, sempre sob orquestração do Serginho como gateway único.
       </p>
       <p>
-        Prompts, mensagens, histórico necessário da conversa e conteúdo enviado ao Construtor,
-        Híbrido ou aos Especialistas podem ser transmitidos a esses provedores para inferência.
-        Esse processamento ocorre para responder ao pedido do usuário.
+        Dados enviados aos provedores podem incluir prompt, contexto necessário, histórico
+        relevante da conversa e conteúdo fornecido pelo usuário (incluindo materiais enviados ao
+        Construtor, Híbrido ou Especialistas), estritamente para inferência e resposta ao pedido do
+        usuário.
+      </p>
+      <p>
+        O fato de o usuário final pagar pela RKMMAX não equivale automaticamente ao uso de um tier
+        pago, enterprise ou com controles específicos no provider. Regras e recursos técnicos
+        (incluindo billing ativo, data controls ou Zero Data Retention) podem variar por ambiente e
+        devem ser verificados operacionalmente antes de uso em produção com usuários reais ou dados
+        sensíveis.
       </p>
 
       <h2>6. Uso para Treinamento de Modelos</h2>
@@ -64,9 +77,9 @@ export default function Privacy() {
       </p>
       <p>
         O uso, retenção ou eventual aproveitamento dos dados por provedores terceiros é regido
-        pelos termos e políticas oficiais desses provedores. Enquanto os termos específicos do tier
-        contratado não forem formalmente verificados, a RKMMAX não promete garantia absoluta de
-        não-treinamento por terceiros.
+        pelos termos e políticas oficiais desses provedores, conforme a configuração real aplicada
+        no ambiente. Enquanto os termos específicos do tier técnico em uso não forem formalmente
+        verificados, a RKMMAX não promete garantia absoluta de não-treinamento por terceiros.
       </p>
       <p>
         Referências oficiais: Google Gemini ({" "}

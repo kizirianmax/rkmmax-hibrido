@@ -1,3 +1,18 @@
+## 2026-06-12 — docs(privacy-terms): alinhar SaaS pago e transparência sobre providers IA
+
+| Item | Detalhe |
+|------|---------|
+| **Base** | `origin/main` pós-#614. |
+| **Objetivo** | Atualizar exclusivamente textos públicos de privacidade e termos para refletir modelo SaaS pago recorrente, ausência de plano gratuito para usuário final e transparência sobre processamento por providers terceiros. |
+| **Arquivos alterados** | `src/pages/Privacy.jsx`; `src/pages/Terms.jsx`; `CHECKLIST.md`. |
+| **Ajustes aplicados** | Inclusão explícita de que RKMMAX é SaaS pago por assinatura/recorrência sem plano gratuito para usuário final; reforço de que Google Gemini e Groq operam sob orquestração do Serginho (gateway único); detalhamento de que dados enviados podem incluir prompt, contexto necessário, histórico relevante e conteúdo fornecido pelo usuário; distinção de que pagamento do usuário na RKMMAX não garante tier pago/proteções no provider; reforço de que billing/data controls/ZDR dependem do ambiente e dos termos oficiais. |
+| **Linguagem de cautela preservada** | Mantida a declaração de que RKMMAX não treina modelos próprios com conteúdo do usuário; sem promessa de garantia absoluta sobre terceiros; recomendação para não inserir dados sensíveis/confidenciais/pessoais desnecessários nos prompts. |
+| **Invariantes preservadas** | Alteração exclusivamente documental; sem mudanças em `api/`, `api/lib/providers-config.js`, `serginho-orchestrator`, lógica de providers/fallback, dependências, lockfiles, variáveis de ambiente, WebContainer ou `executeArtifact`. Gemini e Groq permanecem permitidos sob orquestração do Serginho. |
+| **Validação** | `npm run build`; `npm test -- --runInBand src/__tests__/public-pages-premium-ui.test.js`; `npm test -- --runInBand src/__tests__/demo-showcase-routing.test.js`. |
+| **Rollback** | `git revert <commit-sha>` restaura os textos anteriores e esta entrada. |
+
+---
+
 ## 2026-06-12 — feat(construtor): adicionar preview visual estático gated sem execução
 
 | Item | Detalhe |

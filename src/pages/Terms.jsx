@@ -12,6 +12,10 @@ export default function Terms() {
 
       <h2>2. Descrição do Serviço</h2>
       <p>RKMMAX é uma plataforma de inteligência artificial com 47 especialistas para ajudar em:</p>
+      <p>
+        A RKMMAX é oferecida como SaaS pago por assinatura/recorrência, destinado a usuários
+        pagantes, sem plano gratuito previsto para usuários finais.
+      </p>
       <ul>
         <li>Produtividade e automação</li>
         <li>Criatividade e brainstorming</li>
@@ -57,7 +61,11 @@ export default function Terms() {
       <ul>
         <li>
           Você entende que suas solicitações podem ser processadas por provedores terceiros de IA,
-          incluindo Google Gemini e Groq.
+          incluindo Google Gemini e Groq, sempre sob orquestração do Serginho como gateway único.
+        </li>
+        <li>
+          Os dados enviados para inferência podem incluir prompt, contexto necessário, histórico
+          relevante da conversa e conteúdo fornecido por você para gerar a resposta.
         </li>
         <li>
           Você é responsável por não inserir informações altamente sensíveis, sigilosas ou de
@@ -66,7 +74,16 @@ export default function Terms() {
         <li>A RKMMAX não treina modelos próprios com conteúdo do usuário.</li>
         <li>
           O uso de dados por provedores terceiros segue os termos e políticas oficiais desses
-          provedores.
+          provedores e a configuração técnica real do ambiente.
+        </li>
+        <li>
+          O fato de você pagar pela RKMMAX não implica automaticamente que o provider esteja em tier
+          pago, enterprise ou com proteções específicas habilitadas.
+        </li>
+        <li>
+          Recursos como billing ativo, data controls e Zero Data Retention dependem do tier técnico
+          e da configuração operacional de cada provider, e devem ser verificados antes de uso em
+          produção com usuários reais ou dados sensíveis.
         </li>
         <li>
           Referências oficiais: Google Gemini (ai.google.dev/terms) e Groq
