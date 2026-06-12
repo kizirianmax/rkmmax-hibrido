@@ -1,3 +1,19 @@
+## 2026-06-12 — ops(supabase): aplicação manual do artifact_ledger no Projeto-Unificado
+
+| Item | Detalhe |
+|------|---------|
+| **Ambiente/projeto** | Supabase real **Projeto-Unificado**. |
+| **Aplicação manual** | Aplicação executada manualmente via Supabase SQL Editor, seguindo o runbook do PR #620. |
+| **Confirmação documental** | Confirmado documentalmente que GitHub/Vercel não aplicam migrations Supabase automaticamente; aplicação manual necessária e concluída. |
+| **Migrations/etapas aplicadas manualmente** | 1) criação de `artifact_ledger`; 2) adição de `trace_id`; 3) criação da policy `artifact_ledger_select_owner`. |
+| **Verificação final** | `artifact_ledger` existe (`tabela_existe = true`); `trace_id` existe e é `text`; policy `artifact_ledger_select_owner` existe; policy `FOR SELECT`; role `{authenticated}`; expressão `(user_id = (auth.uid())::text)`; `with_check = NULL`. |
+| **Observação de segurança** | `user_id` permanece `TEXT`; não foi usado `user_id::uuid`; `service_role` continua sem impacto porque bypassa RLS; a policy atua como defesa em profundidade para acesso direto `authenticated`. |
+| **Escopo preservado** | Sem alteração de código; sem alteração em `api/`; sem alteração em frontend; sem alteração em providers; sem alteração de `package.json`/lockfile; sem Dependabot; sem WebContainer; sem `executeArtifact`; sem persistência de conteúdo real; sem persistência de prompts. |
+| **Rollback SQL disponível** | `DROP POLICY IF EXISTS artifact_ledger_select_owner ON public.artifact_ledger;` |
+| **Rollback do PR** | `git revert <commit-sha>` |
+
+---
+
 ## 2026-06-12 — docs(ops): runbook de aplicação e verificação de migrations Supabase
 
 | Item | Detalhe |
