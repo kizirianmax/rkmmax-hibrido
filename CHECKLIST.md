@@ -1,3 +1,20 @@
+## 2026-06-12 — fix(security): adicionar policy RLS SELECT por dono no artifact_ledger
+
+| Item | Detalhe |
+|------|---------|
+| **Base** | `origin/main` pós-auditoria de RLS do `artifact_ledger`. |
+| **Objetivo** | Adicionar defesa em profundidade com policy de leitura por dono no `artifact_ledger`, sem alterar runtime e preservando o fluxo atual via `service_role`. |
+| **Migration criada** | `supabase/migrations/20260612_add_artifact_ledger_select_owner_policy.sql`. |
+| **Policy adicionada** | `artifact_ledger_select_owner` com `FOR SELECT`, `TO authenticated` e `USING (user_id = (auth.uid())::text)`. |
+| **Escopo de permissão** | Apenas `SELECT`; nenhuma policy de `INSERT`, `UPDATE` ou `DELETE` foi adicionada. |
+| **Estrutura de dados** | Sem criação/alteração de tabela e sem mudança de tipo da coluna `user_id` (permanece `TEXT`). |
+| **Escopo de código** | Sem alterações em `api/`, frontend, providers, Serginho, Dependabot, `package.json` ou lockfile; sem mudança de runtime. |
+| **Invariantes preservadas** | WebContainer permanece desativado; `executeArtifact` permanece desativado; conteúdo real e prompts continuam não persistidos. |
+| **Rollback SQL** | `DROP POLICY IF EXISTS artifact_ledger_select_owner ON public.artifact_ledger;` |
+| **Validação** | `npm run lint`; `npm run build`; `npm test -- --runInBand`. |
+
+---
+
 ## 2026-06-12 — docs(persistencia): base documental da FASE 1.5 para artefatos duráveis
 
 | Item | Detalhe |
