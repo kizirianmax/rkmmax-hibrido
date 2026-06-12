@@ -4,6 +4,7 @@
 import { render, screen, fireEvent, within, waitFor } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import ArtifactPreviewPanel from '../ArtifactPreviewPanel.jsx';
+import * as clientZipBuilder from '../../../lib/construtor/clientZipBuilder.jsx';
 
 const buildPreview = (fileNames = []) => ({
   previewAvailable: true,
@@ -29,6 +30,11 @@ const buildPreview = (fileNames = []) => ({
 describe('ArtifactPreviewPanel — PASSO 4 Feedback Estruturado', () => {
   let writeTextMock;
   const originalClipboard = global.navigator.clipboard;
+  const originalCreateObjectURL = global.URL.createObjectURL;
+  const originalRevokeObjectURL = global.URL.revokeObjectURL;
+  const originalAtob = global.atob;
+  const createObjectURLMock = jest.fn();
+  const revokeObjectURLMock = jest.fn();
   const getFileItem = (path) => {
     const filePathElement = screen.getAllByText(path).find((el) => el.classList.contains('artifact-file-path'));
     return filePathElement?.closest('li') || null;
@@ -37,12 +43,29 @@ describe('ArtifactPreviewPanel — PASSO 4 Feedback Estruturado', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     writeTextMock = jest.fn().mockResolvedValue(undefined);
+    createObjectURLMock.mockReset();
+    createObjectURLMock.mockReturnValue('blob:mock-url');
+    revokeObjectURLMock.mockReset();
     Object.defineProperty(global.navigator, 'clipboard', {
       configurable: true,
       value: {
         writeText: writeTextMock,
       },
     });
+    Object.defineProperty(global.URL, 'createObjectURL', {
+      configurable: true,
+      value: createObjectURLMock,
+    });
+    Object.defineProperty(global.URL, 'revokeObjectURL', {
+      configurable: true,
+      value: revokeObjectURLMock,
+    });
+    if (typeof global.atob !== 'function') {
+      Object.defineProperty(global, 'atob', {
+        configurable: true,
+        value: (value) => Buffer.from(value, 'base64').toString('binary'),
+      });
+    }
   });
 
   afterEach(() => {
@@ -50,6 +73,19 @@ describe('ArtifactPreviewPanel — PASSO 4 Feedback Estruturado', () => {
       configurable: true,
       value: originalClipboard,
     });
+    Object.defineProperty(global.URL, 'createObjectURL', {
+      configurable: true,
+      value: originalCreateObjectURL,
+    });
+    Object.defineProperty(global.URL, 'revokeObjectURL', {
+      configurable: true,
+      value: originalRevokeObjectURL,
+    });
+    Object.defineProperty(global, 'atob', {
+      configurable: true,
+      value: originalAtob,
+    });
+    jest.restoreAllMocks();
     jest.clearAllMocks();
   });
 
@@ -387,5 +423,110 @@ describe('ArtifactPreviewPanel — PASSO 4 Feedback Estruturado', () => {
     expect(screen.getByText('trace-xyz-001')).toBeInTheDocument();
     expect(screen.getByText(/presente/i)).toBeInTheDocument();
     expect(screen.getByText('true')).toBeInTheDocument();
+  });
+
+  test('download sem edição local usa delivery.zipBase64 e não chama builder client-side', () => {
+    const buildZipSpy = jest.spyOn(clientZipBuilder, 'buildZipBlobFromTextFiles');
+    const atobSpy = jest.spyOn(global, 'atob');
+    const preview = buildPreview(['index.html']);
+    preview.decision = 'approved';
+    preview.summary.fileContents = { 'index.html': '<html>original</html>' };
+    const delivery = { zipBase64: Buffer.from('ORIGINAL_ZIP_BYTES', 'binary').toString('base64') };
+
+    render(<ArtifactPreviewPanel preview={preview} delivery={delivery} onRevision={jest.fn()} onDecision={jest.fn()} />);
+
+    fireEvent.click(screen.getByRole('button', { name: /baixar artefato/i }));
+
+    expect(buildZipSpy).not.toHaveBeenCalled();
+    expect(atobSpy).toHaveBeenCalledWith(delivery.zipBase64);
+    expect(createObjectURLMock).toHaveBeenCalledTimes(1);
+  });
+
+  test('download com edição local reproduzível gera ZIP client-side com conteúdo editado e original', async () => {
+    const buildZipSpy = jest.spyOn(clientZipBuilder, 'buildZipBlobFromTextFiles');
+    const preview = buildPreview(['index.html', 'style.css', 'manifest.json', 'logs/generation.log']);
+    preview.decision = 'approved';
+    preview.summary.fileContents = {
+      'index.html': '<html>original</html>',
+      'style.css': 'body { color: #000; }',
+      'manifest.json': '{"checksum":"sha256:abc"}',
+      'logs/generation.log': 'original log',
+    };
+    const delivery = { zipBase64: Buffer.from('ORIGINAL_ZIP_BYTES', 'binary').toString('base64') };
+
+    render(<ArtifactPreviewPanel preview={preview} delivery={delivery} onRevision={jest.fn()} onDecision={jest.fn()} />);
+
+    fireEvent.click(within(getFileItem('index.html')).getByRole('button', { name: '✏️ Editar' }));
+    fireEvent.change(screen.getByLabelText('Editor local do arquivo index.html'), {
+      target: { value: '<html>editado</html>' },
+    });
+    fireEvent.click(screen.getByRole('button', { name: 'Aplicar edição local' }));
+    expect(screen.getByText(/edição local aplicada\. a exportação zip incluirá as edições locais deste preview/i)).toBeInTheDocument();
+
+    fireEvent.click(screen.getByRole('button', { name: /baixar artefato/i }));
+
+    expect(buildZipSpy).toHaveBeenCalledTimes(1);
+    expect(buildZipSpy).toHaveBeenCalledWith({
+      'index.html': '<html>editado</html>',
+      'style.css': 'body { color: #000; }',
+      'manifest.json': '{"checksum":"sha256:abc"}',
+      'logs/generation.log': 'original log',
+    });
+    expect(createObjectURLMock).toHaveBeenCalledTimes(1);
+  });
+
+  test('fail-closed com arquivo sem conteúdo textual: mantém download original e mostra aviso', () => {
+    const buildZipSpy = jest.spyOn(clientZipBuilder, 'buildZipBlobFromTextFiles');
+    const atobSpy = jest.spyOn(global, 'atob');
+    const preview = buildPreview(['index.html', 'logo.png']);
+    preview.decision = 'approved';
+    preview.summary.files = [
+      { path: 'index.html', size: 100, type: 'text/html' },
+      { path: 'logo.png', size: 200, type: 'image/png' },
+    ];
+    preview.summary.fileContents = {
+      'index.html': '<html>original</html>',
+    };
+    const delivery = { zipBase64: Buffer.from('ORIGINAL_ZIP_BYTES', 'binary').toString('base64') };
+
+    render(<ArtifactPreviewPanel preview={preview} delivery={delivery} onRevision={jest.fn()} onDecision={jest.fn()} />);
+
+    fireEvent.click(within(getFileItem('index.html')).getByRole('button', { name: '✏️ Editar' }));
+    fireEvent.change(screen.getByLabelText('Editor local do arquivo index.html'), {
+      target: { value: '<html>editado</html>' },
+    });
+    fireEvent.click(screen.getByRole('button', { name: 'Aplicar edição local' }));
+    expect(screen.getByText(/edição local aplicada apenas à visualização\/cópia/i)).toBeInTheDocument();
+
+    fireEvent.click(screen.getByRole('button', { name: /baixar artefato/i }));
+
+    expect(buildZipSpy).not.toHaveBeenCalled();
+    expect(atobSpy).toHaveBeenCalledWith(delivery.zipBase64);
+    expect(screen.getByText(/zip com edições locais indisponível; baixando artefato original/i)).toBeInTheDocument();
+    expect(createObjectURLMock).toHaveBeenCalledTimes(1);
+  });
+
+  test('erro ao gerar ZIP editado não quebra painel e mostra aviso sem download', () => {
+    jest.spyOn(clientZipBuilder, 'buildZipBlobFromTextFiles').mockImplementation(() => {
+      throw new Error('zip-error');
+    });
+    const preview = buildPreview(['index.html']);
+    preview.decision = 'approved';
+    preview.summary.fileContents = {
+      'index.html': '<html>original</html>',
+    };
+    const delivery = { zipBase64: Buffer.from('ORIGINAL_ZIP_BYTES', 'binary').toString('base64') };
+
+    render(<ArtifactPreviewPanel preview={preview} delivery={delivery} onRevision={jest.fn()} onDecision={jest.fn()} />);
+
+    fireEvent.click(within(getFileItem('index.html')).getByRole('button', { name: '✏️ Editar' }));
+    fireEvent.change(screen.getByLabelText('Editor local do arquivo index.html'), {
+      target: { value: '<html>editado</html>' },
+    });
+    fireEvent.click(screen.getByRole('button', { name: 'Aplicar edição local' }));
+    fireEvent.click(screen.getByRole('button', { name: /baixar artefato/i }));
+
+    expect(screen.getByText(/falha ao gerar zip com edições locais/i)).toBeInTheDocument();
+    expect(createObjectURLMock).not.toHaveBeenCalled();
   });
 });

@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import StaticArtifactPreview from './StaticArtifactPreview.jsx';
+import { buildZipBlobFromTextFiles } from '../../lib/construtor/clientZipBuilder.jsx';
 
 /**
  * ArtifactPreviewPanel — Fase 2D (PASSO 6: histórico local de revisão)
@@ -260,11 +261,30 @@ export default function ArtifactPreviewPanel({ preview, onDecision, onRevision, 
 
   const handleDownload = () => {
     if (!delivery?.zipBase64) return;
-    const byteNums = Uint8Array.from(atob(delivery.zipBase64), (c) => c.charCodeAt(0));
-    const blob = new Blob([byteNums], { type: 'application/zip' });
+
+    if (hasAnyLocalEdit && !canExportLocalEdits) {
+      showCopyFeedback('⚠️ Este artefato inclui arquivo sem conteúdo textual completo. ZIP com edições locais indisponível; baixando artefato original.');
+    }
+
+    let blob;
+    let filename = `artifact-${summary.id || 'download'}.zip`;
+
+    if (hasAnyLocalEdit && canExportLocalEdits) {
+      try {
+        blob = buildZipBlobFromTextFiles(localExportFilesMap);
+        filename = `artifact-${summary.id || 'download'}-editado.zip`;
+      } catch {
+        showCopyFeedback('❌ Falha ao gerar ZIP com edições locais. Revise os arquivos e tente novamente.');
+        return;
+      }
+    } else {
+      const byteNums = Uint8Array.from(atob(delivery.zipBase64), (c) => c.charCodeAt(0));
+      blob = new Blob([byteNums], { type: 'application/zip' });
+    }
+
     const a = document.createElement('a');
     a.href = URL.createObjectURL(blob);
-    a.download = `artifact-${summary.id || 'download'}.zip`;
+    a.download = filename;
     a.click();
     setTimeout(() => URL.revokeObjectURL(a.href), 100);
   };
@@ -313,6 +333,27 @@ export default function ArtifactPreviewPanel({ preview, onDecision, onRevision, 
   );
 
   const hasAnyLocalEdit = Object.keys(editedFileContents).some((path) => hasLocalEdit(path));
+
+  const localExportFilesMap = (() => {
+    const files = summary.files || [];
+    if (files.length === 0) return null;
+
+    const map = {};
+    for (let index = 0; index < files.length; index += 1) {
+      const path = files[index]?.path;
+      if (typeof path !== 'string' || path.length === 0) return null;
+      const content = getEffectiveContent(path);
+      if (typeof content !== 'string') return null;
+      map[path] = content;
+    }
+    return map;
+  })();
+  const canExportLocalEdits = hasAnyLocalEdit && Boolean(localExportFilesMap);
+  const localEditNoticeMessage = hasAnyLocalEdit
+    ? (canExportLocalEdits
+      ? 'Edição local aplicada. A exportação ZIP incluirá as edições locais deste preview. Manifest/checksum podem refletir a geração original.'
+      : 'Edição local aplicada apenas à visualização/cópia. Este artefato contém arquivo sem conteúdo textual completo; por segurança, o ZIP editado não será gerado e o download manterá o artefato original.')
+    : null;
 
   const handleCopyFile = (path) => {
     const file = summary.files?.find((item) => item.path === path);
@@ -620,16 +661,13 @@ export default function ArtifactPreviewPanel({ preview, onDecision, onRevision, 
           </ul>
           {hasAnyLocalEdit && (
             <div className="artifact-local-edit-notice">
-              Edição local: altera apenas a visualização e a cópia. O ZIP/exportação continua com o artefato original.
+              {localEditNoticeMessage}
             </div>
           )}
           {editingFilePath && (
             <div className="artifact-local-editor">
               <div className="artifact-local-editor-header">
                 <span className="artifact-local-editor-title">✏️ Editor local: {editingFilePath}</span>
-              </div>
-              <div className="artifact-local-edit-notice">
-                Edição local: altera apenas a visualização e a cópia. O ZIP/exportação continua com o artefato original.
               </div>
               <textarea
                 className="artifact-local-editor-textarea"
