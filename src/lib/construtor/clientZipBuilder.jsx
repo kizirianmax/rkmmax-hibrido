@@ -68,6 +68,24 @@ function toSortedEntries(filesMap) {
     .map((path) => ({ path, content: files[path] }));
 }
 
+function validateZipEntryPath(path) {
+  if (typeof path !== 'string' || path.length === 0) {
+    throw new Error('invalid-zip-entry-path');
+  }
+  if (path.startsWith('/') || path.includes('\\') || path.includes('\0')) {
+    throw new Error(`unsafe-zip-entry-path:${path}`);
+  }
+  if (/^[a-zA-Z]:/.test(path)) {
+    throw new Error(`unsafe-zip-entry-path:${path}`);
+  }
+
+  const segments = path.split('/');
+  const hasUnsafeSegment = segments.some((segment) => segment.length === 0 || segment === '.' || segment === '..');
+  if (hasUnsafeSegment) {
+    throw new Error(`unsafe-zip-entry-path:${path}`);
+  }
+}
+
 export function buildZipBytesFromTextFiles(filesMap) {
   const entries = toSortedEntries(filesMap);
 
@@ -77,9 +95,7 @@ export function buildZipBytesFromTextFiles(filesMap) {
   let centralLength = 0;
 
   entries.forEach(({ path, content }) => {
-    if (typeof path !== 'string' || path.length === 0) {
-      throw new Error('invalid-zip-entry-path');
-    }
+    validateZipEntryPath(path);
     if (typeof content !== 'string') {
       throw new Error(`invalid-zip-entry-content:${path}`);
     }

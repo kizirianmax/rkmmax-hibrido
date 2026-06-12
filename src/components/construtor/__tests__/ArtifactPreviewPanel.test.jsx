@@ -461,7 +461,7 @@ describe('ArtifactPreviewPanel — PASSO 4 Feedback Estruturado', () => {
       target: { value: '<html>editado</html>' },
     });
     fireEvent.click(screen.getByRole('button', { name: 'Aplicar edição local' }));
-    expect(screen.getByText(/a exportação incluirá as edições locais aplicadas neste preview/i)).toBeInTheDocument();
+    expect(screen.getByText(/edição local aplicada\. a exportação zip incluirá as edições locais deste preview/i)).toBeInTheDocument();
 
     fireEvent.click(screen.getByRole('button', { name: /baixar artefato/i }));
 
@@ -496,7 +496,7 @@ describe('ArtifactPreviewPanel — PASSO 4 Feedback Estruturado', () => {
       target: { value: '<html>editado</html>' },
     });
     fireEvent.click(screen.getByRole('button', { name: 'Aplicar edição local' }));
-    expect(screen.getByText(/não permite zip editado/i)).toBeInTheDocument();
+    expect(screen.getByText(/edição local aplicada apenas à visualização\/cópia/i)).toBeInTheDocument();
 
     fireEvent.click(screen.getByRole('button', { name: /baixar artefato/i }));
 

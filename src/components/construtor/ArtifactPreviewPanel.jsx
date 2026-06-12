@@ -349,6 +349,11 @@ export default function ArtifactPreviewPanel({ preview, onDecision, onRevision, 
     return map;
   })();
   const canExportLocalEdits = hasAnyLocalEdit && Boolean(localExportFilesMap);
+  const localEditNoticeMessage = hasAnyLocalEdit
+    ? (canExportLocalEdits
+      ? 'Edição local aplicada. A exportação ZIP incluirá as edições locais deste preview. Manifest/checksum podem refletir a geração original.'
+      : 'Edição local aplicada apenas à visualização/cópia. Este artefato contém arquivo sem conteúdo textual completo; por segurança, o ZIP editado não será gerado e o download manterá o artefato original.')
+    : null;
 
   const handleCopyFile = (path) => {
     const file = summary.files?.find((item) => item.path === path);
@@ -656,20 +661,13 @@ export default function ArtifactPreviewPanel({ preview, onDecision, onRevision, 
           </ul>
           {hasAnyLocalEdit && (
             <div className="artifact-local-edit-notice">
-              {canExportLocalEdits
-                ? 'A exportação incluirá as edições locais aplicadas neste preview (manifest/checksum refletem a geração original).'
-                : 'As edições locais seguem ativas no preview, mas este artefato não permite ZIP editado (há arquivo sem conteúdo textual completo). O download manterá o artefato original.'}
+              {localEditNoticeMessage}
             </div>
           )}
           {editingFilePath && (
             <div className="artifact-local-editor">
               <div className="artifact-local-editor-header">
                 <span className="artifact-local-editor-title">✏️ Editor local: {editingFilePath}</span>
-              </div>
-              <div className="artifact-local-edit-notice">
-                {canExportLocalEdits
-                  ? 'A exportação incluirá as edições locais aplicadas neste preview (manifest/checksum refletem a geração original).'
-                  : 'As edições locais seguem ativas no preview, mas este artefato não permite ZIP editado (há arquivo sem conteúdo textual completo). O download manterá o artefato original.'}
               </div>
               <textarea
                 className="artifact-local-editor-textarea"

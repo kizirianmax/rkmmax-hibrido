@@ -38,4 +38,28 @@ describe('clientZipBuilder', () => {
     const buffer = await blob.arrayBuffer();
     expect(buffer.byteLength).toBeGreaterThan(0);
   });
+
+  test('rejeita path com tentativa de traversal simples', () => {
+    expect(() => buildZipBytesFromTextFiles({ '../secret.txt': 'x' })).toThrow('unsafe-zip-entry-path');
+  });
+
+  test('rejeita path absoluto', () => {
+    expect(() => buildZipBytesFromTextFiles({ '/absolute.txt': 'x' })).toThrow('unsafe-zip-entry-path');
+  });
+
+  test('rejeita traversal em path aninhado', () => {
+    expect(() => buildZipBytesFromTextFiles({ 'folder/../../secret.txt': 'x' })).toThrow('unsafe-zip-entry-path');
+  });
+
+  test('rejeita path com backslash', () => {
+    expect(() => buildZipBytesFromTextFiles({ 'folder\\secret.txt': 'x' })).toThrow('unsafe-zip-entry-path');
+  });
+
+  test('rejeita path com drive do windows', () => {
+    expect(() => buildZipBytesFromTextFiles({ 'C:/arquivo.txt': 'x' })).toThrow('unsafe-zip-entry-path');
+  });
+
+  test('aceita path aninhado seguro', () => {
+    expect(() => buildZipBytesFromTextFiles({ 'logs/generation.log': 'linha 1' })).not.toThrow();
+  });
 });
