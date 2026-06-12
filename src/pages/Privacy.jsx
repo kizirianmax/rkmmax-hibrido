@@ -53,9 +53,9 @@ export default function Privacy() {
 
       <h2>5. Processamento por Provedores de IA Terceiros</h2>
       <p>
-        A RKMMAX utiliza provedores terceiros de IA para gerar respostas e processar solicitações,
-        sempre sob orquestração do Serginho, que atua como gateway único. Conforme a configuração
-        técnica do ambiente, o fluxo pode usar Google Gemini e Groq.
+        As solicitações no RKMMAX podem ser processadas por provedores terceiros de IA, sempre sob
+        orquestração do Serginho, que atua como gateway único. Conforme a configuração técnica do
+        ambiente, o fluxo pode usar Google Gemini e Groq.
       </p>
       <p>
         Dados enviados aos provedores podem incluir prompt, contexto necessário, histórico relevante
@@ -81,13 +81,21 @@ export default function Privacy() {
         com usuários reais ou dados sensíveis.
       </p>
       <p>
-        Referências oficiais: Google Gemini ({" "}
+        Referências oficiais: Gemini API Terms ({" "}
+        <a href="https://ai.google.dev/gemini-api/terms" target="_blank" rel="noreferrer">
+          ai.google.dev/gemini-api/terms
+        </a>
+        ), Google AI / Gemini Terms ({" "}
         <a href="https://ai.google.dev/terms" target="_blank" rel="noreferrer">
           ai.google.dev/terms
         </a>
-        ) e Groq ({" "}
+        ), Groq Terms ({" "}
         <a href="https://groq.com/terms-of-use/" target="_blank" rel="noreferrer">
           groq.com/terms-of-use
+        </a>
+        ) e Groq Your Data ({" "}
+        <a href="https://console.groq.com/docs/your-data" target="_blank" rel="noreferrer">
+          console.groq.com/docs/your-data
         </a>
         ).
       </p>

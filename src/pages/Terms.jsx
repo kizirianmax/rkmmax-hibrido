@@ -77,8 +77,9 @@ export default function Terms() {
           provedores.
         </li>
         <li>
-          O fato de você pagar pelo RKMMAX não implica automaticamente que o processamento ocorra em
-          tier pago/enterprise do provider nem com controles específicos ativos.
+          O fato de você pagar pela assinatura SaaS do RKMMAX não implica automaticamente que o
+          processamento ocorra em tier pago/enterprise do provider nem com controles específicos
+          ativos.
         </li>
         <li>
           Regras por tier e configurações como billing ativo, data controls e opções como Zero Data
@@ -86,8 +87,23 @@ export default function Terms() {
           produção com usuários reais ou dados sensíveis.
         </li>
         <li>
-          Referências oficiais: Google Gemini (ai.google.dev/terms) e Groq
-          (groq.com/terms-of-use).
+          Referências oficiais:{" "}
+          <a href="https://ai.google.dev/gemini-api/terms" target="_blank" rel="noreferrer">
+            Gemini API Terms
+          </a>{" "}
+          |{" "}
+          <a href="https://ai.google.dev/terms" target="_blank" rel="noreferrer">
+            Google AI / Gemini Terms
+          </a>{" "}
+          |{" "}
+          <a href="https://groq.com/terms-of-use/" target="_blank" rel="noreferrer">
+            Groq Terms
+          </a>{" "}
+          |{" "}
+          <a href="https://console.groq.com/docs/your-data" target="_blank" rel="noreferrer">
+            Groq Your Data
+          </a>
+          .
         </li>
         <li>
           As respostas são probabilísticas e devem ser revisadas antes de uso profissional,

@@ -1,3 +1,17 @@
+## 2026-06-12 — docs(legal): corrigir duplicidade e referências oficiais no PR #616
+
+| Item | Detalhe |
+|------|---------|
+| **Base** | Branch do PR #616 em revisão final. |
+| **Objetivo** | Remover redação antiga/duplicada em `Privacy.jsx`, revisar consistência gramatical/lista em `Terms.jsx` e atualizar links oficiais de Gemini/Groq para referências mais específicas. |
+| **Arquivos alterados** | `src/pages/Privacy.jsx`; `src/pages/Terms.jsx`; `CHECKLIST.md`. |
+| **Ajustes aplicados** | Reescrita do parágrafo de processamento por terceiros em `Privacy.jsx` para eliminar a formulação antiga; manutenção explícita de Serginho como gateway único e Gemini/Groq conforme configuração técnica; reforço textual em `Terms.jsx` da distinção entre assinatura SaaS RKMMAX e tier técnico do provider; atualização de referências para `ai.google.dev/gemini-api/terms`, `ai.google.dev/terms`, `groq.com/terms-of-use/` e `console.groq.com/docs/your-data`; validação de lista sem item quebrado/repetido. |
+| **Invariantes preservadas** | Mudança exclusivamente documental; sem alterações em `api/`, lógica de providers, variáveis de ambiente, dependências, Dependabot, WebContainer ou `executeArtifact`. Gemini e Groq permanecem permitidos/configuráveis sob gateway único do Serginho. |
+| **Validação** | `npm run build`; `npm test -- --runInBand src/pages`; `npm test -- --runInBand`. |
+| **Rollback** | `git revert <commit-sha>` |
+
+---
+
 ## 2026-06-12 — docs(legal): alinhar privacidade e termos ao modelo SaaS pago e uso de providers
 
 | Item | Detalhe |
