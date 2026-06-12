@@ -1,3 +1,22 @@
+## 2026-06-12 — feat(construtor): adicionar preview visual estático gated sem execução
+
+| Item | Detalhe |
+|------|---------|
+| **Base** | `origin/main` pós-#613 (`a4f0b65`). |
+| **Objetivo** | Implementar preview visual estático pequeno/controlado/reversível no Construtor/Híbrido, somente para artefatos `previewable-static`, com dupla trava (classificador + sanitizador puro) e fail-closed. |
+| **Relação com #609/#610/#613** | #609 definiu ADR/taxonomia; #610 segue como classificador de capacidade (não sanitizador); #613 manteve UI diagnóstica gated. Este passo adiciona renderização estática sanitizada com gate próprio. |
+| **Flag usada** | Gate exclusivo: `?constructorStaticPreview=1` (default OFF, rollback independente, sem reuso de `?constructorTelemetry=1`). |
+| **Arquivos alterados** | `src/lib/construtor/constructorStaticPreviewSanitizer.js`; `src/lib/construtor/__tests__/constructorStaticPreviewSanitizer.test.js`; `src/components/construtor/StaticArtifactPreview.jsx`; `src/components/construtor/__tests__/StaticArtifactPreview.test.jsx`; `src/components/construtor/ArtifactPreviewPanel.jsx`; `src/components/construtor/__tests__/ArtifactPreviewPanel.test.jsx`; `src/styles/HybridAgent.css`; `CHECKLIST.md`. |
+| **Estratégia de sanitização** | Sanitizador puro sem side effects: rejeita entrada inválida e srcdoc > 256KB; remove `<script>`, `<iframe>`, `<object>`, `<embed>`, `<form>`, `<base>`, `<meta http-equiv=\"refresh\">`; remove `on*`; bloqueia `javascript:`, `data:text/html`, `data:image/svg+xml`, `http(s)://` e `//` em atributos/CSS; injeta CSP defensiva. |
+| **Renderização** | Componente `StaticArtifactPreview` usa `iframe` com `sandbox=\"\"`, `srcDoc`, `referrerPolicy=\"no-referrer\"`, `loading=\"lazy\"`; sem `allow-scripts`, sem `allow-same-origin`, sem `src` remoto. |
+| **Elegibilidade efetiva** | Renderiza somente quando TODAS: `?constructorStaticPreview=1`; capability `previewable-static`; `index.html` string não vazia; sanitizador retorna `ok: true`; HTML final sanitizado sem tokens proibidos. Qualquer falha => não renderiza (fail-closed). |
+| **Invariantes preservadas** | WebContainer permanece desativado; `executeArtifact` server-side segue `disabled`; sem bypass ao Serginho; sem alterações em `api/`, contratos/readers/parser/normalizer/empacotador/allowlist/classifier; `conteudo-com-acesso-dinamico` não foi relaxado; sem alterações em `robots.txt`, `Privacy.jsx`, `Terms.jsx`, `package.json`, lockfiles ou dependências. |
+| **Testes** | Direcionados: `npm test -- --runInBand src/lib/construtor/__tests__/constructorStaticPreviewSanitizer.test.js` e `npm test -- --runInBand src/components/construtor/__tests__/StaticArtifactPreview.test.jsx`; integração gate no painel em `ArtifactPreviewPanel.test.jsx`; depois suíte completa + build. |
+| **Rollback** | `git revert <commit-sha>` |
+| **Próximo passo recomendado** | Coleta visual/manual desktop+mobile com `?constructorStaticPreview=1`; validar ganho de demo/pitch; depois auditar termos oficiais Google Gemini/Groq; depois avaliar sanitização de prompts antes do provider. |
+
+---
+
 ## 2026-06-12 — feat(construtor): exibir capacidade do artefato em modo diagnóstico
 
 | Item | Detalhe |

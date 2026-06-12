@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import StaticArtifactPreview from './StaticArtifactPreview.jsx';
 
 /**
  * ArtifactPreviewPanel — Fase 2D (PASSO 6: histórico local de revisão)
@@ -76,6 +77,7 @@ export default function ArtifactPreviewPanel({ preview, onDecision, onRevision, 
   const [editingDraft, setEditingDraft] = useState('');
   const [artifactCapabilityLabel, setArtifactCapabilityLabel] = useState(FALLBACK_CAPABILITY_LABEL);
   const [artifactCapabilityDisclaimer, setArtifactCapabilityDisclaimer] = useState(FALLBACK_CAPABILITY_DISCLAIMER);
+  const [sanitizedStaticPreviewHtml, setSanitizedStaticPreviewHtml] = useState('');
   const summary = preview?.summary;
   const shouldShowCapabilityDiagnostics = (() => {
     try {
@@ -83,6 +85,16 @@ export default function ArtifactPreviewPanel({ preview, onDecision, onRevision, 
       if (typeof rawSearch !== 'string') return false;
       const params = new URLSearchParams(rawSearch.replace(/^[?&]+/, ''));
       return params.get('constructorTelemetry') === '1';
+    } catch {
+      return false;
+    }
+  })();
+  const shouldShowStaticPreview = (() => {
+    try {
+      const rawSearch = globalThis?.location?.search;
+      if (typeof rawSearch !== 'string') return false;
+      const params = new URLSearchParams(rawSearch.replace(/^[?&]+/, ''));
+      return params.get('constructorStaticPreview') === '1';
     } catch {
       return false;
     }
@@ -98,16 +110,18 @@ export default function ArtifactPreviewPanel({ preview, onDecision, onRevision, 
     let isActive = true;
 
     async function resolveCapability() {
-      if (!shouldShowCapabilityDiagnostics || !summary) {
+      if (!summary || (!shouldShowCapabilityDiagnostics && !shouldShowStaticPreview)) {
         setArtifactCapabilityLabel(FALLBACK_CAPABILITY_LABEL);
         setArtifactCapabilityDisclaimer(FALLBACK_CAPABILITY_DISCLAIMER);
+        setSanitizedStaticPreviewHtml('');
         return;
       }
 
       try {
-        const [{ classifyConstructorArtifactCapability }, labelsModule] = await Promise.all([
+        const [{ classifyConstructorArtifactCapability }, labelsModule, { sanitizeConstructorStaticPreviewHtml }] = await Promise.all([
           import('../../lib/construtor/constructorArtifactCapabilityClassifier.js'),
           import('../../lib/construtor/constructorArtifactCapabilityLabels.js'),
+          import('../../lib/construtor/constructorStaticPreviewSanitizer.js'),
         ]);
         if (!isActive) return;
         const capabilityVerdict = classifyConstructorArtifactCapability({
@@ -115,14 +129,36 @@ export default function ArtifactPreviewPanel({ preview, onDecision, onRevision, 
           entrypoint: summary.entrypoint,
           validation: summary.validation,
         });
-        setArtifactCapabilityLabel(
-          labelsModule.getConstructorArtifactCapabilityLabel(capabilityVerdict?.capability),
-        );
-        setArtifactCapabilityDisclaimer(labelsModule.CONSTRUCTOR_ARTIFACT_CAPABILITY_DISCLAIMER);
+        if (shouldShowCapabilityDiagnostics) {
+          setArtifactCapabilityLabel(
+            labelsModule.getConstructorArtifactCapabilityLabel(capabilityVerdict?.capability),
+          );
+          setArtifactCapabilityDisclaimer(labelsModule.CONSTRUCTOR_ARTIFACT_CAPABILITY_DISCLAIMER);
+        }
+
+        if (!shouldShowStaticPreview) {
+          setSanitizedStaticPreviewHtml('');
+          return;
+        }
+
+        const indexHtml = summary?.fileContents?.['index.html'];
+        if (capabilityVerdict?.capability !== 'previewable-static' || typeof indexHtml !== 'string' || indexHtml.trim().length === 0) {
+          setSanitizedStaticPreviewHtml('');
+          return;
+        }
+
+        const sanitizeResult = sanitizeConstructorStaticPreviewHtml(indexHtml);
+        if (sanitizeResult?.ok === true && typeof sanitizeResult.html === 'string' && sanitizeResult.html.trim().length > 0) {
+          setSanitizedStaticPreviewHtml(sanitizeResult.html);
+          return;
+        }
+
+        setSanitizedStaticPreviewHtml('');
       } catch {
         if (isActive) {
           setArtifactCapabilityLabel(FALLBACK_CAPABILITY_LABEL);
           setArtifactCapabilityDisclaimer(FALLBACK_CAPABILITY_DISCLAIMER);
+          setSanitizedStaticPreviewHtml('');
         }
       }
     }
@@ -132,7 +168,7 @@ export default function ArtifactPreviewPanel({ preview, onDecision, onRevision, 
     return () => {
       isActive = false;
     };
-  }, [shouldShowCapabilityDiagnostics, summary?.fileContents, summary?.entrypoint, summary?.validation]);
+  }, [shouldShowCapabilityDiagnostics, shouldShowStaticPreview, summary?.fileContents, summary?.entrypoint, summary?.validation]);
 
   if (loading) {
     return (
@@ -468,6 +504,9 @@ export default function ArtifactPreviewPanel({ preview, onDecision, onRevision, 
           <p className="artifact-capability-caption">{artifactCapabilityLabel.caption}</p>
           <p className="artifact-capability-disclaimer">{artifactCapabilityDisclaimer}</p>
         </div>
+      )}
+      {sanitizedStaticPreviewHtml && (
+        <StaticArtifactPreview html={sanitizedStaticPreviewHtml} />
       )}
 
       {/* Resumo Estrutural */}

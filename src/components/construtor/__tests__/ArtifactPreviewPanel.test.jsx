@@ -36,6 +36,7 @@ describe('ArtifactPreviewPanel — PASSO 4 Feedback Estruturado', () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
+    window.history.pushState({}, '', '/');
     writeTextMock = jest.fn().mockResolvedValue(undefined);
     Object.defineProperty(global.navigator, 'clipboard', {
       configurable: true,
@@ -46,6 +47,7 @@ describe('ArtifactPreviewPanel — PASSO 4 Feedback Estruturado', () => {
   });
 
   afterEach(() => {
+    window.history.pushState({}, '', '/');
     Object.defineProperty(global.navigator, 'clipboard', {
       configurable: true,
       value: originalClipboard,
@@ -387,5 +389,56 @@ describe('ArtifactPreviewPanel — PASSO 4 Feedback Estruturado', () => {
     expect(screen.getByText('trace-xyz-001')).toBeInTheDocument();
     expect(screen.getByText(/presente/i)).toBeInTheDocument();
     expect(screen.getByText('true')).toBeInTheDocument();
+  });
+
+  test('preview visual estático não aparece sem a flag constructorStaticPreview', async () => {
+    const preview = buildPreview(['index.html', 'styles.css']);
+    preview.summary.fileContents = {
+      'index.html': '<html><head><link rel="stylesheet" href="styles.css"></head><body><h1>ok</h1></body></html>',
+      'styles.css': 'body{color:#111;}',
+    };
+    render(<ArtifactPreviewPanel preview={preview} onRevision={jest.fn()} onDecision={jest.fn()} />);
+
+    await waitFor(() => {
+      expect(screen.queryByTestId('artifact-static-preview-panel')).not.toBeInTheDocument();
+    });
+  });
+
+  test('preview visual estático não aparece para exportable/executable-client/blocked', async () => {
+    window.history.pushState({}, '', '/?constructorStaticPreview=1');
+
+    const exportablePreview = buildPreview(['index.js']);
+    exportablePreview.summary.fileContents = { 'index.js': 'console.log(\"ok\");' };
+    const executableClientPreview = buildPreview(['index.html', 'script.js']);
+    executableClientPreview.summary.fileContents = {
+      'index.html': '<html><body><div id=\"app\"></div><script src=\"script.js\"></script></body></html>',
+      'script.js': 'document.getElementById(\"app\").textContent = \"ok\";',
+    };
+    const blockedPreview = buildPreview(['index.js']);
+    blockedPreview.summary.fileContents = { 'index.js': 'eval(\"2+2\")' };
+
+    const { rerender } = render(<ArtifactPreviewPanel preview={exportablePreview} onRevision={jest.fn()} onDecision={jest.fn()} />);
+    rerender(<ArtifactPreviewPanel preview={executableClientPreview} onRevision={jest.fn()} onDecision={jest.fn()} />);
+    rerender(<ArtifactPreviewPanel preview={blockedPreview} onRevision={jest.fn()} onDecision={jest.fn()} />);
+
+    await waitFor(() => {
+      expect(screen.queryByTestId('artifact-static-preview-panel')).not.toBeInTheDocument();
+    });
+  });
+
+  test('preview visual estático aparece para previewable-static + flag + sanitizador ok', async () => {
+    window.history.pushState({}, '', '/?constructorStaticPreview=1');
+    const preview = buildPreview(['index.html', 'styles.css']);
+    preview.summary.fileContents = {
+      'index.html': '<html><head><link rel=\"stylesheet\" href=\"styles.css\"></head><body><h1 onclick=\"x()\">ok</h1></body></html>',
+      'styles.css': 'body{color:#111;}',
+    };
+
+    render(<ArtifactPreviewPanel preview={preview} onRevision={jest.fn()} onDecision={jest.fn()} />);
+
+    await waitFor(() => {
+      expect(screen.getByTestId('artifact-static-preview-panel')).toBeInTheDocument();
+    });
+    expect(screen.getByTitle('Preview visual estático do artefato')).toHaveAttribute('sandbox', '');
   });
 });
