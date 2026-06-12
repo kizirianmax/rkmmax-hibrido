@@ -18,6 +18,10 @@ export default function Terms() {
         <li>Análise e resolução de problemas</li>
         <li>Educação e aprendizado</li>
       </ul>
+      <p>
+        RKMMAX é um serviço SaaS pago por assinatura/recorrência, destinado a usuários finais
+        pagantes, sem plano gratuito previsto para usuários finais.
+      </p>
 
       <h2>3. Planos e Limites</h2>
       <p>Cada plano tem limites diários de tokens:</p>
@@ -57,7 +61,11 @@ export default function Terms() {
       <ul>
         <li>
           Você entende que suas solicitações podem ser processadas por provedores terceiros de IA,
-          incluindo Google Gemini e Groq.
+          incluindo Google Gemini e Groq, sempre sob orquestração do Serginho como gateway único.
+        </li>
+        <li>
+          Para gerar respostas, os dados enviados a provedores podem incluir prompt, contexto
+          necessário, histórico relevante da conversa e conteúdo fornecido por você.
         </li>
         <li>
           Você é responsável por não inserir informações altamente sensíveis, sigilosas ou de
@@ -69,8 +77,33 @@ export default function Terms() {
           provedores.
         </li>
         <li>
-          Referências oficiais: Google Gemini (ai.google.dev/terms) e Groq
-          (groq.com/terms-of-use).
+          O fato de você pagar pela assinatura SaaS do RKMMAX não implica automaticamente que o
+          processamento ocorra em tier pago/enterprise do provider nem com controles específicos
+          ativos.
+        </li>
+        <li>
+          Regras por tier e configurações como billing ativo, data controls e opções como Zero Data
+          Retention variam por provider e ambiente, devendo ser verificadas antes de uso em
+          produção com usuários reais ou dados sensíveis.
+        </li>
+        <li>
+          Referências oficiais:{" "}
+          <a href="https://ai.google.dev/gemini-api/terms" target="_blank" rel="noreferrer">
+            Gemini API Terms
+          </a>{" "}
+          |{" "}
+          <a href="https://ai.google.dev/terms" target="_blank" rel="noreferrer">
+            Google AI / Gemini Terms
+          </a>{" "}
+          |{" "}
+          <a href="https://groq.com/terms-of-use/" target="_blank" rel="noreferrer">
+            Groq Terms
+          </a>{" "}
+          |{" "}
+          <a href="https://console.groq.com/docs/your-data" target="_blank" rel="noreferrer">
+            Groq Your Data
+          </a>
+          .
         </li>
         <li>
           As respostas são probabilísticas e devem ser revisadas antes de uso profissional,
