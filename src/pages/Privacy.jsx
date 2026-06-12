@@ -10,6 +10,10 @@ export default function Privacy() {
         A RKMMAX respeita sua privacidade. Esta Política de Privacidade explica como coletamos,
         usamos e protegemos seus dados pessoais.
       </p>
+      <p>
+        A RKMMAX é um serviço SaaS pago por assinatura/recorrência, destinado a usuários finais
+        pagantes, sem plano gratuito previsto para usuários finais.
+      </p>
 
       <h2>2. Conformidade Legal</h2>
       <p>Este site está em conformidade com:</p>
@@ -49,13 +53,14 @@ export default function Privacy() {
 
       <h2>5. Processamento por Provedores de IA Terceiros</h2>
       <p>
-        A RKMMAX utiliza provedores terceiros de IA para gerar respostas e processar solicitações.
-        Atualmente, o fluxo pode usar Google Gemini e Groq.
+        A RKMMAX utiliza provedores terceiros de IA para gerar respostas e processar solicitações,
+        sempre sob orquestração do Serginho, que atua como gateway único. Conforme a configuração
+        técnica do ambiente, o fluxo pode usar Google Gemini e Groq.
       </p>
       <p>
-        Prompts, mensagens, histórico necessário da conversa e conteúdo enviado ao Construtor,
-        Híbrido ou aos Especialistas podem ser transmitidos a esses provedores para inferência.
-        Esse processamento ocorre para responder ao pedido do usuário.
+        Dados enviados aos provedores podem incluir prompt, contexto necessário, histórico relevante
+        da conversa e conteúdo fornecido pelo usuário (incluindo conteúdo enviado ao Construtor,
+        Híbrido ou aos Especialistas) para inferência e geração de resposta.
       </p>
 
       <h2>6. Uso para Treinamento de Modelos</h2>
@@ -67,6 +72,13 @@ export default function Privacy() {
         pelos termos e políticas oficiais desses provedores. Enquanto os termos específicos do tier
         contratado não forem formalmente verificados, a RKMMAX não promete garantia absoluta de
         não-treinamento por terceiros.
+      </p>
+      <p>
+        O pagamento do usuário final à RKMMAX não equivale automaticamente ao tier técnico do
+        provider de IA. Regras e controles podem variar por plano (incluindo gratuito, pago ou
+        enterprise), billing ativo, data controls e opções como Zero Data Retention. Essas
+        configurações devem ser verificadas no ambiente operacional real antes de uso em produção
+        com usuários reais ou dados sensíveis.
       </p>
       <p>
         Referências oficiais: Google Gemini ({" "}

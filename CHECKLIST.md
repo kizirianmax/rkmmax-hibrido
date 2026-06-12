@@ -1,3 +1,17 @@
+## 2026-06-12 — docs(legal): alinhar privacidade e termos ao modelo SaaS pago e uso de providers
+
+| Item | Detalhe |
+|------|---------|
+| **Base** | `origin/main` pós-#614. |
+| **Objetivo** | Atualizar exclusivamente textos públicos de `Privacy.jsx` e `Terms.jsx` para refletir serviço SaaS pago recorrente, ausência de plano gratuito ao usuário final e uso de providers terceiros sob orquestração do Serginho. |
+| **Arquivos alterados** | `src/pages/Privacy.jsx`; `src/pages/Terms.jsx`; `CHECKLIST.md`. |
+| **Ajustes aplicados** | Inclusão explícita de que RKMMAX é SaaS pago por assinatura/recorrência sem plano gratuito para usuário final; reforço de que Google Gemini e Groq são providers terceiros configuráveis sob gateway único do Serginho; detalhamento de que dados enviados podem incluir prompt, contexto necessário, histórico relevante e conteúdo fornecido; distinção de que pagamento ao RKMMAX não implica tier técnico específico do provider; reforço de verificação operacional real (billing, data controls, opções como ZDR) antes de produção com usuários reais/dados sensíveis; manutenção da linguagem honesta sem garantia absoluta sobre terceiros. |
+| **Invariantes preservadas** | Mudança apenas documental/textual; sem alterações em `api/`, orquestrador, lógica de providers/fallback, variáveis de ambiente, dependências, lockfiles ou arquitetura. Gemini e Groq permanecem permitidos sob orquestração do Serginho. |
+| **Validação** | `npm run build`; `npm test -- --runInBand` (após ajustes textuais). |
+| **Rollback** | `git revert <commit-sha>` |
+
+---
+
 ## 2026-06-12 — feat(construtor): adicionar preview visual estático gated sem execução
 
 | Item | Detalhe |
