@@ -924,6 +924,31 @@ textarea:disabled {
   line-height: 1.45;
 }
 
+.artifact-static-preview-panel {
+  border: 1px solid rgba(148, 163, 184, 0.35);
+  background: rgba(15, 23, 42, 0.55);
+  border-radius: 6px;
+  padding: 0.6rem 0.7rem;
+  margin-bottom: 0.75rem;
+}
+
+.artifact-static-preview-disclaimer {
+  margin: 0.4rem 0 0.55rem 0;
+  font-size: 0.7rem;
+  color: #94a3b8;
+  line-height: 1.45;
+}
+
+.artifact-static-preview-iframe {
+  width: 100%;
+  min-height: 220px;
+  height: 260px;
+  border: 1px solid rgba(148, 163, 184, 0.35);
+  border-radius: 6px;
+  background: #ffffff;
+  overflow: auto;
+}
+
 .artifact-preview-meta {
   display: flex;
   flex-direction: column;
@@ -1292,6 +1317,11 @@ textarea:disabled {
   .artifact-capability-badge {
     width: 100%;
     overflow-wrap: anywhere;
+  }
+
+  .artifact-static-preview-iframe {
+    min-height: 200px;
+    height: 220px;
   }
 }
 
