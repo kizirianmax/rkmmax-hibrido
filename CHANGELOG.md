@@ -43,6 +43,8 @@ Próxima fase: operação / infra / smoke test / descontinuação controlada do 
 - Criado runbook operacional para aplicação e verificação manual de migrations Supabase (`docs/ops/runbook-migrations-supabase.md`).
 - Documentado que GitHub/Vercel não aplicam migrations de banco automaticamente.
 - Incluído procedimento seguro para verificar/aplicar a policy RLS `artifact_ledger_select_owner` do `artifact_ledger`.
+- Registrada evidência operacional da aplicação manual das migrations Supabase do `artifact_ledger` no projeto real **Projeto-Unificado**.
+- Confirmada policy RLS `artifact_ledger_select_owner` ativa com `FOR SELECT TO authenticated`.
 
 ### 📝 Documentação
 - **Persistência durável de artefatos (FASE 1.5, documental):** adicionados `docs/adr/ADR-persistencia-duravel-artefatos.md` e `docs/legal/politica-retencao-artefatos.md`, registrando modelo mínimo futuro, política de retenção/LGPD e decisão de policy de dono RLS como pré-requisito antes de persistir conteúdo real.
