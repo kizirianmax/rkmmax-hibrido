@@ -39,7 +39,10 @@ export default function Privacy() {
       <p>Seus dados são usados apenas para:</p>
       <ul>
         <li>Fornecer os serviços de IA</li>
-        <li>Melhorar a qualidade do serviço em finalidades operacionais específicas</li>
+        <li>
+          Melhoria operacional limitada a segurança, estabilidade, correção de erros e prevenção
+          de abuso
+        </li>
         <li>Segurança, estabilidade, prevenção de abuso e suporte ao usuário</li>
         <li>Cumprir obrigações legais</li>
       </ul>
@@ -64,6 +67,17 @@ export default function Privacy() {
         pelos termos e políticas oficiais desses provedores. Enquanto os termos específicos do tier
         contratado não forem formalmente verificados, a RKMMAX não promete garantia absoluta de
         não-treinamento por terceiros.
+      </p>
+      <p>
+        Referências oficiais: Google Gemini ({" "}
+        <a href="https://ai.google.dev/terms" target="_blank" rel="noreferrer">
+          ai.google.dev/terms
+        </a>
+        ) e Groq ({" "}
+        <a href="https://groq.com/terms-of-use/" target="_blank" rel="noreferrer">
+          groq.com/terms-of-use
+        </a>
+        ).
       </p>
       <p>
         Recomendamos que você não insira dados sensíveis, sigilosos ou pessoais desnecessários nos

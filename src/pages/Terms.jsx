@@ -69,6 +69,10 @@ export default function Terms() {
           provedores.
         </li>
         <li>
+          Referências oficiais: Google Gemini (ai.google.dev/terms) e Groq
+          (groq.com/terms-of-use).
+        </li>
+        <li>
           As respostas são probabilísticas e devem ser revisadas antes de uso profissional,
           jurídico, financeiro, médico ou sensível.
         </li>

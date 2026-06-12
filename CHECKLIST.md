@@ -1,3 +1,18 @@
+## 2026-06-12 — docs(privacidade): revisão final de consistência para saída de Draft (#612)
+
+| Item | Detalhe |
+|------|---------|
+| **Base** | Branch do PR #612 após revisão documental inicial. |
+| **Objetivo** | Ajuste final de linguagem e consistência estrutural em Privacidade/Termos antes de Ready for review. |
+| **Arquivos alterados** | `src/pages/Privacy.jsx`; `src/pages/Terms.jsx`; `CHECKLIST.md`. |
+| **Ajustes aplicados** | Qualificação da linguagem operacional em `Privacy.jsx` (sem frases amplas genéricas), inclusão de referência textual aos termos oficiais de Google Gemini e Groq em `Privacy.jsx` e `Terms.jsx`, e validação de ausência de títulos/números/datas duplicados nos dois arquivos. |
+| **Declarações preservadas** | RKMMAX não treina modelos próprios com dados do usuário; uso/retenção por terceiros depende dos termos oficiais dos provedores; não há promessa absoluta de não-treinamento por terceiros; orientação para evitar dados sensíveis desnecessários; canal `suporte@kizirianmax.site`. |
+| **Invariantes preservadas** | PR permanece exclusivamente documental; sem alterações em `api/`, orquestrador, providers-config, ModelArmor, `robots.txt`, WebContainer, `executeArtifact`, `package.json`, lockfiles ou dependências do projeto. |
+| **Validação** | `npm run build`; `npm test -- --runInBand`. |
+| **Rollback** | `git revert <commit-sha>` |
+
+---
+
 ## 2026-06-12 — docs(privacidade): declarar uso de provedores de IA terceiros e limites de retenção
 
 | Item | Detalhe |
