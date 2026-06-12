@@ -44,6 +44,7 @@ Próxima fase: operação / infra / smoke test / descontinuação controlada do 
 - **Docs:** adicionado índice de documentação (`docs/README.md`, `docs/INDEX.md`) com todos os 40+ arquivos Markdown organizados por categoria (PR #168)
 
 ### 🔒 Segurança
+- **RLS no `artifact_ledger` (defesa em profundidade):** adicionada migration `supabase/migrations/20260612_add_artifact_ledger_select_owner_policy.sql` com policy `artifact_ledger_select_owner` (`FOR SELECT` para `authenticated` com `user_id = (auth.uid())::text`), preparando persistência durável futura sem alterar runtime atual via `service_role`.
 - **`SECURITY.md`** expandido: substituído o template genérico do GitHub por política de segurança real com contato, prazos de resposta, escopo de vulnerabilidades e política de divulgação responsável (PR #167)
 
 ### 📝 Documentação / Governança
